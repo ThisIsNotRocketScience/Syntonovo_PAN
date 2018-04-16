@@ -1,0 +1,18 @@
+19:55:10 **** Incremental Build of configuration Debug for project pan_synth ****
+make -r -j8 all 
+Building target: pan_synth.axf
+Invoking: MCU Linker
+arm-none-eabi-gcc -nostdlib -L"C:\work\pan\git\controller\pan_synth\CMSIS\drivers" -Xlinker -print-memory-usage -Xlinker --gc-sections -Xlinker -Map="pan_synth.map" -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -T LPC54616J512_Project_Debug.ld -o "pan_synth.axf"  ./startup/startup_lpc54616.o  ./source/LPC54616J512_Project.o ./source/MAX11300.o ./source/MAX11311.o ./source/MAX5134.o ./source/ad.o ./source/adsr.o ./source/autotune.o ./source/control.o ./source/lfo.o ./source/notestack.o ./source/semihost_hardfault.o ./source/shiftctrl.o ./source/spi_sched.o ./source/synth.o  ./board/board.o ./board/clock_config.o ./board/peripherals.o ./board/pin_mux.o  ./CMSIS/drivers/fsl_clock.o ./CMSIS/drivers/fsl_common.o ./CMSIS/drivers/fsl_ctimer.o ./CMSIS/drivers/fsl_dma.o ./CMSIS/drivers/fsl_eeprom.o ./CMSIS/drivers/fsl_flexcomm.o ./CMSIS/drivers/fsl_fmc.o ./CMSIS/drivers/fsl_fmeas.o ./CMSIS/drivers/fsl_gint.o ./CMSIS/drivers/fsl_gpio.o ./CMSIS/drivers/fsl_inputmux.o ./CMSIS/drivers/fsl_mrt.o ./CMSIS/drivers/fsl_pint.o ./CMSIS/drivers/fsl_power.o ./CMSIS/drivers/fsl_reset.o ./CMSIS/drivers/fsl_rit.o ./CMSIS/drivers/fsl_rtc.o ./CMSIS/drivers/fsl_sctimer.o ./CMSIS/drivers/fsl_spi.o ./CMSIS/drivers/fsl_spi_dma.o ./CMSIS/drivers/fsl_usart.o ./CMSIS/drivers/fsl_usart_dma.o ./CMSIS/drivers/fsl_utick.o ./CMSIS/drivers/fsl_wwdt.o  ./CMSIS/cmsis_drivers/fsl_i2c_cmsis.o ./CMSIS/cmsis_drivers/fsl_spi_cmsis.o ./CMSIS/cmsis_drivers/fsl_usart_cmsis.o  ./CMSIS/system_LPC54616.o   -lpower_hardabi
+Memory region         Used Size  Region Size  %age Used
+   PROGRAM_FLASH:       58600 B       512 KB     11.18%
+    SRAM_0_1_2_3:      116196 B       160 KB     70.92%
+           SRAMX:          0 GB        32 KB      0.00%
+         USB_RAM:          0 GB         8 KB      0.00%
+Finished building target: pan_synth.axf
+ 
+make --no-print-directory post-build
+Performing post-build steps
+arm-none-eabi-size "pan_synth.axf"; # arm-none-eabi-objcopy -v -O binary "pan_synth.axf" "pan_synth.bin" ; # checksum -p LPC54616J512 -d "pan_synth.bin";
+   text	   data	    bss	    dec	    hex	filename
+  56548	   2052	 113636	 172236	  2a0cc	pan_synth.axf
+ 

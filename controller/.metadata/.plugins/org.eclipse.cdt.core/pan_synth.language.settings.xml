@@ -1,0 +1,1508 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project>
+	<configuration id="com.crt.advproject.config.exe.debug.340053007" name="Debug">
+		<extension point="org.eclipse.cdt.core.LanguageSettingsProvider">
+			<provider id="com.crt.advproject.GCCBuildCommandParser">
+				<language id="org.eclipse.cdt.core.gcc">
+					<resource project-relative-path="CMSIS/drivers/fsl_mrt.c">
+						<entry kind="includePath" name="/${ProjName}/board">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/source">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/startup">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS/drivers">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="C:/work/pan/git/interface"/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208" value=""/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208_cm4" value=""/>
+						<entry kind="macro" name="CR_INTEGER_PRINTF" value=""/>
+						<entry kind="macro" name="FSL_RTOS_BM" value=""/>
+						<entry kind="macro" name="NDEBUG" value=""/>
+						<entry kind="macro" name="PRINTF_FLOAT_ENABLE" value="0"/>
+						<entry kind="macro" name="SDK_DEBUGCONSOLE" value="0"/>
+						<entry kind="macro" name="SDK_OS_BAREMETAL" value=""/>
+						<entry kind="macro" name="__MCUXPRESSO" value=""/>
+						<entry kind="macro" name="__REDLIB__" value=""/>
+						<entry kind="macro" name="__USE_CMSIS" value=""/>
+					</resource>
+					<resource project-relative-path="source/spi_sched.c">
+						<entry kind="includePath" name="/${ProjName}/board">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/source">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/startup">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS/drivers">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="C:/work/pan/git/interface"/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208" value=""/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208_cm4" value=""/>
+						<entry kind="macro" name="CR_INTEGER_PRINTF" value=""/>
+						<entry kind="macro" name="FSL_RTOS_BM" value=""/>
+						<entry kind="macro" name="NDEBUG" value=""/>
+						<entry kind="macro" name="PRINTF_FLOAT_ENABLE" value="0"/>
+						<entry kind="macro" name="SDK_DEBUGCONSOLE" value="0"/>
+						<entry kind="macro" name="SDK_OS_BAREMETAL" value=""/>
+						<entry kind="macro" name="__MCUXPRESSO" value=""/>
+						<entry kind="macro" name="__REDLIB__" value=""/>
+						<entry kind="macro" name="__USE_CMSIS" value=""/>
+					</resource>
+					<resource project-relative-path="board/board.c">
+						<entry kind="includePath" name="/${ProjName}/board">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/source">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/startup">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS/drivers">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="C:/work/pan/git/interface"/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208" value=""/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208_cm4" value=""/>
+						<entry kind="macro" name="CR_INTEGER_PRINTF" value=""/>
+						<entry kind="macro" name="FSL_RTOS_BM" value=""/>
+						<entry kind="macro" name="NDEBUG" value=""/>
+						<entry kind="macro" name="PRINTF_FLOAT_ENABLE" value="0"/>
+						<entry kind="macro" name="SDK_DEBUGCONSOLE" value="0"/>
+						<entry kind="macro" name="SDK_OS_BAREMETAL" value=""/>
+						<entry kind="macro" name="__MCUXPRESSO" value=""/>
+						<entry kind="macro" name="__REDLIB__" value=""/>
+						<entry kind="macro" name="__USE_CMSIS" value=""/>
+					</resource>
+					<resource project-relative-path="CMSIS/drivers/fsl_clock.c">
+						<entry kind="includePath" name="/${ProjName}/board">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/source">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/startup">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS/drivers">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="C:/work/pan/git/interface"/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208" value=""/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208_cm4" value=""/>
+						<entry kind="macro" name="CR_INTEGER_PRINTF" value=""/>
+						<entry kind="macro" name="FSL_RTOS_BM" value=""/>
+						<entry kind="macro" name="NDEBUG" value=""/>
+						<entry kind="macro" name="PRINTF_FLOAT_ENABLE" value="0"/>
+						<entry kind="macro" name="SDK_DEBUGCONSOLE" value="0"/>
+						<entry kind="macro" name="SDK_OS_BAREMETAL" value=""/>
+						<entry kind="macro" name="__MCUXPRESSO" value=""/>
+						<entry kind="macro" name="__REDLIB__" value=""/>
+						<entry kind="macro" name="__USE_CMSIS" value=""/>
+					</resource>
+					<resource project-relative-path="CMSIS/drivers/fsl_fmeas.c">
+						<entry kind="includePath" name="/${ProjName}/board">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/source">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/startup">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS/drivers">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="C:/work/pan/git/interface"/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208" value=""/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208_cm4" value=""/>
+						<entry kind="macro" name="CR_INTEGER_PRINTF" value=""/>
+						<entry kind="macro" name="FSL_RTOS_BM" value=""/>
+						<entry kind="macro" name="NDEBUG" value=""/>
+						<entry kind="macro" name="PRINTF_FLOAT_ENABLE" value="0"/>
+						<entry kind="macro" name="SDK_DEBUGCONSOLE" value="0"/>
+						<entry kind="macro" name="SDK_OS_BAREMETAL" value=""/>
+						<entry kind="macro" name="__MCUXPRESSO" value=""/>
+						<entry kind="macro" name="__REDLIB__" value=""/>
+						<entry kind="macro" name="__USE_CMSIS" value=""/>
+					</resource>
+					<resource project-relative-path="source/adsr.c">
+						<entry kind="includePath" name="/${ProjName}/board">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/source">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/startup">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS/drivers">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="macro" name="CPU_LPC54616J512BD208" value=""/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208_cm4" value=""/>
+						<entry kind="macro" name="CR_INTEGER_PRINTF" value=""/>
+						<entry kind="macro" name="FSL_RTOS_BM" value=""/>
+						<entry kind="macro" name="NDEBUG" value=""/>
+						<entry kind="macro" name="PRINTF_FLOAT_ENABLE" value="0"/>
+						<entry kind="macro" name="SDK_DEBUGCONSOLE" value="0"/>
+						<entry kind="macro" name="SDK_OS_BAREMETAL" value=""/>
+						<entry kind="macro" name="__MCUXPRESSO" value=""/>
+						<entry kind="macro" name="__REDLIB__" value=""/>
+						<entry kind="macro" name="__USE_CMSIS" value=""/>
+					</resource>
+					<resource project-relative-path="CMSIS/drivers/fsl_common.c">
+						<entry kind="includePath" name="/${ProjName}/board">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/source">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/startup">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS/drivers">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="C:/work/pan/git/interface"/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208" value=""/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208_cm4" value=""/>
+						<entry kind="macro" name="CR_INTEGER_PRINTF" value=""/>
+						<entry kind="macro" name="FSL_RTOS_BM" value=""/>
+						<entry kind="macro" name="NDEBUG" value=""/>
+						<entry kind="macro" name="PRINTF_FLOAT_ENABLE" value="0"/>
+						<entry kind="macro" name="SDK_DEBUGCONSOLE" value="0"/>
+						<entry kind="macro" name="SDK_OS_BAREMETAL" value=""/>
+						<entry kind="macro" name="__MCUXPRESSO" value=""/>
+						<entry kind="macro" name="__REDLIB__" value=""/>
+						<entry kind="macro" name="__USE_CMSIS" value=""/>
+					</resource>
+					<resource project-relative-path="source/ad.c">
+						<entry kind="includePath" name="/${ProjName}/board">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/source">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/startup">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS/drivers">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="macro" name="CPU_LPC54616J512BD208" value=""/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208_cm4" value=""/>
+						<entry kind="macro" name="CR_INTEGER_PRINTF" value=""/>
+						<entry kind="macro" name="FSL_RTOS_BM" value=""/>
+						<entry kind="macro" name="NDEBUG" value=""/>
+						<entry kind="macro" name="PRINTF_FLOAT_ENABLE" value="0"/>
+						<entry kind="macro" name="SDK_DEBUGCONSOLE" value="0"/>
+						<entry kind="macro" name="SDK_OS_BAREMETAL" value=""/>
+						<entry kind="macro" name="__MCUXPRESSO" value=""/>
+						<entry kind="macro" name="__REDLIB__" value=""/>
+						<entry kind="macro" name="__USE_CMSIS" value=""/>
+					</resource>
+					<resource project-relative-path="CMSIS/drivers/fsl_dma.c">
+						<entry kind="includePath" name="/${ProjName}/board">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/source">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/startup">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS/drivers">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="C:/work/pan/git/interface"/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208" value=""/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208_cm4" value=""/>
+						<entry kind="macro" name="CR_INTEGER_PRINTF" value=""/>
+						<entry kind="macro" name="FSL_RTOS_BM" value=""/>
+						<entry kind="macro" name="NDEBUG" value=""/>
+						<entry kind="macro" name="PRINTF_FLOAT_ENABLE" value="0"/>
+						<entry kind="macro" name="SDK_DEBUGCONSOLE" value="0"/>
+						<entry kind="macro" name="SDK_OS_BAREMETAL" value=""/>
+						<entry kind="macro" name="__MCUXPRESSO" value=""/>
+						<entry kind="macro" name="__REDLIB__" value=""/>
+						<entry kind="macro" name="__USE_CMSIS" value=""/>
+					</resource>
+					<resource project-relative-path="CMSIS/drivers/fsl_fmc.c">
+						<entry kind="includePath" name="/${ProjName}/board">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/source">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/startup">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS/drivers">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="C:/work/pan/git/interface"/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208" value=""/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208_cm4" value=""/>
+						<entry kind="macro" name="CR_INTEGER_PRINTF" value=""/>
+						<entry kind="macro" name="FSL_RTOS_BM" value=""/>
+						<entry kind="macro" name="NDEBUG" value=""/>
+						<entry kind="macro" name="PRINTF_FLOAT_ENABLE" value="0"/>
+						<entry kind="macro" name="SDK_DEBUGCONSOLE" value="0"/>
+						<entry kind="macro" name="SDK_OS_BAREMETAL" value=""/>
+						<entry kind="macro" name="__MCUXPRESSO" value=""/>
+						<entry kind="macro" name="__REDLIB__" value=""/>
+						<entry kind="macro" name="__USE_CMSIS" value=""/>
+					</resource>
+					<resource project-relative-path="CMSIS/drivers/fsl_utick.c">
+						<entry kind="includePath" name="/${ProjName}/board">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/source">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/startup">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS/drivers">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="C:/work/pan/git/interface"/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208" value=""/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208_cm4" value=""/>
+						<entry kind="macro" name="CR_INTEGER_PRINTF" value=""/>
+						<entry kind="macro" name="FSL_RTOS_BM" value=""/>
+						<entry kind="macro" name="NDEBUG" value=""/>
+						<entry kind="macro" name="PRINTF_FLOAT_ENABLE" value="0"/>
+						<entry kind="macro" name="SDK_DEBUGCONSOLE" value="0"/>
+						<entry kind="macro" name="SDK_OS_BAREMETAL" value=""/>
+						<entry kind="macro" name="__MCUXPRESSO" value=""/>
+						<entry kind="macro" name="__REDLIB__" value=""/>
+						<entry kind="macro" name="__USE_CMSIS" value=""/>
+					</resource>
+					<resource project-relative-path="CMSIS/drivers/fsl_reset.c">
+						<entry kind="includePath" name="/${ProjName}/board">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/source">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/startup">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS/drivers">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="C:/work/pan/git/interface"/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208" value=""/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208_cm4" value=""/>
+						<entry kind="macro" name="CR_INTEGER_PRINTF" value=""/>
+						<entry kind="macro" name="FSL_RTOS_BM" value=""/>
+						<entry kind="macro" name="NDEBUG" value=""/>
+						<entry kind="macro" name="PRINTF_FLOAT_ENABLE" value="0"/>
+						<entry kind="macro" name="SDK_DEBUGCONSOLE" value="0"/>
+						<entry kind="macro" name="SDK_OS_BAREMETAL" value=""/>
+						<entry kind="macro" name="__MCUXPRESSO" value=""/>
+						<entry kind="macro" name="__REDLIB__" value=""/>
+						<entry kind="macro" name="__USE_CMSIS" value=""/>
+					</resource>
+					<resource project-relative-path="CMSIS/drivers/fsl_usart.c">
+						<entry kind="includePath" name="/${ProjName}/board">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/source">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/startup">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS/drivers">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="C:/work/pan/git/interface"/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208" value=""/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208_cm4" value=""/>
+						<entry kind="macro" name="CR_INTEGER_PRINTF" value=""/>
+						<entry kind="macro" name="FSL_RTOS_BM" value=""/>
+						<entry kind="macro" name="NDEBUG" value=""/>
+						<entry kind="macro" name="PRINTF_FLOAT_ENABLE" value="0"/>
+						<entry kind="macro" name="SDK_DEBUGCONSOLE" value="0"/>
+						<entry kind="macro" name="SDK_OS_BAREMETAL" value=""/>
+						<entry kind="macro" name="__MCUXPRESSO" value=""/>
+						<entry kind="macro" name="__REDLIB__" value=""/>
+						<entry kind="macro" name="__USE_CMSIS" value=""/>
+					</resource>
+					<resource project-relative-path="CMSIS/cmsis_drivers/fsl_i2c_cmsis.c">
+						<entry kind="includePath" name="/${ProjName}/board">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/source">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/startup">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS/drivers">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="C:/work/pan/git/interface"/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208" value=""/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208_cm4" value=""/>
+						<entry kind="macro" name="CR_INTEGER_PRINTF" value=""/>
+						<entry kind="macro" name="FSL_RTOS_BM" value=""/>
+						<entry kind="macro" name="NDEBUG" value=""/>
+						<entry kind="macro" name="PRINTF_FLOAT_ENABLE" value="0"/>
+						<entry kind="macro" name="SDK_DEBUGCONSOLE" value="0"/>
+						<entry kind="macro" name="SDK_OS_BAREMETAL" value=""/>
+						<entry kind="macro" name="__MCUXPRESSO" value=""/>
+						<entry kind="macro" name="__REDLIB__" value=""/>
+						<entry kind="macro" name="__USE_CMSIS" value=""/>
+					</resource>
+					<resource project-relative-path="source/MAX11311.c">
+						<entry kind="includePath" name="/${ProjName}/board">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/source">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/startup">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS/drivers">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="macro" name="CPU_LPC54616J512BD208" value=""/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208_cm4" value=""/>
+						<entry kind="macro" name="CR_INTEGER_PRINTF" value=""/>
+						<entry kind="macro" name="FSL_RTOS_BM" value=""/>
+						<entry kind="macro" name="NDEBUG" value=""/>
+						<entry kind="macro" name="PRINTF_FLOAT_ENABLE" value="0"/>
+						<entry kind="macro" name="SDK_DEBUGCONSOLE" value="0"/>
+						<entry kind="macro" name="SDK_OS_BAREMETAL" value=""/>
+						<entry kind="macro" name="__MCUXPRESSO" value=""/>
+						<entry kind="macro" name="__REDLIB__" value=""/>
+						<entry kind="macro" name="__USE_CMSIS" value=""/>
+					</resource>
+					<resource project-relative-path="CMSIS/drivers/fsl_gpio.c">
+						<entry kind="includePath" name="/${ProjName}/board">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/source">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/startup">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS/drivers">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="C:/work/pan/git/interface"/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208" value=""/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208_cm4" value=""/>
+						<entry kind="macro" name="CR_INTEGER_PRINTF" value=""/>
+						<entry kind="macro" name="FSL_RTOS_BM" value=""/>
+						<entry kind="macro" name="NDEBUG" value=""/>
+						<entry kind="macro" name="PRINTF_FLOAT_ENABLE" value="0"/>
+						<entry kind="macro" name="SDK_DEBUGCONSOLE" value="0"/>
+						<entry kind="macro" name="SDK_OS_BAREMETAL" value=""/>
+						<entry kind="macro" name="__MCUXPRESSO" value=""/>
+						<entry kind="macro" name="__REDLIB__" value=""/>
+						<entry kind="macro" name="__USE_CMSIS" value=""/>
+					</resource>
+					<resource project-relative-path="CMSIS/drivers/fsl_inputmux.c">
+						<entry kind="includePath" name="/${ProjName}/board">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/source">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/startup">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS/drivers">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="C:/work/pan/git/interface"/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208" value=""/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208_cm4" value=""/>
+						<entry kind="macro" name="CR_INTEGER_PRINTF" value=""/>
+						<entry kind="macro" name="FSL_RTOS_BM" value=""/>
+						<entry kind="macro" name="NDEBUG" value=""/>
+						<entry kind="macro" name="PRINTF_FLOAT_ENABLE" value="0"/>
+						<entry kind="macro" name="SDK_DEBUGCONSOLE" value="0"/>
+						<entry kind="macro" name="SDK_OS_BAREMETAL" value=""/>
+						<entry kind="macro" name="__MCUXPRESSO" value=""/>
+						<entry kind="macro" name="__REDLIB__" value=""/>
+						<entry kind="macro" name="__USE_CMSIS" value=""/>
+					</resource>
+					<resource project-relative-path="startup/startup_lpc54616.c">
+						<entry kind="includePath" name="/${ProjName}/board">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/source">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/startup">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS/drivers">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="macro" name="CPU_LPC54616J512BD208" value=""/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208_cm4" value=""/>
+						<entry kind="macro" name="CR_INTEGER_PRINTF" value=""/>
+						<entry kind="macro" name="FSL_RTOS_BM" value=""/>
+						<entry kind="macro" name="NDEBUG" value=""/>
+						<entry kind="macro" name="PRINTF_FLOAT_ENABLE" value="0"/>
+						<entry kind="macro" name="SDK_DEBUGCONSOLE" value="0"/>
+						<entry kind="macro" name="SDK_OS_BAREMETAL" value=""/>
+						<entry kind="macro" name="__MCUXPRESSO" value=""/>
+						<entry kind="macro" name="__REDLIB__" value=""/>
+						<entry kind="macro" name="__USE_CMSIS" value=""/>
+					</resource>
+					<resource project-relative-path="CMSIS/system_LPC54616.c">
+						<entry kind="includePath" name="/${ProjName}/board">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/source">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/startup">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS/drivers">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="C:/work/pan/git/interface"/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208" value=""/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208_cm4" value=""/>
+						<entry kind="macro" name="CR_INTEGER_PRINTF" value=""/>
+						<entry kind="macro" name="FSL_RTOS_BM" value=""/>
+						<entry kind="macro" name="NDEBUG" value=""/>
+						<entry kind="macro" name="PRINTF_FLOAT_ENABLE" value="0"/>
+						<entry kind="macro" name="SDK_DEBUGCONSOLE" value="0"/>
+						<entry kind="macro" name="SDK_OS_BAREMETAL" value=""/>
+						<entry kind="macro" name="__MCUXPRESSO" value=""/>
+						<entry kind="macro" name="__REDLIB__" value=""/>
+						<entry kind="macro" name="__USE_CMSIS" value=""/>
+					</resource>
+					<resource project-relative-path="board/clock_config.c">
+						<entry kind="includePath" name="/${ProjName}/board">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/source">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/startup">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS/drivers">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="C:/work/pan/git/interface"/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208" value=""/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208_cm4" value=""/>
+						<entry kind="macro" name="CR_INTEGER_PRINTF" value=""/>
+						<entry kind="macro" name="FSL_RTOS_BM" value=""/>
+						<entry kind="macro" name="NDEBUG" value=""/>
+						<entry kind="macro" name="PRINTF_FLOAT_ENABLE" value="0"/>
+						<entry kind="macro" name="SDK_DEBUGCONSOLE" value="0"/>
+						<entry kind="macro" name="SDK_OS_BAREMETAL" value=""/>
+						<entry kind="macro" name="__MCUXPRESSO" value=""/>
+						<entry kind="macro" name="__REDLIB__" value=""/>
+						<entry kind="macro" name="__USE_CMSIS" value=""/>
+					</resource>
+					<resource project-relative-path="CMSIS/drivers/fsl_flexcomm.c">
+						<entry kind="includePath" name="/${ProjName}/board">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/source">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/startup">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS/drivers">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="C:/work/pan/git/interface"/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208" value=""/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208_cm4" value=""/>
+						<entry kind="macro" name="CR_INTEGER_PRINTF" value=""/>
+						<entry kind="macro" name="FSL_RTOS_BM" value=""/>
+						<entry kind="macro" name="NDEBUG" value=""/>
+						<entry kind="macro" name="PRINTF_FLOAT_ENABLE" value="0"/>
+						<entry kind="macro" name="SDK_DEBUGCONSOLE" value="0"/>
+						<entry kind="macro" name="SDK_OS_BAREMETAL" value=""/>
+						<entry kind="macro" name="__MCUXPRESSO" value=""/>
+						<entry kind="macro" name="__REDLIB__" value=""/>
+						<entry kind="macro" name="__USE_CMSIS" value=""/>
+					</resource>
+					<resource project-relative-path="CMSIS/drivers/fsl_spi.c">
+						<entry kind="includePath" name="/${ProjName}/board">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/source">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/startup">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS/drivers">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="C:/work/pan/git/interface"/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208" value=""/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208_cm4" value=""/>
+						<entry kind="macro" name="CR_INTEGER_PRINTF" value=""/>
+						<entry kind="macro" name="FSL_RTOS_BM" value=""/>
+						<entry kind="macro" name="NDEBUG" value=""/>
+						<entry kind="macro" name="PRINTF_FLOAT_ENABLE" value="0"/>
+						<entry kind="macro" name="SDK_DEBUGCONSOLE" value="0"/>
+						<entry kind="macro" name="SDK_OS_BAREMETAL" value=""/>
+						<entry kind="macro" name="__MCUXPRESSO" value=""/>
+						<entry kind="macro" name="__REDLIB__" value=""/>
+						<entry kind="macro" name="__USE_CMSIS" value=""/>
+					</resource>
+					<resource project-relative-path="CMSIS/drivers/fsl_spi_dma.c">
+						<entry kind="includePath" name="/${ProjName}/board">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/source">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/startup">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS/drivers">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="C:/work/pan/git/interface"/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208" value=""/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208_cm4" value=""/>
+						<entry kind="macro" name="CR_INTEGER_PRINTF" value=""/>
+						<entry kind="macro" name="FSL_RTOS_BM" value=""/>
+						<entry kind="macro" name="NDEBUG" value=""/>
+						<entry kind="macro" name="PRINTF_FLOAT_ENABLE" value="0"/>
+						<entry kind="macro" name="SDK_DEBUGCONSOLE" value="0"/>
+						<entry kind="macro" name="SDK_OS_BAREMETAL" value=""/>
+						<entry kind="macro" name="__MCUXPRESSO" value=""/>
+						<entry kind="macro" name="__REDLIB__" value=""/>
+						<entry kind="macro" name="__USE_CMSIS" value=""/>
+					</resource>
+					<resource project-relative-path="source/semihost_hardfault.c">
+						<entry kind="includePath" name="/${ProjName}/board">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/source">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/startup">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS/drivers">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="C:/work/pan/git/interface"/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208" value=""/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208_cm4" value=""/>
+						<entry kind="macro" name="CR_INTEGER_PRINTF" value=""/>
+						<entry kind="macro" name="FSL_RTOS_BM" value=""/>
+						<entry kind="macro" name="NDEBUG" value=""/>
+						<entry kind="macro" name="PRINTF_FLOAT_ENABLE" value="0"/>
+						<entry kind="macro" name="SDK_DEBUGCONSOLE" value="0"/>
+						<entry kind="macro" name="SDK_OS_BAREMETAL" value=""/>
+						<entry kind="macro" name="__MCUXPRESSO" value=""/>
+						<entry kind="macro" name="__REDLIB__" value=""/>
+						<entry kind="macro" name="__USE_CMSIS" value=""/>
+					</resource>
+					<resource project-relative-path="source/synth.c">
+						<entry kind="includePath" name="/${ProjName}/board">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/source">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/startup">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS/drivers">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="C:/work/pan/git/interface"/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208" value=""/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208_cm4" value=""/>
+						<entry kind="macro" name="CR_INTEGER_PRINTF" value=""/>
+						<entry kind="macro" name="FSL_RTOS_BM" value=""/>
+						<entry kind="macro" name="NDEBUG" value=""/>
+						<entry kind="macro" name="PRINTF_FLOAT_ENABLE" value="0"/>
+						<entry kind="macro" name="SDK_DEBUGCONSOLE" value="0"/>
+						<entry kind="macro" name="SDK_OS_BAREMETAL" value=""/>
+						<entry kind="macro" name="__MCUXPRESSO" value=""/>
+						<entry kind="macro" name="__REDLIB__" value=""/>
+						<entry kind="macro" name="__USE_CMSIS" value=""/>
+					</resource>
+					<resource project-relative-path="CMSIS/drivers/fsl_wwdt.c">
+						<entry kind="includePath" name="/${ProjName}/board">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/source">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/startup">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS/drivers">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="C:/work/pan/git/interface"/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208" value=""/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208_cm4" value=""/>
+						<entry kind="macro" name="CR_INTEGER_PRINTF" value=""/>
+						<entry kind="macro" name="FSL_RTOS_BM" value=""/>
+						<entry kind="macro" name="NDEBUG" value=""/>
+						<entry kind="macro" name="PRINTF_FLOAT_ENABLE" value="0"/>
+						<entry kind="macro" name="SDK_DEBUGCONSOLE" value="0"/>
+						<entry kind="macro" name="SDK_OS_BAREMETAL" value=""/>
+						<entry kind="macro" name="__MCUXPRESSO" value=""/>
+						<entry kind="macro" name="__REDLIB__" value=""/>
+						<entry kind="macro" name="__USE_CMSIS" value=""/>
+					</resource>
+					<resource project-relative-path="source/control.c">
+						<entry kind="includePath" name="/${ProjName}/board">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/source">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/startup">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS/drivers">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="C:/work/pan/git/interface"/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208" value=""/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208_cm4" value=""/>
+						<entry kind="macro" name="CR_INTEGER_PRINTF" value=""/>
+						<entry kind="macro" name="FSL_RTOS_BM" value=""/>
+						<entry kind="macro" name="NDEBUG" value=""/>
+						<entry kind="macro" name="PRINTF_FLOAT_ENABLE" value="0"/>
+						<entry kind="macro" name="SDK_DEBUGCONSOLE" value="0"/>
+						<entry kind="macro" name="SDK_OS_BAREMETAL" value=""/>
+						<entry kind="macro" name="__MCUXPRESSO" value=""/>
+						<entry kind="macro" name="__REDLIB__" value=""/>
+						<entry kind="macro" name="__USE_CMSIS" value=""/>
+					</resource>
+					<resource project-relative-path="CMSIS/drivers/fsl_ctimer.c">
+						<entry kind="includePath" name="/${ProjName}/board">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/source">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/startup">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS/drivers">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="C:/work/pan/git/interface"/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208" value=""/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208_cm4" value=""/>
+						<entry kind="macro" name="CR_INTEGER_PRINTF" value=""/>
+						<entry kind="macro" name="FSL_RTOS_BM" value=""/>
+						<entry kind="macro" name="NDEBUG" value=""/>
+						<entry kind="macro" name="PRINTF_FLOAT_ENABLE" value="0"/>
+						<entry kind="macro" name="SDK_DEBUGCONSOLE" value="0"/>
+						<entry kind="macro" name="SDK_OS_BAREMETAL" value=""/>
+						<entry kind="macro" name="__MCUXPRESSO" value=""/>
+						<entry kind="macro" name="__REDLIB__" value=""/>
+						<entry kind="macro" name="__USE_CMSIS" value=""/>
+					</resource>
+					<resource project-relative-path="CMSIS/drivers/fsl_eeprom.c">
+						<entry kind="includePath" name="/${ProjName}/board">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/source">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/startup">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS/drivers">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="C:/work/pan/git/interface"/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208" value=""/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208_cm4" value=""/>
+						<entry kind="macro" name="CR_INTEGER_PRINTF" value=""/>
+						<entry kind="macro" name="FSL_RTOS_BM" value=""/>
+						<entry kind="macro" name="NDEBUG" value=""/>
+						<entry kind="macro" name="PRINTF_FLOAT_ENABLE" value="0"/>
+						<entry kind="macro" name="SDK_DEBUGCONSOLE" value="0"/>
+						<entry kind="macro" name="SDK_OS_BAREMETAL" value=""/>
+						<entry kind="macro" name="__MCUXPRESSO" value=""/>
+						<entry kind="macro" name="__REDLIB__" value=""/>
+						<entry kind="macro" name="__USE_CMSIS" value=""/>
+					</resource>
+					<resource project-relative-path="CMSIS/drivers/fsl_pint.c">
+						<entry kind="includePath" name="/${ProjName}/board">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/source">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/startup">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS/drivers">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="C:/work/pan/git/interface"/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208" value=""/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208_cm4" value=""/>
+						<entry kind="macro" name="CR_INTEGER_PRINTF" value=""/>
+						<entry kind="macro" name="FSL_RTOS_BM" value=""/>
+						<entry kind="macro" name="NDEBUG" value=""/>
+						<entry kind="macro" name="PRINTF_FLOAT_ENABLE" value="0"/>
+						<entry kind="macro" name="SDK_DEBUGCONSOLE" value="0"/>
+						<entry kind="macro" name="SDK_OS_BAREMETAL" value=""/>
+						<entry kind="macro" name="__MCUXPRESSO" value=""/>
+						<entry kind="macro" name="__REDLIB__" value=""/>
+						<entry kind="macro" name="__USE_CMSIS" value=""/>
+					</resource>
+					<resource project-relative-path="source/MAX5134.c">
+						<entry kind="includePath" name="/${ProjName}/board">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/source">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/startup">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS/drivers">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="macro" name="CPU_LPC54616J512BD208" value=""/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208_cm4" value=""/>
+						<entry kind="macro" name="CR_INTEGER_PRINTF" value=""/>
+						<entry kind="macro" name="FSL_RTOS_BM" value=""/>
+						<entry kind="macro" name="NDEBUG" value=""/>
+						<entry kind="macro" name="PRINTF_FLOAT_ENABLE" value="0"/>
+						<entry kind="macro" name="SDK_DEBUGCONSOLE" value="0"/>
+						<entry kind="macro" name="SDK_OS_BAREMETAL" value=""/>
+						<entry kind="macro" name="__MCUXPRESSO" value=""/>
+						<entry kind="macro" name="__REDLIB__" value=""/>
+						<entry kind="macro" name="__USE_CMSIS" value=""/>
+					</resource>
+					<resource project-relative-path="source/notestack.c">
+						<entry kind="includePath" name="/${ProjName}/board">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/source">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/startup">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS/drivers">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="C:/work/pan/git/interface"/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208" value=""/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208_cm4" value=""/>
+						<entry kind="macro" name="CR_INTEGER_PRINTF" value=""/>
+						<entry kind="macro" name="FSL_RTOS_BM" value=""/>
+						<entry kind="macro" name="NDEBUG" value=""/>
+						<entry kind="macro" name="PRINTF_FLOAT_ENABLE" value="0"/>
+						<entry kind="macro" name="SDK_DEBUGCONSOLE" value="0"/>
+						<entry kind="macro" name="SDK_OS_BAREMETAL" value=""/>
+						<entry kind="macro" name="__MCUXPRESSO" value=""/>
+						<entry kind="macro" name="__REDLIB__" value=""/>
+						<entry kind="macro" name="__USE_CMSIS" value=""/>
+					</resource>
+					<resource project-relative-path="CMSIS/drivers/fsl_gint.c">
+						<entry kind="includePath" name="/${ProjName}/board">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/source">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/startup">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS/drivers">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="C:/work/pan/git/interface"/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208" value=""/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208_cm4" value=""/>
+						<entry kind="macro" name="CR_INTEGER_PRINTF" value=""/>
+						<entry kind="macro" name="FSL_RTOS_BM" value=""/>
+						<entry kind="macro" name="NDEBUG" value=""/>
+						<entry kind="macro" name="PRINTF_FLOAT_ENABLE" value="0"/>
+						<entry kind="macro" name="SDK_DEBUGCONSOLE" value="0"/>
+						<entry kind="macro" name="SDK_OS_BAREMETAL" value=""/>
+						<entry kind="macro" name="__MCUXPRESSO" value=""/>
+						<entry kind="macro" name="__REDLIB__" value=""/>
+						<entry kind="macro" name="__USE_CMSIS" value=""/>
+					</resource>
+					<resource project-relative-path="CMSIS/drivers/fsl_usart_dma.c">
+						<entry kind="includePath" name="/${ProjName}/board">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/source">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/startup">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS/drivers">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="C:/work/pan/git/interface"/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208" value=""/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208_cm4" value=""/>
+						<entry kind="macro" name="CR_INTEGER_PRINTF" value=""/>
+						<entry kind="macro" name="FSL_RTOS_BM" value=""/>
+						<entry kind="macro" name="NDEBUG" value=""/>
+						<entry kind="macro" name="PRINTF_FLOAT_ENABLE" value="0"/>
+						<entry kind="macro" name="SDK_DEBUGCONSOLE" value="0"/>
+						<entry kind="macro" name="SDK_OS_BAREMETAL" value=""/>
+						<entry kind="macro" name="__MCUXPRESSO" value=""/>
+						<entry kind="macro" name="__REDLIB__" value=""/>
+						<entry kind="macro" name="__USE_CMSIS" value=""/>
+					</resource>
+					<resource project-relative-path="board/peripherals.c">
+						<entry kind="includePath" name="/${ProjName}/board">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/source">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/startup">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS/drivers">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="C:/work/pan/git/interface"/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208" value=""/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208_cm4" value=""/>
+						<entry kind="macro" name="CR_INTEGER_PRINTF" value=""/>
+						<entry kind="macro" name="FSL_RTOS_BM" value=""/>
+						<entry kind="macro" name="NDEBUG" value=""/>
+						<entry kind="macro" name="PRINTF_FLOAT_ENABLE" value="0"/>
+						<entry kind="macro" name="SDK_DEBUGCONSOLE" value="0"/>
+						<entry kind="macro" name="SDK_OS_BAREMETAL" value=""/>
+						<entry kind="macro" name="__MCUXPRESSO" value=""/>
+						<entry kind="macro" name="__REDLIB__" value=""/>
+						<entry kind="macro" name="__USE_CMSIS" value=""/>
+					</resource>
+					<resource project-relative-path="CMSIS/drivers/fsl_sctimer.c">
+						<entry kind="includePath" name="/${ProjName}/board">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/source">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/startup">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS/drivers">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="C:/work/pan/git/interface"/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208" value=""/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208_cm4" value=""/>
+						<entry kind="macro" name="CR_INTEGER_PRINTF" value=""/>
+						<entry kind="macro" name="FSL_RTOS_BM" value=""/>
+						<entry kind="macro" name="NDEBUG" value=""/>
+						<entry kind="macro" name="PRINTF_FLOAT_ENABLE" value="0"/>
+						<entry kind="macro" name="SDK_DEBUGCONSOLE" value="0"/>
+						<entry kind="macro" name="SDK_OS_BAREMETAL" value=""/>
+						<entry kind="macro" name="__MCUXPRESSO" value=""/>
+						<entry kind="macro" name="__REDLIB__" value=""/>
+						<entry kind="macro" name="__USE_CMSIS" value=""/>
+					</resource>
+					<resource project-relative-path="CMSIS/cmsis_drivers/fsl_spi_cmsis.c">
+						<entry kind="includePath" name="/${ProjName}/board">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/source">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/startup">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS/drivers">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="C:/work/pan/git/interface"/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208" value=""/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208_cm4" value=""/>
+						<entry kind="macro" name="CR_INTEGER_PRINTF" value=""/>
+						<entry kind="macro" name="FSL_RTOS_BM" value=""/>
+						<entry kind="macro" name="NDEBUG" value=""/>
+						<entry kind="macro" name="PRINTF_FLOAT_ENABLE" value="0"/>
+						<entry kind="macro" name="SDK_DEBUGCONSOLE" value="0"/>
+						<entry kind="macro" name="SDK_OS_BAREMETAL" value=""/>
+						<entry kind="macro" name="__MCUXPRESSO" value=""/>
+						<entry kind="macro" name="__REDLIB__" value=""/>
+						<entry kind="macro" name="__USE_CMSIS" value=""/>
+					</resource>
+					<resource project-relative-path="source/MAX11300.c">
+						<entry kind="includePath" name="/${ProjName}/board">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/source">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/startup">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS/drivers">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="macro" name="CPU_LPC54616J512BD208" value=""/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208_cm4" value=""/>
+						<entry kind="macro" name="CR_INTEGER_PRINTF" value=""/>
+						<entry kind="macro" name="FSL_RTOS_BM" value=""/>
+						<entry kind="macro" name="NDEBUG" value=""/>
+						<entry kind="macro" name="PRINTF_FLOAT_ENABLE" value="0"/>
+						<entry kind="macro" name="SDK_DEBUGCONSOLE" value="0"/>
+						<entry kind="macro" name="SDK_OS_BAREMETAL" value=""/>
+						<entry kind="macro" name="__MCUXPRESSO" value=""/>
+						<entry kind="macro" name="__REDLIB__" value=""/>
+						<entry kind="macro" name="__USE_CMSIS" value=""/>
+					</resource>
+					<resource project-relative-path="CMSIS/drivers/fsl_power.c">
+						<entry kind="includePath" name="/${ProjName}/board">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/source">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/startup">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS/drivers">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="C:/work/pan/git/interface"/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208" value=""/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208_cm4" value=""/>
+						<entry kind="macro" name="CR_INTEGER_PRINTF" value=""/>
+						<entry kind="macro" name="FSL_RTOS_BM" value=""/>
+						<entry kind="macro" name="NDEBUG" value=""/>
+						<entry kind="macro" name="PRINTF_FLOAT_ENABLE" value="0"/>
+						<entry kind="macro" name="SDK_DEBUGCONSOLE" value="0"/>
+						<entry kind="macro" name="SDK_OS_BAREMETAL" value=""/>
+						<entry kind="macro" name="__MCUXPRESSO" value=""/>
+						<entry kind="macro" name="__REDLIB__" value=""/>
+						<entry kind="macro" name="__USE_CMSIS" value=""/>
+					</resource>
+					<resource project-relative-path="source/autotune.c">
+						<entry kind="includePath" name="/${ProjName}/board">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/source">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/startup">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS/drivers">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="C:/work/pan/git/interface"/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208" value=""/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208_cm4" value=""/>
+						<entry kind="macro" name="CR_INTEGER_PRINTF" value=""/>
+						<entry kind="macro" name="FSL_RTOS_BM" value=""/>
+						<entry kind="macro" name="NDEBUG" value=""/>
+						<entry kind="macro" name="PRINTF_FLOAT_ENABLE" value="0"/>
+						<entry kind="macro" name="SDK_DEBUGCONSOLE" value="0"/>
+						<entry kind="macro" name="SDK_OS_BAREMETAL" value=""/>
+						<entry kind="macro" name="__MCUXPRESSO" value=""/>
+						<entry kind="macro" name="__REDLIB__" value=""/>
+						<entry kind="macro" name="__USE_CMSIS" value=""/>
+					</resource>
+					<resource project-relative-path="CMSIS/cmsis_drivers/fsl_usart_cmsis.c">
+						<entry kind="includePath" name="/${ProjName}/board">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/source">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/startup">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS/drivers">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="C:/work/pan/git/interface"/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208" value=""/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208_cm4" value=""/>
+						<entry kind="macro" name="CR_INTEGER_PRINTF" value=""/>
+						<entry kind="macro" name="FSL_RTOS_BM" value=""/>
+						<entry kind="macro" name="NDEBUG" value=""/>
+						<entry kind="macro" name="PRINTF_FLOAT_ENABLE" value="0"/>
+						<entry kind="macro" name="SDK_DEBUGCONSOLE" value="0"/>
+						<entry kind="macro" name="SDK_OS_BAREMETAL" value=""/>
+						<entry kind="macro" name="__MCUXPRESSO" value=""/>
+						<entry kind="macro" name="__REDLIB__" value=""/>
+						<entry kind="macro" name="__USE_CMSIS" value=""/>
+					</resource>
+					<resource project-relative-path="CMSIS/drivers/fsl_rit.c">
+						<entry kind="includePath" name="/${ProjName}/board">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/source">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/startup">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS/drivers">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="C:/work/pan/git/interface"/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208" value=""/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208_cm4" value=""/>
+						<entry kind="macro" name="CR_INTEGER_PRINTF" value=""/>
+						<entry kind="macro" name="FSL_RTOS_BM" value=""/>
+						<entry kind="macro" name="NDEBUG" value=""/>
+						<entry kind="macro" name="PRINTF_FLOAT_ENABLE" value="0"/>
+						<entry kind="macro" name="SDK_DEBUGCONSOLE" value="0"/>
+						<entry kind="macro" name="SDK_OS_BAREMETAL" value=""/>
+						<entry kind="macro" name="__MCUXPRESSO" value=""/>
+						<entry kind="macro" name="__REDLIB__" value=""/>
+						<entry kind="macro" name="__USE_CMSIS" value=""/>
+					</resource>
+					<resource project-relative-path="source/lfo.c">
+						<entry kind="includePath" name="/${ProjName}/board">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/source">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/startup">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS/drivers">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="C:/work/pan/git/interface"/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208" value=""/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208_cm4" value=""/>
+						<entry kind="macro" name="CR_INTEGER_PRINTF" value=""/>
+						<entry kind="macro" name="FSL_RTOS_BM" value=""/>
+						<entry kind="macro" name="NDEBUG" value=""/>
+						<entry kind="macro" name="PRINTF_FLOAT_ENABLE" value="0"/>
+						<entry kind="macro" name="SDK_DEBUGCONSOLE" value="0"/>
+						<entry kind="macro" name="SDK_OS_BAREMETAL" value=""/>
+						<entry kind="macro" name="__MCUXPRESSO" value=""/>
+						<entry kind="macro" name="__REDLIB__" value=""/>
+						<entry kind="macro" name="__USE_CMSIS" value=""/>
+					</resource>
+					<resource project-relative-path="source/shiftctrl.c">
+						<entry kind="includePath" name="/${ProjName}/board">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/source">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/startup">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS/drivers">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="C:/work/pan/git/interface"/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208" value=""/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208_cm4" value=""/>
+						<entry kind="macro" name="CR_INTEGER_PRINTF" value=""/>
+						<entry kind="macro" name="FSL_RTOS_BM" value=""/>
+						<entry kind="macro" name="NDEBUG" value=""/>
+						<entry kind="macro" name="PRINTF_FLOAT_ENABLE" value="0"/>
+						<entry kind="macro" name="SDK_DEBUGCONSOLE" value="0"/>
+						<entry kind="macro" name="SDK_OS_BAREMETAL" value=""/>
+						<entry kind="macro" name="__MCUXPRESSO" value=""/>
+						<entry kind="macro" name="__REDLIB__" value=""/>
+						<entry kind="macro" name="__USE_CMSIS" value=""/>
+					</resource>
+					<resource project-relative-path="board/pin_mux.c">
+						<entry kind="includePath" name="/${ProjName}/board">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/source">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/startup">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS/drivers">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="C:/work/pan/git/interface"/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208" value=""/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208_cm4" value=""/>
+						<entry kind="macro" name="CR_INTEGER_PRINTF" value=""/>
+						<entry kind="macro" name="FSL_RTOS_BM" value=""/>
+						<entry kind="macro" name="NDEBUG" value=""/>
+						<entry kind="macro" name="PRINTF_FLOAT_ENABLE" value="0"/>
+						<entry kind="macro" name="SDK_DEBUGCONSOLE" value="0"/>
+						<entry kind="macro" name="SDK_OS_BAREMETAL" value=""/>
+						<entry kind="macro" name="__MCUXPRESSO" value=""/>
+						<entry kind="macro" name="__REDLIB__" value=""/>
+						<entry kind="macro" name="__USE_CMSIS" value=""/>
+					</resource>
+					<resource project-relative-path="source/LPC54616J512_Project.c">
+						<entry kind="includePath" name="/${ProjName}/board">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/source">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/startup">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS/drivers">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="macro" name="CPU_LPC54616J512BD208" value=""/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208_cm4" value=""/>
+						<entry kind="macro" name="CR_INTEGER_PRINTF" value=""/>
+						<entry kind="macro" name="FSL_RTOS_BM" value=""/>
+						<entry kind="macro" name="NDEBUG" value=""/>
+						<entry kind="macro" name="PRINTF_FLOAT_ENABLE" value="0"/>
+						<entry kind="macro" name="SDK_DEBUGCONSOLE" value="0"/>
+						<entry kind="macro" name="SDK_OS_BAREMETAL" value=""/>
+						<entry kind="macro" name="__MCUXPRESSO" value=""/>
+						<entry kind="macro" name="__REDLIB__" value=""/>
+						<entry kind="macro" name="__USE_CMSIS" value=""/>
+					</resource>
+					<resource project-relative-path="CMSIS/drivers/fsl_rtc.c">
+						<entry kind="includePath" name="/${ProjName}/board">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/source">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/startup">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS/drivers">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="C:/work/pan/git/interface"/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208" value=""/>
+						<entry kind="macro" name="CPU_LPC54616J512BD208_cm4" value=""/>
+						<entry kind="macro" name="CR_INTEGER_PRINTF" value=""/>
+						<entry kind="macro" name="FSL_RTOS_BM" value=""/>
+						<entry kind="macro" name="NDEBUG" value=""/>
+						<entry kind="macro" name="PRINTF_FLOAT_ENABLE" value="0"/>
+						<entry kind="macro" name="SDK_DEBUGCONSOLE" value="0"/>
+						<entry kind="macro" name="SDK_OS_BAREMETAL" value=""/>
+						<entry kind="macro" name="__MCUXPRESSO" value=""/>
+						<entry kind="macro" name="__REDLIB__" value=""/>
+						<entry kind="macro" name="__USE_CMSIS" value=""/>
+					</resource>
+				</language>
+			</provider>
+		</extension>
+	</configuration>
+</project>
