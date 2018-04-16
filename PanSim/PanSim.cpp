@@ -97,6 +97,11 @@ CSerialPort CP;
 void GetSerialPorts(int port)
 {
 	if (port > 0) CP.Open(port, 115200UL);
+	if (CP.IsOpen())
+	{
+		unsigned char bytes[8] = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
+		CP.Write(bytes, 8);
+	}
 }
 
 void CloseSerialPorts()
