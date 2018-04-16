@@ -1,0 +1,229 @@
+notemode low
+
+midi sw 1 32 SEL1TRI
+midi sw 1 33 SEL1SAW
+midi sw 1 34 SEL1SQR
+midi sw 1 35 SEL1SUB
+midi sw 1 48 SEL2TRI
+midi sw 1 49 SEL2SAW
+midi sw 1 50 SEL2SQR
+midi sw 1 51 SEL2SUB
+midi sw 1 64 SEL3TRI
+midi sw 1 65 SEL3SAW
+midi sw 1 66 SEL3SQR
+midi sw 1 67 SEL3SUB
+midi sw 1 36 SELVCOSYNC1
+midi sw 1 52 SELVCOSYNC2
+
+midi sw 1 37 SEL4SAW
+midi sw 1 53 SEL5SAW
+midi sw 1 69 SEL6SAW
+midi sw 1 38 SEL7SAW
+
+midi sw 1 39 SELVCF2L0
+midi sw 1 55 SELVCF2L1
+midi sw 1 71 SELVCF2POST
+
+midi cc 1 0 VCO1_MIX1
+midi cc 1 1 VCO2_MIX1
+midi cc 1 2 VCO3_MIX1
+midi cc 1 3 VCO4567_MIX1
+midi cc 1 4 VCO1_MIX2
+midi cc 1 5 VCO2_MIX2
+midi cc 1 6 VCO3_MIX2
+midi cc 1 7 VCO4567_MIX2
+
+midi cc 1 16 VCF1_CV
+midi cc 1 17 VCF1_RES
+midi cc 1 18 VCF1_CROSSMOD
+midi cc 1 19 VCF2_L_CV
+midi cc 1 20 VCF2_M1_CV
+midi cc 1 21 VCF2_M2_CV
+midi cc 1 22 VCF2_H_CV
+midi cc 1 23 VCF2_RES
+
+
+p note VCO1_PITCH 0x4000
+p note VCO2_PITCH 0x4000
+p note VCO3_PITCH 0x4000
+p note VCO4_PITCH 0x4000
+p note VCO5_PITCH 0x4000
+p note VCO6_PITCH 0x4000
+p note VCO7_PITCH 0x4000
+
+c SEL1TRI
+s SEL1SAW
+c SEL1SQR
+c SEL1SUB
+c SEL2TRI
+s SEL2SAW
+c SEL2SQR
+c SEL2SUB
+c SEL3TRI
+s SEL3SAW
+c SEL3SQR
+c SEL3SUB
+c SELVCOSYNC1
+c SELVCOSYNC2
+c SEL4SAW
+c SEL5SAW
+c SEL6SAW
+c SEL7SAW
+c SELVCF2POST
+s SELVCF2L0
+s SELVCF2L1
+s SELEF1
+s SELEF2
+s SELEF3
+s SELEF4
+c SELMOST2
+s SELMOST3
+c SELEFFECT1
+c SELEFFECT2
+s SELEFFECT3
+
+p VCO1_PW 0x2000
+p lfo_depth VCO1_PW 0
+p lfo_speed VCO1_PW 0xffff
+p VCO2_PW 0x8000
+p lfo_depth VCO2_PW 0
+p lfo_speed VCO2_PW 0x5fff
+p VCO3_PW 0x8000
+p lfo_depth VCO3_PW 0
+p lfo_speed VCO3_PW 0x33ff
+p VCO123_FM1 0
+p VCO123_FM2 0
+
+p adsr_depth VCO1_MIX1 0
+p VCO1_MIX1 0
+p VCO2_MIX1 0
+p VCO3_MIX1 0
+p VCO1_MIX2 0
+p VCO2_MIX2 0
+p VCO3_MIX2 0
+p RM1_MIX1 0
+p RM1_MIX2 0
+
+p note VCF1_CV 0x4000
+p adsr_a VCF1_CV 0x100
+p adsr_d VCF1_CV 0x3000
+p adsr_r VCF1_CV 0x2000
+p adsr_depth VCF1_CV 0x2000
+p VCF1_CV 0x1000
+p VCF1_RES 0x2000
+p VCF1_CROSSMOD 0x0
+
+p VCF2_RES 0
+p VCF2_CROSSMOD 0
+p VCF2_L_CV 0x1fff
+p VCF2_M1_CV 0x3fff
+p VCF2_M2_CV 0x5fff
+p VCF2_H_CV 0x7fff
+p VCF2_FB 0
+
+p VCF2_L_MIX 0
+p VCF2_M1_MIX 0
+p VCF2_M2_MIX 0
+p VCF2_H_MIX 0
+
+p VCF1_L_LIN 0
+p VCF1_R_LIN 0
+p VCF1_L_LOG 0
+p VCF1_R_LOG 0
+
+p adsr_a VCF1_L_LIN 0x10
+p adsr_r VCF1_L_LIN 0x200
+p adsr_depth VCF1_L_LIN 0x4000
+p adsr_a VCF1_R_LIN 0x10
+p adsr_r VCF1_R_LIN 0x200
+p adsr_depth VCF1_R_LIN 0x4000
+p adsr_a VCF1_L_LOG 0x10
+p adsr_depth VCF1_L_LOG 0
+p adsr_a VCF1_R_LOG 0x10
+p adsr_depth VCF1_R_LOG 0
+
+p VCF2_L_LIN 0
+p VCF2_R_LIN 0
+p VCF2_L_LOG 0
+p VCF2_R_LOG 0
+
+p adsr_a VCF2_L_LIN 0x10
+p adsr_depth VCF2_L_LIN 0x4000
+p adsr_a VCF2_R_LIN 0x10
+p adsr_depth VCF2_R_LIN 0x4000
+p adsr_a VCF2_L_LOG 0x10
+p adsr_depth VCF2_L_LOG 0
+p adsr_a VCF2_R_LOG 0x10
+p adsr_depth VCF2_R_LOG 0
+
+p CLEANF_L_LIN 0
+p CLEANF_R_LIN 0
+p CLEANF_L_LOG 0xc000
+p CLEANF_R_LOG 0xc000
+
+p adsr_a CLEANF_L_LIN 0x2
+p adsr_r CLEANF_L_LIN 0x60
+p adsr_depth CLEANF_L_LIN 0x4000
+p adsr_a CLEANF_R_LIN 0x2
+p adsr_r CLEANF_R_LIN 0x60
+p adsr_depth CLEANF_R_LIN 0x4000
+p adsr_a CLEANF_L_LOG 0x10
+p adsr_depth CLEANF_L_LOG 0
+p adsr_a CLEANF_R_LOG 0x10
+p adsr_depth CLEANF_R_LOG 0
+
+p NOISE_COLOR 0x2fff
+
+p PUN_MIX 0
+p WHITENS_MIX1 0
+p WHITENS_MIX2 0
+p DIGINS_MIX1 0
+p DIGINS_MIX2 0
+p EXT_MIX1 0
+p EXT_MIX2 0
+p RM2_MIX3 0
+p BN_MIX3 0
+p VCO4_DRY_MIX 0xefff
+p VCO5_DRY_MIX 0x3fff
+p VCO6_DRY_MIX 0x2fff
+p VCO7_DRY_MIX 0x1fff
+p VCO4567_MIX1 0
+p VCO4567_MIX2 0
+
+p adsr_depth VCO4_DRY_MIX 0
+
+p adsr_a VCO5_DRY_MIX 0x3
+p adsr_d VCO5_DRY_MIX 0x20
+p adsr_s VCO5_DRY_MIX 0x0
+p adsr_depth VCO5_DRY_MIX 0x2000
+
+p adsr_a VCO6_DRY_MIX 0x3
+p adsr_d VCO6_DRY_MIX 0x60
+p adsr_s VCO6_DRY_MIX 0x0
+p adsr_depth VCO6_DRY_MIX 0x1800
+
+p adsr_a VCO7_DRY_MIX 0x3
+p adsr_d VCO7_DRY_MIX 0x100
+p adsr_s VCO7_DRY_MIX 0x0
+p adsr_depth VCO7_DRY_MIX 0x1000
+
+p VCA_FXPOT1 0x4fff
+p VCA_FXPOT2 0xa000
+p VCA_FXPOT3 0xffff
+
+p VCO1_PITCH 0x8000
+p VCO2_PITCH 0x8020
+p VCO3_PITCH 0x7FE8
+p VCO4_PITCH 0x8000
+p VCO5_PITCH 0xa730
+p VCO6_PITCH 0xb200
+p VCO7_PITCH 0xb900
+
+midi cc 1 16 VCO4_PITCH 0x8000 0xffff
+midi cc 1 17 VCO5_PITCH 0x8000 0xffff
+midi cc 1 18 VCO6_PITCH 0x8000 0xffff
+midi cc 1 19 VCO7_PITCH 0x8000 0xffff
+midi cc 1 20 VCO4_DRY_MIX
+midi cc 1 21 VCO5_DRY_MIX
+midi cc 1 22 VCO6_DRY_MIX
+midi cc 1 23 VCO7_DRY_MIX
