@@ -1,3 +1,6 @@
+#include <Windows.h>
+#pragma comment(lib, "winmm.lib")
+
 
 #include "imgui.h"
 #include "imgui_impl_sdl_gl3.h"
@@ -91,25 +94,76 @@ void SetupIcon(SDL_Window *window)
 CSerialPort CP;
 
 
-void GetSerialPorts()
+void GetSerialPorts(int port)
 {
-	CP.Open(11, 115200UL);
+	if (port > 0) CP.Open(port, 115200UL);
 }
 
 void CloseSerialPorts()
 {
-	CP.Close();
+	if (CP.IsOpen()) CP.Close();
 }
+
 void WriteKnob(int id, uint32_t value)
 {
+	if (CP.IsOpen() == false) return;
 	char b[4];
 	b[0] = (id>> 0) & 0xFF;
+	b[1] = (id >> 8) & 0xFF;
+	b[2] = (value >> 8) & 0xFF;
+	b[3] = (value >> 0) & 0xFF;
+	CP.Write(b, 4);
+}
+
+void WriteWithSubKnob(int id, int subid, uint32_t value)
+{
+	id |= subid << 8;
+	if (CP.IsOpen() == false) return;
+	char b[4];
+	b[0] = (id >> 0) & 0xFF;
 	b[1] = (id >> 8) & 0xFF;
 	b[2] = (value >> 8) & 0xFF;
 	b[3] = (value >> 0) & 0xFF;
 
 	CP.Write(b, 4);
 }
+
+typedef struct setpara_t
+{
+	uint16_t paramid;
+	uint16_t value;
+};
+
+void set(setpara_t& para)
+{
+	if (CP.IsOpen() == false) return;
+	char b[4];
+
+	//b[0] = 1;
+	b[0] = (para.paramid >> 0) & 0xFF;
+	b[1] = (para.paramid >> 8) & 0xFF;
+	b[2] = (para.value >> 8) & 0xFF;
+	b[3] = (para.value >> 0) & 0xFF;
+
+	CP.Write(b, 4);
+}
+
+void note_on(int noteid, int notevel)
+{
+	setpara_t setpara;
+	setpara.paramid = 0x02fc;
+	setpara.value = noteid | (notevel << 8);
+	set(setpara);
+}
+
+void note_off(int noteid, int notevel)
+{
+	setpara_t setpara;
+	setpara.paramid = 0x01fc;
+	setpara.value = noteid | (notevel << 8);
+	set(setpara);
+}
+
 
 static bool MyKnob(const char* label, float* p_value, float v_min, float v_max)
 {
@@ -221,6 +275,86 @@ bool ImLed(const char* label, bool* v)
 
 	return false;
 }
+void on_short_message(const unsigned char &ch_msg, const unsigned char &data1, const unsigned char &data2, const unsigned char &data3)
+{
+	unsigned char type = ch_msg & 0xf0;
+
+	// channel voice message
+	switch (type) {
+	case 0x80:
+		// note off
+		note_off(data1, data2);
+		break;
+	case 0x90:
+		if (data2 > 0)
+		{
+			note_on(data1, data2);
+		}
+		else
+		{
+			note_off(data1, data2);
+		}
+		// note on
+		break;
+	case 0xA0:
+		// polyphonic key pressure
+		break;
+	case 0xB0:
+		// control change
+		break;
+	case 0xC0:
+		// program change
+		break;
+	case 0xD0:
+		// channel pressure
+		break;
+	case 0xE0:
+		// pitch bend
+		break;
+	default:
+		break;
+	}
+	_tprintf_s(_T("wMsg=MIM_DATA, ch_msg=%02x, data1=%02x, data2=%02x, data3=%02x\n"), ch_msg, data1, data2, data3);
+}
+void CALLBACK MidiInProc(HMIDIIN hMidiIn, UINT wMsg, DWORD dwInstance, DWORD dwParam1, DWORD dwParam2)
+{
+	unsigned char ch_msg, data1, data2, data3;
+	switch (wMsg) {
+	case MIM_OPEN:
+		printf("wMsg=MIM_OPEN\n");
+		break;
+	case MIM_CLOSE:
+		printf("wMsg=MIM_CLOSE\n");
+		break;
+	case MIM_DATA:
+		printf("wMsg=MIM_DATA, dwInstance=%08x, dwParam1=%08x, dwParam2=%08x\n", dwInstance, dwParam1, dwParam2);
+
+		ch_msg = (unsigned char)(0xFF & dwParam1);
+		data1 = (unsigned char)(0xFF & (dwParam1 >> 8));
+		data2 = (unsigned char)(0xFF & (dwParam1 >> 16));
+		data3 = (unsigned char)(0xFF & (dwParam1 >> 24));
+		on_short_message(ch_msg, data1, data2, data3);
+
+		break;
+	case MIM_LONGDATA:
+		printf("wMsg=MIM_LONGDATA\n");
+		break;
+	case MIM_ERROR:
+		printf("wMsg=MIM_ERROR\n");
+		break;
+	case MIM_LONGERROR:
+		printf("wMsg=MIM_LONGERROR\n");
+		break;
+	case MIM_MOREDATA:
+		printf("wMsg=MIM_MOREDATA\n");
+		break;
+	default:
+		printf("wMsg = unknown\n");
+		break;
+	}
+	return;
+}
+
 
 int main(int argc, char** argv)
 {
@@ -230,9 +364,30 @@ int main(int argc, char** argv)
 		return -1;
 	}
 
+	HMIDIIN hMidiDevice = NULL;;
+	DWORD nMidiPort = 0;
+	UINT nMidiDeviceNum;
+	MMRESULT rv;
 
+	int port = 0;
 	if (argc > 1)
 	{
+		port = atoi(argv[1]);
+	}
+	else
+	{
+		printf("please use PanSim.exe <portnum> where portnum is an integer! COM11: 11\n");
+	}
+
+	if (midiInGetNumDevs() > 0)
+	{
+
+		rv = midiInOpen(&hMidiDevice, nMidiPort, (DWORD)(void*)MidiInProc, 0, CALLBACK_FUNCTION);
+		if (rv != MMSYSERR_NOERROR) {
+			fprintf(stderr, "midiInOpen() failed...rv=%d", rv);
+			return -1;
+		}
+		midiInStart(hMidiDevice);
 
 	}
 	// Setup window
@@ -295,8 +450,29 @@ int main(int argc, char** argv)
 	ImGui::GetStyle().Colors[ImGuiCol_WindowBg] = ImVec4(1.0f, 1.0f, 1.0f, .800f);
 
 	static bool parameters = true;
-	GetSerialPorts();
-	CP.Write("hallo", 5);
+	GetSerialPorts(port);
+	
+
+
+	WriteWithSubKnob(Output_CLEANF_LEVEL, Sub_adsr_a, 0x2000);
+	WriteWithSubKnob(Output_CLEANF_LEVEL, Sub_adsr_d, 0x2000);
+	WriteWithSubKnob(Output_CLEANF_LEVEL, Sub_adsr_s, 0x8000);
+	WriteWithSubKnob(Output_CLEANF_LEVEL, Sub_adsr_r, 0x5000);
+
+	WriteWithSubKnob(Output_VCF1_LEVEL, Sub_adsr_a, 0x2000);
+	WriteWithSubKnob(Output_VCF1_LEVEL, Sub_adsr_d, 0x2000);
+	WriteWithSubKnob(Output_VCF1_LEVEL, Sub_adsr_s, 0x8000);
+	WriteWithSubKnob(Output_VCF1_LEVEL, Sub_adsr_r, 0x5000);
+
+	WriteWithSubKnob(Output_VCF2_LEVEL, Sub_adsr_a, 0x2000);
+	WriteWithSubKnob(Output_VCF2_LEVEL, Sub_adsr_d, 0x2000);
+	WriteWithSubKnob(Output_VCF2_LEVEL, Sub_adsr_s, 0x8000);
+	WriteWithSubKnob(Output_VCF2_LEVEL, Sub_adsr_r, 0x5000);
+
+	WriteWithSubKnob(Output_CLEANF_LEVEL, Sub_adsr_depth, 0x4000);
+	WriteWithSubKnob(Output_VCF1_LEVEL, Sub_adsr_depth, 0x4000);
+	WriteWithSubKnob(Output_VCF2_LEVEL, Sub_adsr_depth, 0x4000);
+
 
 	while (!done)
 	{
@@ -377,6 +553,12 @@ int main(int argc, char** argv)
 		ImGui_ImplSdlGL3_RenderDrawData(ImGui::GetDrawData());
 		//ImGui::PopFont();
 		SDL_GL_SwapWindow(window);
+	}
+
+	if (hMidiDevice)
+	{
+		midiInStop(hMidiDevice);
+		midiInClose(hMidiDevice);
 	}
 
 	ImGui_ImplSdlGL3_Shutdown();

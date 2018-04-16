@@ -224,6 +224,28 @@ enum
 #undef SWITCH
 
 
+enum 
+{
+	Sub_value,
+	Sub_lfo_speed,
+	Sub_lfo_depth,
+	Sub_lfo_shape,
+	Sub_adsr_a,
+	Sub_adsr_d,
+	Sub_adsr_s,
+	Sub_adsr_r,
+	Sub_adsr_depth,
+	Sub_ad_a,
+	Sub_ad_d,
+	Sub_ad_depth,
+	Sub_x,
+	Sub_y,
+	Sub_z,
+	Sub_zprime,
+	Sub_note,
+	Sub_vel
+};
+
 
 
 
