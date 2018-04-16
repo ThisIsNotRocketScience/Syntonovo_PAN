@@ -1,3 +1,19 @@
+#ifndef OUTPUT 
+	#define REDEFINEDOUTPUT
+	#define OUTPUT(name,codecport,codecpin, type,id, style,defaultvalue)
+#endif
+
+#ifndef OUTPUT_VIRT
+	#define REDEFINEDOUTPUTVIRT
+	#define OUTPUT_VIRT(name,codecport,codecpin, type,id, style,defaultvalue)
+#endif
+
+#ifndef SWITCH
+	#define REDEFINEDSWITCH
+	#define SWITCH(name,ìd)
+#endif
+
+
 OUTPUT(XPAD_OUT, 	    P12_0,	6,	    INT,	0x07,	LIN,	0)
 OUTPUT(YPAD_OUT, 	    P12_0,	7,	    INT,	0x08,  	LIN,	0)
 OUTPUT(ZPAD_OUT, 	    P12_0,	8,	    INT,	0x09,  	LIN,	0)
@@ -134,3 +150,18 @@ SWITCH(SELMOST3, 3)
 SWITCH(SELEFFECT1, 5)
 SWITCH(SELEFFECT2, 6)
 SWITCH(SELEFFECT3, 7)
+
+#ifdef REDEFINEDOUTPUT
+	#undef OUTPUT
+	#undef REDEFINEDOUTPUT
+#endif
+
+#ifdef REDEFINEDOUTPUTVIRT
+#undef OUTPUTVIRT
+#undef REDEFINEDOUTPUTVIRT
+#endif
+
+#ifdef REDEFINEDSWITCH
+#undef SWITCH
+#undef REDEFINEDSWITCH
+#endif

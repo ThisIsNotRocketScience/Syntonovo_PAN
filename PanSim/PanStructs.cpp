@@ -1,8 +1,6 @@
 #include "PanHeader.h"
 
 
-
-
 aLedButton Buttons[__LEDBUTTON_COUNT] = {
 #define LEDBUTTON(iname,ix,iy) {#iname,ix, iy,ledbutton_##iname},
 #include "PanControls.h"
