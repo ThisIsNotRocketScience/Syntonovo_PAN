@@ -52,9 +52,9 @@ void Teensy_KnobChanged(int ID, uint32_t value)
 	case knob_PAN_VCF1: WriteKnob(Output_VCF1_PAN, value); break;
 	case knob_PAN_VCF2: WriteKnob(Output_VCF2_PAN, value); break;
 
-	case knob_LEVEL_Cleanfeed: WriteWithSubKnob(Output_CLEANF_LEVEL, Sub_adsr_depth, value); break;
-	case knob_LEVEL_VCF1: WriteWithSubKnob(Output_VCF1_LEVEL, Sub_adsr_depth, value); break;
-	case knob_LEVEL_VCF2: WriteWithSubKnob(Output_VCF2_LEVEL, Sub_adsr_depth, value); break;
+	case knob_LEVEL_Cleanfeed: WriteKnob(Output_CLEANF_LEVEL, value); break;
+	case knob_LEVEL_VCF1: WriteKnob(Output_VCF1_LEVEL, value); break;
+	case knob_LEVEL_VCF2: WriteKnob(Output_VCF2_LEVEL, value); break;
 
 
 

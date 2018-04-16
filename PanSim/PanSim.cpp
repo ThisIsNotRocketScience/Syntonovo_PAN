@@ -455,24 +455,24 @@ int main(int argc, char** argv)
 	
 
 
-	WriteWithSubKnob(Output_CLEANF_LEVEL, Sub_adsr_a, 0x2000);
-	WriteWithSubKnob(Output_CLEANF_LEVEL, Sub_adsr_d, 0x2000);
-	WriteWithSubKnob(Output_CLEANF_LEVEL, Sub_adsr_s, 0x8000);
-	WriteWithSubKnob(Output_CLEANF_LEVEL, Sub_adsr_r, 0x5000);
+	WriteWithSubKnob(Output_CLEANF_LIN, Sub_adsr_a, 0x10);
+	WriteWithSubKnob(Output_CLEANF_LIN, Sub_adsr_d, 0x20);
+	WriteWithSubKnob(Output_CLEANF_LIN, Sub_adsr_s, 0x8000);
+	WriteWithSubKnob(Output_CLEANF_LIN, Sub_adsr_r, 0x1000);
 
-	WriteWithSubKnob(Output_VCF1_LEVEL, Sub_adsr_a, 0x2000);
-	WriteWithSubKnob(Output_VCF1_LEVEL, Sub_adsr_d, 0x2000);
-	WriteWithSubKnob(Output_VCF1_LEVEL, Sub_adsr_s, 0x8000);
-	WriteWithSubKnob(Output_VCF1_LEVEL, Sub_adsr_r, 0x5000);
+	WriteWithSubKnob(Output_VCF1_LIN, Sub_adsr_a, 0x10);
+	WriteWithSubKnob(Output_VCF1_LIN, Sub_adsr_d, 0x50);
+	WriteWithSubKnob(Output_VCF1_LIN, Sub_adsr_s, 0x8000);
+	WriteWithSubKnob(Output_VCF1_LIN, Sub_adsr_r, 0x1000);
+								  
+	WriteWithSubKnob(Output_VCF2_LIN, Sub_adsr_a, 0x10);
+	WriteWithSubKnob(Output_VCF2_LIN, Sub_adsr_d, 0x50);
+	WriteWithSubKnob(Output_VCF2_LIN, Sub_adsr_s, 0x8000);
+	WriteWithSubKnob(Output_VCF2_LIN, Sub_adsr_r, 0x1000);
 
-	WriteWithSubKnob(Output_VCF2_LEVEL, Sub_adsr_a, 0x2000);
-	WriteWithSubKnob(Output_VCF2_LEVEL, Sub_adsr_d, 0x2000);
-	WriteWithSubKnob(Output_VCF2_LEVEL, Sub_adsr_s, 0x8000);
-	WriteWithSubKnob(Output_VCF2_LEVEL, Sub_adsr_r, 0x5000);
-
-	WriteWithSubKnob(Output_CLEANF_LEVEL, Sub_adsr_depth, 0x4000);
-	WriteWithSubKnob(Output_VCF1_LEVEL, Sub_adsr_depth, 0x4000);
-	WriteWithSubKnob(Output_VCF2_LEVEL, Sub_adsr_depth, 0x4000);
+	WriteWithSubKnob(Output_CLEANF_LIN, Sub_adsr_depth, 0x4000);
+	WriteWithSubKnob(Output_VCF1_LIN, Sub_adsr_depth, 0x4000);
+	WriteWithSubKnob(Output_VCF2_LIN, Sub_adsr_depth, 0x4000);
 
 	WriteWithSubKnob(Output_VCO1_PITCH, Sub_note, 0x4000);
 	WriteWithSubKnob(Output_VCO2_PITCH, Sub_note, 0x4000);
