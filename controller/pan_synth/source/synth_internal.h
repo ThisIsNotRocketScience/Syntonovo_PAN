@@ -85,6 +85,7 @@ param_t synth_param[SYNTH_PARAM_COUNT] =
 	const int NAME = ID; \
 	const int PORT_##NAME = PORTID;
 #define MAPPING_INT(ID, NAME, PORTID) \
+	const int NAME = ID; \
 	const int PORT_##NAME = PORTID;
 
 #define SWITCH(NAME, ID) \
@@ -107,13 +108,23 @@ param_t synth_param[SYNTH_PARAM_COUNT] =
 ////////////////////////////////////////////////////////////////
 // Virtual parameter handler forward declarations
 
-#define OUTPUT(NAME, PGROUP, PID, CTRLTYPE, CTRLID, MODE, INITVALUE)
+#define DO_OUTPUT_LIN(NAME, CTRLID, PID)
+#define DO_OUTPUT_INV(NAME, CTRLID, PID)
+#define DO_OUTPUT_LOG(NAME, CTRLID, PID)
+#define DO_OUTPUT_CUSTOM(NAME, CTRLID, PID) \
+	void do_output_##NAME(int ctrlid, int pid);
+#define OUTPUT(NAME, PGROUP, PID, CTRLTYPE, CTRLID, MODE, INITVALUE) \
+	DO_OUTPUT_##MODE(NAME, CTRLID, BASE_##PGROUP + PID);
 #define OUTPUT_VIRT(NAME, PGROUP, PID, CTRLTYPE, CTRLID, MODE, INITVALUE) \
 	void virt_##NAME();
 #define SWITCH(NAME, ID)
 
 #include "paramdef.h"
 
+#undef DO_OUTPUT_LIN
+#undef DO_OUTPUT_INV
+#undef DO_OUTPUT_LOG
+#undef DO_OUTPUT_CUSTOM
 #undef OUTPUT
 #undef OUTPUT_VIRT
 #undef SWITCH
@@ -148,20 +159,27 @@ void synth_mapping_init()
 
 void synth_mapping_run()
 {
-#define DO_OUTPUT_LIN(CTRLID, PID) \
+#define DO_OUTPUT_LIN(NAME, CTRLID, PID) \
 	do_output_lin(CTRLID, PID);
-#define DO_OUTPUT_INV(CTRLID, PID) \
+#define DO_OUTPUT_INV(NAME, CTRLID, PID) \
 	do_output_inv(CTRLID, PID);
-#define DO_OUTPUT_LOG(CTRLID, PID) \
+#define DO_OUTPUT_LOG(NAME, CTRLID, PID) \
 	do_output_log(CTRLID, PID);
+#define DO_OUTPUT_CUSTOM(NAME, CTRLID, PID) \
+	do_output_##NAME(CTRLID, PID);
 #define OUTPUT(NAME, PGROUP, PID, CTRLTYPE, CTRLID, MODE, INITVALUE) \
-	DO_OUTPUT_##MODE(CTRLID, BASE_##PGROUP + PID);
+	DO_OUTPUT_##MODE(NAME, CTRLID, BASE_##PGROUP + PID);
 #define OUTPUT_VIRT(NAME, PGROUP, PID, CTRLTYPE, CTRLID, MODE, INITVALUE) \
 	virt_##NAME();
 
 #define SWITCH(NAME, ID)
 
 #include "paramdef.h"
+
+#undef DO_OUTPUT_LIN
+#undef DO_OUTPUT_INV
+#undef DO_OUTPUT_LOG
+#undef DO_OUTPUT_CUSTOM
 #undef OUTPUT
 #undef OUTPUT_VIRT
 #undef SWITCH

@@ -26,6 +26,34 @@ void ports_value(int portid, uint16_t value);
 static volatile int reset = 0;
 int doing_reset = 0;
 
+uint16_t pan_law_table[2049];
+
+static void pan_law_init()
+{
+	for (int i = 0; i < 2048; i++) {
+		float x = sinf((float)i * (0.5f * 3.141592654f / 2048.0f));
+		pan_law_table[i] = floorf((x * x) * 16384.f);
+	}
+	pan_law_table[2048] = 0;
+}
+
+static uint16_t linint(uint16_t* table, uint32_t phase)
+{
+	int index = phase >> 21;
+	int fract = (phase >> 10) - (index << 11);
+
+	int a = table[index];
+	int b = table[index + 1];
+	int diff = b - a;
+
+	return (uint16_t) (a + ((diff * fract) >> 11));
+}
+
+uint16_t pan_law(uint16_t x)
+{
+	return linint(pan_law_table, ((uint32_t)x) << 16);
+}
+
 #if 0
 uint16_t note_to_voltage(int osc, uint16_t value)
 {
@@ -429,34 +457,155 @@ void do_output_log(int ctrlid, int port)
 	}
 }
 
+void linpan_l(int ctrlid, int port, int linctrlid, int panctrlid)
+{
+	uint16_t value = signed_scale(synth_param[linctrlid].last, pan_law(synth_param[panctrlid].last));
+
+	int result = (synth_param[ctrlid].last != value) || doing_reset;
+	if (result) {
+		synth_param[ctrlid].last = value;
+		ports_value(port, synth_param[ctrlid].last);
+	}
+}
+
+void linpan_r(int ctrlid, int port, int linctrlid, int panctrlid)
+{
+	uint16_t value = signed_scale(synth_param[linctrlid].last, pan_law(65535 - synth_param[panctrlid].last));
+
+	int result = (synth_param[ctrlid].last != value) || doing_reset;
+	if (result) {
+		synth_param[ctrlid].last = value;
+		ports_value(port, synth_param[ctrlid].last);
+	}
+}
+
+void do_output_VCF1_L_LIN(int ctrlid, int port)
+{
+	linpan_l(ctrlid, port, VCF1_LIN, VCF1_PAN);
+}
+
+void do_output_VCF1_R_LIN(int ctrlid, int port)
+{
+	linpan_r(ctrlid, port, VCF1_LIN, VCF1_PAN);
+}
+
+void do_output_VCF2_L_LIN(int ctrlid, int port)
+{
+	linpan_l(ctrlid, port, VCF2_LIN, VCF2_PAN);
+}
+
+void do_output_VCF2_R_LIN(int ctrlid, int port)
+{
+	linpan_r(ctrlid, port, VCF2_LIN, VCF2_PAN);
+}
+
+void do_output_CLEANF_L_LIN(int ctrlid, int port)
+{
+	linpan_l(ctrlid, port, CLEANF_LIN, CLEANF_PAN);
+}
+
+void do_output_CLEANF_R_LIN(int ctrlid, int port)
+{
+	linpan_r(ctrlid, port, CLEANF_LIN, CLEANF_PAN);
+}
+
+void do_output_VCF1_L_LOG(int ctrlid, int port)
+{
+	int result = (synth_param[VCF1_L_LOG].last != synth_param[VCF1_LEVEL].last) || doing_reset;
+	synth_param[VCF1_L_LOG].last = synth_param[VCF1_LEVEL].last;
+	if (result) {
+		ports_value(port, synth_param[ctrlid].last);
+	}
+}
+
+void do_output_VCF1_R_LOG(int ctrlid, int port)
+{
+	int result = (synth_param[VCF1_R_LOG].last != synth_param[VCF1_LEVEL].last) || doing_reset;
+	synth_param[VCF1_R_LOG].last = synth_param[VCF1_LEVEL].last;
+	if (result) {
+		ports_value(port, synth_param[ctrlid].last);
+	}
+}
+
+void do_output_VCF2_L_LOG(int ctrlid, int port)
+{
+	int result = (synth_param[VCF2_L_LOG].last != synth_param[VCF2_LEVEL].last) || doing_reset;
+	synth_param[VCF2_L_LOG].last = synth_param[VCF2_LEVEL].last;
+	if (result) {
+		ports_value(port, synth_param[ctrlid].last);
+	}
+}
+
+void do_output_VCF2_R_LOG(int ctrlid, int port)
+{
+	int result = (synth_param[VCF2_R_LOG].last != synth_param[VCF2_LEVEL].last) || doing_reset;
+	synth_param[VCF2_R_LOG].last = synth_param[VCF2_LEVEL].last;
+	if (result) {
+		ports_value(port, synth_param[ctrlid].last);
+	}
+}
+
+void do_output_CLEANF_L_LOG(int ctrlid, int port)
+{
+	int result = (synth_param[CLEANF_L_LOG].last != synth_param[VCF2_LEVEL].last) || doing_reset;
+	synth_param[CLEANF_L_LOG].last = synth_param[CLEANF_LEVEL].last;
+	if (result) {
+		ports_value(port, synth_param[ctrlid].last);
+	}
+}
+
+void do_output_CLEANF_R_LOG(int ctrlid, int port)
+{
+	int result = (synth_param[CLEANF_R_LOG].last != synth_param[VCF2_LEVEL].last) || doing_reset;
+	synth_param[CLEANF_R_LOG].last = synth_param[CLEANF_LEVEL].last;
+	if (result) {
+		ports_value(port, synth_param[ctrlid].last);
+	}
+}
+
+void virt_VCF1_LIN()
+{
+	process_param_lin(VCF1_LIN);
+}
+
+void virt_VCF2_LIN()
+{
+	process_param_lin(VCF2_LIN);
+}
+
+void virt_CLEANF_LIN()
+{
+	process_param_lin(CLEANF_LIN);
+}
+
 void virt_VCF1_LEVEL()
 {
-
+	process_param_log(VCF1_LEVEL);
 }
 
 void virt_VCF2_LEVEL()
 {
-
+	process_param_log(VCF2_LEVEL);
 }
 
 void virt_CLEANF_LEVEL()
 {
-
+	process_param_log(CLEANF_LEVEL);
 }
 
 void virt_VCF1_PAN()
 {
-
+	process_param_lin(VCF1_PAN);
 }
 
 void virt_VCF2_PAN()
 {
-
+	process_param_lin(VCF2_PAN);
 }
 
 void virt_CLEANF_PAN()
 {
-
+	process_param_lin(CLEANF_PAN);
 }
 
 void virt_NOTE()
@@ -710,6 +859,7 @@ void synth_mapping_virt()
 void synth_init()
 {
 	synth_mapping_init();
+	pan_law_init();
     lfo_init();
     adsr_init();
     ad_init();

@@ -12,8 +12,10 @@
 		<list key="textArray">
 		</list>
 	</section>
+	<section name="NewWizardAction">
+	</section>
 	<section name="ImportExportAction">
-		<item value="org.eclipse.ui.wizards.import.ExternalProject" key="ImportExportPage.STORE_SELECTED_IMPORT_WIZARD_ID"/>
+		<item value="org.eclipse.ui.wizards.import.FileSystem" key="ImportExportPage.STORE_SELECTED_IMPORT_WIZARD_ID"/>
 		<list key="ImportExportPage.STORE_EXPANDED_IMPORT_CATEGORIES">
 			<item value="org.eclipse.ui.Basic"/>
 			<item value="com.nxp.swtools.utils.wizards.importWizard.importCategory"/>
@@ -24,6 +26,17 @@
 			<item value="org.eclipse.equinox.p2.category"/>
 			<item value="org.eclipse.team.ui.importWizards"/>
 			<item value="org.eclipse.wst.XMLCategory"/>
+		</list>
+	</section>
+	<section name="FileSystemImportWizard">
+		<item value="false" key="WizardFileSystemResourceImportPage1.STORE_CREATE_CONTAINER_STRUCTURE_ID"/>
+		<item value="WORKSPACE_LOC" key="WizardFileSystemResourceImportPage1.STORE_PATH_VARIABLE_NAME_ID"/>
+		<item value="false" key="WizardFileSystemResourceImportPage1.STORE_OVERWRITE_EXISTING_RESOURCES_ID"/>
+		<item value="true" key="WizardFileSystemResourceImportPage1.STORE_CREATE_VIRTUAL_FOLDERS_ID"/>
+		<item value="true" key="WizardFileSystemResourceImportPage1.STORE_CREATE_LINKS_IN_WORKSPACE_ID"/>
+		<item value="true" key="WizardFileSystemResourceImportPage1.STORE_PATH_VARIABLE_SELECTED_ID"/>
+		<list key="WizardFileSystemResourceImportPage1.STORE_SOURCE_NAMES_ID">
+			<item value="C:\work\pan\git\interface"/>
 		</list>
 	</section>
 </section>
