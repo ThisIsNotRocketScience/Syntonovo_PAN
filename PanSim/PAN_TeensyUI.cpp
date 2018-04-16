@@ -1,8 +1,60 @@
 #include "PanHeader.h"
 
-void Teensy_KnobChanged(int ID, int value)
+
+extern void WriteKnob(int id, uint32_t value);
+
+void Teensy_KnobChanged(int ID, uint32_t value)
 {
-	printf("knob %s: %f\n", Knobs[ID].name, Knobs[ID].value);
+	switch (ID)
+	{
+		//case knob_MASTER_TUNE: WriteKnob()
+	case knob_FM_1_to_2: WriteKnob(Output_VCO123_FM1, value); break;
+	case knob_FM_2_to_3: WriteKnob(Output_VCO123_FM2, value); break;
+	case knob_VCO1_Pitch: WriteKnob(Output_VCO1_PITCH, value); break;
+	case knob_VCO2_Pitch: WriteKnob(Output_VCO2_PITCH, value); break;
+	case knob_VCO3_Pitch: WriteKnob(Output_VCO3_PITCH, value); break;
+	
+	case knob_VCO1_PW: WriteKnob(Output_VCO1_PW, value); break;
+	case knob_VCO2_PW: WriteKnob(Output_VCO2_PW, value); break;
+	case knob_VCO3_PW: WriteKnob(Output_VCO3_PW, value); break;
+
+	case knob_VCO4_Pitch: WriteKnob(Output_VCO4_PITCH, value); break;
+	case knob_VCO5_Pitch: WriteKnob(Output_VCO5_PITCH, value); break;
+	case knob_VCO6_Pitch: WriteKnob(Output_VCO6_PITCH, value); break;
+	case knob_VCO7_Pitch: WriteKnob(Output_VCO7_PITCH, value); break;
+
+	case knob_VCF1_Resonance: WriteKnob(Output_VCF1_RES, value); break;
+	case knob_VCF1_Frequency: WriteKnob(Output_VCF1_CV, value); break;
+	case knob_VCF1_Spectrum_Mod: WriteKnob(Output_VCF1_CROSSMOD, value); break;
+
+	case knob_VCF2_Resonance: WriteKnob(Output_VCF2_RES, value); break;
+	case knob_VCF2_Feed_Back: WriteKnob(Output_VCF2_FB, value); break;
+	case knob_VCF2_Spectrum_mod: WriteKnob(Output_VCF2_CROSSMOD, value); break;
+
+	case knob_Bank_Low: WriteKnob(Output_VCF2_L_CV, value); break;
+	case knob_Bank_Low_Level: WriteKnob(Output_VCF2_L_MIX, value); break;
+	
+	case knob_Bank_High: WriteKnob(Output_VCF2_H_CV, value); break;
+	case knob_Bank_High_Level: WriteKnob(Output_VCF2_H_MIX, value); break;
+
+	case knob_Bank_Mid_1: WriteKnob(Output_VCF2_M1_CV, value); break;
+	case knob_Bank_Mid_1_Level: WriteKnob(Output_VCF2_M1_MIX, value); break;
+
+	case knob_Bank_Mid_2: WriteKnob(Output_VCF2_M2_CV, value); break;
+	case knob_Bank_Mid_2_Level: WriteKnob(Output_VCF2_M2_MIX, value); break;
+
+	case knob_PAN_Cleanfeed: WriteKnob(Output_CLEANF_PAN, value); break;
+	case knob_PAN_VCF1: WriteKnob(Output_VCF1_PAN, value); break;
+	case knob_PAN_VCF2: WriteKnob(Output_VCF2_PAN, value); break;
+
+	case knob_LEVEL_Cleanfeed: WriteKnob(Output_CLEANF_LEVEL, value); break;
+	case knob_LEVEL_VCF1: WriteKnob(Output_VCF1_LEVEL, value); break;
+	case knob_LEVEL_VCF2: WriteKnob(Output_VCF2_LEVEL, value); break;
+
+	//case knob_TOTAL_OUT: WriteKnob(Output_, value); break;
+
+	}
+	printf("knob %s: %d\n", Knobs[ID].name, value);
 
 }
 

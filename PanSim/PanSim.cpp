@@ -100,6 +100,16 @@ void CloseSerialPorts()
 {
 	CP.Close();
 }
+void WriteKnob(int id, uint32_t value)
+{
+	char b[4];
+	b[0] = (id>> 0) & 0xFF;
+	b[1] = (id >> 8) & 0xFF;
+	b[2] = (value >> 8) & 0xFF;
+	b[3] = (value >> 0) & 0xFF;
+
+	CP.Write(b, 4);
+}
 
 static bool MyKnob(const char* label, float* p_value, float v_min, float v_max)
 {
@@ -321,11 +331,10 @@ int main(int argc, char** argv)
 				float yscalefac = 60;
 				for (int i = 0; i < __KNOB_COUNT; i++)
 				{
-
 					ImGui::SetCursorScreenPos(ImVec2(pos.x + Knobs[i].x * xscalefac, pos.y + Knobs[i].y * yscalefac));
 					if (MyKnob(Knobs[i].name, &Knobs[i].value, 0, 1))
 					{
-						Teensy_KnobChanged(Knobs[i].id, Knobs[i].value);
+						Teensy_KnobChanged(Knobs[i].id, uint32_t(floor((Knobs[i].value*65535.0))));
 					}
 				}
 

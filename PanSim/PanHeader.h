@@ -206,13 +206,34 @@ enum LedEnum
 	__LED_COUNT
 };
 
+#define OUTPUT(name,codecport,codecpin, type,id, style,defaultvalue) Output_##name = id,
+#define OUTPUT_VIRT(name,codecport,codecpin, type,id, style,defaultvalue) Output_##name = id,
+enum
+{
+#include "../interface/paramdef.h"
+	__OUTPUT_COUNT
+};
+#undef OUTPUT
+#undef OUTPUT_VIRT
+#define SWITCH(name,id) Switch_##name = id,
+enum
+{
+#include "../interface/paramdef.h"
+	__SWITCH_COUNT
+};
+#undef SWITCH
+
+
+
+
+
 #undef LEDBUTTON
 typedef struct PanGui_t
 {
 	
 } PanGui_t;
 
-extern void Teensy_KnobChanged(int ID, int value);
+extern void Teensy_KnobChanged(int ID, uint32_t value);
 extern void Teensy_ButtonPressed(int ID, int value);
 
 extern void Raspberry_RenderScreen();
