@@ -212,10 +212,10 @@ typedef struct PanGui_t
 	
 } PanGui_t;
 
-extern void KnobChanged(int ID, int value);
-extern void ButtonPressed(int ID, int value);
+extern void Teensy_KnobChanged(int ID, int value);
+extern void Teensy_ButtonPressed(int ID, int value);
 
-extern void RenderScreen();
-extern void EncoderTurn(int id, int delta);
+extern void Raspberry_RenderScreen();
+extern void Raspberry_EncoderTurn(int id, int delta);
 
 #endif

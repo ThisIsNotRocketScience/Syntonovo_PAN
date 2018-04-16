@@ -1,12 +1,12 @@
 #include "PanHeader.h"
 
-void KnobChanged(int ID, int value)
+void Teensy_KnobChanged(int ID, int value)
 {
 	printf("knob %s: %f\n", Knobs[ID].name, Knobs[ID].value);
 
 }
 
-void ButtonPressed(int ID, int value)
+void Teensy_ButtonPressed(int ID, int value)
 {
 	printf("button %s: %d\n", Buttons[ID].name, Buttons[ID].value ? 1 : 0);
 

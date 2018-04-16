@@ -87,10 +87,18 @@ void SetupIcon(SDL_Window *window)
 	SDL_SetWindowIcon(window, load_PNG("favicon-32x32.png"));
 
 }
+#include "SerialPort.h"
+CSerialPort CP;
 
-void PrintKnobs()
+
+void GetSerialPorts()
 {
-	
+	CP.Open(11, 115200UL);
+}
+
+void CloseSerialPorts()
+{
+	CP.Close();
 }
 
 static bool MyKnob(const char* label, float* p_value, float v_min, float v_max)
@@ -204,7 +212,7 @@ bool ImLed(const char* label, bool* v)
 	return false;
 }
 
-int main(int, char**)
+int main(int argc, char** argv)
 {
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) != 0)
 	{
@@ -212,6 +220,11 @@ int main(int, char**)
 		return -1;
 	}
 
+
+	if (argc > 1)
+	{
+
+	}
 	// Setup window
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
@@ -259,8 +272,8 @@ int main(int, char**)
 	int32_t gatecolor = ImColor::HSV(0, 0, 0.3);
 	int32_t accentcolor = ImColor::HSV(0, 0, 1);
 
-	ImFont* pFont = io.Fonts->AddFontFromFileTTF("ProggyTiny.ttf", 10.0f);
-	ImFont* pFontBold = io.Fonts->AddFontFromFileTTF("ProggyTiny.ttf", 12.0f);
+	ImFont* pFont = io.Fonts->AddFontFromFileTTF("ProggyTiny.ttf", 8.0f);
+	ImFont* pFontBold = io.Fonts->AddFontFromFileTTF("ProggyTiny.ttf", 10.0f);
 
 	unsigned char * pixels;
 	int width, height, bytes_per_pixels;
@@ -272,7 +285,8 @@ int main(int, char**)
 	ImGui::GetStyle().Colors[ImGuiCol_WindowBg] = ImVec4(1.0f, 1.0f, 1.0f, .800f);
 
 	static bool parameters = true;
-
+	GetSerialPorts();
+	CP.Write("hallo", 5);
 
 	while (!done)
 	{
@@ -304,14 +318,14 @@ int main(int, char**)
 
 				ImVec2 pos = ImGui::GetCursorScreenPos();
 				float xscalefac = 60;
-				float yscalefac = 80;
+				float yscalefac = 60;
 				for (int i = 0; i < __KNOB_COUNT; i++)
 				{
 
 					ImGui::SetCursorScreenPos(ImVec2(pos.x + Knobs[i].x * xscalefac, pos.y + Knobs[i].y * yscalefac));
 					if (MyKnob(Knobs[i].name, &Knobs[i].value, 0, 1))
 					{
-						KnobChanged(Knobs[i].id, Knobs[i].value);
+						Teensy_KnobChanged(Knobs[i].id, Knobs[i].value);
 					}
 				}
 
@@ -320,7 +334,7 @@ int main(int, char**)
 					ImGui::SetCursorScreenPos(ImVec2(pos.x + Buttons[i].x * xscalefac, pos.y + Buttons[i].y * yscalefac));
 					if (LedButton(Buttons[i].name, &Buttons[i].value))
 					{
-						ButtonPressed(Buttons[i].id, Buttons[i].value);
+						Teensy_ButtonPressed(Buttons[i].id, Buttons[i].value);
 
 					}
 				}
@@ -334,7 +348,7 @@ int main(int, char**)
 				ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0, 0, 0, 255));
 
 				ImGui::BeginChild("screen", ImVec2(xscalefac * TheScreen.width, yscalefac * TheScreen.height), true);
-				RenderScreen();
+				Raspberry_RenderScreen();
 				ImGui::EndChild();
 				ImGui::PopStyleColor();
 				ImGui::PopFont();
@@ -358,7 +372,7 @@ int main(int, char**)
 
 	ImGui_ImplSdlGL3_Shutdown();
 	ImGui::DestroyContext();
-
+	CloseSerialPorts();
 	SDL_GL_DeleteContext(glcontext);
 	SDL_DestroyWindow(window);
 	SDL_Quit();

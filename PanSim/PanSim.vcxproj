@@ -164,7 +164,9 @@
     <ClInclude Include="PanHeader.h" />
   </ItemGroup>
   <ItemGroup>
-    <Font Include="ProggyTiny.ttf" />
+    <Font Include="ProggyTiny.ttf">
+      <DeploymentContent>true</DeploymentContent>
+    </Font>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
