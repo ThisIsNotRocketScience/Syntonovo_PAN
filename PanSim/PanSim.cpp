@@ -364,7 +364,7 @@ int main(int argc, char** argv)
 		return -1;
 	}
 
-	HMIDIIN hMidiDevice = NULL;;
+	HMIDIIN hMidiDevice[255] = { 0 };
 	DWORD nMidiPort = 0;
 	UINT nMidiDeviceNum;
 	MMRESULT rv;
@@ -381,14 +381,15 @@ int main(int argc, char** argv)
 
 	if (midiInGetNumDevs() > 0)
 	{
-
-		rv = midiInOpen(&hMidiDevice, nMidiPort, (DWORD)(void*)MidiInProc, 0, CALLBACK_FUNCTION);
-		if (rv != MMSYSERR_NOERROR) {
-			fprintf(stderr, "midiInOpen() failed...rv=%d", rv);
-			return -1;
+		for (int i = 0; i < midiInGetNumDevs(); i++)
+		{
+			rv = midiInOpen(&hMidiDevice[i], i, (DWORD)(void*)MidiInProc, 0, CALLBACK_FUNCTION);
+			if (rv != MMSYSERR_NOERROR) {
+				fprintf(stderr, "midiInOpen() failed...rv=%d", rv);
+				return -1;
+			}
+			midiInStart(hMidiDevice[i]);
 		}
-		midiInStart(hMidiDevice);
-
 	}
 	// Setup window
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG);
@@ -473,7 +474,17 @@ int main(int argc, char** argv)
 	WriteWithSubKnob(Output_VCF1_LEVEL, Sub_adsr_depth, 0x4000);
 	WriteWithSubKnob(Output_VCF2_LEVEL, Sub_adsr_depth, 0x4000);
 
-
+	WriteWithSubKnob(Output_VCO1_PITCH, Sub_note, 0x4000);
+	WriteWithSubKnob(Output_VCO2_PITCH, Sub_note, 0x4000);
+	WriteWithSubKnob(Output_VCO3_PITCH, Sub_note, 0x4000);
+	WriteWithSubKnob(Output_VCO4_PITCH, Sub_note, 0x4000);
+	WriteWithSubKnob(Output_VCO5_PITCH, Sub_note, 0x4000);
+	WriteWithSubKnob(Output_VCO6_PITCH, Sub_note, 0x4000);
+	WriteWithSubKnob(Output_VCO7_PITCH, Sub_note, 0x4000);
+	setpara_t para;
+	para.paramid = 0xfcfe;
+	para.value = 3;
+	set(para);
 	while (!done)
 	{
 		SDL_Event event;
@@ -555,12 +566,14 @@ int main(int argc, char** argv)
 		SDL_GL_SwapWindow(window);
 	}
 
-	if (hMidiDevice)
+	for (int i = 0; i < midiInGetNumDevs(); i++)
 	{
-		midiInStop(hMidiDevice);
-		midiInClose(hMidiDevice);
+		if (hMidiDevice[i])
+		{
+			midiInStop(hMidiDevice[i]);
+			midiInClose(hMidiDevice[i]);
+		}
 	}
-
 	ImGui_ImplSdlGL3_Shutdown();
 	ImGui::DestroyContext();
 	CloseSerialPorts();
