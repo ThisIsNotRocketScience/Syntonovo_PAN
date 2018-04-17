@@ -96,7 +96,14 @@ CSerialPort CP;
 
 void GetSerialPorts(int port)
 {
-	if (port > 0) CP.Open(port, 115200UL);
+	try
+	{
+		if (port > 0) CP.Open(port, 115200UL);
+	}
+	catch (int e)
+	{
+
+	}
 	if (CP.IsOpen())
 	{
 		unsigned char bytes[8] = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
@@ -207,6 +214,52 @@ static bool MyKnob(const char* label, float* p_value, float v_min, float v_max)
 	auto R = ImGui::CalcTextSize(label);
 	draw_list->AddText(ImVec2(center.x - R.x/2, pos.y - line_height - style.ItemInnerSpacing.y), ImGui::GetColorU32(ImGuiCol_Text), label);
 
+	if (is_active || is_hovered)
+	{
+		ImGui::SetNextWindowPos(ImVec2(pos.x - style.WindowPadding.x, pos.y - line_height - style.ItemInnerSpacing.y - style.WindowPadding.y));
+		ImGui::BeginTooltip();
+		ImGui::Text("%.3f", *p_value);
+		ImGui::EndTooltip();
+	}
+
+	return value_changed;
+}
+
+
+
+static bool MySlider(const char* label, float* p_value, float v_min, float v_max)
+{
+	ImGuiIO& io = ImGui::GetIO();
+	ImGuiStyle& style = ImGui::GetStyle();
+
+	float radius_outer = 20.0f;
+	ImVec2 pos = ImGui::GetCursorScreenPos();
+	ImVec2 center = ImVec2(pos.x + radius_outer, pos.y + radius_outer);
+	float line_height = ImGui::GetTextLineHeight();
+	ImDrawList* draw_list = ImGui::GetWindowDrawList();
+
+	float POS_MIN = 5;
+	float POS_MAX = 35;
+
+	ImGui::InvisibleButton(label, ImVec2(radius_outer * 2, radius_outer * 4 + line_height + style.ItemInnerSpacing.y));
+	bool value_changed = false;
+	bool is_active = ImGui::IsItemActive();
+	bool is_hovered = ImGui::IsItemActive();
+	if (is_active && io.MouseDelta.x != 0.0f)
+	{
+		float step = (v_max - v_min) / 200.0f;
+		*p_value -= io.MouseDelta.y * step;
+		if (*p_value < v_min) *p_value = v_min;
+		if (*p_value > v_max) *p_value = v_max;
+		value_changed = true;
+	}
+
+	float t = ((*p_value - v_min) / (v_max - v_min))-0.5;
+	t *= 2;
+	auto R = ImGui::CalcTextSize(label);
+	draw_list->AddText(ImVec2(center.x - R.x / 2, pos.y - line_height - style.ItemInnerSpacing.y), ImGui::GetColorU32(ImGuiCol_Text), label);
+	draw_list->AddLine(ImVec2(center.x , center.y -  40), ImVec2(center.x , center.y + 40), ImGui::GetColorU32(ImGuiCol_ButtonHovered), 4);
+	draw_list->AddLine(ImVec2(center.x - 4, center.y - t * 40), ImVec2(center.x + 4, center.y - t * 40), ImGui::GetColorU32(ImGuiCol_Text), 4);
 	if (is_active || is_hovered)
 	{
 		ImGui::SetNextWindowPos(ImVec2(pos.x - style.WindowPadding.x, pos.y - line_height - style.ItemInnerSpacing.y - style.WindowPadding.y));
@@ -524,9 +577,19 @@ int main(int argc, char** argv)
 				for (int i = 0; i < __KNOB_COUNT; i++)
 				{
 					ImGui::SetCursorScreenPos(ImVec2(pos.x + Knobs[i].x * xscalefac, pos.y + Knobs[i].y * yscalefac));
-					if (MyKnob(Knobs[i].name, &Knobs[i].value, 0, 1))
+					if (Knobs[i].isslider==1)
 					{
-						Teensy_KnobChanged(Knobs[i].id, uint32_t(floor((Knobs[i].value*65535.0))));
+						if (MySlider(Knobs[i].name, &Knobs[i].value, 0, 1))
+						{
+							Teensy_KnobChanged(Knobs[i].id, uint32_t(floor((Knobs[i].value*65535.0))));
+						}
+					}
+					else
+					{
+						if (MyKnob(Knobs[i].name, &Knobs[i].value, 0, 1))
+						{
+							Teensy_KnobChanged(Knobs[i].id, uint32_t(floor((Knobs[i].value*65535.0))));
+						}
 					}
 				}
 

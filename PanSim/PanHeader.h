@@ -128,6 +128,7 @@ public:
 	float x;
 	float y;
 	int id;
+	int isslider;
 	float value;
 };
 
@@ -183,12 +184,14 @@ extern void GUI_Enter();
 extern void GUI_Cancel();
 
 #define KNOB(name,x,y,min,max)  knob_##name,
+#define SLIDER(name,x,y,min,max)  knob_##name,
 enum KnobEnum
 {
 #include "PanControls.h"
 	__KNOB_COUNT
 };
 #undef KNOB
+#undef SLIDER
 
 #define LEDBUTTON(name,x,y)  ledbutton_##name,
 enum LedButtonEnum
