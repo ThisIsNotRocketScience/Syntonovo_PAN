@@ -140,6 +140,16 @@ void WriteWithSubKnob(int id, int subid, uint32_t value)
 	CP.Write(b, 4);
 }
 
+void WriteSwitch(int id, int state)
+{
+	//TODO
+}
+
+void WriteSyncLfo(uint8_t* paramids)
+{
+	//TODO
+}
+
 typedef struct setpara_t
 {
 	uint16_t paramid;
@@ -511,34 +521,8 @@ int main(int argc, char** argv)
 	static bool parameters = true;
 	GetSerialPorts(port);
 	
+	Teensy_InitPreset();
 
-
-	WriteWithSubKnob(Output_CLEANF_LIN, Sub_adsr_a, 0x10);
-	WriteWithSubKnob(Output_CLEANF_LIN, Sub_adsr_d, 0x20);
-	WriteWithSubKnob(Output_CLEANF_LIN, Sub_adsr_s, 0x8000);
-	WriteWithSubKnob(Output_CLEANF_LIN, Sub_adsr_r, 0x1000);
-
-	WriteWithSubKnob(Output_VCF1_LIN, Sub_adsr_a, 0x10);
-	WriteWithSubKnob(Output_VCF1_LIN, Sub_adsr_d, 0x50);
-	WriteWithSubKnob(Output_VCF1_LIN, Sub_adsr_s, 0x8000);
-	WriteWithSubKnob(Output_VCF1_LIN, Sub_adsr_r, 0x1000);
-								  
-	WriteWithSubKnob(Output_VCF2_LIN, Sub_adsr_a, 0x10);
-	WriteWithSubKnob(Output_VCF2_LIN, Sub_adsr_d, 0x50);
-	WriteWithSubKnob(Output_VCF2_LIN, Sub_adsr_s, 0x8000);
-	WriteWithSubKnob(Output_VCF2_LIN, Sub_adsr_r, 0x1000);
-
-	WriteWithSubKnob(Output_CLEANF_LIN, Sub_adsr_depth, 0x4000);
-	WriteWithSubKnob(Output_VCF1_LIN, Sub_adsr_depth, 0x4000);
-	WriteWithSubKnob(Output_VCF2_LIN, Sub_adsr_depth, 0x4000);
-
-	WriteWithSubKnob(Output_VCO1_PITCH, Sub_note, 0x4000);
-	WriteWithSubKnob(Output_VCO2_PITCH, Sub_note, 0x4000);
-	WriteWithSubKnob(Output_VCO3_PITCH, Sub_note, 0x4000);
-	WriteWithSubKnob(Output_VCO4_PITCH, Sub_note, 0x4000);
-	WriteWithSubKnob(Output_VCO5_PITCH, Sub_note, 0x4000);
-	WriteWithSubKnob(Output_VCO6_PITCH, Sub_note, 0x4000);
-	WriteWithSubKnob(Output_VCO7_PITCH, Sub_note, 0x4000);
 	setpara_t para;
 	para.paramid = 0xfcfe;
 	para.value = 3;

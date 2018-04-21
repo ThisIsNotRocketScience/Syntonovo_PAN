@@ -1,8 +1,365 @@
 #include "PanHeader.h"
 
-
 extern void WriteKnob(int id, uint32_t value);
 extern void WriteWithSubKnob(int id, int subid, uint32_t value);
+extern void WriteSwitch(int id, int state);
+extern void WriteSyncLfo(uint8_t* paramids);
+
+PanPreset_t gPreset;
+
+void InitPreset(PanPreset_t& preset)
+{
+	memset(&preset, 0, sizeof(PanPreset_t));
+
+	preset.ctrlmod[0].source = ControlModulation_t::Source_note;
+	preset.ctrlmod[0].target[0].param = Output_VCO1_PITCH;
+	preset.ctrlmod[0].target[0].depth = 0x4000;
+	preset.ctrlmod[0].target[1].param = Output_VCO2_PITCH;
+	preset.ctrlmod[0].target[1].depth = 0x4000;
+	preset.ctrlmod[0].target[2].param = Output_VCO3_PITCH;
+	preset.ctrlmod[0].target[2].depth = 0x4000;
+	preset.ctrlmod[0].target[3].param = Output_VCO4_PITCH;
+	preset.ctrlmod[0].target[3].depth = 0x4000;
+	preset.ctrlmod[0].target[4].param = Output_VCO5_PITCH;
+	preset.ctrlmod[0].target[4].depth = 0x4000;
+	preset.ctrlmod[0].target[5].param = Output_VCO6_PITCH;
+	preset.ctrlmod[0].target[5].depth = 0x4000;
+	preset.ctrlmod[0].target[6].param = Output_VCO7_PITCH;
+	preset.ctrlmod[0].target[6].depth = 0x4000;
+
+	preset.adsrmod[0].a = 0x5;
+	preset.adsrmod[0].d = 0x200;
+	preset.adsrmod[0].s = 0x4000;
+	preset.adsrmod[0].r = 0x20;
+	preset.adsrmod[0].target[0].param = Output_VCF1_LIN;
+	preset.adsrmod[0].target[0].depth = 0x4000;
+	preset.adsrmod[0].target[1].param = Output_VCF2_LIN;
+	preset.adsrmod[0].target[0].depth = 0x4000;
+	preset.adsrmod[0].target[2].param = Output_CLEANF_LIN;
+	preset.adsrmod[0].target[0].depth = 0x4000;
+
+	preset.paramvalue[Output_VCO1_MIX1] = 0xffff;
+
+	preset.paramvalue[Output_VCF1_LEVEL] = 0xffff;
+	preset.paramvalue[Output_VCF1_CV] = 0x6fff;
+
+	preset.paramvalue[Output_VCF1_PAN] = 0x8000;
+	preset.paramvalue[Output_VCF2_PAN] = 0x8000;
+	preset.paramvalue[Output_CLEANF_PAN] = 0x8000;
+
+	preset.paramvalue[Output_VCO1_PITCH] = 0x8000;
+	preset.paramvalue[Output_VCO2_PITCH] = 0x8000;
+	preset.paramvalue[Output_VCO3_PITCH] = 0x8000;
+	preset.paramvalue[Output_VCO4_PITCH] = 0x8000;
+	preset.paramvalue[Output_VCO5_PITCH] = 0x8000;
+	preset.paramvalue[Output_VCO6_PITCH] = 0x8000;
+	preset.paramvalue[Output_VCO7_PITCH] = 0x8000;
+
+	preset.switches[0] |= (1 << Switch_SEL1SAW);
+	preset.switches[0] |= (1 << Switch_SELMOST2);
+	preset.switches[0] |= (1 << Switch_SELMOST3);
+}
+
+void LoadPreset(PanPreset_t& preset)
+{
+#define OUTPUT(name,codecport,codecpin, type,id, style,defaultvalue) \
+	WriteKnob(id, preset.paramvalue[id]); \
+	WriteWithSubKnob(id, Sub_lfo_depth, 0); \
+	WriteWithSubKnob(id, Sub_adsr_depth, 0); \
+	WriteWithSubKnob(id, Sub_ad_depth, 0); \
+	WriteWithSubKnob(id, Sub_x, 0); \
+	WriteWithSubKnob(id, Sub_y, 0); \
+	WriteWithSubKnob(id, Sub_z, 0); \
+	WriteWithSubKnob(id, Sub_zprime, 0); \
+	WriteWithSubKnob(id, Sub_note, 0); \
+	WriteWithSubKnob(id, Sub_vel, 0);
+#define OUTPUT_VIRT(name,codecport,codecpin, type,id, style,defaultvalue) \
+	OUTPUT(name,codecport,codecpin,type,id,style,defaultvalue);
+#define SWITCH(name,id) \
+	WriteSwitch(id, (preset.switches[0]>>id) & 1);
+#include "../interface/paramdef.h"
+#undef OUTPUT
+#undef OUTPUT_VIRT
+#undef SWITCH
+
+	for (int i = 0; i < 16; i++) {
+		uint8_t synclfo[16] = { 0 };
+		for (int j = 0; j < 16; j++) {
+			int param = preset.lfomod[i].target[j].param;
+			if (param == 0) continue;
+			synclfo[j] = param;
+			WriteWithSubKnob(param, Sub_lfo_depth, preset.lfomod[i].target[i].depth);
+			WriteWithSubKnob(param, Sub_lfo_speed, preset.lfomod[i].speed);
+			WriteWithSubKnob(param, Sub_lfo_shape, preset.lfomod[i].shape);
+		}
+		WriteSyncLfo(synclfo);
+	}
+
+	for (int i = 0; i < 16; i++) {
+		for (int j = 0; j < 16; j++) {
+			int param = preset.adsrmod[i].target[j].param;
+			if (param == 0) continue;
+			WriteWithSubKnob(param, Sub_adsr_depth, preset.adsrmod[i].target[i].depth);
+			WriteWithSubKnob(param, Sub_adsr_a, preset.adsrmod[i].a);
+			WriteWithSubKnob(param, Sub_adsr_d, preset.adsrmod[i].d);
+			WriteWithSubKnob(param, Sub_adsr_s, preset.adsrmod[i].s);
+			WriteWithSubKnob(param, Sub_adsr_r, preset.adsrmod[i].r);
+		}
+	}
+
+	for (int i = 0; i < 16; i++) {
+		for (int j = 0; j < 16; j++) {
+			int param = preset.admod[i].target[j].param;
+			if (param == 0) continue;
+			WriteWithSubKnob(param, Sub_ad_depth, preset.admod[i].target[i].depth);
+			WriteWithSubKnob(param, Sub_ad_a, preset.admod[i].a);
+			WriteWithSubKnob(param, Sub_ad_d, preset.admod[i].d);
+		}
+	}
+
+	for (int i = 0; i < 16; i++) {
+		for (int j = 0; j < 16; j++) {
+			int param = preset.ctrlmod[i].target[j].param;
+			if (param == 0) continue;
+
+			switch (preset.ctrlmod[i].source) {
+			case ControlModulation_t::Source_left_mod:
+				//todo
+				//WriteWithSubKnob(param, Sub)
+				break;
+			case ControlModulation_t::Source_right_mod:
+				//todo
+				break;
+			case ControlModulation_t::Source_x:
+				WriteWithSubKnob(param, Sub_x, preset.ctrlmod[i].target[j].depth);
+				break;
+			case ControlModulation_t::Source_y:
+				WriteWithSubKnob(param, Sub_y, preset.ctrlmod[i].target[j].depth);
+				break;
+			case ControlModulation_t::Source_z:
+				WriteWithSubKnob(param, Sub_z, preset.ctrlmod[i].target[j].depth);
+				break;
+			case ControlModulation_t::Source_zprime:
+				WriteWithSubKnob(param, Sub_zprime, preset.ctrlmod[i].target[j].depth);
+				break;
+			case ControlModulation_t::Source_note:
+				WriteWithSubKnob(param, Sub_note, preset.ctrlmod[i].target[j].depth);
+				break;
+			case ControlModulation_t::Source_vel:
+				WriteWithSubKnob(param, Sub_vel, preset.ctrlmod[i].target[j].depth);
+				break;
+			}
+		}
+	}
+}
+
+void PresetChangeValue(PanPreset_t& preset, int param, uint16_t value)
+{
+	preset.paramvalue[param] = value;
+	WriteKnob(param, value);
+}
+
+void PresetChangeAdsrParam(PanPreset_t& preset, int mod, SubParam_t subparam, uint16_t value)
+{
+	switch (subparam) {
+	case Sub_adsr_a:
+	{
+		preset.adsrmod[mod].a = value;
+		for (int i = 0; i < 16; i++) {
+			int param = preset.adsrmod[mod].target[i].param;
+			if (param == 0) continue;
+			WriteWithSubKnob(param, Sub_adsr_a, value);
+		}
+		break;
+	}
+	case Sub_adsr_d:
+	{
+		preset.adsrmod[mod].d = value;
+		for (int i = 0; i < 16; i++) {
+			int param = preset.adsrmod[mod].target[i].param;
+			if (param == 0) continue;
+			WriteWithSubKnob(param, Sub_adsr_d, value);
+		}
+		break;
+	}
+	case Sub_adsr_s:
+	{
+		preset.adsrmod[mod].s = value;
+		for (int i = 0; i < 16; i++) {
+			int param = preset.adsrmod[mod].target[i].param;
+			if (param == 0) continue;
+			WriteWithSubKnob(param, Sub_adsr_s, value);
+		}
+		break;
+	}
+	case Sub_adsr_r:
+	{
+		preset.adsrmod[mod].r = value;
+		for (int i = 0; i < 16; i++) {
+			int param = preset.adsrmod[mod].target[i].param;
+			if (param == 0) continue;
+			WriteWithSubKnob(param, Sub_adsr_r, value);
+		}
+		break;
+	}
+	}
+}
+
+void PresetChangeAdsrDepth(PanPreset_t& preset, int mod, int index, uint16_t value)
+{
+	preset.adsrmod[mod].target[index].depth = value;
+	WriteWithSubKnob(preset.adsrmod[mod].target[index].param, Sub_adsr_depth, value);
+}
+
+void PresetChangeAdsrAddParam(PanPreset_t& preset, int mod, int param, int depth)
+{
+	int emptyindex;
+	for (emptyindex = 0; emptyindex < 16; emptyindex++) {
+		if (preset.adsrmod[mod].target[emptyindex].param == 0) break;
+	}
+	if (emptyindex == 0) return;
+	preset.adsrmod[mod].target[emptyindex].param = param;
+	preset.adsrmod[mod].target[emptyindex].depth = depth;
+	WriteWithSubKnob(param, Sub_adsr_a, preset.adsrmod[mod].a);
+	WriteWithSubKnob(param, Sub_adsr_d, preset.adsrmod[mod].d);
+	WriteWithSubKnob(param, Sub_adsr_s, preset.adsrmod[mod].s);
+	WriteWithSubKnob(param, Sub_adsr_r, preset.adsrmod[mod].r);
+	WriteWithSubKnob(param, Sub_adsr_depth, depth);
+}
+
+void PresetChangeAdsrRemoveParam(PanPreset_t& preset, int mod, int param)
+{
+	for (int i = 0; i < 16; i++)
+	{
+		if (preset.adsrmod[mod].target[i].param == param) {
+			preset.adsrmod[mod].target[i].param = 0;
+			WriteWithSubKnob(param, Sub_adsr_depth, 0);
+			return;
+		}
+	}
+}
+
+void PresetChangeAdParam(PanPreset_t& preset, int mod, SubParam_t subparam, uint16_t value)
+{
+	switch (subparam) {
+	case Sub_ad_a:
+	{
+		preset.admod[mod].a = value;
+		for (int i = 0; i < 16; i++) {
+			int param = preset.admod[mod].target[i].param;
+			if (param == 0) continue;
+			WriteWithSubKnob(param, Sub_ad_a, value);
+		}
+		break;
+	}
+	case Sub_ad_d:
+	{
+		preset.admod[mod].d = value;
+		for (int i = 0; i < 16; i++) {
+			int param = preset.admod[mod].target[i].param;
+			if (param == 0) continue;
+			WriteWithSubKnob(param, Sub_ad_d, value);
+		}
+		break;
+	}
+	}
+}
+
+void PresetChangeAdDepth(PanPreset_t& preset, int mod, int index, uint16_t value)
+{
+	preset.admod[mod].target[index].depth = value;
+	WriteWithSubKnob(preset.admod[mod].target[index].param, Sub_ad_depth, value);
+}
+
+void PresetChangeAdAddParam(PanPreset_t& preset, int mod, int param, int depth)
+{
+	int emptyindex;
+	for (emptyindex = 0; emptyindex < 16; emptyindex++) {
+		if (preset.admod[mod].target[emptyindex].param == 0) break;
+	}
+	if (emptyindex == 0) return;
+	preset.admod[mod].target[emptyindex].param = param;
+	preset.admod[mod].target[emptyindex].depth = depth;
+	WriteWithSubKnob(param, Sub_ad_a, preset.admod[mod].a);
+	WriteWithSubKnob(param, Sub_ad_d, preset.admod[mod].d);
+	WriteWithSubKnob(param, Sub_ad_depth, depth);
+}
+
+void PresetChangeAdRemoveParam(PanPreset_t& preset, int mod, int param)
+{
+	for (int i = 0; i < 16; i++)
+	{
+		if (preset.admod[mod].target[i].param == param) {
+			preset.admod[mod].target[i].param = 0;
+			WriteWithSubKnob(param, Sub_ad_depth, 0);
+			return;
+		}
+	}
+}
+
+void PresetChangeLfoParam(PanPreset_t& preset, int mod, SubParam_t subparam, uint16_t value)
+{
+	switch (subparam) {
+	case Sub_lfo_speed:
+	{
+		preset.lfomod[mod].speed = value;
+		for (int i = 0; i < 16; i++) {
+			int param = preset.lfomod[mod].target[i].param;
+			if (param == 0) continue;
+			WriteWithSubKnob(param, Sub_lfo_speed, value);
+		}
+		break;
+	}
+	case Sub_lfo_shape:
+	{
+		preset.lfomod[mod].shape = value;
+		for (int i = 0; i < 16; i++) {
+			int param = preset.lfomod[mod].target[i].param;
+			if (param == 0) continue;
+			WriteWithSubKnob(param, Sub_lfo_shape, value);
+		}
+		break;
+	}
+	}
+}
+
+void PresetChangeLfoDepth(PanPreset_t& preset, int mod, int index, uint16_t value)
+{
+	preset.lfomod[mod].target[index].depth = value;
+	WriteWithSubKnob(preset.lfomod[mod].target[index].param, Sub_lfo_depth, value);
+}
+
+void PresetChangeLfoAddParam(PanPreset_t& preset, int mod, int param, int depth)
+{
+	int emptyindex;
+	for (emptyindex = 0; emptyindex < 16; emptyindex++) {
+		if (preset.lfomod[mod].target[emptyindex].param == 0) break;
+	}
+	if (emptyindex == 0) return;
+	preset.lfomod[mod].target[emptyindex].param = param;
+	preset.lfomod[mod].target[emptyindex].depth = depth;
+	WriteWithSubKnob(param, Sub_lfo_speed, preset.lfomod[mod].speed);
+	WriteWithSubKnob(param, Sub_lfo_shape, preset.lfomod[mod].shape);
+	WriteWithSubKnob(param, Sub_lfo_depth, depth);
+}
+
+void PresetChangeLfoRemoveParam(PanPreset_t& preset, int mod, int param)
+{
+	for (int i = 0; i < 16; i++)
+	{
+		if (preset.lfomod[mod].target[i].param == param) {
+			preset.lfomod[mod].target[i].param = 0;
+			WriteWithSubKnob(param, Sub_lfo_depth, 0);
+			return;
+		}
+	}
+}
+
+void Teensy_InitPreset()
+{
+	InitPreset(gPreset);
+	LoadPreset(gPreset);
+}
 
 void Teensy_KnobChanged(int ID, uint32_t value)
 {
@@ -12,76 +369,75 @@ void Teensy_KnobChanged(int ID, uint32_t value)
 
 
 
-
-	case knob_FM_1_to_2: WriteKnob(Output_VCO123_FM1, value); break;
-	case knob_FM_2_to_3: WriteKnob(Output_VCO123_FM2, value); break;
-	case knob_VCO1_Pitch: WriteKnob(Output_VCO1_PITCH, value); break;
-	case knob_VCO2_Pitch: WriteKnob(Output_VCO2_PITCH, value); break;
-	case knob_VCO3_Pitch: WriteKnob(Output_VCO3_PITCH, value); break;
+	case knob_FM_1_to_2: PresetChangeValue(gPreset, Output_VCO123_FM1, value); break;
+	case knob_FM_2_to_3: PresetChangeValue(gPreset, Output_VCO123_FM2, value); break;
+	case knob_VCO1_Pitch: PresetChangeValue(gPreset, Output_VCO1_PITCH, value); break;
+	case knob_VCO2_Pitch: PresetChangeValue(gPreset, Output_VCO2_PITCH, value); break;
+	case knob_VCO3_Pitch: PresetChangeValue(gPreset, Output_VCO3_PITCH, value); break;
 	
-	case knob_VCO1_PW: WriteKnob(Output_VCO1_PW, value); break;
-	case knob_VCO2_PW: WriteKnob(Output_VCO2_PW, value); break;
-	case knob_VCO3_PW: WriteKnob(Output_VCO3_PW, value); break;
+	case knob_VCO1_PW: PresetChangeValue(gPreset, Output_VCO1_PW, value); break;
+	case knob_VCO2_PW: PresetChangeValue(gPreset, Output_VCO2_PW, value); break;
+	case knob_VCO3_PW: PresetChangeValue(gPreset, Output_VCO3_PW, value); break;
 
-	case knob_VCO4_Pitch: WriteKnob(Output_VCO4_PITCH, value); break;
-	case knob_VCO5_Pitch: WriteKnob(Output_VCO5_PITCH, value); break;
-	case knob_VCO6_Pitch: WriteKnob(Output_VCO6_PITCH, value); break;
-	case knob_VCO7_Pitch: WriteKnob(Output_VCO7_PITCH, value); break;
+	case knob_VCO4_Pitch: PresetChangeValue(gPreset, Output_VCO4_PITCH, value); break;
+	case knob_VCO5_Pitch: PresetChangeValue(gPreset, Output_VCO5_PITCH, value); break;
+	case knob_VCO6_Pitch: PresetChangeValue(gPreset, Output_VCO6_PITCH, value); break;
+	case knob_VCO7_Pitch: PresetChangeValue(gPreset, Output_VCO7_PITCH, value); break;
 
-	case knob_VCF1_Resonance: WriteKnob(Output_VCF1_RES, value); break;
-	case knob_VCF1_Frequency: WriteKnob(Output_VCF1_CV, value); break;
-	case knob_VCF1_Spectrum_Mod: WriteKnob(Output_VCF1_CROSSMOD, value); break;
+	case knob_VCF1_Resonance: PresetChangeValue(gPreset, Output_VCF1_RES, value); break;
+	case knob_VCF1_Frequency: PresetChangeValue(gPreset, Output_VCF1_CV, value); break;
+	case knob_VCF1_Spectrum_Mod: PresetChangeValue(gPreset, Output_VCF1_CROSSMOD, value); break;
 
-	case knob_VCF2_Resonance: WriteKnob(Output_VCF2_RES, value); break;
-	case knob_VCF2_Feed_Back: WriteKnob(Output_VCF2_FB, value); break;
-	case knob_VCF2_Spectrum_mod: WriteKnob(Output_VCF2_CROSSMOD, value); break;
+	case knob_VCF2_Resonance: PresetChangeValue(gPreset, Output_VCF2_RES, value); break;
+	case knob_VCF2_Feed_Back: PresetChangeValue(gPreset, Output_VCF2_FB, value); break;
+	case knob_VCF2_Spectrum_mod: PresetChangeValue(gPreset, Output_VCF2_CROSSMOD, value); break;
 
-	case knob_Bank_Low: WriteKnob(Output_VCF2_L_CV, value); break;
-	case knob_Bank_Low_Level: WriteKnob(Output_VCF2_L_MIX, value); break;
+	case knob_Bank_Low: PresetChangeValue(gPreset, Output_VCF2_L_CV, value); break;
+	case knob_Bank_Low_Level: PresetChangeValue(gPreset, Output_VCF2_L_MIX, value); break;
 	
-	case knob_Bank_High: WriteKnob(Output_VCF2_H_CV, value); break;
-	case knob_Bank_High_Level: WriteKnob(Output_VCF2_H_MIX, value); break;
+	case knob_Bank_High: PresetChangeValue(gPreset, Output_VCF2_H_CV, value); break;
+	case knob_Bank_High_Level: PresetChangeValue(gPreset, Output_VCF2_H_MIX, value); break;
 
-	case knob_Bank_Mid_1: WriteKnob(Output_VCF2_M1_CV, value); break;
-	case knob_Bank_Mid_1_Level: WriteKnob(Output_VCF2_M1_MIX, value); break;
+	case knob_Bank_Mid_1: PresetChangeValue(gPreset, Output_VCF2_M1_CV, value); break;
+	case knob_Bank_Mid_1_Level: PresetChangeValue(gPreset, Output_VCF2_M1_MIX, value); break;
 
-	case knob_Bank_Mid_2: WriteKnob(Output_VCF2_M2_CV, value); break;
-	case knob_Bank_Mid_2_Level: WriteKnob(Output_VCF2_M2_MIX, value); break;
+	case knob_Bank_Mid_2: PresetChangeValue(gPreset, Output_VCF2_M2_CV, value); break;
+	case knob_Bank_Mid_2_Level: PresetChangeValue(gPreset, Output_VCF2_M2_MIX, value); break;
 
-	case knob_PAN_Cleanfeed: WriteKnob(Output_CLEANF_PAN, value); break;
-	case knob_PAN_VCF1: WriteKnob(Output_VCF1_PAN, value); break;
-	case knob_PAN_VCF2: WriteKnob(Output_VCF2_PAN, value); break;
+	case knob_PAN_Cleanfeed: PresetChangeValue(gPreset, Output_CLEANF_PAN, value); break;
+	case knob_PAN_VCF1: PresetChangeValue(gPreset, Output_VCF1_PAN, value); break;
+	case knob_PAN_VCF2: PresetChangeValue(gPreset, Output_VCF2_PAN, value); break;
 
-	case knob_LEVEL_Cleanfeed: WriteKnob(Output_CLEANF_LEVEL, value); break;
-	case knob_LEVEL_VCF1: WriteKnob(Output_VCF1_LEVEL, value); break;
-	case knob_LEVEL_VCF2: WriteKnob(Output_VCF2_LEVEL, value); break;
-
-
+	case knob_LEVEL_Cleanfeed: PresetChangeValue(gPreset, Output_CLEANF_LEVEL, value); break;
+	case knob_LEVEL_VCF1: PresetChangeValue(gPreset, Output_VCF1_LEVEL, value); break;
+	case knob_LEVEL_VCF2: PresetChangeValue(gPreset, Output_VCF2_LEVEL, value); break;
 
 
 
 
 
 
-	case knob_MIXER_VCO1:WriteKnob(Output_VCO1_MIX1, value); break;
-	case knob_MIXER_VCO2:WriteKnob(Output_VCO2_MIX1, value); break;
-	case knob_MIXER_VCO3:WriteKnob(Output_VCO3_MIX1, value); break;
-	case knob_MIXER_VCO4_7:WriteKnob(Output_VCO4567_MIX1, value); break;
-	case knob_MIXER_RM1_2:WriteKnob(Output_RM1_MIX1, value); break;
-	case knob_MIXER_NOISE_ANAWT:WriteKnob(Output_WHITENS_MIX1, value); break;
-	case knob_MIXER_NOISE_DIG:WriteKnob(Output_DIGINS_MIX1, value); break;
-	case knob_MIXER_NOISECOLOR:WriteKnob(Output_NOISE_COLOR, value); break;
 
 
-	case knob_MIXER_VCO4:WriteKnob(Output_VCO4_DRY_MIX, value); break;
-	case knob_MIXER_VCO5:WriteKnob(Output_VCO5_DRY_MIX, value); break;
-	case knob_MIXER_VCO6:WriteKnob(Output_VCO6_DRY_MIX, value); break;
-	case knob_MIXER_VCO7:WriteKnob(Output_VCO7_DRY_MIX, value); break;
-	case knob_MIXER_RM2_3:WriteKnob(Output_RM2_MIX3, value); break;
+	case knob_MIXER_VCO1:PresetChangeValue(gPreset, Output_VCO1_MIX1, value); break;
+	case knob_MIXER_VCO2:PresetChangeValue(gPreset, Output_VCO2_MIX1, value); break;
+	case knob_MIXER_VCO3:PresetChangeValue(gPreset, Output_VCO3_MIX1, value); break;
+	case knob_MIXER_VCO4_7:PresetChangeValue(gPreset, Output_VCO4567_MIX1, value); break;
+	case knob_MIXER_RM1_2:PresetChangeValue(gPreset, Output_RM1_MIX1, value); break;
+	case knob_MIXER_NOISE_ANAWT:PresetChangeValue(gPreset, Output_WHITENS_MIX1, value); break;
+	case knob_MIXER_NOISE_DIG:PresetChangeValue(gPreset, Output_DIGINS_MIX1, value); break;
+	case knob_MIXER_NOISECOLOR:PresetChangeValue(gPreset, Output_NOISE_COLOR, value); break;
+
+
+	case knob_MIXER_VCO4:PresetChangeValue(gPreset, Output_VCO4_DRY_MIX, value); break;
+	case knob_MIXER_VCO5:PresetChangeValue(gPreset, Output_VCO5_DRY_MIX, value); break;
+	case knob_MIXER_VCO6:PresetChangeValue(gPreset, Output_VCO6_DRY_MIX, value); break;
+	case knob_MIXER_VCO7:PresetChangeValue(gPreset, Output_VCO7_DRY_MIX, value); break;
+	case knob_MIXER_RM2_3:PresetChangeValue(gPreset, Output_RM2_MIX3, value); break;
 	case knob_MIXER_SUMQUAD: printf("TODODODOTODODODOTODODO!!\n"); break;
-	case knob_MIXER_NOISE_BROWN:WriteKnob(Output_BN_MIX3, value); break;
-	case knob_MIXER_NOISE_VIOLET:WriteKnob(Output_PUN_MIX, value); break;
-		//case knob_TOTAL_OUT: WriteKnob(Output_, value); break;
+	case knob_MIXER_NOISE_BROWN:PresetChangeValue(gPreset, Output_BN_MIX3, value); break;
+	case knob_MIXER_NOISE_VIOLET:PresetChangeValue(gPreset, Output_PUN_MIX, value); break;
+		//case knob_TOTAL_OUT: PresetChangeValue(gPreset, Output_, value); break;
 	}
 	printf("knob %s: %d\n", Knobs[ID].name, value);
 

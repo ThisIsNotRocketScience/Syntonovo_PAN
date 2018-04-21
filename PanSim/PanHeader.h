@@ -227,7 +227,7 @@ enum
 #undef SWITCH
 
 
-enum 
+enum SubParam_t
 {
 	Sub_value,
 	Sub_lfo_speed,
@@ -258,6 +258,57 @@ typedef struct PanGui_t
 	
 } PanGui_t;
 
+typedef struct {
+	uint8_t param;
+	uint16_t depth;
+} ModTarget_t;
+
+typedef struct {
+	uint16_t speed;
+	uint16_t shape;
+	ModTarget_t target[16];
+} LfoModulation_t;
+
+typedef struct {
+	uint16_t a;
+	uint16_t d;
+	uint16_t s;
+	uint16_t r;
+	ModTarget_t target[16];
+} AdsrModulation_t;
+
+typedef struct {
+	uint16_t a;
+	uint16_t d;
+	ModTarget_t target[16];
+} AdModulation_t;
+
+typedef struct {
+	enum {
+		Source_left_mod,
+		Source_right_mod,
+		Source_x,
+		Source_y,
+		Source_z,
+		Source_zprime,
+		Source_note,
+		Source_vel
+	} source;
+	ModTarget_t target[16];
+} ControlModulation_t;
+
+typedef struct {
+	uint32_t switches[1];
+
+	uint16_t paramvalue[256];
+
+	LfoModulation_t lfomod[16];
+	AdsrModulation_t adsrmod[16];
+	AdModulation_t admod[16];
+	ControlModulation_t ctrlmod[16];
+} PanPreset_t;
+
+extern void Teensy_InitPreset();
 extern void Teensy_KnobChanged(int ID, uint32_t value);
 extern void Teensy_ButtonPressed(int ID, int value);
 
