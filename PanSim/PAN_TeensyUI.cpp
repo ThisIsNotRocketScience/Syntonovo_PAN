@@ -217,7 +217,7 @@ void PresetChangeAdsrAddParam(PanPreset_t& preset, int mod, int param, int depth
 	for (emptyindex = 0; emptyindex < 16; emptyindex++) {
 		if (preset.adsrmod[mod].target[emptyindex].param == 0) break;
 	}
-	if (emptyindex == 0) return;
+	if (emptyindex == 16) return;
 	preset.adsrmod[mod].target[emptyindex].param = param;
 	preset.adsrmod[mod].target[emptyindex].depth = depth;
 	WriteWithSubKnob(param, Sub_adsr_a, preset.adsrmod[mod].a);
@@ -277,7 +277,7 @@ void PresetChangeAdAddParam(PanPreset_t& preset, int mod, int param, int depth)
 	for (emptyindex = 0; emptyindex < 16; emptyindex++) {
 		if (preset.admod[mod].target[emptyindex].param == 0) break;
 	}
-	if (emptyindex == 0) return;
+	if (emptyindex == 16) return;
 	preset.admod[mod].target[emptyindex].param = param;
 	preset.admod[mod].target[emptyindex].depth = depth;
 	WriteWithSubKnob(param, Sub_ad_a, preset.admod[mod].a);
@@ -335,7 +335,7 @@ void PresetChangeLfoAddParam(PanPreset_t& preset, int mod, int param, int depth)
 	for (emptyindex = 0; emptyindex < 16; emptyindex++) {
 		if (preset.lfomod[mod].target[emptyindex].param == 0) break;
 	}
-	if (emptyindex == 0) return;
+	if (emptyindex == 16) return;
 	preset.lfomod[mod].target[emptyindex].param = param;
 	preset.lfomod[mod].target[emptyindex].depth = depth;
 	WriteWithSubKnob(param, Sub_lfo_speed, preset.lfomod[mod].speed);
@@ -350,6 +350,80 @@ void PresetChangeLfoRemoveParam(PanPreset_t& preset, int mod, int param)
 		if (preset.lfomod[mod].target[i].param == param) {
 			preset.lfomod[mod].target[i].param = 0;
 			WriteWithSubKnob(param, Sub_lfo_depth, 0);
+			return;
+		}
+	}
+}
+
+void WriteCtrlDepth(int param, int source, uint16_t depth)
+{
+	switch (source)
+	{
+	case ControlModulation_t::Source_left_mod:
+		//WriteWithSubKnob(param, Sub_lfo_, 0);
+		// todo
+		break;
+	case ControlModulation_t::Source_right_mod:
+		// todo
+		break;
+	case ControlModulation_t::Source_x:
+		WriteWithSubKnob(param, Sub_x, depth);
+		break;
+	case ControlModulation_t::Source_y:
+		WriteWithSubKnob(param, Sub_y, depth);
+		break;
+	case ControlModulation_t::Source_z:
+		WriteWithSubKnob(param, Sub_z, depth);
+		break;
+	case ControlModulation_t::Source_zprime:
+		WriteWithSubKnob(param, Sub_zprime, depth);
+		break;
+	case ControlModulation_t::Source_note:
+		WriteWithSubKnob(param, Sub_note, depth);
+		break;
+	case ControlModulation_t::Source_vel:
+		WriteWithSubKnob(param, Sub_vel, depth);
+		break;
+	}
+}
+
+void PresetChangeCtrlSource(PanPreset_t& preset, int mod, ControlModulation_t::ModSource_t value)
+{
+	int oldsource = preset.ctrlmod[mod].source;
+	preset.ctrlmod[mod].source = value;
+	for (int i = 0; i < 16; i++)
+	{
+		int param = preset.ctrlmod[mod].target[i].param;
+		WriteCtrlDepth(param, oldsource, 0);
+		WriteCtrlDepth(param, value, preset.ctrlmod[mod].target[i].depth);
+	}
+}
+
+void PresetChangeCtrlDepth(PanPreset_t& preset, int mod, int index, uint16_t value)
+{
+	preset.ctrlmod[mod].target[index].depth = value;
+	WriteCtrlDepth(preset.ctrlmod[mod].target[index].param, preset.ctrlmod[mod].source, value);
+}
+
+void PresetChangeCtrlAddParam(PanPreset_t& preset, int mod, int param, int depth)
+{
+	int emptyindex;
+	for (emptyindex = 0; emptyindex < 16; emptyindex++) {
+		if (preset.ctrlmod[mod].target[emptyindex].param == 0) break;
+	}
+	if (emptyindex == 16) return;
+	preset.ctrlmod[mod].target[emptyindex].param = param;
+	preset.ctrlmod[mod].target[emptyindex].depth = depth;
+	WriteCtrlDepth(param, preset.ctrlmod[mod].source, depth);
+}
+
+void PresetChangeCtrlRemoveParam(PanPreset_t& preset, int mod, int param)
+{
+	for (int i = 0; i < 16; i++)
+	{
+		if (preset.ctrlmod[mod].target[i].param == param) {
+			preset.ctrlmod[mod].target[i].param = 0;
+			WriteCtrlDepth(param, preset.ctrlmod[mod].source, 0);
 			return;
 		}
 	}

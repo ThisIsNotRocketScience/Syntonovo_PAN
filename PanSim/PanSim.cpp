@@ -255,7 +255,7 @@ static bool MySlider(const char* label, float* p_value, float v_min, float v_max
 	bool value_changed = false;
 	bool is_active = ImGui::IsItemActive();
 	bool is_hovered = ImGui::IsItemActive();
-	if (is_active && io.MouseDelta.x != 0.0f)
+	if (is_active && io.MouseDelta.y != 0.0f)
 	{
 		float step = (v_max - v_min) / 200.0f;
 		*p_value -= io.MouseDelta.y * step;

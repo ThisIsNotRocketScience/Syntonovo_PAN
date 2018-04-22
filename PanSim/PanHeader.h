@@ -284,7 +284,7 @@ typedef struct {
 } AdModulation_t;
 
 typedef struct {
-	enum {
+	enum ModSource_t {
 		Source_left_mod,
 		Source_right_mod,
 		Source_x,
