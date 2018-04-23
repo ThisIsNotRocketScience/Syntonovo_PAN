@@ -251,13 +251,23 @@ enum SubParam_t
 
 #undef LEDBUTTON
 
-#define TARGET(param, button, knob) \
+#define TARGET(param, button, knob, name) \
 	if (paramid == param) return button;
 inline int ParamToButton(int paramid)
 {
 #include "PanUiMap.h"
 	return -1;
 }
+#undef TARGET
+
+#define TARGET(param, button, knob, name) \
+	if (paramid == param) return name;
+inline const char* ParamToName(int paramid)
+{
+#include "PanUiMap.h"
+	return "Unnamed";
+}
+#undef TARGET
 
 typedef struct PanGui_t
 {
@@ -291,6 +301,8 @@ typedef struct {
 
 typedef struct {
 	enum ModSource_t {
+		Source_none,
+
 		Source_left_mod,
 		Source_right_mod,
 		Source_x,
@@ -329,5 +341,10 @@ extern void Teensy_ButtonPressed(int ID, int value);
 extern void Raspberry_RenderScreen();
 extern void Raspberry_EncoderTurn(int id, int delta);
 void Raspberry_ToState(GuiState_t state, int modselect);
+void Raspberry_EditLfo(LfoModulation_t& mod);
+void Raspberry_EditAdsr(AdsrModulation_t& mod);
+void Raspberry_EditAd(AdModulation_t& mod);
+void Raspberry_EditCtrl(ControlModulation_t& mod);
+void Raspberry_SelectTarget(int target);
 
 #endif
