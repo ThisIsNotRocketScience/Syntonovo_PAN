@@ -1,3 +1,28 @@
+#ifndef TARGET 
+	#define REDEFINEDTARGET
+	#define TARGET(param,buttonid,knobid,name)
+#endif
+
+#ifndef MENU
+#define REDEFINEDMENU
+#define MENU(id,buttonid,name)
+#endif
+
+#ifndef ENTRY
+#define REDEFINEDENTRY
+#define ENTRY(name,entryid,knob)
+#endif
+
+#ifndef CUSTOMENTRY
+#define REDEFINEDCUSTOMENTRY
+#define CUSTOMENTRY(name,entryid,ctrl)
+#endif
+
+#ifndef ENDMENU
+#define REDEFINEDENDMENU
+#define ENDMENU()
+#endif
+
 
 TARGET(Output_VCF1_RES, ledbutton_VCF1_ResonanceBut, knob_VCF1_Resonance, "VCF1 res")
 TARGET(Output_VCF1_CROSSMOD, ledbutton_VCF1_Spectrum_ModBut, knob_VCF1_Spectrum_Mod, "VCF1 SPM")
@@ -51,9 +76,9 @@ TARGET(Output_VCO123_FM2, ledbutton_VCO2, knob_FM_2_to_3, "FM2")
 //TARGET(EXT_MIX2, ledbutton_, knob_, "")
 
 //
-TARGET(Output_CLEANF_LIN, ledbutton_Cleanfeed_VCA, -1, "CF Mix")
-TARGET(Output_VCF1_LIN, ledbutton_VCF1_VCA, -1, "VCF1 Mix")
-TARGET(Output_VCF2_LIN, ledbutton_VCF2_VCA, -1, "VCF2 Mix")
+TARGET(Output_CLEANF_LIN, ledbutton_Cleanfeed_VCA, __KNOB_COUNT, "CF Mix")
+TARGET(Output_VCF1_LIN, ledbutton_VCF1_VCA, __KNOB_COUNT, "VCF1 Mix")
+TARGET(Output_VCF2_LIN, ledbutton_VCF2_VCA, __KNOB_COUNT, "VCF2 Mix")
 TARGET(Output_CLEANF_LEVEL, ledbutton_Cleanfeed_VCA, knob_LEVEL_Cleanfeed, "")
 TARGET(Output_VCF1_LEVEL, ledbutton_VCF1_VCA, knob_LEVEL_VCF1, "")
 TARGET(Output_VCF2_LEVEL, ledbutton_VCF2_VCA, knob_LEVEL_VCF2, "")
@@ -69,3 +94,81 @@ TARGET(Output_VCO4_PITCH, ledbutton_VCO4, knob_VCO4_Pitch, "VCO4 Pitch")
 TARGET(Output_VCO5_PITCH, ledbutton_VCO5, knob_VCO5_Pitch, "VCO5 Pitch")
 TARGET(Output_VCO6_PITCH, ledbutton_VCO6, knob_VCO6_Pitch, "VCO6 Pitch")
 TARGET(Output_VCO7_PITCH, ledbutton_VCO7, knob_VCO7_Pitch, "VCO7 Pitch")
+
+MENU(VCO1, ledbutton_VCO1, "VCO1")
+ENTRY("Pitch", MenuEntry_Pitch, Output_VCO1_PITCH)
+CUSTOMENTRY("Wave", MenuEntry_Waveform3, SEL1TRI)
+ENTRY("PW", MenuEntry_Pulsewidth, Output_VCO1_PW)
+ENTRY("VCFMix", MenuEntry_FilterMix, Output_VCO1_MIX1)
+ENTRY("RM Mix", MenuEntry_FilterMix, Output_RM1_MIX1)
+ENDMENU()
+
+MENU(VCO2, ledbutton_VCO2, "VCO2")
+ENTRY("Pitch", MenuEntry_Pitch, Output_VCO2_PITCH)
+CUSTOMENTRY("Wave", MenuEntry_Waveform3, SEL2TRI)
+ENTRY("PW", MenuEntry_Pulsewidth, Output_VCO2_PW)
+ENTRY("FM", MenuEntry_Value, Output_VCO123_FM1)
+ENTRY("VCFMix", MenuEntry_FilterMix, Output_VCO2_MIX1)
+ENTRY("RM Mix", MenuEntry_FilterMix, Output_RM1_MIX1)
+ENDMENU()
+
+MENU(VCO3, ledbutton_VCO3, "VCO3")
+ENTRY("Pitch", MenuEntry_Pitch, Output_VCO3_PITCH)
+CUSTOMENTRY("Wave", MenuEntry_Waveform3, SEL3TRI)
+ENTRY("PW", MenuEntry_Pulsewidth, Output_VCO3_PW)
+ENTRY("FM", MenuEntry_Value, Output_VCO123_FM2)
+ENTRY("VCFMix", MenuEntry_FilterMix, Output_VCO3_MIX1)
+ENTRY("RM Mix", MenuEntry_FilterMix, Output_RM1_MIX1)
+ENDMENU()
+
+MENU(VCO4, ledbutton_VCO4, "VCO4")
+ENTRY("Pitch", MenuEntry_Pitch, Output_VCO4_PITCH)
+CUSTOMENTRY("Wave", MenuEntry_Waveform1, SEL4SAW)
+ENTRY("VCFMix", MenuEntry_FilterMix, Output_VCO4567_MIX1)
+ENDMENU()
+
+MENU(VCO5, ledbutton_VCO5, "VCO5")
+ENTRY("Pitch", MenuEntry_Pitch, Output_VCO5_PITCH)
+CUSTOMENTRY("Wave", MenuEntry_Waveform1, SEL5SAW)
+ENTRY("VCFMix", MenuEntry_FilterMix, Output_VCO4567_MIX1)
+ENDMENU()
+
+MENU(VCO6, ledbutton_VCO6, "VCO6")
+ENTRY("Pitch", MenuEntry_Pitch, Output_VCO6_PITCH)
+CUSTOMENTRY("Wave", MenuEntry_Waveform1, SEL6SAW)
+ENTRY("VCFMix", MenuEntry_FilterMix, Output_VCO4567_MIX1)
+ENDMENU()
+
+MENU(VCO7, ledbutton_VCO7, "VCO7")
+ENTRY("Pitch", MenuEntry_Pitch, Output_VCO7_PITCH)
+CUSTOMENTRY("Wave", MenuEntry_Waveform1, SEL7SAW)
+ENTRY("VCFMix", MenuEntry_FilterMix, Output_VCO4567_MIX1)
+ENDMENU()
+
+
+
+#ifdef REDEFINEDTARGET
+#undef TARGET
+#undef REDEFINEDTARGET
+#endif
+
+#ifdef REDEFINEDMENU
+#undef MENU
+#undef REDEFINEDMENU
+#endif
+
+#ifdef REDEFINEDENTRY
+#undef ENTRY
+#undef REDEFINEDENTRY
+#endif
+
+#ifdef REDEFINEDCUSTOMENTRY
+#undef CUSTOMENTRY
+#undef REDEFINEDCUSTOMENTRY
+#endif
+
+#ifdef REDEFINEDENDMENU
+#undef ENDMENU
+#undef REDEFINEDENDMENU
+#endif
+

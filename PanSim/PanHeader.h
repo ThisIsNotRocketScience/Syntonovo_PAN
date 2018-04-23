@@ -9,6 +9,51 @@ const int knobcount = 0
 ;
 #undef KNOB
 
+enum KnobEnum
+{
+#define KNOB(name,x,y,min,max)  knob_##name,
+#define SLIDER(name,x,y,min,max)  knob_##name,
+#include "PanControls.h"
+#undef KNOB
+#undef SLIDER
+	__KNOB_COUNT
+};
+
+enum LedButtonEnum
+{
+#define LEDBUTTON(name,x,y)  ledbutton_##name,
+#include "PanControls.h"
+#undef LEDBUTTON
+	__LEDBUTTON_COUNT
+};
+
+enum LedEnum
+{
+#define LED(name,x,y)  led_##name,
+#include "PanControls.h"
+#undef LED
+	__LED_COUNT
+};
+
+enum OutputEnum
+{
+#define OUTPUT(name,codecport,codecpin, type,id, style,defaultvalue) Output_##name = id,
+#define OUTPUT_VIRT(name,codecport,codecpin, type,id, style,defaultvalue) Output_##name = id,
+#include "../interface/paramdef.h"
+#undef OUTPUT
+#undef OUTPUT_VIRT
+	__OUTPUT_COUNT
+};
+
+enum SwitchEnum
+{
+#define SWITCH(name,id) Switch_##name = id,
+#include "../interface/paramdef.h"
+#undef SWITCH
+	__SWITCH_COUNT
+};
+
+
 
 typedef struct _param_t
 {	
@@ -99,7 +144,7 @@ public:
 	char *name;
 	float x;
 	float y;
-	int id;
+	LedButtonEnum id;
 	bool value;
 };
 
@@ -127,7 +172,7 @@ public:
 	char *name;
 	float x;
 	float y;
-	int id;
+	KnobEnum id;
 	int isslider;
 	float value;
 };
@@ -183,50 +228,6 @@ extern void GUI_Enc2Press();
 extern void GUI_Enter();
 extern void GUI_Cancel();
 
-#define KNOB(name,x,y,min,max)  knob_##name,
-#define SLIDER(name,x,y,min,max)  knob_##name,
-enum KnobEnum
-{
-#include "PanControls.h"
-	__KNOB_COUNT
-};
-#undef KNOB
-#undef SLIDER
-
-#define LEDBUTTON(name,x,y)  ledbutton_##name,
-enum LedButtonEnum
-{
-#include "PanControls.h"
-	__LEDBUTTON_COUNT
-};
-
-#undef LEDBUTTON
-
-#define LED(name,x,y)  led_##name,
-enum LedEnum
-{
-#include "PanControls.h"
-	__LED_COUNT
-};
-
-#define OUTPUT(name,codecport,codecpin, type,id, style,defaultvalue) Output_##name = id,
-#define OUTPUT_VIRT(name,codecport,codecpin, type,id, style,defaultvalue) Output_##name = id,
-enum
-{
-#include "../interface/paramdef.h"
-	__OUTPUT_COUNT
-};
-#undef OUTPUT
-#undef OUTPUT_VIRT
-#define SWITCH(name,id) Switch_##name = id,
-enum
-{
-#include "../interface/paramdef.h"
-	__SWITCH_COUNT
-};
-#undef SWITCH
-
-
 enum SubParam_t
 {
 	Sub_value,
@@ -249,43 +250,50 @@ enum SubParam_t
 	Sub_vel
 };
 
-#undef LEDBUTTON
-
-#define TARGET(param, button, knob, name) \
-	if (paramid == param) return button;
 inline int ParamToButton(int paramid)
 {
+#define TARGET(param, button, knob, name) \
+	if (paramid == param) return button;
 #include "PanUiMap.h"
+#undef TARGET
 	return -1;
 }
-#undef TARGET
 
-#define TARGET(param, button, knob, name) \
-	if (buttonid == button) return param;
 inline int ButtonToParam(int buttonid)
 {
+#define TARGET(param, button, knob, name) \
+	if (buttonid == button) return param;
 #include "PanUiMap.h"
+#undef TARGET
 	return -1;
 }
-#undef TARGET
 
-#define TARGET(param, button, knob, name) \
-	if (knobid == knob) return param;
 inline int KnobToParam(int knobid)
 {
+#define TARGET(param, button, knob, name) \
+	if (knobid == knob) return param;
 #include "PanUiMap.h"
+#undef TARGET
 	return -1;
 }
-#undef TARGET
 
+inline KnobEnum ParamToKnob(int paramid)
+{
 #define TARGET(param, button, knob, name) \
-	if (paramid == param) return name;
+	if (param == paramid) return knob;
+#include "PanUiMap.h"
+#undef TARGET
+	return __KNOB_COUNT;
+}
+
 inline const char* ParamToName(int paramid)
 {
+#define TARGET(param, button, knob, name) \
+	if (paramid == param) return name;
 #include "PanUiMap.h"
+#undef TARGET
 	return "Unnamed";
 }
-#undef TARGET
 
 typedef struct PanGui_t
 {
@@ -345,17 +353,44 @@ typedef struct {
 } PanPreset_t;
 
 typedef enum {
-	GuiState_Root,
+	GuiState_Root = -1,
 	GuiState_LfoSelect,
 	GuiState_AdsrSelect,
 	GuiState_AdSelect,
-	GuiState_CtrlSelect
+	GuiState_CtrlSelect,
+
+#define MENU(id, buttonid, name) \
+	GuiState_Menu_##id,
+#include "PanUiMap.h"
+#undef MENU
+
 } GuiState_t;
 
-extern void Teensy_InitPreset();
-extern void Teensy_KnobChanged(int ID, uint32_t value);
-extern void Teensy_ButtonPressed(int ID, int value);
 
+inline GuiState_t ButtonToMenu(int buttonid)
+{
+#define MENU(id, button, name) \
+	if (buttonid == button) return GuiState_Menu_##id;
+#include "PanUiMap.h"
+#undef MENU
+	return GuiState_Root;
+}
+
+inline bool IsMenuState(GuiState_t state)
+{
+#define MENU(id, button, name) \
+	if (state == GuiState_Menu_##id) return true;
+#include "PanUiMap.h"
+#undef MENU
+	return false;
+}
+
+extern void Teensy_Reset();
+extern void Teensy_InitPreset();
+extern void Teensy_KnobChanged(KnobEnum ID, uint32_t value);
+extern void Teensy_ButtonPressed(LedButtonEnum ID, int value);
+
+extern void Raspberry_Reset();
 extern void Raspberry_RenderScreen();
 extern void Raspberry_EncoderTurn(int id, int delta);
 void Raspberry_ToState(GuiState_t state, int modselect);
@@ -368,5 +403,6 @@ void Raspberry_UpdateTarget(int target, int param, int depth);
 void Raspberry_SetLfoParam(SubParam_t subparam, uint32_t value);
 void Raspberry_SetAdsrParam(SubParam_t subparam, uint32_t value);
 void Raspberry_SetAdParam(SubParam_t subparam, uint32_t value);
+void Raspberry_OutputChangeValue(int output, uint32_t value);
 
 #endif

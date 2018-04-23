@@ -527,6 +527,19 @@ int SourceToLedButton(ControlModulation_t::ModSource_t source)
 	return -1;
 }
 
+void UpdateMenuButtons()
+{
+#define MENU(id, button, name) \
+	if (Teensy_guidata.GuiState == GuiState_Menu_##id) { \
+		Buttons[button].value = true;
+#define ENDMENU() \
+		return; \
+	}
+#include "PanUiMap.h"
+#undef MENU
+#undef ENDMENU
+}
+
 void UpdateTargets()
 {
 	for (int i = 0; i < __LEDBUTTON_COUNT; i++)
@@ -547,8 +560,12 @@ void UpdateTargets()
 	case GuiState_CtrlSelect:
 		Buttons[SourceToLedButton(gPreset.ctrlmod[Teensy_guidata.ModSelect].source)].value = true;
 		break;
+	default:
+		UpdateMenuButtons();
+		return;
 	}
 
+	// Modulation buttons
 	switch (Teensy_guidata.GuiState)
 	{
 	case GuiState_LfoSelect:
@@ -748,7 +765,7 @@ int CtrlMod(PanPreset_t& preset, ControlModulation_t::ModSource_t source)
 	return firstEmpty;
 }
 
-bool IsModEdit()
+bool Teensy_IsModEdit()
 {
 	if (Teensy_guidata.GuiState == GuiState_LfoSelect
 		|| Teensy_guidata.GuiState == GuiState_AdsrSelect
@@ -1065,11 +1082,15 @@ void Teensy_SelectTarget(int ledbutton)
 	if (Teensy_guidata.GuiState == GuiState_LfoSelect) {
 		int target = NextTarget(&gPreset.lfomod[Teensy_guidata.ModSelect].target[0], ledbutton, Teensy_guidata.TargetSelect);
 		if (target == -1) {
-			Teensy_UnmapPrevious(ButtonToParam(ledbutton));
-			target = PresetChangeLfoAddParam(gPreset, Teensy_guidata.ModSelect, ButtonToParam(ledbutton), 0);
+			int param = ButtonToParam(ledbutton);
+			if (param == -1) {
+				return;
+			}
+			Teensy_UnmapPrevious(param);
+			target = PresetChangeLfoAddParam(gPreset, Teensy_guidata.ModSelect, param, 0);
 			if (target != -1) {
 				SyncLfo(gPreset, Teensy_guidata.ModSelect);
-				Raspberry_UpdateTarget(target, ButtonToParam(ledbutton), 0);
+				Raspberry_UpdateTarget(target, param, 0);
 				Buttons[ledbutton].value = true;
 			}
 		}
@@ -1079,10 +1100,14 @@ void Teensy_SelectTarget(int ledbutton)
 	else if (Teensy_guidata.GuiState == GuiState_AdsrSelect) {
 		int target = NextTarget(&gPreset.adsrmod[Teensy_guidata.ModSelect].target[0], ledbutton, Teensy_guidata.TargetSelect);
 		if (target == -1) {
-			Teensy_UnmapPrevious(ButtonToParam(ledbutton));
-			target = PresetChangeAdsrAddParam(gPreset, Teensy_guidata.ModSelect, ButtonToParam(ledbutton), 0);
+			int param = ButtonToParam(ledbutton);
+			if (param == -1) {
+				return;
+			}
+			Teensy_UnmapPrevious(param);
+			target = PresetChangeAdsrAddParam(gPreset, Teensy_guidata.ModSelect, param, 0);
 			if (target != -1) {
-				Raspberry_UpdateTarget(target, ButtonToParam(ledbutton), 0);
+				Raspberry_UpdateTarget(target, param, 0);
 				Buttons[ledbutton].value = true;
 			}
 		}
@@ -1092,10 +1117,14 @@ void Teensy_SelectTarget(int ledbutton)
 	else if (Teensy_guidata.GuiState == GuiState_AdSelect) {
 		int target = NextTarget(&gPreset.admod[Teensy_guidata.ModSelect].target[0], ledbutton, Teensy_guidata.TargetSelect);
 		if (target == -1) {
-			Teensy_UnmapPrevious(ButtonToParam(ledbutton));
-			target = PresetChangeAdAddParam(gPreset, Teensy_guidata.ModSelect, ButtonToParam(ledbutton), 0);
+			int param = ButtonToParam(ledbutton);
+			if (param == -1) {
+				return;
+			}
+			Teensy_UnmapPrevious(param);
+			target = PresetChangeAdAddParam(gPreset, Teensy_guidata.ModSelect, param, 0);
 			if (target != -1) {
-				Raspberry_UpdateTarget(target, ButtonToParam(ledbutton), 0);
+				Raspberry_UpdateTarget(target, param, 0);
 				Buttons[ledbutton].value = true;
 			}
 		}
@@ -1105,10 +1134,14 @@ void Teensy_SelectTarget(int ledbutton)
 	else if (Teensy_guidata.GuiState == GuiState_CtrlSelect) {
 		int target = NextTarget(&gPreset.ctrlmod[Teensy_guidata.ModSelect].target[0], ledbutton, Teensy_guidata.TargetSelect);
 		if (target == -1) {
-			Teensy_UnmapPrevious(ButtonToParam(ledbutton));
-			target = PresetChangeCtrlAddParam(gPreset, Teensy_guidata.ModSelect, ButtonToParam(ledbutton), 0);
+			int param = ButtonToParam(ledbutton);
+			if (param == -1) {
+				return;
+			}
+			Teensy_UnmapPrevious(param);
+			target = PresetChangeCtrlAddParam(gPreset, Teensy_guidata.ModSelect, param, 0);
 			if (target != -1) {
-				Raspberry_UpdateTarget(target, ButtonToParam(ledbutton), 0);
+				Raspberry_UpdateTarget(target, param, 0);
 				Buttons[ledbutton].value = true;
 			}
 		}
@@ -1230,152 +1263,205 @@ void Teensy_ModChangeDepth(int target, uint32_t value)
 	}
 }
 
-void Teensy_KnobChanged(int ID, uint32_t value)
+bool Teensy_ActivateMenu(int buttonid)
+{
+	GuiState_t menu = ButtonToMenu(buttonid);
+
+	if (menu != GuiState_Root) {
+		Teensy_ToState(menu, 0);
+
+
+#define MENU(id, button, name) \
+		if (menu == GuiState_Menu_##id) {
+#define ENDMENU() \
+		}
+#define ENTRY(name,type,param) \
+		Raspberry_OutputChangeValue(param, gPreset.paramvalue[param]);
+#include "PanUiMap.h"
+#undef MENU
+#undef ENDMENU
+#undef ENTRY
+
+		return true;
+	}
+
+	return false;
+}
+
+bool Teensy_KnobInMenu(KnobEnum knobid)
+{
+	int paramid = KnobToParam(knobid);
+#define MENU(id, button, name) \
+		if (Teensy_guidata.GuiState == GuiState_Menu_##id) {
+#define ENDMENU() \
+		}
+#define ENTRY(name,type,param) \
+		if (param == paramid) return true;
+#include "PanUiMap.h"
+#undef MENU
+#undef ENDMENU
+#undef ENTRY
+	return false;
+}
+
+void Teensy_KnobChanged(KnobEnum ID, uint32_t value)
 {
 	int target = Teensy_KnobInModulation(ID);
 	if (target != -1) {
 		Teensy_ModChangeDepth(target, value);
 	}
 	else {
-		switch (ID)
-		{
-			//case knob_MASTER_TUNE: WriteKnob()
-
-		case knob_LFO_SHAPE: {
-			if (Teensy_guidata.GuiState == GuiState_LfoSelect && Teensy_guidata.ModSelect != -1) {
-				PresetChangeLfoParam(gPreset, Teensy_guidata.ModSelect, Sub_lfo_shape, value);
-				Raspberry_SetLfoParam(Sub_lfo_shape, value);
-			}
-			break;
-		}
-		case knob_LFO_SPEED: {
-			if (Teensy_guidata.GuiState == GuiState_LfoSelect && Teensy_guidata.ModSelect != -1) {
-				PresetChangeLfoParam(gPreset, Teensy_guidata.ModSelect, Sub_lfo_speed, value);
-				Raspberry_SetLfoParam(Sub_lfo_speed, value);
-			}
-			break;
+		if (Teensy_KnobInMenu(ID)) {
+			Raspberry_OutputChangeValue(KnobToParam(ID), value);
 		}
 
-		case knob_ADSR_A: {
-			if (Teensy_guidata.GuiState == GuiState_AdsrSelect && Teensy_guidata.ModSelect != -1) {
-				PresetChangeAdsrParam(gPreset, Teensy_guidata.ModSelect, Sub_adsr_a, value);
-				Raspberry_SetAdsrParam(Sub_adsr_a, value);
-			}
-			break;
+		int param = KnobToParam(ID);
+		if (param != -1) {
+			PresetChangeValue(gPreset, param, value);
 		}
-		case knob_ADSR_D: {
-			if (Teensy_guidata.GuiState == GuiState_AdsrSelect && Teensy_guidata.ModSelect != -1) {
-				PresetChangeAdsrParam(gPreset, Teensy_guidata.ModSelect, Sub_adsr_d, value);
-				Raspberry_SetAdsrParam(Sub_adsr_d, value);
+		else {
+			switch (ID)
+			{
+				//case knob_MASTER_TUNE: WriteKnob()
+
+			case knob_LFO_SHAPE: {
+				if (Teensy_guidata.GuiState == GuiState_LfoSelect && Teensy_guidata.ModSelect != -1) {
+					PresetChangeLfoParam(gPreset, Teensy_guidata.ModSelect, Sub_lfo_shape, value);
+					Raspberry_SetLfoParam(Sub_lfo_shape, value);
+				}
+				break;
 			}
-			break;
-		}
-		case knob_ADSR_S: {
-			if (Teensy_guidata.GuiState == GuiState_AdsrSelect && Teensy_guidata.ModSelect != -1) {
-				PresetChangeAdsrParam(gPreset, Teensy_guidata.ModSelect, Sub_adsr_s, value);
-				Raspberry_SetAdsrParam(Sub_adsr_s, value);
+			case knob_LFO_SPEED: {
+				if (Teensy_guidata.GuiState == GuiState_LfoSelect && Teensy_guidata.ModSelect != -1) {
+					PresetChangeLfoParam(gPreset, Teensy_guidata.ModSelect, Sub_lfo_speed, value);
+					Raspberry_SetLfoParam(Sub_lfo_speed, value);
+				}
+				break;
 			}
-			break;
-		}
-		case knob_ADSR_R: {
-			if (Teensy_guidata.GuiState == GuiState_AdsrSelect && Teensy_guidata.ModSelect != -1) {
-				PresetChangeAdsrParam(gPreset, Teensy_guidata.ModSelect, Sub_adsr_r, value);
-				Raspberry_SetAdsrParam(Sub_adsr_r, value);
+
+			case knob_ADSR_A: {
+				if (Teensy_guidata.GuiState == GuiState_AdsrSelect && Teensy_guidata.ModSelect != -1) {
+					PresetChangeAdsrParam(gPreset, Teensy_guidata.ModSelect, Sub_adsr_a, value);
+					Raspberry_SetAdsrParam(Sub_adsr_a, value);
+				}
+				break;
 			}
-			break;
-		}
-
-		case knob_AD_A: {
-			if (Teensy_guidata.GuiState == GuiState_AdSelect && Teensy_guidata.ModSelect != -1) {
-				PresetChangeAdParam(gPreset, Teensy_guidata.ModSelect, Sub_ad_a, value);
-				Raspberry_SetAdParam(Sub_ad_a, value);
+			case knob_ADSR_D: {
+				if (Teensy_guidata.GuiState == GuiState_AdsrSelect && Teensy_guidata.ModSelect != -1) {
+					PresetChangeAdsrParam(gPreset, Teensy_guidata.ModSelect, Sub_adsr_d, value);
+					Raspberry_SetAdsrParam(Sub_adsr_d, value);
+				}
+				break;
 			}
-			break;
-		}
-		case knob_AD_D: {
-			if (Teensy_guidata.GuiState == GuiState_AdSelect && Teensy_guidata.ModSelect != -1) {
-				PresetChangeAdParam(gPreset, Teensy_guidata.ModSelect, Sub_ad_d, value);
-				Raspberry_SetAdParam(Sub_ad_d, value);
+			case knob_ADSR_S: {
+				if (Teensy_guidata.GuiState == GuiState_AdsrSelect && Teensy_guidata.ModSelect != -1) {
+					PresetChangeAdsrParam(gPreset, Teensy_guidata.ModSelect, Sub_adsr_s, value);
+					Raspberry_SetAdsrParam(Sub_adsr_s, value);
+				}
+				break;
 			}
-			break;
-		}
+			case knob_ADSR_R: {
+				if (Teensy_guidata.GuiState == GuiState_AdsrSelect && Teensy_guidata.ModSelect != -1) {
+					PresetChangeAdsrParam(gPreset, Teensy_guidata.ModSelect, Sub_adsr_r, value);
+					Raspberry_SetAdsrParam(Sub_adsr_r, value);
+				}
+				break;
+			}
 
-		case knob_FM_1_to_2: PresetChangeValue(gPreset, Output_VCO123_FM1, value); break;
-		case knob_FM_2_to_3: PresetChangeValue(gPreset, Output_VCO123_FM2, value); break;
-		case knob_VCO1_Pitch: PresetChangeValue(gPreset, Output_VCO1_PITCH, value); break;
-		case knob_VCO2_Pitch: PresetChangeValue(gPreset, Output_VCO2_PITCH, value); break;
-		case knob_VCO3_Pitch: PresetChangeValue(gPreset, Output_VCO3_PITCH, value); break;
+			case knob_AD_A: {
+				if (Teensy_guidata.GuiState == GuiState_AdSelect && Teensy_guidata.ModSelect != -1) {
+					PresetChangeAdParam(gPreset, Teensy_guidata.ModSelect, Sub_ad_a, value);
+					Raspberry_SetAdParam(Sub_ad_a, value);
+				}
+				break;
+			}
+			case knob_AD_D: {
+				if (Teensy_guidata.GuiState == GuiState_AdSelect && Teensy_guidata.ModSelect != -1) {
+					PresetChangeAdParam(gPreset, Teensy_guidata.ModSelect, Sub_ad_d, value);
+					Raspberry_SetAdParam(Sub_ad_d, value);
+				}
+				break;
+			}
 
-		case knob_VCO1_PW: PresetChangeValue(gPreset, Output_VCO1_PW, value); break;
-		case knob_VCO2_PW: PresetChangeValue(gPreset, Output_VCO2_PW, value); break;
-		case knob_VCO3_PW: PresetChangeValue(gPreset, Output_VCO3_PW, value); break;
+							/*
+									case knob_FM_1_to_2: PresetChangeValue(gPreset, Output_VCO123_FM1, value); break;
+									case knob_FM_2_to_3: PresetChangeValue(gPreset, Output_VCO123_FM2, value); break;
+									case knob_VCO1_Pitch: PresetChangeValue(gPreset, Output_VCO1_PITCH, value); break;
+									case knob_VCO2_Pitch: PresetChangeValue(gPreset, Output_VCO2_PITCH, value); break;
+									case knob_VCO3_Pitch: PresetChangeValue(gPreset, Output_VCO3_PITCH, value); break;
 
-		case knob_VCO4_Pitch: PresetChangeValue(gPreset, Output_VCO4_PITCH, value); break;
-		case knob_VCO5_Pitch: PresetChangeValue(gPreset, Output_VCO5_PITCH, value); break;
-		case knob_VCO6_Pitch: PresetChangeValue(gPreset, Output_VCO6_PITCH, value); break;
-		case knob_VCO7_Pitch: PresetChangeValue(gPreset, Output_VCO7_PITCH, value); break;
+									case knob_VCO1_PW: PresetChangeValue(gPreset, Output_VCO1_PW, value); break;
+									case knob_VCO2_PW: PresetChangeValue(gPreset, Output_VCO2_PW, value); break;
+									case knob_VCO3_PW: PresetChangeValue(gPreset, Output_VCO3_PW, value); break;
 
-		case knob_VCF1_Resonance: PresetChangeValue(gPreset, Output_VCF1_RES, value); break;
-		case knob_VCF1_Frequency: PresetChangeValue(gPreset, Output_VCF1_CV, value); break;
-		case knob_VCF1_Spectrum_Mod: PresetChangeValue(gPreset, Output_VCF1_CROSSMOD, value); break;
+									case knob_VCO4_Pitch: PresetChangeValue(gPreset, Output_VCO4_PITCH, value); break;
+									case knob_VCO5_Pitch: PresetChangeValue(gPreset, Output_VCO5_PITCH, value); break;
+									case knob_VCO6_Pitch: PresetChangeValue(gPreset, Output_VCO6_PITCH, value); break;
+									case knob_VCO7_Pitch: PresetChangeValue(gPreset, Output_VCO7_PITCH, value); break;
 
-		case knob_VCF2_Resonance: PresetChangeValue(gPreset, Output_VCF2_RES, value); break;
-		case knob_VCF2_Feed_Back: PresetChangeValue(gPreset, Output_VCF2_FB, value); break;
-		case knob_VCF2_Spectrum_mod: PresetChangeValue(gPreset, Output_VCF2_CROSSMOD, value); break;
+									case knob_VCF1_Resonance: PresetChangeValue(gPreset, Output_VCF1_RES, value); break;
+									case knob_VCF1_Frequency: PresetChangeValue(gPreset, Output_VCF1_CV, value); break;
+									case knob_VCF1_Spectrum_Mod: PresetChangeValue(gPreset, Output_VCF1_CROSSMOD, value); break;
 
-		case knob_Bank_Low: PresetChangeValue(gPreset, Output_VCF2_L_CV, value); break;
-		case knob_Bank_Low_Level: PresetChangeValue(gPreset, Output_VCF2_L_MIX, value); break;
+									case knob_VCF2_Resonance: PresetChangeValue(gPreset, Output_VCF2_RES, value); break;
+									case knob_VCF2_Feed_Back: PresetChangeValue(gPreset, Output_VCF2_FB, value); break;
+									case knob_VCF2_Spectrum_mod: PresetChangeValue(gPreset, Output_VCF2_CROSSMOD, value); break;
 
-		case knob_Bank_High: PresetChangeValue(gPreset, Output_VCF2_H_CV, value); break;
-		case knob_Bank_High_Level: PresetChangeValue(gPreset, Output_VCF2_H_MIX, value); break;
+									case knob_Bank_Low: PresetChangeValue(gPreset, Output_VCF2_L_CV, value); break;
+									case knob_Bank_Low_Level: PresetChangeValue(gPreset, Output_VCF2_L_MIX, value); break;
 
-		case knob_Bank_Mid_1: PresetChangeValue(gPreset, Output_VCF2_M1_CV, value); break;
-		case knob_Bank_Mid_1_Level: PresetChangeValue(gPreset, Output_VCF2_M1_MIX, value); break;
+									case knob_Bank_High: PresetChangeValue(gPreset, Output_VCF2_H_CV, value); break;
+									case knob_Bank_High_Level: PresetChangeValue(gPreset, Output_VCF2_H_MIX, value); break;
 
-		case knob_Bank_Mid_2: PresetChangeValue(gPreset, Output_VCF2_M2_CV, value); break;
-		case knob_Bank_Mid_2_Level: PresetChangeValue(gPreset, Output_VCF2_M2_MIX, value); break;
+									case knob_Bank_Mid_1: PresetChangeValue(gPreset, Output_VCF2_M1_CV, value); break;
+									case knob_Bank_Mid_1_Level: PresetChangeValue(gPreset, Output_VCF2_M1_MIX, value); break;
 
-		case knob_PAN_Cleanfeed: PresetChangeValue(gPreset, Output_CLEANF_PAN, value); break;
-		case knob_PAN_VCF1: PresetChangeValue(gPreset, Output_VCF1_PAN, value); break;
-		case knob_PAN_VCF2: PresetChangeValue(gPreset, Output_VCF2_PAN, value); break;
+									case knob_Bank_Mid_2: PresetChangeValue(gPreset, Output_VCF2_M2_CV, value); break;
+									case knob_Bank_Mid_2_Level: PresetChangeValue(gPreset, Output_VCF2_M2_MIX, value); break;
 
-		case knob_LEVEL_Cleanfeed: PresetChangeValue(gPreset, Output_CLEANF_LEVEL, value); break;
-		case knob_LEVEL_VCF1: PresetChangeValue(gPreset, Output_VCF1_LEVEL, value); break;
-		case knob_LEVEL_VCF2: PresetChangeValue(gPreset, Output_VCF2_LEVEL, value); break;
+									case knob_PAN_Cleanfeed: PresetChangeValue(gPreset, Output_CLEANF_PAN, value); break;
+									case knob_PAN_VCF1: PresetChangeValue(gPreset, Output_VCF1_PAN, value); break;
+									case knob_PAN_VCF2: PresetChangeValue(gPreset, Output_VCF2_PAN, value); break;
 
-
-
-
-
-
-
-
-		case knob_MIXER_VCO1:PresetChangeValue(gPreset, Output_VCO1_MIX1, value); break;
-		case knob_MIXER_VCO2:PresetChangeValue(gPreset, Output_VCO2_MIX1, value); break;
-		case knob_MIXER_VCO3:PresetChangeValue(gPreset, Output_VCO3_MIX1, value); break;
-		case knob_MIXER_VCO4_7:PresetChangeValue(gPreset, Output_VCO4567_MIX1, value); break;
-		case knob_MIXER_RM1_2:PresetChangeValue(gPreset, Output_RM1_MIX1, value); break;
-		case knob_MIXER_NOISE_ANAWT:PresetChangeValue(gPreset, Output_WHITENS_MIX1, value); break;
-		case knob_MIXER_NOISE_DIG:PresetChangeValue(gPreset, Output_DIGINS_MIX1, value); break;
-		case knob_MIXER_NOISECOLOR:PresetChangeValue(gPreset, Output_NOISE_COLOR, value); break;
+									case knob_LEVEL_Cleanfeed: PresetChangeValue(gPreset, Output_CLEANF_LEVEL, value); break;
+									case knob_LEVEL_VCF1: PresetChangeValue(gPreset, Output_VCF1_LEVEL, value); break;
+									case knob_LEVEL_VCF2: PresetChangeValue(gPreset, Output_VCF2_LEVEL, value); break;
 
 
-		case knob_MIXER_VCO4:PresetChangeValue(gPreset, Output_VCO4_DRY_MIX, value); break;
-		case knob_MIXER_VCO5:PresetChangeValue(gPreset, Output_VCO5_DRY_MIX, value); break;
-		case knob_MIXER_VCO6:PresetChangeValue(gPreset, Output_VCO6_DRY_MIX, value); break;
-		case knob_MIXER_VCO7:PresetChangeValue(gPreset, Output_VCO7_DRY_MIX, value); break;
-		case knob_MIXER_RM2_3:PresetChangeValue(gPreset, Output_RM2_MIX3, value); break;
-		case knob_MIXER_SUMQUAD: printf("TODODODOTODODODOTODODO!!\n"); break;
-		case knob_MIXER_NOISE_BROWN:PresetChangeValue(gPreset, Output_BN_MIX3, value); break;
-		case knob_MIXER_NOISE_VIOLET:PresetChangeValue(gPreset, Output_PUN_MIX, value); break;
-			//case knob_TOTAL_OUT: PresetChangeValue(gPreset, Output_, value); break;
+
+
+
+
+
+
+									case knob_MIXER_VCO1:PresetChangeValue(gPreset, Output_VCO1_MIX1, value); break;
+									case knob_MIXER_VCO2:PresetChangeValue(gPreset, Output_VCO2_MIX1, value); break;
+									case knob_MIXER_VCO3:PresetChangeValue(gPreset, Output_VCO3_MIX1, value); break;
+									case knob_MIXER_VCO4_7:PresetChangeValue(gPreset, Output_VCO4567_MIX1, value); break;
+									case knob_MIXER_RM1_2:PresetChangeValue(gPreset, Output_RM1_MIX1, value); break;
+									case knob_MIXER_NOISE_ANAWT:PresetChangeValue(gPreset, Output_WHITENS_MIX1, value); break;
+									case knob_MIXER_NOISE_DIG:PresetChangeValue(gPreset, Output_DIGINS_MIX1, value); break;
+									case knob_MIXER_NOISECOLOR:PresetChangeValue(gPreset, Output_NOISE_COLOR, value); break;
+
+
+									case knob_MIXER_VCO4:PresetChangeValue(gPreset, Output_VCO4_DRY_MIX, value); break;
+									case knob_MIXER_VCO5:PresetChangeValue(gPreset, Output_VCO5_DRY_MIX, value); break;
+									case knob_MIXER_VCO6:PresetChangeValue(gPreset, Output_VCO6_DRY_MIX, value); break;
+									case knob_MIXER_VCO7:PresetChangeValue(gPreset, Output_VCO7_DRY_MIX, value); break;
+									case knob_MIXER_RM2_3:PresetChangeValue(gPreset, Output_RM2_MIX3, value); break;
+									case knob_MIXER_SUMQUAD: printf("TODODODOTODODODOTODODO!!\n"); break;
+									case knob_MIXER_NOISE_BROWN:PresetChangeValue(gPreset, Output_BN_MIX3, value); break;
+									case knob_MIXER_NOISE_VIOLET:PresetChangeValue(gPreset, Output_PUN_MIX, value); break;
+										//case knob_TOTAL_OUT: PresetChangeValue(gPreset, Output_, value); break;
+								*/
+			}
 		}
 	}
 	printf("knob %s: %d\n", Knobs[ID].name, value);
 
 }
 
-void Teensy_ButtonPressed(int ID, int value)
+void Teensy_ButtonPressed(LedButtonEnum ID, int value)
 {
 	printf("button %s: %d\n", Buttons[ID].name, Buttons[ID].value ? 1 : 0);
 
@@ -1416,10 +1502,17 @@ modes:
 	case ledbutton_VELOCITY: Teensy_ToState(GuiState_CtrlSelect, ledbutton_VELOCITY); break;
 
 	default:
-		if (IsModEdit()) {
+		if (Teensy_IsModEdit()) {
 			Teensy_SelectTarget(ID);
+		}
+		else if (Teensy_ActivateMenu(ID)) {
+
 		}
 		break;
 	}
 }
 
+void Teensy_Reset()
+{
+	Teensy_guidata.GuiState = GuiState_Root;
+}

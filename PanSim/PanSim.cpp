@@ -150,11 +150,11 @@ void WriteSyncLfo(uint8_t* paramids)
 	//TODO
 }
 
-typedef struct setpara_t
+typedef struct
 {
 	uint16_t paramid;
 	uint16_t value;
-};
+} setpara_t;
 
 void set(setpara_t& para)
 {
@@ -520,7 +520,9 @@ int main(int argc, char** argv)
 
 	static bool parameters = true;
 	GetSerialPorts(port);
-	
+
+	Teensy_Reset();
+	Raspberry_Reset();
 	Teensy_InitPreset();
 
 	setpara_t para;
