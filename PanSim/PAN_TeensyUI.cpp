@@ -1069,6 +1069,7 @@ void Teensy_SelectTarget(int ledbutton)
 			target = PresetChangeLfoAddParam(gPreset, Teensy_guidata.ModSelect, ButtonToParam(ledbutton), 0);
 			if (target != -1) {
 				SyncLfo(gPreset, Teensy_guidata.ModSelect);
+				Raspberry_UpdateTarget(target, ButtonToParam(ledbutton), 0);
 				Buttons[ledbutton].value = true;
 			}
 		}
@@ -1080,7 +1081,10 @@ void Teensy_SelectTarget(int ledbutton)
 		if (target == -1) {
 			Teensy_UnmapPrevious(ButtonToParam(ledbutton));
 			target = PresetChangeAdsrAddParam(gPreset, Teensy_guidata.ModSelect, ButtonToParam(ledbutton), 0);
-			if (target != -1) Buttons[ledbutton].value = true;
+			if (target != -1) {
+				Raspberry_UpdateTarget(target, ButtonToParam(ledbutton), 0);
+				Buttons[ledbutton].value = true;
+			}
 		}
 		Teensy_guidata.TargetSelect = target;
 		Raspberry_SelectTarget(target);
@@ -1090,7 +1094,10 @@ void Teensy_SelectTarget(int ledbutton)
 		if (target == -1) {
 			Teensy_UnmapPrevious(ButtonToParam(ledbutton));
 			target = PresetChangeAdAddParam(gPreset, Teensy_guidata.ModSelect, ButtonToParam(ledbutton), 0);
-			if (target != -1) Buttons[ledbutton].value = true;
+			if (target != -1) {
+				Raspberry_UpdateTarget(target, ButtonToParam(ledbutton), 0);
+				Buttons[ledbutton].value = true;
+			}
 		}
 		Teensy_guidata.TargetSelect = target;
 		Raspberry_SelectTarget(target);
@@ -1100,7 +1107,10 @@ void Teensy_SelectTarget(int ledbutton)
 		if (target == -1) {
 			Teensy_UnmapPrevious(ButtonToParam(ledbutton));
 			target = PresetChangeCtrlAddParam(gPreset, Teensy_guidata.ModSelect, ButtonToParam(ledbutton), 0);
-			if (target != -1) Buttons[ledbutton].value = true;
+			if (target != -1) {
+				Raspberry_UpdateTarget(target, ButtonToParam(ledbutton), 0);
+				Buttons[ledbutton].value = true;
+			}
 		}
 		Teensy_guidata.TargetSelect = target;
 		Raspberry_SelectTarget(target);
@@ -1195,21 +1205,25 @@ void Teensy_ModChangeDepth(int target, uint32_t value)
 	{
 	case GuiState_LfoSelect:
 	{
+		Raspberry_UpdateTarget(target, gPreset.lfomod[Teensy_guidata.ModSelect].target[target].param, value);
 		PresetChangeLfoDepth(gPreset, Teensy_guidata.ModSelect, target, value);
 	}
 	break;
 	case GuiState_AdsrSelect:
 	{
+		Raspberry_UpdateTarget(target, gPreset.adsrmod[Teensy_guidata.ModSelect].target[target].param, value);
 		PresetChangeAdsrDepth(gPreset, Teensy_guidata.ModSelect, target, value);
 	}
 	break;
 	case GuiState_AdSelect:
 	{
+		Raspberry_UpdateTarget(target, gPreset.admod[Teensy_guidata.ModSelect].target[target].param, value);
 		PresetChangeAdDepth(gPreset, Teensy_guidata.ModSelect, target, value);
 	}
 	break;
 	case GuiState_CtrlSelect:
 	{
+		Raspberry_UpdateTarget(target, gPreset.ctrlmod[Teensy_guidata.ModSelect].target[target].param, value);
 		PresetChangeCtrlDepth(gPreset, Teensy_guidata.ModSelect, target, value);
 	}
 	break;
@@ -1227,7 +1241,64 @@ void Teensy_KnobChanged(int ID, uint32_t value)
 		{
 			//case knob_MASTER_TUNE: WriteKnob()
 
+		case knob_LFO_SHAPE: {
+			if (Teensy_guidata.GuiState == GuiState_LfoSelect && Teensy_guidata.ModSelect != -1) {
+				PresetChangeLfoParam(gPreset, Teensy_guidata.ModSelect, Sub_lfo_shape, value);
+				Raspberry_SetLfoParam(Sub_lfo_shape, value);
+			}
+			break;
+		}
+		case knob_LFO_SPEED: {
+			if (Teensy_guidata.GuiState == GuiState_LfoSelect && Teensy_guidata.ModSelect != -1) {
+				PresetChangeLfoParam(gPreset, Teensy_guidata.ModSelect, Sub_lfo_speed, value);
+				Raspberry_SetLfoParam(Sub_lfo_speed, value);
+			}
+			break;
+		}
 
+		case knob_ADSR_A: {
+			if (Teensy_guidata.GuiState == GuiState_AdsrSelect && Teensy_guidata.ModSelect != -1) {
+				PresetChangeAdsrParam(gPreset, Teensy_guidata.ModSelect, Sub_adsr_a, value);
+				Raspberry_SetAdsrParam(Sub_adsr_a, value);
+			}
+			break;
+		}
+		case knob_ADSR_D: {
+			if (Teensy_guidata.GuiState == GuiState_AdsrSelect && Teensy_guidata.ModSelect != -1) {
+				PresetChangeAdsrParam(gPreset, Teensy_guidata.ModSelect, Sub_adsr_d, value);
+				Raspberry_SetAdsrParam(Sub_adsr_d, value);
+			}
+			break;
+		}
+		case knob_ADSR_S: {
+			if (Teensy_guidata.GuiState == GuiState_AdsrSelect && Teensy_guidata.ModSelect != -1) {
+				PresetChangeAdsrParam(gPreset, Teensy_guidata.ModSelect, Sub_adsr_s, value);
+				Raspberry_SetAdsrParam(Sub_adsr_s, value);
+			}
+			break;
+		}
+		case knob_ADSR_R: {
+			if (Teensy_guidata.GuiState == GuiState_AdsrSelect && Teensy_guidata.ModSelect != -1) {
+				PresetChangeAdsrParam(gPreset, Teensy_guidata.ModSelect, Sub_adsr_r, value);
+				Raspberry_SetAdsrParam(Sub_adsr_r, value);
+			}
+			break;
+		}
+
+		case knob_AD_A: {
+			if (Teensy_guidata.GuiState == GuiState_AdSelect && Teensy_guidata.ModSelect != -1) {
+				PresetChangeAdParam(gPreset, Teensy_guidata.ModSelect, Sub_ad_a, value);
+				Raspberry_SetAdParam(Sub_ad_a, value);
+			}
+			break;
+		}
+		case knob_AD_D: {
+			if (Teensy_guidata.GuiState == GuiState_AdSelect && Teensy_guidata.ModSelect != -1) {
+				PresetChangeAdParam(gPreset, Teensy_guidata.ModSelect, Sub_ad_d, value);
+				Raspberry_SetAdParam(Sub_ad_d, value);
+			}
+			break;
+		}
 
 		case knob_FM_1_to_2: PresetChangeValue(gPreset, Output_VCO123_FM1, value); break;
 		case knob_FM_2_to_3: PresetChangeValue(gPreset, Output_VCO123_FM2, value); break;

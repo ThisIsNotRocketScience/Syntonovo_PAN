@@ -364,5 +364,9 @@ void Raspberry_EditAdsr(AdsrModulation_t& mod);
 void Raspberry_EditAd(AdModulation_t& mod);
 void Raspberry_EditCtrl(ControlModulation_t& mod);
 void Raspberry_SelectTarget(int target);
+void Raspberry_UpdateTarget(int target, int param, int depth);
+void Raspberry_SetLfoParam(SubParam_t subparam, uint32_t value);
+void Raspberry_SetAdsrParam(SubParam_t subparam, uint32_t value);
+void Raspberry_SetAdParam(SubParam_t subparam, uint32_t value);
 
 #endif
