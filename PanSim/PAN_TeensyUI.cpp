@@ -60,6 +60,91 @@ void InitPreset(PanPreset_t& preset)
 	preset.switches[0] |= (1 << Switch_SELMOST3);
 }
 
+void SyncLfo(PanPreset_t& preset, int i)
+{
+	uint8_t synclfo[16] = { 0 };
+	for (int j = 0; j < 16; j++) {
+		int param = preset.lfomod[i].target[j].param;
+		if (param == 0) continue;
+		synclfo[j] = param;
+	}
+	WriteSyncLfo(synclfo);
+}
+
+void WriteLfo(PanPreset_t& preset, int i)
+{
+	uint8_t synclfo[16] = { 0 };
+	for (int j = 0; j < 16; j++) {
+		int param = preset.lfomod[i].target[j].param;
+		if (param == 0) continue;
+		synclfo[j] = param;
+		WriteWithSubKnob(param, Sub_lfo_depth, preset.lfomod[i].target[i].depth);
+		WriteWithSubKnob(param, Sub_lfo_speed, preset.lfomod[i].speed);
+		WriteWithSubKnob(param, Sub_lfo_shape, preset.lfomod[i].shape);
+	}
+	WriteSyncLfo(synclfo);
+}
+
+void WriteAdsr(PanPreset_t& preset, int i)
+{
+	for (int j = 0; j < 16; j++) {
+		int param = preset.adsrmod[i].target[j].param;
+		if (param == 0) continue;
+		WriteWithSubKnob(param, Sub_adsr_depth, preset.adsrmod[i].target[i].depth);
+		WriteWithSubKnob(param, Sub_adsr_a, preset.adsrmod[i].a);
+		WriteWithSubKnob(param, Sub_adsr_d, preset.adsrmod[i].d);
+		WriteWithSubKnob(param, Sub_adsr_s, preset.adsrmod[i].s);
+		WriteWithSubKnob(param, Sub_adsr_r, preset.adsrmod[i].r);
+	}
+}
+
+void WriteAd(PanPreset_t& preset, int i)
+{
+	for (int j = 0; j < 16; j++) {
+		int param = preset.admod[i].target[j].param;
+		if (param == 0) continue;
+		WriteWithSubKnob(param, Sub_ad_depth, preset.admod[i].target[i].depth);
+		WriteWithSubKnob(param, Sub_ad_a, preset.admod[i].a);
+		WriteWithSubKnob(param, Sub_ad_d, preset.admod[i].d);
+	}
+}
+
+void WriteCtrl(PanPreset_t& preset, int i)
+{
+	for (int j = 0; j < 16; j++) {
+		int param = preset.ctrlmod[i].target[j].param;
+		if (param == 0) continue;
+
+		switch (preset.ctrlmod[i].source) {
+		case ControlModulation_t::Source_left_mod:
+			//todo
+			//WriteWithSubKnob(param, Sub)
+			break;
+		case ControlModulation_t::Source_right_mod:
+			//todo
+			break;
+		case ControlModulation_t::Source_x:
+			WriteWithSubKnob(param, Sub_x, preset.ctrlmod[i].target[j].depth);
+			break;
+		case ControlModulation_t::Source_y:
+			WriteWithSubKnob(param, Sub_y, preset.ctrlmod[i].target[j].depth);
+			break;
+		case ControlModulation_t::Source_z:
+			WriteWithSubKnob(param, Sub_z, preset.ctrlmod[i].target[j].depth);
+			break;
+		case ControlModulation_t::Source_zprime:
+			WriteWithSubKnob(param, Sub_zprime, preset.ctrlmod[i].target[j].depth);
+			break;
+		case ControlModulation_t::Source_note:
+			WriteWithSubKnob(param, Sub_note, preset.ctrlmod[i].target[j].depth);
+			break;
+		case ControlModulation_t::Source_vel:
+			WriteWithSubKnob(param, Sub_vel, preset.ctrlmod[i].target[j].depth);
+			break;
+		}
+	}
+}
+
 void LoadPreset(PanPreset_t& preset)
 {
 #define OUTPUT(name,codecport,codecpin, type,id, style,defaultvalue) \
@@ -83,73 +168,19 @@ void LoadPreset(PanPreset_t& preset)
 #undef SWITCH
 
 	for (int i = 0; i < 16; i++) {
-		uint8_t synclfo[16] = { 0 };
-		for (int j = 0; j < 16; j++) {
-			int param = preset.lfomod[i].target[j].param;
-			if (param == 0) continue;
-			synclfo[j] = param;
-			WriteWithSubKnob(param, Sub_lfo_depth, preset.lfomod[i].target[i].depth);
-			WriteWithSubKnob(param, Sub_lfo_speed, preset.lfomod[i].speed);
-			WriteWithSubKnob(param, Sub_lfo_shape, preset.lfomod[i].shape);
-		}
-		WriteSyncLfo(synclfo);
+		WriteLfo(preset, i);
 	}
 
 	for (int i = 0; i < 16; i++) {
-		for (int j = 0; j < 16; j++) {
-			int param = preset.adsrmod[i].target[j].param;
-			if (param == 0) continue;
-			WriteWithSubKnob(param, Sub_adsr_depth, preset.adsrmod[i].target[i].depth);
-			WriteWithSubKnob(param, Sub_adsr_a, preset.adsrmod[i].a);
-			WriteWithSubKnob(param, Sub_adsr_d, preset.adsrmod[i].d);
-			WriteWithSubKnob(param, Sub_adsr_s, preset.adsrmod[i].s);
-			WriteWithSubKnob(param, Sub_adsr_r, preset.adsrmod[i].r);
-		}
+		WriteAdsr(preset, i);
 	}
 
 	for (int i = 0; i < 16; i++) {
-		for (int j = 0; j < 16; j++) {
-			int param = preset.admod[i].target[j].param;
-			if (param == 0) continue;
-			WriteWithSubKnob(param, Sub_ad_depth, preset.admod[i].target[i].depth);
-			WriteWithSubKnob(param, Sub_ad_a, preset.admod[i].a);
-			WriteWithSubKnob(param, Sub_ad_d, preset.admod[i].d);
-		}
+		WriteAd(preset, i);
 	}
 
 	for (int i = 0; i < 16; i++) {
-		for (int j = 0; j < 16; j++) {
-			int param = preset.ctrlmod[i].target[j].param;
-			if (param == 0) continue;
-
-			switch (preset.ctrlmod[i].source) {
-			case ControlModulation_t::Source_left_mod:
-				//todo
-				//WriteWithSubKnob(param, Sub)
-				break;
-			case ControlModulation_t::Source_right_mod:
-				//todo
-				break;
-			case ControlModulation_t::Source_x:
-				WriteWithSubKnob(param, Sub_x, preset.ctrlmod[i].target[j].depth);
-				break;
-			case ControlModulation_t::Source_y:
-				WriteWithSubKnob(param, Sub_y, preset.ctrlmod[i].target[j].depth);
-				break;
-			case ControlModulation_t::Source_z:
-				WriteWithSubKnob(param, Sub_z, preset.ctrlmod[i].target[j].depth);
-				break;
-			case ControlModulation_t::Source_zprime:
-				WriteWithSubKnob(param, Sub_zprime, preset.ctrlmod[i].target[j].depth);
-				break;
-			case ControlModulation_t::Source_note:
-				WriteWithSubKnob(param, Sub_note, preset.ctrlmod[i].target[j].depth);
-				break;
-			case ControlModulation_t::Source_vel:
-				WriteWithSubKnob(param, Sub_vel, preset.ctrlmod[i].target[j].depth);
-				break;
-			}
-		}
+		WriteCtrl(preset, i);
 	}
 }
 
@@ -228,16 +259,17 @@ int PresetChangeAdsrAddParam(PanPreset_t& preset, int mod, int param, int depth)
 	return emptyindex;
 }
 
-void PresetChangeAdsrRemoveParam(PanPreset_t& preset, int mod, int param)
+int PresetChangeAdsrRemoveParam(PanPreset_t& preset, int mod, int param)
 {
 	for (int i = 0; i < 16; i++)
 	{
 		if (preset.adsrmod[mod].target[i].param == param) {
 			preset.adsrmod[mod].target[i].param = 0;
 			WriteWithSubKnob(param, Sub_adsr_depth, 0);
-			return;
+			return i;
 		}
 	}
+	return -1;
 }
 
 void PresetChangeAdParam(PanPreset_t& preset, int mod, SubParam_t subparam, uint16_t value)
@@ -287,16 +319,17 @@ int PresetChangeAdAddParam(PanPreset_t& preset, int mod, int param, int depth)
 	return emptyindex;
 }
 
-void PresetChangeAdRemoveParam(PanPreset_t& preset, int mod, int param)
+int PresetChangeAdRemoveParam(PanPreset_t& preset, int mod, int param)
 {
 	for (int i = 0; i < 16; i++)
 	{
 		if (preset.admod[mod].target[i].param == param) {
 			preset.admod[mod].target[i].param = 0;
 			WriteWithSubKnob(param, Sub_ad_depth, 0);
-			return;
+			return i;
 		}
 	}
+	return -1;
 }
 
 void PresetChangeLfoParam(PanPreset_t& preset, int mod, SubParam_t subparam, uint16_t value)
@@ -346,16 +379,17 @@ int PresetChangeLfoAddParam(PanPreset_t& preset, int mod, int param, int depth)
 	return emptyindex;
 }
 
-void PresetChangeLfoRemoveParam(PanPreset_t& preset, int mod, int param)
+int PresetChangeLfoRemoveParam(PanPreset_t& preset, int mod, int param)
 {
 	for (int i = 0; i < 16; i++)
 	{
 		if (preset.lfomod[mod].target[i].param == param) {
 			preset.lfomod[mod].target[i].param = 0;
 			WriteWithSubKnob(param, Sub_lfo_depth, 0);
-			return;
+			return i;
 		}
 	}
+	return -1;
 }
 
 void WriteCtrlDepth(int param, int source, uint16_t depth)
@@ -421,16 +455,17 @@ int PresetChangeCtrlAddParam(PanPreset_t& preset, int mod, int param, int depth)
 	return emptyindex;
 }
 
-void PresetChangeCtrlRemoveParam(PanPreset_t& preset, int mod, int param)
+int PresetChangeCtrlRemoveParam(PanPreset_t& preset, int mod, int param)
 {
 	for (int i = 0; i < 16; i++)
 	{
 		if (preset.ctrlmod[mod].target[i].param == param) {
 			preset.ctrlmod[mod].target[i].param = 0;
 			WriteCtrlDepth(param, preset.ctrlmod[mod].source, 0);
-			return;
+			return i;
 		}
 	}
+	return -1;
 }
 
 void Teensy_InitPreset()
@@ -439,13 +474,21 @@ void Teensy_InitPreset()
 	LoadPreset(gPreset);
 }
 
+typedef struct {
+	int modid;
+	ModTarget_t target;
+} Teensy_CancelStack_t;
+
 typedef struct
 {
 	GuiState_t GuiState;
 	int ModSelect;
 	int TargetSelect;
 
+	// Old data of selected modulation
 	char cancel[128];
+	int CancelStackSize;
+	Teensy_CancelStack_t CancelStack[128];
 } Teensy_GuiData_t;
 
 static Teensy_GuiData_t Teensy_guidata;
@@ -722,20 +765,69 @@ void CancelMod()
 {
 	if (Teensy_guidata.GuiState == GuiState_LfoSelect && Teensy_guidata.ModSelect >= 0) {
 		memcpy(&gPreset.lfomod[Teensy_guidata.ModSelect], &Teensy_guidata.cancel, sizeof(gPreset.lfomod[0]));
+		WriteLfo(gPreset, Teensy_guidata.ModSelect);
+
+		int changes[16] = { 0 };
+		for (int i = 0; i < Teensy_guidata.CancelStackSize; i++) {
+			PresetChangeLfoAddParam(gPreset, Teensy_guidata.CancelStack[i].modid, Teensy_guidata.CancelStack[i].target.param, Teensy_guidata.CancelStack[i].target.depth);
+			changes[Teensy_guidata.CancelStack[i].modid] = 1;
+		}
+		for (int i = 0; i < 16; i++) {
+			if (changes[i]) {
+				WriteLfo(gPreset, i);
+			}
+		}
 	}
 	else if (Teensy_guidata.GuiState == GuiState_AdsrSelect && Teensy_guidata.ModSelect >= 0) {
 		memcpy(&gPreset.adsrmod[Teensy_guidata.ModSelect], &Teensy_guidata.cancel, sizeof(gPreset.adsrmod[0]));
+		WriteAdsr(gPreset, Teensy_guidata.ModSelect);
+
+		int changes[16] = { 0 };
+		for (int i = 0; i < Teensy_guidata.CancelStackSize; i++) {
+			PresetChangeAdsrAddParam(gPreset, Teensy_guidata.CancelStack[i].modid, Teensy_guidata.CancelStack[i].target.param, Teensy_guidata.CancelStack[i].target.depth);
+			changes[Teensy_guidata.CancelStack[i].modid] = 1;
+		}
+		for (int i = 0; i < 16; i++) {
+			if (changes[i]) {
+				WriteAdsr(gPreset, i);
+			}
+		}
 	}
 	else if (Teensy_guidata.GuiState == GuiState_AdSelect && Teensy_guidata.ModSelect >= 0) {
 		memcpy(&gPreset.admod[Teensy_guidata.ModSelect], &Teensy_guidata.cancel, sizeof(gPreset.admod[0]));
+		WriteAd(gPreset, Teensy_guidata.ModSelect);
+
+		int changes[16] = { 0 };
+		for (int i = 0; i < Teensy_guidata.CancelStackSize; i++) {
+			PresetChangeAdAddParam(gPreset, Teensy_guidata.CancelStack[i].modid, Teensy_guidata.CancelStack[i].target.param, Teensy_guidata.CancelStack[i].target.depth);
+			changes[Teensy_guidata.CancelStack[i].modid] = 1;
+		}
+		for (int i = 0; i < 16; i++) {
+			if (changes[i]) {
+				WriteAd(gPreset, i);
+			}
+		}
 	}
 	else if (Teensy_guidata.GuiState == GuiState_CtrlSelect && Teensy_guidata.ModSelect >= 0) {
 		memcpy(&gPreset.ctrlmod[Teensy_guidata.ModSelect], &Teensy_guidata.cancel, sizeof(gPreset.ctrlmod[0]));
+		WriteCtrl(gPreset, Teensy_guidata.ModSelect);
+
+		int changes[16] = { 0 };
+		for (int i = 0; i < Teensy_guidata.CancelStackSize; i++) {
+			PresetChangeCtrlAddParam(gPreset, Teensy_guidata.CancelStack[i].modid, Teensy_guidata.CancelStack[i].target.param, Teensy_guidata.CancelStack[i].target.depth);
+			changes[Teensy_guidata.CancelStack[i].modid] = 1;
+		}
+		for (int i = 0; i < 16; i++) {
+			if (changes[i]) {
+				WriteCtrl(gPreset, i);
+			}
+		}
 	}
 }
 
 void SelectMod()
 {
+	Teensy_guidata.CancelStackSize = 0;
 	if (Teensy_guidata.GuiState == GuiState_LfoSelect && Teensy_guidata.ModSelect >= 0) {
 		memcpy(&Teensy_guidata.cancel, &gPreset.lfomod[Teensy_guidata.ModSelect], sizeof(gPreset.lfomod[0]));
 	}
@@ -841,6 +933,7 @@ bool Teensy_FindModulation(int ledbutton)
 					Teensy_guidata.ModSelect = i;
 					Teensy_guidata.TargetSelect = j;
 					SelectMod();
+					UpdateTargets();
 					Raspberry_EditLfo(gPreset.lfomod[Teensy_guidata.ModSelect]);
 					Raspberry_SelectTarget(Teensy_guidata.TargetSelect);
 					return true;
@@ -852,6 +945,7 @@ bool Teensy_FindModulation(int ledbutton)
 		Teensy_guidata.TargetSelect = -1;
 		SelectMod();
 		Raspberry_EditLfo(gPreset.lfomod[Teensy_guidata.ModSelect]);
+		UpdateTargets();
 	}
 	else if (Teensy_guidata.GuiState == GuiState_AdsrSelect) {
 		int firstEmpty = -1;
@@ -865,6 +959,7 @@ bool Teensy_FindModulation(int ledbutton)
 					Teensy_guidata.ModSelect = i;
 					Teensy_guidata.TargetSelect = j;
 					SelectMod();
+					UpdateTargets();
 					Raspberry_EditAdsr(gPreset.adsrmod[Teensy_guidata.ModSelect]);
 					Raspberry_SelectTarget(Teensy_guidata.TargetSelect);
 					return true;
@@ -876,6 +971,7 @@ bool Teensy_FindModulation(int ledbutton)
 		Teensy_guidata.TargetSelect = -1;
 		SelectMod();
 		Raspberry_EditAdsr(gPreset.adsrmod[Teensy_guidata.ModSelect]);
+		UpdateTargets();
 	}
 	else if (Teensy_guidata.GuiState == GuiState_AdSelect) {
 		int firstEmpty = -1;
@@ -889,6 +985,7 @@ bool Teensy_FindModulation(int ledbutton)
 					Teensy_guidata.ModSelect = i;
 					Teensy_guidata.TargetSelect = j;
 					SelectMod();
+					UpdateTargets();
 					Raspberry_EditAd(gPreset.admod[Teensy_guidata.ModSelect]);
 					Raspberry_SelectTarget(Teensy_guidata.TargetSelect);
 					return true;
@@ -900,9 +997,62 @@ bool Teensy_FindModulation(int ledbutton)
 		Teensy_guidata.TargetSelect = -1;
 		SelectMod();
 		Raspberry_EditAd(gPreset.admod[Teensy_guidata.ModSelect]);
+		UpdateTargets();
 	}
 
 	return false;
+}
+
+void Teensy_UnmapPrevious(int param)
+{
+	if (Teensy_guidata.GuiState == GuiState_LfoSelect) {
+		for (int i = 0; i < 16; i++) {
+			if (i == Teensy_guidata.ModSelect) continue;
+
+			for (int j = 0; j < 16; j++) {
+				if (gPreset.lfomod[i].target[j].param == param) {
+					Teensy_guidata.CancelStack[Teensy_guidata.CancelStackSize].modid = i;
+					Teensy_guidata.CancelStack[Teensy_guidata.CancelStackSize].target.param = param;
+					Teensy_guidata.CancelStack[Teensy_guidata.CancelStackSize].target.depth = gPreset.lfomod[i].target[j].depth;
+					Teensy_guidata.CancelStackSize++;
+					PresetChangeLfoRemoveParam(gPreset, i, param);
+					return;
+				}
+			}
+		}
+	}
+	else if (Teensy_guidata.GuiState == GuiState_AdsrSelect) {
+		for (int i = 0; i < 16; i++) {
+			if (i == Teensy_guidata.ModSelect) continue;
+
+			for (int j = 0; j < 16; j++) {
+				if (gPreset.adsrmod[i].target[j].param == param) {
+					Teensy_guidata.CancelStack[Teensy_guidata.CancelStackSize].modid = i;
+					Teensy_guidata.CancelStack[Teensy_guidata.CancelStackSize].target.param = param;
+					Teensy_guidata.CancelStack[Teensy_guidata.CancelStackSize].target.depth = gPreset.adsrmod[i].target[j].depth;
+					Teensy_guidata.CancelStackSize++;
+					PresetChangeAdsrRemoveParam(gPreset, i, param);
+					return;
+				}
+			}
+		}
+	}
+	else if (Teensy_guidata.GuiState == GuiState_AdSelect) {
+		for (int i = 0; i < 16; i++) {
+			if (i == Teensy_guidata.ModSelect) continue;
+
+			for (int j = 0; j < 16; j++) {
+				if (gPreset.admod[i].target[j].param == param) {
+					Teensy_guidata.CancelStack[Teensy_guidata.CancelStackSize].modid = i;
+					Teensy_guidata.CancelStack[Teensy_guidata.CancelStackSize].target.param = param;
+					Teensy_guidata.CancelStack[Teensy_guidata.CancelStackSize].target.depth = gPreset.admod[i].target[j].depth;
+					Teensy_guidata.CancelStackSize++;
+					PresetChangeAdRemoveParam(gPreset, i, param);
+					return;
+				}
+			}
+		}
+	}
 }
 
 void Teensy_SelectTarget(int ledbutton)
@@ -915,8 +1065,12 @@ void Teensy_SelectTarget(int ledbutton)
 	if (Teensy_guidata.GuiState == GuiState_LfoSelect) {
 		int target = NextTarget(&gPreset.lfomod[Teensy_guidata.ModSelect].target[0], ledbutton, Teensy_guidata.TargetSelect);
 		if (target == -1) {
+			Teensy_UnmapPrevious(ButtonToParam(ledbutton));
 			target = PresetChangeLfoAddParam(gPreset, Teensy_guidata.ModSelect, ButtonToParam(ledbutton), 0);
-			if (target != -1) Buttons[ledbutton].value = true;
+			if (target != -1) {
+				SyncLfo(gPreset, Teensy_guidata.ModSelect);
+				Buttons[ledbutton].value = true;
+			}
 		}
 		Teensy_guidata.TargetSelect = target;
 		Raspberry_SelectTarget(target);
@@ -924,6 +1078,7 @@ void Teensy_SelectTarget(int ledbutton)
 	else if (Teensy_guidata.GuiState == GuiState_AdsrSelect) {
 		int target = NextTarget(&gPreset.adsrmod[Teensy_guidata.ModSelect].target[0], ledbutton, Teensy_guidata.TargetSelect);
 		if (target == -1) {
+			Teensy_UnmapPrevious(ButtonToParam(ledbutton));
 			target = PresetChangeAdsrAddParam(gPreset, Teensy_guidata.ModSelect, ButtonToParam(ledbutton), 0);
 			if (target != -1) Buttons[ledbutton].value = true;
 		}
@@ -933,6 +1088,7 @@ void Teensy_SelectTarget(int ledbutton)
 	else if (Teensy_guidata.GuiState == GuiState_AdSelect) {
 		int target = NextTarget(&gPreset.admod[Teensy_guidata.ModSelect].target[0], ledbutton, Teensy_guidata.TargetSelect);
 		if (target == -1) {
+			Teensy_UnmapPrevious(ButtonToParam(ledbutton));
 			target = PresetChangeAdAddParam(gPreset, Teensy_guidata.ModSelect, ButtonToParam(ledbutton), 0);
 			if (target != -1) Buttons[ledbutton].value = true;
 		}
@@ -942,6 +1098,7 @@ void Teensy_SelectTarget(int ledbutton)
 	else if (Teensy_guidata.GuiState == GuiState_CtrlSelect) {
 		int target = NextTarget(&gPreset.ctrlmod[Teensy_guidata.ModSelect].target[0], ledbutton, Teensy_guidata.TargetSelect);
 		if (target == -1) {
+			Teensy_UnmapPrevious(ButtonToParam(ledbutton));
 			target = PresetChangeCtrlAddParam(gPreset, Teensy_guidata.ModSelect, ButtonToParam(ledbutton), 0);
 			if (target != -1) Buttons[ledbutton].value = true;
 		}
