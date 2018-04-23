@@ -249,10 +249,16 @@ enum SubParam_t
 	Sub_vel
 };
 
-
-
-
 #undef LEDBUTTON
+
+#define TARGET(param, button, knob) \
+	if (paramid == param) return button;
+inline int ParamToButton(int paramid)
+{
+#include "PanUiMap.h"
+	return -1;
+}
+
 typedef struct PanGui_t
 {
 	
@@ -308,11 +314,20 @@ typedef struct {
 	ControlModulation_t ctrlmod[16];
 } PanPreset_t;
 
+typedef enum {
+	GuiState_Root,
+	GuiState_LfoSelect,
+	GuiState_AdsrSelect,
+	GuiState_AdSelect,
+	GuiState_CtrlSelect
+} GuiState_t;
+
 extern void Teensy_InitPreset();
 extern void Teensy_KnobChanged(int ID, uint32_t value);
 extern void Teensy_ButtonPressed(int ID, int value);
 
 extern void Raspberry_RenderScreen();
 extern void Raspberry_EncoderTurn(int id, int delta);
+void Raspberry_ToState(GuiState_t state, int modselect);
 
 #endif
