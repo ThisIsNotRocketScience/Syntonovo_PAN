@@ -270,6 +270,15 @@ inline int ButtonToParam(int buttonid)
 #undef TARGET
 
 #define TARGET(param, button, knob, name) \
+	if (knobid == knob) return param;
+inline int KnobToParam(int knobid)
+{
+#include "PanUiMap.h"
+	return -1;
+}
+#undef TARGET
+
+#define TARGET(param, button, knob, name) \
 	if (paramid == param) return name;
 inline const char* ParamToName(int paramid)
 {

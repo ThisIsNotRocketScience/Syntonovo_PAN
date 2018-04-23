@@ -64,7 +64,7 @@ const char* ParamLabel(int param)
 
 float DepthLabel(int depth)
 {
-	return (float)depth * (1.0 / 0x4000);
+	return (float)(int16_t)depth * (1.0 / 0x4000);
 }
 
 void TargetsList()
