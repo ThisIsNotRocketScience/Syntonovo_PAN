@@ -807,6 +807,7 @@ void virt_VCO1_PITCH()
 	ad_set_gate(ctrlid, synth_param[GATE].value);
 
 	int32_t value = note_add(note_scale(synth_param[NOTE].last, synth_param[ctrlid].note), synth_param[ctrlid].value);
+	value += (int32_t)synth_param[MASTER_PITCH].last - 0x8000;
 	if (synth_param[ctrlid].lfo_depth) {
 		uint16_t lfo = (lfo_update(ctrlid) >> 2) + 0x8000;
 		value += signed_scale(lfo, synth_param[ctrlid].lfo_depth);
@@ -833,6 +834,7 @@ void virt_VCO2_PITCH()
 	ad_set_gate(ctrlid, synth_param[GATE].value);
 
 	int32_t value = note_add(note_scale(synth_param[NOTE].last, synth_param[ctrlid].note), synth_param[ctrlid].value);
+	value += (int32_t)synth_param[MASTER_PITCH].last - 0x8000;
 	if (synth_param[ctrlid].lfo_depth) {
 		uint16_t lfo = (lfo_update(ctrlid) >> 2) + 0x8000;
 		value += signed_scale(lfo, synth_param[ctrlid].lfo_depth);
@@ -859,6 +861,7 @@ void virt_VCO3_PITCH()
 	ad_set_gate(ctrlid, synth_param[GATE].value);
 
 	int32_t value = note_add(note_scale(synth_param[NOTE].last, synth_param[ctrlid].note), synth_param[ctrlid].value);
+	value += (int32_t)synth_param[MASTER_PITCH].last - 0x8000;
 	if (synth_param[ctrlid].lfo_depth) {
 		uint16_t lfo = (lfo_update(ctrlid) >> 2) + 0x8000;
 		value += signed_scale(lfo, synth_param[ctrlid].lfo_depth);
@@ -885,6 +888,7 @@ void virt_VCO4_PITCH()
 	ad_set_gate(ctrlid, synth_param[GATE].value);
 
 	int32_t value = note_add(note_scale(synth_param[NOTE].last, synth_param[ctrlid].note), synth_param[ctrlid].value);
+	value += (int32_t)synth_param[MASTER_PITCH].last - 0x8000;
 	if (synth_param[ctrlid].lfo_depth) {
 		uint16_t lfo = (lfo_update(ctrlid) >> 2) + 0x8000;
 		value += signed_scale(lfo, synth_param[ctrlid].lfo_depth);
@@ -911,6 +915,7 @@ void virt_VCO5_PITCH()
 	ad_set_gate(ctrlid, synth_param[GATE].value);
 
 	int32_t value = note_add(note_scale(synth_param[NOTE].last, synth_param[ctrlid].note), synth_param[ctrlid].value);
+	value += (int32_t)synth_param[MASTER_PITCH].last - 0x8000;
 	if (synth_param[ctrlid].lfo_depth) {
 		uint16_t lfo = (lfo_update(ctrlid) >> 2) + 0x8000;
 		value += signed_scale(lfo, synth_param[ctrlid].lfo_depth);
@@ -937,6 +942,7 @@ void virt_VCO6_PITCH()
 	ad_set_gate(ctrlid, synth_param[GATE].value);
 
 	int32_t value = note_add(note_scale(synth_param[NOTE].last, synth_param[ctrlid].note), synth_param[ctrlid].value);
+	value += (int32_t)synth_param[MASTER_PITCH].last - 0x8000;
 	if (synth_param[ctrlid].lfo_depth) {
 		uint16_t lfo = (lfo_update(ctrlid) >> 2) + 0x8000;
 		value += signed_scale(lfo, synth_param[ctrlid].lfo_depth);
@@ -963,6 +969,7 @@ void virt_VCO7_PITCH()
 	ad_set_gate(ctrlid, synth_param[GATE].value);
 
 	int32_t value = note_add(note_scale(synth_param[NOTE].last, synth_param[ctrlid].note), synth_param[ctrlid].value);
+	value += (int32_t)synth_param[MASTER_PITCH].last - 0x8000;
 	if (synth_param[ctrlid].lfo_depth) {
 		uint16_t lfo = (lfo_update(ctrlid) >> 2) + 0x8000;
 		value += signed_scale(lfo, synth_param[ctrlid].lfo_depth);
@@ -992,6 +999,11 @@ void virt_RETRIGGER()
 		synth_param[RETRIGGER].value--;
 	}
 	synth_param[RETRIGGER].last = synth_param[RETRIGGER].value;
+}
+
+void virt_MASTER_PITCH()
+{
+	synth_param[MASTER_PITCH].last = (((int32_t)synth_param[MASTER_PITCH].value - 0x8000) * 12) / 128 + 0x8000;
 }
 
 void synth_mapping_virt()
