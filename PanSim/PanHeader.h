@@ -35,6 +35,14 @@ enum LedEnum
 	__LED_COUNT
 };
 
+enum EncoderEnum
+{
+#define ENCODER(name,x,y)  encoder_##name,
+#include "PanControls.h"
+#undef ENCODER
+	__ENCODER_COUNT
+};
+
 enum OutputEnum
 {
 #define OUTPUT(name,codecport,codecpin, type,id, style,defaultvalue) Output_##name = id,
@@ -177,6 +185,19 @@ public:
 	float value;
 };
 
+
+class Encoder
+{
+public:
+	char *name;
+	float x;
+	float y;
+	EncoderEnum id;
+	float pos;
+	int delta;
+};
+
+
 class Screen
 {
 public:
@@ -188,6 +209,7 @@ public:
 
 extern Knob Knobs[];
 extern Led Leds[];
+extern Encoder Encoders[];
 extern Screen TheScreen;
 
 
@@ -392,7 +414,7 @@ extern void Teensy_ButtonPressed(LedButtonEnum ID, int value);
 
 extern void Raspberry_Reset();
 extern void Raspberry_RenderScreen();
-extern void Raspberry_EncoderTurn(int id, int delta);
+extern void Raspberry_EncoderTurn(EncoderEnum id, int delta);
 void Raspberry_ToState(GuiState_t state, int modselect);
 void Raspberry_EditLfo(LfoModulation_t& mod);
 void Raspberry_EditAdsr(AdsrModulation_t& mod);

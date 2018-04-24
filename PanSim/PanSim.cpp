@@ -235,6 +235,59 @@ static bool MyKnob(const char* label, float* p_value, float v_min, float v_max)
 	return value_changed;
 }
 
+static bool MyEncoder(const char* label, float* p_value, int* p_delta)
+{
+	ImGuiIO& io = ImGui::GetIO();
+	ImGuiStyle& style = ImGui::GetStyle();
+
+	float radius_outer = 20.0f;
+	ImVec2 pos = ImGui::GetCursorScreenPos();
+	ImVec2 center = ImVec2(pos.x + radius_outer, pos.y + radius_outer);
+	float line_height = ImGui::GetTextLineHeight();
+	ImDrawList* draw_list = ImGui::GetWindowDrawList();
+
+	ImGui::InvisibleButton(label, ImVec2(radius_outer * 2, radius_outer * 2 + line_height + style.ItemInnerSpacing.y));
+	bool value_changed = false;
+	bool is_active = ImGui::IsItemActive();
+	bool is_hovered = ImGui::IsItemActive();
+	if (is_active && io.MouseDelta.x != 0.0f)
+	{
+		float step = 0.5;
+		*p_value += io.MouseDelta.x * step;
+
+		if (*p_value <= -1) {
+			*p_delta = (int)ceil(*p_value);
+			*p_value -= *p_delta;
+			value_changed = true;
+		}
+		else if (*p_value >= 1) {
+			*p_delta = (int)floor(*p_value);
+			*p_value -= *p_delta;
+			value_changed = true;
+		}
+	}
+	else
+	{
+		*p_value = 0;
+		*p_delta = 0;
+	}
+
+	float radius_inner = radius_outer * 0.40f;
+	draw_list->AddCircleFilled(center, radius_outer, ImGui::GetColorU32(ImGuiCol_FrameBg), 16);
+	draw_list->AddCircleFilled(center, radius_inner, ImGui::GetColorU32(is_active ? ImGuiCol_FrameBgActive : is_hovered ? ImGuiCol_FrameBgHovered : ImGuiCol_FrameBg), 16);
+	auto R = ImGui::CalcTextSize(label);
+	draw_list->AddText(ImVec2(center.x - R.x / 2, pos.y - line_height - style.ItemInnerSpacing.y), ImGui::GetColorU32(ImGuiCol_Text), label);
+
+	//if (is_active || is_hovered)
+	//{
+	//	ImGui::SetNextWindowPos(ImVec2(pos.x - style.WindowPadding.x, pos.y - line_height - style.ItemInnerSpacing.y - style.WindowPadding.y));
+	//	ImGui::BeginTooltip();
+	//	ImGui::Text("%.3f", *p_value);
+	//	ImGui::EndTooltip();
+	//}
+
+	return value_changed;
+}
 
 
 static bool MySlider(const char* label, float* p_value, float v_min, float v_max)
@@ -592,6 +645,14 @@ int main(int argc, char** argv)
 				{
 					ImGui::SetCursorScreenPos(ImVec2(pos.x + Leds[i].x * xscalefac, pos.y + Leds[i].y * yscalefac));
 					ImLed(Leds[i].name, &Leds[i].value);
+				}
+				for (int i = 0; i < __ENCODER_COUNT; i++)
+				{
+					ImGui::SetCursorScreenPos(ImVec2(pos.x + Encoders[i].x * xscalefac, pos.y + Encoders[i].y * yscalefac));
+					if (MyEncoder(Encoders[i].name, &Encoders[i].pos, &Encoders[i].delta))
+					{
+						Raspberry_EncoderTurn(Encoders[i].id, Encoders[i].delta);
+					}
 				}
 
 				ImGui::SetCursorScreenPos(ImVec2(pos.x + TheScreen.x * xscalefac, pos.y + TheScreen.y * yscalefac));

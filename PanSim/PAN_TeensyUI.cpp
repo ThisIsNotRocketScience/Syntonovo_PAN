@@ -34,9 +34,9 @@ void InitPreset(PanPreset_t& preset)
 	preset.adsrmod[0].target[0].param = Output_VCF1_LIN;
 	preset.adsrmod[0].target[0].depth = 0x4000;
 	preset.adsrmod[0].target[1].param = Output_VCF2_LIN;
-	preset.adsrmod[0].target[0].depth = 0x4000;
+	preset.adsrmod[0].target[1].depth = 0x4000;
 	preset.adsrmod[0].target[2].param = Output_CLEANF_LIN;
-	preset.adsrmod[0].target[0].depth = 0x4000;
+	preset.adsrmod[0].target[2].depth = 0x4000;
 
 	preset.paramvalue[Output_VCO1_LEVEL] = 0xffff;
 

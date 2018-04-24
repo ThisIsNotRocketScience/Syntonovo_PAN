@@ -171,7 +171,7 @@ void Render_MenuEntry_Pulsewidth(const char* name, int param)
 void Render_MenuEntry_FilterMix(const char* name, int param)
 {
 	int mix1 = (0x10000) - (int)Raspberry_guidata.outputValues[param];
-	int mix2 = (int)Raspberry_guidata.outputValues[param] - 0x8000;
+	int mix2 = (int)Raspberry_guidata.outputValues[param];
 	if (mix1 < 0) mix1 = 0;
 	if (mix1 > 0x8000) mix1 = 0x8000;
 	if (mix2 < 0) mix2 = 0;
@@ -248,9 +248,9 @@ void Raspberry_OutputChangeValue(int output, uint32_t value)
 	Raspberry_guidata.outputValues[output] = value;
 }
 
-void Raspberry_EncoderTurn(int id, int delta)
+void Raspberry_EncoderTurn(EncoderEnum id, int delta)
 {
-
+	printf("encoder %s: %d\n", Encoders[id].name, delta);
 }
 
 void Raspberry_Reset()
