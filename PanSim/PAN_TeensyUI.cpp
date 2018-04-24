@@ -567,12 +567,21 @@ void UpdateTargets()
 	switch (Teensy_guidata.GuiState) {
 	case GuiState_LfoSelect:
 		Buttons[ledbutton_LFO].value = true;
+		if (Teensy_guidata.ModSelect != -1) {
+			Buttons[ledbutton_SOURCE_LFO].value = true;
+		}
 		break;
 	case GuiState_AdsrSelect:
 		Buttons[ledbutton_ADSR].value = true;
+		if (Teensy_guidata.ModSelect != -1) {
+			Buttons[ledbutton_SOURCE_ADSR].value = true;
+		}
 		break;
 	case GuiState_AdSelect:
 		Buttons[ledbutton_AD].value = true;
+		if (Teensy_guidata.ModSelect != -1) {
+			Buttons[ledbutton_SOURCE_AD].value = true;
+		}
 		break;
 	case GuiState_CtrlSelect:
 		Buttons[SourceToLedButton(gPreset.ctrlmod[Teensy_guidata.ModSelect].source)].value = true;
@@ -935,6 +944,34 @@ void Teensy_ToState(GuiState_t state, int modselect = -1)
 
 	UpdateTargets();
 }
+
+int Teensy_FirstEmptyLfoMod()
+{
+	for (int i = 0; i < 16; i++) {
+		if (!IsLfoActive(gPreset, i)) return i;
+	}
+
+	return -1;
+}
+
+int Teensy_FirstEmptyAdsrMod()
+{
+	for (int i = 0; i < 16; i++) {
+		if (!IsAdsrActive(gPreset, i)) return i;
+	}
+
+	return -1;
+}
+
+int Teensy_FirstEmptyAdMod()
+{
+	for (int i = 0; i < 16; i++) {
+		if (!IsAdActive(gPreset, i)) return i;
+	}
+
+	return -1;
+}
+
 
 int NextTarget(ModTarget_t* targets, int button, int lastsel = -1)
 {
@@ -1401,6 +1438,18 @@ bool Teensy_KnobInMenu(KnobEnum knobid)
 	return false;
 }
 
+int PresetRemapKnob(int param)
+{
+	// some hacks
+
+	// Level knobs are used for linear modulations but actual level output params are different
+	if (param == Output_CLEANF_LIN) return Output_CLEANF_LEVEL;
+	if (param == Output_VCF1_LIN) return Output_VCF1_LEVEL;
+	if (param == Output_VCF2_LIN) return Output_VCF2_LEVEL;
+
+	return param;
+}
+
 void Teensy_KnobChanged(KnobEnum ID, uint32_t value)
 {
 	int target = Teensy_KnobInModulation(ID);
@@ -1408,19 +1457,19 @@ void Teensy_KnobChanged(KnobEnum ID, uint32_t value)
 		Teensy_ModChangeDepth(target, value);
 	}
 	else {
-		if (Teensy_KnobInMenu(ID)) {
-			Raspberry_OutputChangeValue(KnobToParam(ID), value);
-		}
-
 		int param = KnobToParam(ID);
 		if (param != -1) {
+			param = PresetRemapKnob(param);
+		
+			if (Teensy_KnobInMenu(ID)) {
+				Raspberry_OutputChangeValue(param, value);
+			}
+
 			PresetChangeValue(gPreset, param, value);
 		}
 		else {
 			switch (ID)
 			{
-				//case knob_MASTER_TUNE: WriteKnob()
-
 			case knob_LFO_SHAPE: {
 				if (Teensy_guidata.GuiState == GuiState_LfoSelect && Teensy_guidata.ModSelect != -1) {
 					PresetChangeLfoParam(gPreset, Teensy_guidata.ModSelect, Sub_lfo_shape, value);
@@ -1491,7 +1540,6 @@ void Teensy_ButtonPressed(LedButtonEnum ID, int value)
 	printf("button %s: %d\n", Buttons[ID].name, Buttons[ID].value ? 1 : 0);
 
 
-
 	/*
 modes:
 
@@ -1517,6 +1565,9 @@ modes:
 	case ledbutton_LFO: Teensy_ToState(GuiState_LfoSelect); break;
 	case ledbutton_ADSR: Teensy_ToState(GuiState_AdsrSelect); break;
 	case ledbutton_AD: Teensy_ToState(GuiState_AdSelect); break;
+	case ledbutton_SOURCE_LFO: Teensy_ToState(GuiState_LfoSelect, Teensy_FirstEmptyLfoMod()); break;
+	case ledbutton_SOURCE_ADSR: Teensy_ToState(GuiState_AdsrSelect, Teensy_FirstEmptyAdsrMod()); break;
+	case ledbutton_SOURCE_AD: Teensy_ToState(GuiState_AdSelect, Teensy_FirstEmptyAdMod()); break;
 	case ledbutton_LEFT_MOD: Teensy_ToState(GuiState_CtrlSelect, ledbutton_LEFT_MOD); break;
 	case ledbutton_RIGHT_MOD: Teensy_ToState(GuiState_CtrlSelect, ledbutton_RIGHT_MOD); break;
 	case ledbutton_X: Teensy_ToState(GuiState_CtrlSelect, ledbutton_X); break;
