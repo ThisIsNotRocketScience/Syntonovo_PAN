@@ -259,10 +259,10 @@ inline int ParamToButton(int paramid)
 	return -1;
 }
 
-inline int ButtonToParam(int buttonid)
+inline int ButtonToParam(int buttonid, int depth)
 {
 #define TARGET(param, button, knob, name) \
-	if (buttonid == button) return param;
+	if (buttonid == button && !(depth--)) return param;
 #include "PanUiMap.h"
 #undef TARGET
 	return -1;
