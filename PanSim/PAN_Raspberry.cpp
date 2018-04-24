@@ -20,6 +20,7 @@ typedef struct
 	ControlModulation_t dataCtrl;
 
 	uint32_t outputValues[256];
+	uint32_t switches[1];
 } Raspberry_GuiData_t;
 
 static Raspberry_GuiData_t Raspberry_guidata;
@@ -156,12 +157,39 @@ void Render_MenuEntry_Pitch(const char* name, int param)
 	ImGui::LabelText(name, "%1.3f", (float)((int)Raspberry_guidata.outputValues[param] - 0x8000) * (1.0f / (float)0x100));
 }
 
-/*
+void Render_MenuEntry_Waveform1(const char* name, int param)
+{
+	bool saw = (Raspberry_guidata.switches[0] >> param) & 1;
+
+	ImVec4 selected = ImVec4(1.0, 1.0, 1.0, 1.0);
+	ImVec4 unselected = ImVec4(0.0, 0.0, 0.0, 1.0);
+
+	ImVec4 sawcol = saw ? selected : unselected;
+
+	ImGui::TextColored(sawcol, "SAW MIX"); ImGui::SameLine();
+	ImGui::Text("%s", saw ? "On" : "Off");
+}
+
 void Render_MenuEntry_Waveform3(const char* name, int param)
 {
-	ImGui::LabelText(name, "%1.3f", (float)((int)Raspberry_guidata.outputValues[param] - 0x8000) * (1.0f / (float)0x100));
+	bool tri = (Raspberry_guidata.switches[0] >> param) & 1;
+	bool saw = (Raspberry_guidata.switches[0] >> (param + 1)) & 1;
+	bool sqr = (Raspberry_guidata.switches[0] >> (param + 2)) & 1;
+	bool sub = (Raspberry_guidata.switches[0] >> (param + 3)) & 1;
+
+	ImVec4 selected = ImVec4(1.0, 1.0, 1.0, 1.0);
+	ImVec4 unselected = ImVec4(0.0, 0.0, 0.0, 1.0);
+
+	ImVec4 tricol = tri ? selected : unselected;
+	ImVec4 sawcol = saw ? selected : unselected;
+	ImVec4 sqrcol = sqr ? selected : unselected;
+	ImVec4 subcol = sub ? selected : unselected;
+
+	ImGui::TextColored(tricol, "T"); ImGui::SameLine();
+	ImGui::TextColored(sawcol, "S"); ImGui::SameLine();
+	ImGui::TextColored(sqrcol, "P"); ImGui::SameLine();
+	ImGui::TextColored(subcol, "U");
 }
-*/
 
 void Render_MenuEntry_Pulsewidth(const char* name, int param)
 {
@@ -188,10 +216,13 @@ bool RenderMenu(GuiState_t state)
 	}
 #define ENTRY(name,type,param) \
 	Render_##type(name, param);
+#define CUSTOMENTRY(name,type,param) \
+	Render_##type(name, param);
 #include "PanUiMap.h"
 #undef MENU
 #undef ENDMENU
 #undef ENTRY
+#undef CUSTOMENTRY
 
 	return false;
 }
@@ -246,6 +277,11 @@ void Raspberry_RenderScreen()
 void Raspberry_OutputChangeValue(int output, uint32_t value)
 {
 	Raspberry_guidata.outputValues[output] = value;
+}
+
+void Raspberry_SetSwitches(uint32_t* switches)
+{
+	Raspberry_guidata.switches[0] = switches[0];
 }
 
 void Raspberry_EncoderTurn(EncoderEnum id, int delta)

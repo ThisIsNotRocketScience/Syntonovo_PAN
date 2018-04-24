@@ -193,6 +193,8 @@ void LoadPreset(PanPreset_t& preset)
 	for (int i = 0; i < 16; i++) {
 		WriteCtrl(preset, i);
 	}
+
+	Raspberry_SetSwitches(preset.switches);
 }
 
 void PresetChangeValue(PanPreset_t& preset, int param, uint16_t value)
