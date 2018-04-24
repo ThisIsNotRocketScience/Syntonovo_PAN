@@ -479,6 +479,111 @@ void linpan_r(int ctrlid, int port, int linctrlid, int panctrlid)
 	}
 }
 
+void mixtwo_1(int ctrlid, int port, int levelctrlid, int mixctrlid)
+{
+	int32_t mix1 = 0x10000 - (int32_t)synth_param[mixctrlid].last;
+	int value = synth_param[levelctrlid].last;
+	if (mix1 < 0x8000) value = bipolar_signed_scale(value, mix1);
+	int result = (synth_param[ctrlid].last != value) || doing_reset;
+	if (result) {
+		synth_param[ctrlid].last = value;
+		ports_value(port, synth_param[ctrlid].last);
+	}
+}
+
+void mixtwo_2(int ctrlid, int port, int levelctrlid, int mixctrlid)
+{
+	int32_t mix2 = (int32_t)synth_param[mixctrlid].last;
+	int value = synth_param[levelctrlid].last;
+	if (mix2 < 0x8000) value = bipolar_signed_scale(value, mix2);
+	int result = (synth_param[ctrlid].last != value) || doing_reset;
+	if (result) {
+		synth_param[ctrlid].last = value;
+		ports_value(port, synth_param[ctrlid].last);
+	}
+}
+
+void do_output_VCO1_MIX2(int ctrlid, int port)
+{
+	mixtwo_2(ctrlid, port, VCO1_LEVEL, VCO1_VCFMIX);
+}
+
+void do_output_VCO2_MIX2(int ctrlid, int port)
+{
+	mixtwo_2(ctrlid, port, VCO2_LEVEL, VCO2_VCFMIX);
+}
+
+void do_output_VCO3_MIX2(int ctrlid, int port)
+{
+	mixtwo_2(ctrlid, port, VCO3_LEVEL, VCO3_VCFMIX);
+}
+
+void do_output_RM1_MIX2(int ctrlid, int port)
+{
+	mixtwo_2(ctrlid, port, RM1_LEVEL, RM1_VCFMIX);
+}
+
+void do_output_VCO1_MIX1(int ctrlid, int port)
+{
+	mixtwo_1(ctrlid, port, VCO1_LEVEL, VCO1_VCFMIX);
+}
+
+void do_output_VCO2_MIX1(int ctrlid, int port)
+{
+	mixtwo_1(ctrlid, port, VCO2_LEVEL, VCO2_VCFMIX);
+}
+
+void do_output_VCO3_MIX1(int ctrlid, int port)
+{
+	mixtwo_1(ctrlid, port, VCO3_LEVEL, VCO3_VCFMIX);
+}
+
+void do_output_RM1_MIX1(int ctrlid, int port)
+{
+	mixtwo_1(ctrlid, port, RM1_LEVEL, RM1_VCFMIX);
+}
+
+void do_output_VCO4567_MIX2(int ctrlid, int port)
+{
+	mixtwo_2(ctrlid, port, VCO4567_LEVEL, VCO4567_VCFMIX);
+}
+
+void do_output_WHITENS_MIX1(int ctrlid, int port)
+{
+	mixtwo_1(ctrlid, port, WHITENS_LEVEL, WHITENS_VCFMIX);
+}
+
+void do_output_DIGINS_MIX1(int ctrlid, int port)
+{
+	mixtwo_1(ctrlid, port, DIGINS_LEVEL, DIGINS_VCFMIX);
+}
+
+
+void do_output_EXT_MIX1(int ctrlid, int port)
+{
+	mixtwo_1(ctrlid, port, EXT_LEVEL, EXT_VCFMIX);
+}
+
+void do_output_VCO4567_MIX1(int ctrlid, int port)
+{
+	mixtwo_1(ctrlid, port, VCO4567_LEVEL, VCO4567_VCFMIX);
+}
+
+void do_output_WHITENS_MIX2(int ctrlid, int port)
+{
+	mixtwo_2(ctrlid, port, WHITENS_LEVEL, WHITENS_VCFMIX);
+}
+
+void do_output_DIGINS_MIX2(int ctrlid, int port)
+{
+	mixtwo_2(ctrlid, port, DIGINS_LEVEL, DIGINS_VCFMIX);
+}
+
+void do_output_EXT_MIX2(int ctrlid, int port)
+{
+	mixtwo_2(ctrlid, port, EXT_LEVEL, EXT_VCFMIX);
+}
+
 void do_output_VCF1_L_LIN(int ctrlid, int port)
 {
 	linpan_l(ctrlid, port, VCF1_LIN, VCF1_PAN);
@@ -606,6 +711,86 @@ void virt_VCF2_PAN()
 void virt_CLEANF_PAN()
 {
 	process_param_lin(CLEANF_PAN);
+}
+
+void virt_VCO1_VCFMIX()
+{
+	process_param_lin(VCO1_VCFMIX);
+}
+
+void virt_VCO2_VCFMIX()
+{
+	process_param_lin(VCO2_VCFMIX);
+}
+
+void virt_VCO3_VCFMIX()
+{
+	process_param_lin(VCO3_VCFMIX);
+}
+
+void virt_RM1_VCFMIX()
+{
+	process_param_lin(RM1_VCFMIX);
+}
+
+void virt_WHITENS_VCFMIX()
+{
+	process_param_lin(WHITENS_VCFMIX);
+}
+
+void virt_DIGINS_VCFMIX()
+{
+	process_param_lin(DIGINS_VCFMIX);
+}
+
+void virt_EXT_VCFMIX()
+{
+	process_param_lin(EXT_VCFMIX);
+}
+
+void virt_VCO4567_VCFMIX()
+{
+	process_param_lin(VCO4567_VCFMIX);
+}
+
+void virt_VCO1_LEVEL()
+{
+	process_param_log(VCO1_LEVEL);
+}
+
+void virt_VCO2_LEVEL()
+{
+	process_param_log(VCO2_LEVEL);
+}
+
+void virt_VCO3_LEVEL()
+{
+	process_param_log(VCO3_LEVEL);
+}
+
+void virt_RM1_LEVEL()
+{
+	process_param_log(RM1_LEVEL);
+}
+
+void virt_WHITENS_LEVEL()
+{
+	process_param_log(WHITENS_LEVEL);
+}
+
+void virt_DIGINS_LEVEL()
+{
+	process_param_log(DIGINS_LEVEL);
+}
+
+void virt_EXT_LEVEL()
+{
+	process_param_log(EXT_LEVEL);
+}
+
+void virt_VCO4567_LEVEL()
+{
+	process_param_log(VCO4567_LEVEL);
 }
 
 void virt_NOTE()
