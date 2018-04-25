@@ -13,6 +13,7 @@
 #include  "PanHeader.h"
 
 
+
 SDL_Surface* load_PNG(const char* filename)
 {
 	std::vector<unsigned char> buffer, image;
@@ -688,6 +689,11 @@ int main(int argc, char** argv)
 
 #define RACINGGREEN IM_COL32(1, 58, 66, 255)
 
+	GLint BGtexture;
+	glGenTextures(&BGtexture, 1);
+
+	ImTextureID BG = (ImTextureID)BGtexture;
+
 	bool done = false;
 	int32_t clkcolor = ImColor::HSV(0, 1, 1);
 	int32_t tickcolor = ImColor::HSV(0.25, 1, 1);;// IM_COL32(0, 128, 255, 255);
@@ -764,13 +770,14 @@ int main(int argc, char** argv)
 			}
 			ImGui::EndMainMenuBar();
 		}
-
+		
 		if (parameters)
 		{
 			ImGui::PushFont(pFontBold);
 			{
 				ImGui::Begin("Pan Parameters", &parameters, ImGuiWindowFlags_AlwaysAutoResize);
 				ImGui::PushFont(pFont);
+				ImGui::Image(BG, ImVec2(2534, 1183));
 				ImGui::LabelText("l1","%d left %d bytes this frame.. %d handled", bytecount - handledbytes, bytecount, handledbytes);
 				ImVec2 pos = ImGui::GetCursorScreenPos();
 				float xscalefac = 60;

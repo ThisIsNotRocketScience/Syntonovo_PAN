@@ -24,7 +24,7 @@
 #define FADER(name,x,y)
 #endif
 
-KNOB(MASTER_TUNE, 1,1,"","",1,"Master Tune")
+KNOB(MASTER_TUNE, 1,1,"","",0,"Master Tune")
 LEDBUTTON(VCO1, 2.3,1,103)
 KNOB(VCO1_Pitch, 3,1, "-2_oct","+2_oct",32,"VCO1 Pitch")
 KNOB(VCO1_PW, 4, 1, "", "",16,"VCO1 PW")
