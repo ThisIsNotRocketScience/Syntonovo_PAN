@@ -523,6 +523,7 @@ void mixtwo_1(int ctrlid, int port, int levelctrlid, int mixctrlid)
 	int32_t mix1 = 0x10000 - (int32_t)synth_param[mixctrlid].last;
 	int value = synth_param[levelctrlid].last;
 	if (mix1 < 0x8000) value = bipolar_signed_scale(value, mix1);
+	value = 65535 - value;
 	int result = (synth_param[ctrlid].last != value) || doing_reset;
 	if (result) {
 		synth_param[ctrlid].last = value;
@@ -535,6 +536,7 @@ void mixtwo_2(int ctrlid, int port, int levelctrlid, int mixctrlid)
 	int32_t mix2 = (int32_t)synth_param[mixctrlid].last;
 	int value = synth_param[levelctrlid].last;
 	if (mix2 < 0x8000) value = bipolar_signed_scale(value, mix2);
+	value = 65535 - value;
 	int result = (synth_param[ctrlid].last != value) || doing_reset;
 	if (result) {
 		synth_param[ctrlid].last = value;
@@ -794,7 +796,7 @@ void virt_VCO4567_VCFMIX()
 
 void virt_VCO4567_DRY_MIX()
 {
-	process_param_log(VCO4567_DRY_MIX);
+	process_param_lin(VCO4567_DRY_MIX);
 }
 
 void virt_VCO1_LEVEL()
