@@ -91,53 +91,102 @@ void SetupIcon(SDL_Window *window)
 
 }
 #include "SerialPort.h"
-CSerialPort CP;
+
+CSerialPort DSPSerial;
+CSerialPort UISerial;
 
 
-void GetSerialPorts(int port)
+void GetSerialPorts(int port, int uiport)
 {
 	try
 	{
-		if (port > 0) CP.Open(port, 115200UL);
+		if (port > 0) DSPSerial.Open(port, 115200UL);
 	}
-	catch (int e)
+	catch (CSerialException e)
 	{
 
 	}
-	if (CP.IsOpen())
+	
+	if (DSPSerial.IsOpen())
 	{
 		unsigned char bytes[8] = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
-		CP.Write(bytes, 8);
+		DSPSerial.Write(bytes, 8);
 	}
+
+	try
+	{
+		if (uiport > 0)
+		{
+			UISerial.Open(uiport, 1000000UL);
+			UISerial.Setup(100000, 100000);
+		
+			
+		}	
+	}
+	catch (CSerialException e)
+	{
+
+	}
+	
 }
 
 void CloseSerialPorts()
 {
-	if (CP.IsOpen()) CP.Close();
+	if (DSPSerial.IsOpen()) DSPSerial.Close();
+	if (UISerial.IsOpen()) UISerial.Close();
+}
+
+uint32_t ConvertDat(uint32_t d)
+{
+	unsigned char d1 = d & 127;
+	unsigned char d2 = (d >> 7) & 127;
+	unsigned char d3 = (d >> 14) & 127;
+	unsigned char d4 = (d >> 21) & 127;
+
+	return d1 + (d2 << 8) + (d3 << 16) + (d4 << 24);
+}
+
+void UISendCommand(unsigned char command, uint32_t data)
+{
+	if (UISerial.IsOpen() == false) return;
+	uint8_t buffer[10];
+	uint32_t D = ConvertDat(data);
+	buffer[0] = command;
+	buffer[1] = (D & 127);
+	buffer[2] = (((D >> 8) & 127));
+	buffer[3] = (((D >> 16) & 127));
+	buffer[4] = (((D >> 24) & 127));
+	UISerial.Write(buffer, 5);
+}
+
+void UIWriteLed(int idx, int value)
+{	
+	uint32_t D = (idx << 16) + (255-value);
+	UISendCommand(0x83, D);
 }
 
 void WriteKnob(int id, uint32_t value)
 {
-	if (CP.IsOpen() == false) return;
+	if (DSPSerial.IsOpen() == false) return;
 	char b[4];
 	b[0] = (id>> 0) & 0xFF;
 	b[1] = (id >> 8) & 0xFF;
 	b[2] = (value >> 8) & 0xFF;
 	b[3] = (value >> 0) & 0xFF;
-	CP.Write(b, 4);
+	DSPSerial.Write(b, 4);
 }
 
 void WriteWithSubKnob(int id, int subid, uint32_t value)
 {
 	id |= subid << 8;
-	if (CP.IsOpen() == false) return;
+	if (DSPSerial.IsOpen() == false) return;
 	char b[4];
 	b[0] = (id >> 0) & 0xFF;
 	b[1] = (id >> 8) & 0xFF;
 	b[2] = (value >> 8) & 0xFF;
 	b[3] = (value >> 0) & 0xFF;
 
-	CP.Write(b, 4);
+	DSPSerial.Write(b, 4);
 }
 
 void WriteSwitch(int id, int state)
@@ -158,7 +207,7 @@ typedef struct
 
 void set(setpara_t& para)
 {
-	if (CP.IsOpen() == false) return;
+	if (DSPSerial.IsOpen() == false) return;
 	char b[4];
 
 	//b[0] = 1;
@@ -167,7 +216,7 @@ void set(setpara_t& para)
 	b[2] = (para.value >> 8) & 0xFF;
 	b[3] = (para.value >> 0) & 0xFF;
 
-	CP.Write(b, 4);
+	DSPSerial.Write(b, 4);
 }
 
 void note_on(int noteid, int notevel)
@@ -187,7 +236,7 @@ void note_off(int noteid, int notevel)
 }
 
 
-static bool MyKnob(const char* label, float* p_value, float v_min, float v_max)
+static bool MyKnob(const char* label, float* p_value, float v_min, float v_max, const char*desc)
 {
 	ImGuiIO& io = ImGui::GetIO();
 	ImGuiStyle& style = ImGui::GetStyle();
@@ -221,8 +270,8 @@ static bool MyKnob(const char* label, float* p_value, float v_min, float v_max)
 	draw_list->AddCircleFilled(center, radius_outer, ImGui::GetColorU32(ImGuiCol_FrameBg), 16);
 	draw_list->AddLine(ImVec2(center.x + angle_cos*radius_inner, center.y + angle_sin*radius_inner), ImVec2(center.x + angle_cos*(radius_outer - 2), center.y + angle_sin*(radius_outer - 2)), ImGui::GetColorU32(ImGuiCol_SliderGrabActive), 2.0f);
 	draw_list->AddCircleFilled(center, radius_inner, ImGui::GetColorU32(is_active ? ImGuiCol_FrameBgActive : is_hovered ? ImGuiCol_FrameBgHovered : ImGuiCol_FrameBg), 16);
-	auto R = ImGui::CalcTextSize(label);
-	draw_list->AddText(ImVec2(center.x - R.x/2, pos.y - line_height - style.ItemInnerSpacing.y), ImGui::GetColorU32(ImGuiCol_Text), label);
+	auto R = ImGui::CalcTextSize(desc);
+	draw_list->AddText(ImVec2(center.x - R.x/2, pos.y - line_height - style.ItemInnerSpacing.y), ImGui::GetColorU32(ImGuiCol_Text), desc);
 
 	if (is_active || is_hovered)
 	{
@@ -477,6 +526,99 @@ void CALLBACK MidiInProc(HMIDIIN hMidiIn, UINT wMsg, DWORD dwInstance, DWORD dwP
 }
 
 
+int T = 0;
+int SerialStatus = 0;
+int SerialCounter = 0;
+uint32_t SerialData = 0;
+
+int FindKnobIDX(int in)
+{
+	for (int i = 0; i < __KNOB_COUNT; i++)
+	{
+		if (Knobs[i].frontpanelidx == in)
+		{
+			return i;
+		}
+	}
+	return -1;
+}
+int FindButtonIDX(int in)
+{
+	for (int i = 0; i < __LEDBUTTON_COUNT; i++)
+	{
+		if (Buttons[i].fpid == in)
+		{
+			return i;
+		}
+	}
+	return -1;
+}
+void DoCommand(unsigned char comm, uint32_t data)
+{
+	switch (comm)
+	{
+	case 0x81:
+	{
+		uint16_t idx = data >> 8;
+		uint16_t val = data & 0xff;
+		int N = FindButtonIDX(idx);
+		if (N > -1)
+		{
+			Buttons[N].value = ((val == 0) ? true : false);
+		}
+		printf("incoming button: %d, %d\n",idx, val);
+		
+		UIWriteLed(idx, val);
+	}
+	break;
+	case 0x82:
+	{
+		uint16_t idx = data >> 16;
+		uint16_t val = data & 0xffff;
+		int TargetIDX = FindKnobIDX(idx);
+		if (TargetIDX > -1)
+		{
+			Knobs[TargetIDX].value = val/1023.0f;
+		//	printf("incoming pot: %d, %d\n", idx, val);
+		}
+	}
+	break;
+	case 0x90:
+		printf("0x90: %d\n", data);
+		break;
+	case 0x91:
+		printf("0x91: %d\n", data);
+		break;
+	}
+}
+
+int HandleSerial(unsigned char inb)
+{
+	if ((inb & 0x80) == 0x80)
+	{
+		SerialStatus = inb;
+		SerialCounter = 4;
+		SerialData = 0;
+		return 1;
+	}
+	else
+	{
+		if (SerialCounter > 0)
+		{
+			SerialCounter--;
+			SerialData += inb << ((3-SerialCounter) * 7);
+			if (SerialCounter == 0)
+			{
+				DoCommand(SerialStatus, SerialData);
+			}
+			return 1;
+		}
+
+	}
+	return 0;
+}
+
+
 int main(int argc, char** argv)
 {
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) != 0)
@@ -490,14 +632,16 @@ int main(int argc, char** argv)
 	UINT nMidiDeviceNum;
 	MMRESULT rv;
 
-	int port = 0;
-	if (argc > 1)
+	int dspport = 0;
+	int uiport = 0;
+	if (argc > 2)
 	{
-		port = atoi(argv[1]);
+		dspport = atoi(argv[1]);
+		uiport = atoi(argv[2]);
 	}
 	else
 	{
-		printf("please use PanSim.exe <portnum> where portnum is an integer! COM11: 11\n");
+		printf("please use PanSim.exe <dspportnum> <uiportnum> where params are integer! COM11: 11\n");
 	}
 
 	if (midiInGetNumDevs() > 0)
@@ -572,7 +716,7 @@ int main(int argc, char** argv)
 	ImGui::GetStyle().Colors[ImGuiCol_WindowBg] = ImVec4(1.0f, 1.0f, 1.0f, .800f);
 
 	static bool parameters = true;
-	GetSerialPorts(port);
+	GetSerialPorts(dspport,uiport);
 
 	Teensy_Reset();
 	Raspberry_Reset();
@@ -582,8 +726,26 @@ int main(int argc, char** argv)
 	para.paramid = 0xfcfe;
 	para.value = 3;
 	set(para);
+	unsigned char buffer[100];
 	while (!done)
 	{
+		int bytecount = 0;
+		int handledbytes = 0;
+		if (UISerial.IsOpen())
+		{
+			int byteswaiting = UISerial.BytesWaiting();
+			bytecount += byteswaiting;
+			while (byteswaiting > 0)
+			{
+				int r = __min(100, byteswaiting);
+				byteswaiting -= r;
+				UISerial.Read(buffer, r);
+				for (int i = 0; i < r; i++)
+				{
+					handledbytes += HandleSerial(buffer[i]);
+				}
+			}
+		}
 		SDL_Event event;
 		while (SDL_PollEvent(&event))
 		{
@@ -609,7 +771,7 @@ int main(int argc, char** argv)
 			{
 				ImGui::Begin("Pan Parameters", &parameters, ImGuiWindowFlags_AlwaysAutoResize);
 				ImGui::PushFont(pFont);
-
+				ImGui::LabelText("l1","%d left %d bytes this frame.. %d handled", bytecount - handledbytes, bytecount, handledbytes);
 				ImVec2 pos = ImGui::GetCursorScreenPos();
 				float xscalefac = 60;
 				float yscalefac = 60;
@@ -625,7 +787,7 @@ int main(int argc, char** argv)
 					}
 					else
 					{
-						if (MyKnob(Knobs[i].name, &Knobs[i].value, 0, 1))
+						if (MyKnob(Knobs[i].name, &Knobs[i].value, 0, 1, Knobs[i].label))
 						{
 							Teensy_KnobChanged(Knobs[i].id, uint32_t(floor((Knobs[i].value*65535.0))));
 						}
@@ -679,6 +841,7 @@ int main(int argc, char** argv)
 		ImGui_ImplSdlGL3_RenderDrawData(ImGui::GetDrawData());
 		//ImGui::PopFont();
 		SDL_GL_SwapWindow(window);
+		SDL_Delay(0);
 	}
 
 	for (int i = 0; i < midiInGetNumDevs(); i++)
