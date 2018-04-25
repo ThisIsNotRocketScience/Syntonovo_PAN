@@ -12,7 +12,28 @@
 
 #include  "PanHeader.h"
 
+ImTextureID loadTexture(const char *filename)
+{
+	std::vector<unsigned char> buffer, image;
+	lodepng::load_file(buffer, filename); //load the image file with given filename
+	unsigned w, h;
+	unsigned error = lodepng::decode(image, w, h, buffer); //decode the png
 
+	if (error)
+	{
+		//std::cout << "decoder error " << error << ": " << lodepng_error_text(error) << std::endl;
+		return 0;
+	}
+	GLuint tex;
+	glEnable(GL_TEXTURE_2D);
+	glGenTextures(1, &tex);
+	glBindTexture(GL_TEXTURE_2D, tex);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); //GL_NEAREST = no smoothing
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, &image[0]);
+
+	return (ImTextureID)tex;
+};
 
 SDL_Surface* load_PNG(const char* filename)
 {
@@ -566,10 +587,13 @@ void DoCommand(unsigned char comm, uint32_t data)
 		if (N > -1)
 		{
 			Buttons[N].value = ((val == 0) ? true : false);
+
+			Teensy_ButtonPressed(Buttons[N].id, Buttons[N].value);
+
 		}
 		printf("incoming button: %d, %d\n",idx, val);
 		
-		UIWriteLed(idx, val);
+	//	UIWriteLed(idx, val);
 	}
 	break;
 	case 0x82:
@@ -579,7 +603,9 @@ void DoCommand(unsigned char comm, uint32_t data)
 		int TargetIDX = FindKnobIDX(idx);
 		if (TargetIDX > -1)
 		{
+
 			Knobs[TargetIDX].value = val/1023.0f;
+			Teensy_KnobChanged(Knobs[TargetIDX].id, uint32_t(floor((Knobs[TargetIDX].value*65535.0))));
 		//	printf("incoming pot: %d, %d\n", idx, val);
 		}
 	}
@@ -689,10 +715,8 @@ int main(int argc, char** argv)
 
 #define RACINGGREEN IM_COL32(1, 58, 66, 255)
 
-	GLint BGtexture=0;
-	//glGenTextures(&BGtexture, 1);
-
-	ImTextureID BG = (ImTextureID)BGtexture;
+	
+	ImTextureID BG = 0;// loadTexture("FrontPanel.PNG");
 
 	bool done = false;
 	int32_t clkcolor = ImColor::HSV(0, 1, 1);
@@ -732,9 +756,21 @@ int main(int argc, char** argv)
 	para.paramid = 0xfcfe;
 	para.value = 3;
 	set(para);
-	unsigned char buffer[100];
+
+	int LastLedStatus[__LED_COUNT];
+	bool LastLedButtonStatus[__LEDBUTTON_COUNT];
+#define __SERIALINBUFFERSIZE 100000
+	unsigned char buffer[__SERIALINBUFFERSIZE];
 	while (!done)
 	{
+		for (int i = 0; i < __LEDBUTTON_COUNT; i++)
+		{
+			if (Buttons[i].value != LastLedButtonStatus[i])
+			{
+				UIWriteLed(Buttons[i].fpid, Buttons[i].value?0:255);
+				LastLedButtonStatus[i] = Buttons[i].value;
+			}
+		}
 		int bytecount = 0;
 		int handledbytes = 0;
 		if (UISerial.IsOpen())
@@ -743,7 +779,7 @@ int main(int argc, char** argv)
 			bytecount += byteswaiting;
 			while (byteswaiting > 0)
 			{
-				int r = __min(100, byteswaiting);
+				int r = __min(__SERIALINBUFFERSIZE, byteswaiting);
 				byteswaiting -= r;
 				UISerial.Read(buffer, r);
 				for (int i = 0; i < r; i++)
@@ -777,9 +813,12 @@ int main(int argc, char** argv)
 			{
 				ImGui::Begin("Pan Parameters", &parameters, ImGuiWindowFlags_AlwaysAutoResize);
 				ImGui::PushFont(pFont);
-				if (BG) ImGui::Image(BG, ImVec2(2534, 1183));
-				ImGui::LabelText("l1","%d left %d bytes this frame.. %d handled", bytecount - handledbytes, bytecount, handledbytes);
 				ImVec2 pos = ImGui::GetCursorScreenPos();
+				if (BG) ImGui::Image(BG, ImVec2(2534*0.6, 1183*0.6));
+				ImGui::SetCursorScreenPos(pos);
+
+				ImGui::LabelText("l1","%d left %d bytes this frame.. %d handled", bytecount - handledbytes, bytecount, handledbytes);
+				//ImVec2 pos = ImGui::GetCursorScreenPos();
 				float xscalefac = 60;
 				float yscalefac = 60;
 				for (int i = 0; i < __KNOB_COUNT; i++)
