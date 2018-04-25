@@ -689,8 +689,8 @@ int main(int argc, char** argv)
 
 #define RACINGGREEN IM_COL32(1, 58, 66, 255)
 
-	GLint BGtexture;
-	glGenTextures(&BGtexture, 1);
+	GLint BGtexture=0;
+	//glGenTextures(&BGtexture, 1);
 
 	ImTextureID BG = (ImTextureID)BGtexture;
 
@@ -777,7 +777,7 @@ int main(int argc, char** argv)
 			{
 				ImGui::Begin("Pan Parameters", &parameters, ImGuiWindowFlags_AlwaysAutoResize);
 				ImGui::PushFont(pFont);
-				ImGui::Image(BG, ImVec2(2534, 1183));
+				if (BG) ImGui::Image(BG, ImVec2(2534, 1183));
 				ImGui::LabelText("l1","%d left %d bytes this frame.. %d handled", bytecount - handledbytes, bytecount, handledbytes);
 				ImVec2 pos = ImGui::GetCursorScreenPos();
 				float xscalefac = 60;

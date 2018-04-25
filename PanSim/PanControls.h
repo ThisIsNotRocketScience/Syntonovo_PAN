@@ -49,7 +49,7 @@ LEDBUTTON(VCO7,5.2,4,96)
 KNOB(VCO7_Pitch,6,4,"0","+3_oct",12, "VCO7 Pitch")
 
 
-LEDBUTTON(Interval_spread, 2.3, 4,100,-1)
+LEDBUTTON(Interval_spread, 2.3, 4,100)
 LEDBUTTON(Spread, 7, 4,55)
 
 #define VCF1X 7.7

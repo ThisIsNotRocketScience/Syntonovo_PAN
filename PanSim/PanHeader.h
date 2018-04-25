@@ -21,7 +21,7 @@ enum KnobEnum
 
 enum LedButtonEnum
 {
-#define LEDBUTTON(name,x,y)  ledbutton_##name,
+#define LEDBUTTON(name,x,y,idx)  ledbutton_##name,
 #include "PanControls.h"
 #undef LEDBUTTON
 	__LEDBUTTON_COUNT
