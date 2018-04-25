@@ -1457,6 +1457,7 @@
 						<entry kind="includePath" name="/${ProjName}/CMSIS/drivers">
 							<flag value="VALUE_WORKSPACE_PATH"/>
 						</entry>
+						<entry kind="includePath" name="C:/work/pan/git/interface"/>
 						<entry kind="macro" name="CPU_LPC54616J512BD208" value=""/>
 						<entry kind="macro" name="CPU_LPC54616J512BD208_cm4" value=""/>
 						<entry kind="macro" name="CR_INTEGER_PRINTF" value=""/>

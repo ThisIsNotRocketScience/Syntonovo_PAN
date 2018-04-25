@@ -14,12 +14,12 @@
 #endif
 
 
-OUTPUT(XPAD_OUT, 	    P12_0,	6,	    INT,	0x07,	LIN,	0)
-OUTPUT(YPAD_OUT, 	    P12_0,	7,	    INT,	0x08,  	LIN,	0)
-OUTPUT(ZPAD_OUT, 	    P12_0,	8,	    INT,	0x09,  	LIN,	0)
-OUTPUT(BP_OUT, 	        P12_0,	9,	    INT,	0x0A,  	LIN,	0)
-OUTPUT(MP_OUT, 	        P12_0,	10,	    INT,	0x0B,  	LIN,	0)
-OUTPUT(SP_OUT, 	        P12_0,	11,	    INT,	0x0C,	LIN,	0)
+//OUTPUT(XPAD_OUT, 	    P12_0,	6,	    INT,	0x07,	LIN,	0)
+//OUTPUT(YPAD_OUT, 	    P12_0,	7,	    INT,	0x08,  	LIN,	0)
+//OUTPUT(ZPAD_OUT, 	    P12_0,	8,	    INT,	0x09,  	LIN,	0)
+//OUTPUT(BP_OUT, 	        P12_0,	9,	    INT,	0x0A,  	LIN,	0)
+//OUTPUT(MP_OUT, 	        P12_0,	10,	    INT,	0x0B,  	LIN,	0)
+//OUTPUT(SP_OUT, 	        P12_0,	11,	    INT,	0x0C,	LIN,	0)
 
 OUTPUT(VCF1_RES, 	    P12_2,	0,	    CTRL,	0x11,	LIN,	0)
 OUTPUT(VCF1_CROSSMOD,	P12_2,	1,	    CTRL,	0x12, 	LIN,	0)

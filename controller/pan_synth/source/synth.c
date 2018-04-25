@@ -26,6 +26,19 @@ void ports_value(int portid, uint16_t value);
 static volatile int reset = 0;
 int doing_reset = 0;
 
+const int KEYBOARD_X = 0;
+const int KEYBOARD_Y = 1;
+const int KEYBOARD_Z = 2;
+const int PAD_PBL = 3;
+const int PAD_MBL = 4;
+const int PAD_SBL = 5;
+const int PAD_PBR = 6;
+const int PAD_MBR = 7;
+const int PAD_SBR = 8;
+uint16_t pad_adc_value[9];
+uint16_t pad_calibration[9] = {0};
+int32_t pad_value[9];
+
 uint16_t pan_law_table[2049];
 
 static void pan_law_init()
@@ -367,6 +380,15 @@ int process_param_lin(int ctrlid)
 		uint16_t ad = ad_update(ctrlid);
 		value += signed_scale(ad, synth_param[ctrlid].ad_depth);
 	}
+	if (synth_param[ctrlid].x) {
+		value += bipolar_signed_scale(pad_value[KEYBOARD_X], synth_param[ctrlid].x);
+	}
+	if (synth_param[ctrlid].y) {
+		value += bipolar_signed_scale(pad_value[KEYBOARD_Y], synth_param[ctrlid].y);
+	}
+	if (synth_param[ctrlid].z) {
+		value += bipolar_signed_scale(pad_value[KEYBOARD_Z], synth_param[ctrlid].z);
+	}
 
 	if (value < 0) value = 0;
 	else if (value > 65535) value = 65535;
@@ -400,6 +422,15 @@ int process_param_inv(int ctrlid)
 		uint16_t ad = ad_update(ctrlid);
 		value += signed_scale(ad, synth_param[ctrlid].ad_depth);
 	}
+	if (synth_param[ctrlid].x) {
+		value += bipolar_signed_scale(pad_value[KEYBOARD_X], synth_param[ctrlid].x);
+	}
+	if (synth_param[ctrlid].y) {
+		value += bipolar_signed_scale(pad_value[KEYBOARD_Y], synth_param[ctrlid].y);
+	}
+	if (synth_param[ctrlid].z) {
+		value += bipolar_signed_scale(pad_value[KEYBOARD_Z], synth_param[ctrlid].z);
+	}
 
 	if (value < 0) value = 65535;
 	else if (value > 65535) value = 0;
@@ -430,6 +461,15 @@ int process_param_log_add(int ctrlid, int32_t add)
 	if (synth_param[ctrlid].ad_depth) {
 		uint16_t ad = ad_update(ctrlid);
 		value += signed_scale(ad, synth_param[ctrlid].ad_depth);
+	}
+	if (synth_param[ctrlid].x) {
+		value += bipolar_signed_scale(pad_value[KEYBOARD_X], synth_param[ctrlid].x);
+	}
+	if (synth_param[ctrlid].y) {
+		value += bipolar_signed_scale(pad_value[KEYBOARD_Y], synth_param[ctrlid].y);
+	}
+	if (synth_param[ctrlid].z) {
+		value += bipolar_signed_scale(pad_value[KEYBOARD_Z], synth_param[ctrlid].z);
 	}
 
 	if (value < 0) value = 65535;
@@ -801,42 +841,42 @@ void virt_VCO4567_DRY_MIX()
 
 void virt_VCO1_LEVEL()
 {
-	process_param_log(VCO1_LEVEL);
+	process_param_lin(VCO1_LEVEL);
 }
 
 void virt_VCO2_LEVEL()
 {
-	process_param_log(VCO2_LEVEL);
+	process_param_lin(VCO2_LEVEL);
 }
 
 void virt_VCO3_LEVEL()
 {
-	process_param_log(VCO3_LEVEL);
+	process_param_lin(VCO3_LEVEL);
 }
 
 void virt_RM1_LEVEL()
 {
-	process_param_log(RM1_LEVEL);
+	process_param_lin(RM1_LEVEL);
 }
 
 void virt_WHITENS_LEVEL()
 {
-	process_param_log(WHITENS_LEVEL);
+	process_param_lin(WHITENS_LEVEL);
 }
 
 void virt_DIGINS_LEVEL()
 {
-	process_param_log(DIGINS_LEVEL);
+	process_param_lin(DIGINS_LEVEL);
 }
 
 void virt_EXT_LEVEL()
 {
-	process_param_log(EXT_LEVEL);
+	process_param_lin(EXT_LEVEL);
 }
 
 void virt_VCO4567_LEVEL()
 {
-	process_param_log(VCO4567_LEVEL);
+	process_param_lin(VCO4567_LEVEL);
 }
 
 void virt_NOTE()
@@ -865,6 +905,15 @@ int process_param_note(int ctrlid)
 	if (synth_param[ctrlid].ad_depth) {
 		uint16_t ad = ad_update(ctrlid);
 		value += signed_scale(ad, synth_param[ctrlid].ad_depth);
+	}
+	if (synth_param[ctrlid].x) {
+		value += bipolar_signed_scale(pad_value[KEYBOARD_X], synth_param[ctrlid].x);
+	}
+	if (synth_param[ctrlid].y) {
+		value += bipolar_signed_scale(pad_value[KEYBOARD_Y], synth_param[ctrlid].y);
+	}
+	if (synth_param[ctrlid].z) {
+		value += bipolar_signed_scale(pad_value[KEYBOARD_Z], synth_param[ctrlid].z);
 	}
 
 	if (value < 0) value = 0;
@@ -976,6 +1025,20 @@ void synth_mapping_virt()
 	}
 }
 
+void pad_zero()
+{
+	for (int i = 0; i < 3; i++) {
+		ports_input(i, &pad_calibration[i]);
+		ports_input(i + 6, &pad_calibration[i + 6]);
+		ports_input(i + 9, &pad_calibration[i + 9]);
+	}
+}
+
+void pad_init()
+{
+	pad_zero();
+}
+
 void synth_init()
 {
 	synth_mapping_init();
@@ -1003,12 +1066,11 @@ void synth_init()
     NVIC_SetPriority(SCTIMER_1_IRQN, 1);
 
     autotune_init();
+    pad_init();
 }
 
 void synth_run()
 {
-	uint16_t adc_value[6];
-
 	int last_trigger = 0;
 	int last_release = 0;
 	int last_timer_value = 0;
@@ -1019,6 +1081,16 @@ void synth_run()
 
 	    synth_mapping_run();
 	    synth_mapping_virt();
+
+		for (int i = 0; i < 3; i++) {
+			ports_input(i, &pad_adc_value[i]);
+			ports_input(i + 6, &pad_adc_value[i + 3]);
+			ports_input(i + 9, &pad_adc_value[i + 6]);
+		}
+
+		for (int i = 0; i < 9; i++) {
+			pad_value[i] = (int32_t)pad_adc_value[i] - (int32_t)pad_calibration[i];
+		}
 
 #if 0
 		for (int i = 0; i < 6; i++) {
