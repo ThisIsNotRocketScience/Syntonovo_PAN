@@ -411,14 +411,14 @@ int process_param_inv(int ctrlid)
 	return result;
 }
 
-int process_param_log(int ctrlid)
+int process_param_log_add(int ctrlid, int32_t add)
 {
 	int result = doing_reset;
 
 	adsr_set_gate(ctrlid, synth_param[GATE].value);
 	ad_set_gate(ctrlid, synth_param[GATE].value);
 
-	int32_t value = synth_param[ctrlid].value;
+	int32_t value = synth_param[ctrlid].value + add;
 	if (synth_param[ctrlid].lfo_depth) {
 		uint16_t lfo = (lfo_update(ctrlid) >> 2) + 0x8000;
 		value += signed_scale(lfo, synth_param[ctrlid].lfo_depth);
@@ -442,6 +442,11 @@ int process_param_log(int ctrlid)
 	return result;
 }
 
+int process_param_log(int ctrlid)
+{
+	return process_param_log_add(ctrlid, 0);
+}
+
 void do_output_lin(int ctrlid, int port)
 {
 	if (process_param_lin(ctrlid)) {
@@ -459,6 +464,34 @@ void do_output_inv(int ctrlid, int port)
 void do_output_log(int ctrlid, int port)
 {
 	if (process_param_log(ctrlid)) {
+		ports_value(port, synth_param[ctrlid].last);
+	}
+}
+
+void do_output_VCO4_DRY_MIX(int ctrlid, int port)
+{
+	if (process_param_log_add(ctrlid, synth_param[VCO4567_DRY_MIX].last)) {
+		ports_value(port, synth_param[ctrlid].last);
+	}
+}
+
+void do_output_VCO5_DRY_MIX(int ctrlid, int port)
+{
+	if (process_param_log_add(ctrlid, synth_param[VCO4567_DRY_MIX].last)) {
+		ports_value(port, synth_param[ctrlid].last);
+	}
+}
+
+void do_output_VCO6_DRY_MIX(int ctrlid, int port)
+{
+	if (process_param_log_add(ctrlid, synth_param[VCO4567_DRY_MIX].last)) {
+		ports_value(port, synth_param[ctrlid].last);
+	}
+}
+
+void do_output_VCO7_DRY_MIX(int ctrlid, int port)
+{
+	if (process_param_log_add(ctrlid, synth_param[VCO4567_DRY_MIX].last)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
 }
@@ -757,6 +790,11 @@ void virt_EXT_VCFMIX()
 void virt_VCO4567_VCFMIX()
 {
 	process_param_lin(VCO4567_VCFMIX);
+}
+
+void virt_VCO4567_DRY_MIX()
+{
+	process_param_log(VCO4567_DRY_MIX);
 }
 
 void virt_VCO1_LEVEL()
