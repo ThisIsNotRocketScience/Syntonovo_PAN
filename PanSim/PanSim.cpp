@@ -593,7 +593,7 @@ void DoCommand(unsigned char comm, uint32_t data)
 		}
 		printf("incoming button: %d, %d\n",idx, val);
 		
-		UIWriteLed(idx, val);
+	//	UIWriteLed(idx, val);
 	}
 	break;
 	case 0x82:
@@ -756,9 +756,21 @@ int main(int argc, char** argv)
 	para.paramid = 0xfcfe;
 	para.value = 3;
 	set(para);
-	unsigned char buffer[1000];
+
+	int LastLedStatus[__LED_COUNT];
+	bool LastLedButtonStatus[__LEDBUTTON_COUNT];
+#define __SERIALINBUFFERSIZE 100000
+	unsigned char buffer[__SERIALINBUFFERSIZE];
 	while (!done)
 	{
+		for (int i = 0; i < __LEDBUTTON_COUNT; i++)
+		{
+			if (Buttons[i].value != LastLedButtonStatus[i])
+			{
+				UIWriteLed(Buttons[i].fpid, Buttons[i].value?0:255);
+				LastLedButtonStatus[i] = Buttons[i].value;
+			}
+		}
 		int bytecount = 0;
 		int handledbytes = 0;
 		if (UISerial.IsOpen())
@@ -767,7 +779,7 @@ int main(int argc, char** argv)
 			bytecount += byteswaiting;
 			while (byteswaiting > 0)
 			{
-				int r = __min(1000, byteswaiting);
+				int r = __min(__SERIALINBUFFERSIZE, byteswaiting);
 				byteswaiting -= r;
 				UISerial.Read(buffer, r);
 				for (int i = 0; i < r; i++)
