@@ -33,3 +33,4 @@
 PanSim/Debug/*
 PanSim/Release/*
 *.exp
+*.db

@@ -142,6 +142,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <Image Include="favicon-32x32.png" />
+    <Image Include="FrontPanel.PNG">
+      <DeploymentContent>true</DeploymentContent>
+    </Image>
     <Image Include="ms-icon-150x150.png" />
   </ItemGroup>
   <ItemGroup>

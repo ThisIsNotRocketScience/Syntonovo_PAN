@@ -1531,13 +1531,13 @@ void Teensy_KnobChanged(KnobEnum ID, uint32_t value)
 			}
 		}
 	}
-	printf("knob %s: %d\n", Knobs[ID].name, value);
+	//printf("knob %s: %d\n", Knobs[ID].name, value);
 
 }
 
 void Teensy_ButtonPressed(LedButtonEnum ID, int value)
 {
-	printf("button %s: %d\n", Buttons[ID].name, Buttons[ID].value ? 1 : 0);
+	//printf("button %s: %d\n", Buttons[ID].name, Buttons[ID].value ? 1 : 0);
 
 
 	/*
