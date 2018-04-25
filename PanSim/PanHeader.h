@@ -3,7 +3,7 @@
 #define SYNTONPAN
 #include <string>
 
-#define KNOB(name,x,y,min,max) +1
+#define KNOB(name,x,y,min,max,idx,lbl) +1
 const int knobcount = 0
 #include "PanControls.h"
 ;
@@ -11,8 +11,8 @@ const int knobcount = 0
 
 enum KnobEnum
 {
-#define KNOB(name,x,y,min,max)  knob_##name,
-#define SLIDER(name,x,y,min,max)  knob_##name,
+#define KNOB(name,x,y,min,max,idx,lbl)  knob_##name,
+#define SLIDER(name,x,y,min,max,idx,lbl)  knob_##name,
 #include "PanControls.h"
 #undef KNOB
 #undef SLIDER
@@ -153,6 +153,7 @@ public:
 	float x;
 	float y;
 	LedButtonEnum id;
+	int fpid;
 	bool value;
 };
 
@@ -182,6 +183,8 @@ public:
 	float y;
 	KnobEnum id;
 	int isslider;
+	int frontpanelidx;
+	char *label;
 	float value;
 };
 

@@ -346,6 +346,8 @@ void control_cb(int param, int subparam, uint16_t value)
 
 int process_param_lin(int ctrlid)
 {
+	int result = doing_reset;
+
 	adsr_set_gate(ctrlid, synth_param[GATE].value);
 	ad_set_gate(ctrlid, synth_param[GATE].value);
 
@@ -369,7 +371,7 @@ int process_param_lin(int ctrlid)
 	if (value < 0) value = 0;
 	else if (value > 65535) value = 65535;
 
-	int result = (synth_param[ctrlid].last != value);
+	result |= (synth_param[ctrlid].last != value);
 	synth_param[ctrlid].last = value;
 
 	return result;
@@ -377,6 +379,8 @@ int process_param_lin(int ctrlid)
 
 int process_param_inv(int ctrlid)
 {
+	int result = doing_reset;
+
 	adsr_set_gate(ctrlid, synth_param[GATE].value);
 	ad_set_gate(ctrlid, synth_param[GATE].value);
 
@@ -401,7 +405,7 @@ int process_param_inv(int ctrlid)
 	else if (value > 65535) value = 0;
 	else value = 65535 - value;
 
-	int result = (synth_param[ctrlid].last != value);
+	result |= (synth_param[ctrlid].last != value);
 	synth_param[ctrlid].last = value;
 
 	return result;
@@ -409,6 +413,8 @@ int process_param_inv(int ctrlid)
 
 int process_param_log(int ctrlid)
 {
+	int result = doing_reset;
+
 	adsr_set_gate(ctrlid, synth_param[GATE].value);
 	ad_set_gate(ctrlid, synth_param[GATE].value);
 
@@ -430,7 +436,7 @@ int process_param_log(int ctrlid)
 	else if (value > 65535) value = 0;
 	else value = 65535 - value;
 
-	int result = (synth_param[ctrlid].last != value) || doing_reset;
+	result |= (synth_param[ctrlid].last != value);
 	synth_param[ctrlid].last = value;
 
 	return result;
@@ -799,9 +805,9 @@ void virt_NOTE()
 	synth_param[NOTE].last = synth_param[NOTE].value;
 }
 
-void virt_VCO1_PITCH()
+int process_param_note(int ctrlid)
 {
-	const int ctrlid = VCO1_PITCH;
+	int result = doing_reset;
 
 	adsr_set_gate(ctrlid, synth_param[GATE].value);
 	ad_set_gate(ctrlid, synth_param[GATE].value);
@@ -823,169 +829,46 @@ void virt_VCO1_PITCH()
 
 	if (value < 0) value = 0;
 	else if (value > 65535) value = 65535;
+
+	result |= (synth_param[ctrlid].last != value);
 	synth_param[ctrlid].last = value;
+
+	return result;
+}
+
+void virt_VCO1_PITCH()
+{
+	process_param_note(VCO1_PITCH);
 }
 
 void virt_VCO2_PITCH()
 {
-	const int ctrlid = VCO2_PITCH;
-
-	adsr_set_gate(ctrlid, synth_param[GATE].value);
-	ad_set_gate(ctrlid, synth_param[GATE].value);
-
-	int32_t value = note_add(note_scale(synth_param[NOTE].last, synth_param[ctrlid].note), synth_param[ctrlid].value);
-	value += (int32_t)synth_param[MASTER_PITCH].last - 0x8000;
-	if (synth_param[ctrlid].lfo_depth) {
-		uint16_t lfo = (lfo_update(ctrlid) >> 2) + 0x8000;
-		value += signed_scale(lfo, synth_param[ctrlid].lfo_depth);
-	}
-	if (synth_param[ctrlid].adsr_depth) {
-		uint16_t adsr = adsr_update(ctrlid);
-		value += signed_scale(adsr, synth_param[ctrlid].adsr_depth);
-	}
-	if (synth_param[ctrlid].ad_depth) {
-		uint16_t ad = ad_update(ctrlid);
-		value += signed_scale(ad, synth_param[ctrlid].ad_depth);
-	}
-
-	if (value < 0) value = 0;
-	else if (value > 65535) value = 65535;
-	synth_param[ctrlid].last = value;
+	process_param_note(VCO2_PITCH);
 }
 
 void virt_VCO3_PITCH()
 {
-	const int ctrlid = VCO3_PITCH;
-
-	adsr_set_gate(ctrlid, synth_param[GATE].value);
-	ad_set_gate(ctrlid, synth_param[GATE].value);
-
-	int32_t value = note_add(note_scale(synth_param[NOTE].last, synth_param[ctrlid].note), synth_param[ctrlid].value);
-	value += (int32_t)synth_param[MASTER_PITCH].last - 0x8000;
-	if (synth_param[ctrlid].lfo_depth) {
-		uint16_t lfo = (lfo_update(ctrlid) >> 2) + 0x8000;
-		value += signed_scale(lfo, synth_param[ctrlid].lfo_depth);
-	}
-	if (synth_param[ctrlid].adsr_depth) {
-		uint16_t adsr = adsr_update(ctrlid);
-		value += signed_scale(adsr, synth_param[ctrlid].adsr_depth);
-	}
-	if (synth_param[ctrlid].ad_depth) {
-		uint16_t ad = ad_update(ctrlid);
-		value += signed_scale(ad, synth_param[ctrlid].ad_depth);
-	}
-
-	if (value < 0) value = 0;
-	else if (value > 65535) value = 65535;
-	synth_param[ctrlid].last = value;
+	process_param_note(VCO3_PITCH);
 }
 
 void virt_VCO4_PITCH()
 {
-	const int ctrlid = VCO4_PITCH;
-
-	adsr_set_gate(ctrlid, synth_param[GATE].value);
-	ad_set_gate(ctrlid, synth_param[GATE].value);
-
-	int32_t value = note_add(note_scale(synth_param[NOTE].last, synth_param[ctrlid].note), synth_param[ctrlid].value);
-	value += (int32_t)synth_param[MASTER_PITCH].last - 0x8000;
-	if (synth_param[ctrlid].lfo_depth) {
-		uint16_t lfo = (lfo_update(ctrlid) >> 2) + 0x8000;
-		value += signed_scale(lfo, synth_param[ctrlid].lfo_depth);
-	}
-	if (synth_param[ctrlid].adsr_depth) {
-		uint16_t adsr = adsr_update(ctrlid);
-		value += signed_scale(adsr, synth_param[ctrlid].adsr_depth);
-	}
-	if (synth_param[ctrlid].ad_depth) {
-		uint16_t ad = ad_update(ctrlid);
-		value += signed_scale(ad, synth_param[ctrlid].ad_depth);
-	}
-
-	if (value < 0) value = 0;
-	else if (value > 65535) value = 65535;
-	synth_param[ctrlid].last = value;
+	process_param_note(VCO4_PITCH);
 }
 
 void virt_VCO5_PITCH()
 {
-	const int ctrlid = VCO5_PITCH;
-
-	adsr_set_gate(ctrlid, synth_param[GATE].value);
-	ad_set_gate(ctrlid, synth_param[GATE].value);
-
-	int32_t value = note_add(note_scale(synth_param[NOTE].last, synth_param[ctrlid].note), synth_param[ctrlid].value);
-	value += (int32_t)synth_param[MASTER_PITCH].last - 0x8000;
-	if (synth_param[ctrlid].lfo_depth) {
-		uint16_t lfo = (lfo_update(ctrlid) >> 2) + 0x8000;
-		value += signed_scale(lfo, synth_param[ctrlid].lfo_depth);
-	}
-	if (synth_param[ctrlid].adsr_depth) {
-		uint16_t adsr = adsr_update(ctrlid);
-		value += signed_scale(adsr, synth_param[ctrlid].adsr_depth);
-	}
-	if (synth_param[ctrlid].ad_depth) {
-		uint16_t ad = ad_update(ctrlid);
-		value += signed_scale(ad, synth_param[ctrlid].ad_depth);
-	}
-
-	if (value < 0) value = 0;
-	else if (value > 65535) value = 65535;
-	synth_param[ctrlid].last = value;
+	process_param_note(VCO5_PITCH);
 }
 
 void virt_VCO6_PITCH()
 {
-	const int ctrlid = VCO6_PITCH;
-
-	adsr_set_gate(ctrlid, synth_param[GATE].value);
-	ad_set_gate(ctrlid, synth_param[GATE].value);
-
-	int32_t value = note_add(note_scale(synth_param[NOTE].last, synth_param[ctrlid].note), synth_param[ctrlid].value);
-	value += (int32_t)synth_param[MASTER_PITCH].last - 0x8000;
-	if (synth_param[ctrlid].lfo_depth) {
-		uint16_t lfo = (lfo_update(ctrlid) >> 2) + 0x8000;
-		value += signed_scale(lfo, synth_param[ctrlid].lfo_depth);
-	}
-	if (synth_param[ctrlid].adsr_depth) {
-		uint16_t adsr = adsr_update(ctrlid);
-		value += signed_scale(adsr, synth_param[ctrlid].adsr_depth);
-	}
-	if (synth_param[ctrlid].ad_depth) {
-		uint16_t ad = ad_update(ctrlid);
-		value += signed_scale(ad, synth_param[ctrlid].ad_depth);
-	}
-
-	if (value < 0) value = 0;
-	else if (value > 65535) value = 65535;
-	synth_param[ctrlid].last = value;
+	process_param_note(VCO6_PITCH);
 }
 
 void virt_VCO7_PITCH()
 {
-	const int ctrlid = VCO7_PITCH;
-
-	adsr_set_gate(ctrlid, synth_param[GATE].value);
-	ad_set_gate(ctrlid, synth_param[GATE].value);
-
-	int32_t value = note_add(note_scale(synth_param[NOTE].last, synth_param[ctrlid].note), synth_param[ctrlid].value);
-	value += (int32_t)synth_param[MASTER_PITCH].last - 0x8000;
-	if (synth_param[ctrlid].lfo_depth) {
-		uint16_t lfo = (lfo_update(ctrlid) >> 2) + 0x8000;
-		value += signed_scale(lfo, synth_param[ctrlid].lfo_depth);
-	}
-	if (synth_param[ctrlid].adsr_depth) {
-		uint16_t adsr = adsr_update(ctrlid);
-		value += signed_scale(adsr, synth_param[ctrlid].adsr_depth);
-	}
-	if (synth_param[ctrlid].ad_depth) {
-		uint16_t ad = ad_update(ctrlid);
-		value += signed_scale(ad, synth_param[ctrlid].ad_depth);
-	}
-
-	if (value < 0) value = 0;
-	else if (value > 65535) value = 65535;
-	synth_param[ctrlid].last = value;
+	process_param_note(VCO7_PITCH);
 }
 
 void virt_GATE()

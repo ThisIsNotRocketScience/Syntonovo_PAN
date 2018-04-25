@@ -2,7 +2,7 @@
 
 
 aLedButton Buttons[__LEDBUTTON_COUNT] = {
-#define LEDBUTTON(iname,ix,iy) {#iname,ix, iy,ledbutton_##iname},
+#define LEDBUTTON(iname,ix,iy,fpid) {#iname,ix, iy,ledbutton_##iname, fpid},
 #include "PanControls.h"
 #undef LEDBUTTON
 
@@ -16,8 +16,8 @@ Led Leds[__LED_COUNT] = {
 };
 
 Knob Knobs[__KNOB_COUNT] = {
-#define KNOB(iname,ix,iy,imin,imax) {#iname,ix, iy,knob_##iname,0},
-#define SLIDER(iname,ix,iy,imin,imax) {#iname,ix, iy,knob_##iname,1},
+#define KNOB(iname,ix,iy,imin,imax,fpidx,lbl) {#iname,ix, iy,knob_##iname,0,fpidx,lbl},
+#define SLIDER(iname,ix,iy,imin,imax,fpidx,lbl) {#iname,ix, iy,knob_##iname,1,fpidx,lbl},
 #include "PanControls.h"
 #undef KNOB
 #undef SLIDER
