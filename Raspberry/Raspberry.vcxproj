@@ -151,7 +151,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Combine.cpp" />
+    <ClCompile Include="imgui_es2.cpp" />
     <ClCompile Include="Raspberry.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="imgui_impl_es2.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
