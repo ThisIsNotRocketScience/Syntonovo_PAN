@@ -231,9 +231,10 @@ extern "C"
 
 			ImGui_ImlES_NewFrame();
 
-			ImGui::Begin("edit_window");
+		
+			ImGui::BeginChild("screen", ImVec2(480, 800), false,ImGuiWindowFlags_NoTitleBar);
 
-			//ImGui::BeginChild("screen", ImVec2(480, 800), false);
+
 			Raspberry_RenderScreen();
 
 ImGui::GetWindowDrawList()->AddLine(ImVec2(480, 0), ImVec2(0,800), IM_COL32(255, 255, 255, 255), 10.0f);
