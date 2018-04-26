@@ -1,7 +1,7 @@
 #ifndef WINDOWS
 
-#include <imgui.h>
-#include "imgui_impl_sdl.h"
+#include "../libs/imgui-master/imgui.h"
+#include "imgui_impl_es2.h"
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
 
