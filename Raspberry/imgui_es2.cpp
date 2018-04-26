@@ -94,8 +94,8 @@ void ImGui_ImlES_RenderDrawLists(ImDrawData* draw_data)
 	float st2 = sin(T*0.03f);
 	float ortho_projection[4][4] = 
 {
-{0.0f        , 2.0f/480.0f,0.0f,0.0f},
-{2.0f/-800.0f,         0.0f,0.0f,0.0f},
+{0.0f        , 2.0f/800.0f,0.0f,0.0f},
+{2.0f/-480.0f,         0.0f,0.0f,0.0f},
 {0.0f        ,         0.0f,1.0f,0.0f},
 {st          ,         st2,0.0f,1.0f}
 };
