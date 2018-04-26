@@ -167,107 +167,110 @@ unsigned int tadaaaa(unsigned int flags){
 	return TFTGL_OK;
 }
 
-
-//==============================================================================
-int main(int argv, char** argc){
-	unsigned int i;
-	struct timeval t1, t2;
-	GLuint vbo[2];
-	GLuint program;
-	double elapsedTime;
-	
-	
-	bcm_host_init();
-	if(tadaaaa(TFTGL_LANDSCAPE) != TFTGL_OK){
-		fprintf(stderr, "Failed to initialize TFTGL library! Error: %s\n",
-			tftglGetErrorStr());
-		return EXIT_FAILURE;
-	}
-
-	DISPMANX_DISPLAY_HANDLE_T display = vc_dispmanx_display_open(0);
-    
-    DISPMANX_MODEINFO_T info;
-    int result = vc_dispmanx_display_get_info(display, &info);
-    
-
-	Setup(800,480,&info,display);
-
-	// Get viewport size
-	GLint viewport[4];
-	glGetIntegerv(GL_VIEWPORT, viewport);
-	
-	printf("TFT display initialized with EGL! Screen size: %dx%d\n",
-		viewport[2], viewport[3]);
-	
-	printf("OpenGL version is (%s)\n", glGetString(GL_VERSION));
-	
-	// See gl_helper.h for more infor or read any OpenGL tutorial for compiling
-	// GLSL shaders (there are quite many on Google).
-	program = compileShader(vertexShaderCode, fragmentShaderCode);
-	if(program == 0){
-		printf("Failed to create OpenGL shader!\n");
-		return EXIT_FAILURE;
-	}
-	
-	// Create two Vertex Buffer Objects
-	glGenBuffers(2, vbo);
-	if(vbo[0] == 0 || vbo[1] == 0){
-		printf("Failed to create GL_ARRAY_BUFFER! Error: %s\n", glGetErrorStr());
-		return EXIT_FAILURE;
-	}
-	
-	// The first buffer holds vertex positions
-	// 3 vertices of 3D vectors of float data
-	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-	glBufferData(GL_ARRAY_BUFFER, 3 * 3 * sizeof(float), vboVertexData, GL_STATIC_DRAW);
-	
-	// The second buffer holds color data for each vertex
-	glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
-	glBufferData(GL_ARRAY_BUFFER, 3 * 3 * sizeof(float), vboColorData, GL_STATIC_DRAW);
-	
-	// Get attribute and uniform pointers from GLSL shader (program)
-	glUseProgram(program);
-	GLint posLoc = glGetAttribLocation(program, "pos");
-	GLint colorLoc = glGetAttribLocation(program, "col");
-	GLint rotLoc = glGetUniformLocation(program, "rot");
-	for (int qq=0;qq<10000;qq++)
+extern "C"
+{
+	//==============================================================================
+	int main(int argv, char** argc)
 	{
-	
-		//for(i = 0; i <= 36; i++){
-			// Clean screen with black color
+		unsigned int i;
+		struct timeval t1, t2;
+		GLuint vbo[2];
+		GLuint program;
+		double elapsedTime;
+
+
+		bcm_host_init();
+		if (tadaaaa(TFTGL_LANDSCAPE) != TFTGL_OK) {
+			fprintf(stderr, "Failed to initialize TFTGL library! Error: %s\n",
+				tftglGetErrorStr());
+			return EXIT_FAILURE;
+		}
+
+		DISPMANX_DISPLAY_HANDLE_T display = vc_dispmanx_display_open(0);
+
+		DISPMANX_MODEINFO_T info;
+		int result = vc_dispmanx_display_get_info(display, &info);
+
+
+		Setup(800, 480, &info, display);
+
+		// Get viewport size
+		GLint viewport[4];
+		glGetIntegerv(GL_VIEWPORT, viewport);
+
+		printf("TFT display initialized with EGL! Screen size: %dx%d\n",
+			viewport[2], viewport[3]);
+
+		printf("OpenGL version is (%s)\n", glGetString(GL_VERSION));
+
+		// See gl_helper.h for more infor or read any OpenGL tutorial for compiling
+		// GLSL shaders (there are quite many on Google).
+		program = compileShader(vertexShaderCode, fragmentShaderCode);
+		if (program == 0) {
+			printf("Failed to create OpenGL shader!\n");
+			return EXIT_FAILURE;
+		}
+
+		// Create two Vertex Buffer Objects
+		glGenBuffers(2, vbo);
+		if (vbo[0] == 0 || vbo[1] == 0) {
+			printf("Failed to create GL_ARRAY_BUFFER! Error: %s\n", glGetErrorStr());
+			return EXIT_FAILURE;
+		}
+
+		// The first buffer holds vertex positions
+		// 3 vertices of 3D vectors of float data
+		glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
+		glBufferData(GL_ARRAY_BUFFER, 3 * 3 * sizeof(float), vboVertexData, GL_STATIC_DRAW);
+
+		// The second buffer holds color data for each vertex
+		glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
+		glBufferData(GL_ARRAY_BUFFER, 3 * 3 * sizeof(float), vboColorData, GL_STATIC_DRAW);
+
+		// Get attribute and uniform pointers from GLSL shader (program)
+		glUseProgram(program);
+		GLint posLoc = glGetAttribLocation(program, "pos");
+		GLint colorLoc = glGetAttribLocation(program, "col");
+		GLint rotLoc = glGetUniformLocation(program, "rot");
+		for (int qq = 0; qq < 10000; qq++)
+		{
+
+			//for(i = 0; i <= 36; i++){
+				// Clean screen with black color
 			glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 			glClear(GL_COLOR_BUFFER_BIT);
-		
+
 			// Bind first vertex buffer
 			glEnableVertexAttribArray(posLoc);
 			glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
 			glVertexAttribPointer(posLoc, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-			
+
 			// Bind second vertex buffer
 			glEnableVertexAttribArray(colorLoc);
 			glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
 			glVertexAttribPointer(colorLoc, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-			
+
 			// Set rotation
 			glUniform1f(rotLoc, qq*0.2);
-			
+
 			// Draw triangles, total of 3 vertices
 			glDrawArrays(GL_TRIANGLES, 0, 3);
-			
+
 			fullscreen(display, &info);
 
-		//}
+			//}
+		}
+
+
+		// Cleanup GLSL shader and two buffers
+		glDeleteProgram(program);
+		glDeleteBuffers(2, vbo);
+
+
+		vc_dispmanx_display_close(display);
+		// Terminates everything (GPIO, LCD, and EGL)
+
+
+		return EXIT_SUCCESS;
 	}
-	
-	
-	// Cleanup GLSL shader and two buffers
-	glDeleteProgram(program);
-	glDeleteBuffers(2, vbo);
-	
-	
-	 vc_dispmanx_display_close(display);
-	// Terminates everything (GPIO, LCD, and EGL)
-	
-	
-	return EXIT_SUCCESS;
 }
