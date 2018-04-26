@@ -1,4 +1,4 @@
-#ifndef WINDOWS
+#ifndef WIN32
 
 #include <stdint.h>
 #include "../libs/imgui-master/imgui.h"
@@ -254,6 +254,7 @@ void ImGui_ImlES_NewFrame()
 	// Setup display size (every frame to accommodate for window resizing)
 	int w=480, h=800;
 	io.DisplaySize = ImVec2((float)w, (float)h);
+	io.DisplayFramebufferScale = ImVec2(w > 0 ? ((float)w / w) : 0, h > 0 ? ((float)h / h) : 0);
 
 	// Setup time step
 	uint32_t	time = 0;
