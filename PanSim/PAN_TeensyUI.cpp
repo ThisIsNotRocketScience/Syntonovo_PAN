@@ -66,7 +66,19 @@ void InitPreset(PanPreset_t& preset)
 
 	preset.paramvalue[Output_MASTER_PITCH] = 0x8000;
 
-	preset.switches[0] |= (1 << Switch_SEL1SAW);
+	preset.switches[0] |= (1 << Switch_SEL1SAW) ;
+	
+	preset.switches[0] |= (1 << Switch_SEL4SAW);
+	preset.switches[0] |= (1 << Switch_SEL5SAW);
+	preset.switches[0] |= (1 << Switch_SEL6SAW);
+	preset.switches[0] |= (1 << Switch_SEL7SAW);
+
+	preset.switches[0] |= (1 << Switch_SEL2SUB);
+	preset.switches[0] |= (1 << Switch_SEL3SAW);
+	preset.switches[0] |= (1 << Switch_SEL3SQR); 
+	preset.switches[0] |= (1 << Switch_SEL1SQR);
+
+
 	preset.switches[0] |= (1 << Switch_SELMOST2);
 	preset.switches[0] |= (1 << Switch_SELMOST3);
 }

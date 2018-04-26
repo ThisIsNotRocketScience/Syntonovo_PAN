@@ -1,8 +1,9 @@
 #include "imgui.h"
-
+#include <GL/gl3w.h> 
+#include "../libs/lodepng-master/lodepng.h"
 #include "PanHeader.h"
 
-typedef struct
+typedef struct Raspberry_GuiData_t
 {
 	GuiState_t GuiState;
 	int ModSelect;
@@ -21,9 +22,45 @@ typedef struct
 
 	uint32_t outputValues[256];
 	uint32_t switches[1];
+
+
+	uint32_t LeftEncoderValue;
 } Raspberry_GuiData_t;
 
+typedef struct Raspberry_GuiResources_t
+{
+	ImTextureID MainBG;
+	ImTextureID MenuBG;
+	ImTextureID SpriteSheet;
+	ImFont *BigFont;
+	ImFont *SmallFont;
+} Raspberry_GuiResources_t;
+
+ImTextureID Raspberry_LoadTexture(const char *filename)
+{
+	std::vector<unsigned char> buffer, image;
+	lodepng::load_file(buffer, filename); //load the image file with given filename
+	unsigned w, h;
+	unsigned error = lodepng::decode(image, w, h, buffer); //decode the png
+
+	if (error)
+	{
+		return 0;
+	}
+	GLuint tex;
+	glEnable(GL_TEXTURE_2D);
+	glGenTextures(1, &tex);
+	glBindTexture(GL_TEXTURE_2D, tex);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); //GL_NEAREST = no smoothing
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, &image[0]);
+
+	return (ImTextureID)tex;
+};
+
+
 static Raspberry_GuiData_t Raspberry_guidata;
+static Raspberry_GuiResources_t Raspberry_resources;
 
 void Raspberry_ToState(GuiState_t state, int modselect)
 {
@@ -207,7 +244,8 @@ void Render_MenuEntry_FilterMix(const char* name, int param)
 	ImGui::LabelText(name, "%1.2f / %1.2f", (float)mix1 * (1.0f / (float)0x8000), (float)mix2 * (1.0f / (float)0x8000));
 }
 
-bool RenderMenu(GuiState_t state)
+
+bool RenderDefaultItems(GuiState_t state)
 {
 #define MENU(id, button, name) \
 	if (state == GuiState_Menu_##id) {
@@ -224,11 +262,52 @@ bool RenderMenu(GuiState_t state)
 #undef ENTRY
 #undef CUSTOMENTRY
 
-	return false;
+}
+
+bool RenderMenu(GuiState_t state)
+{
+	return RenderDefaultItems(state);
+	
+}
+
+void Raspberry_Init()
+{
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+
+
+	Raspberry_resources.MainBG = Raspberry_LoadTexture("UI_MAINBG.png");
+	Raspberry_resources.SmallFont = io.Fonts->AddFontFromFileTTF("ProggyTiny.ttf", 25.0f);
+
+}
+
+void Raspberry_PushStyle()
+{
+	ImGui::PushFont(Raspberry_resources.SmallFont);
+	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(255, 255, 255, 255));
+
+}
+
+void Raspberry_PopStyle()
+{
+	ImGui::PopStyleColor();
+	ImGui::PopFont();
 }
 
 void Raspberry_RenderScreen()
 {
+	Raspberry_PushStyle();
+	ImVec2 pos = ImGui::GetCursorScreenPos();
+	if (Raspberry_resources.MainBG)
+	{
+		ImGui::Image(Raspberry_resources.MainBG, ImVec2(480, 800));
+	}
+	else
+	{
+		ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(pos.x, pos.y), ImVec2(pos.x + 480, pos.y + 800), IM_COL32(0, 58, 66, 255));
+	}
+	ImGui::SetCursorScreenPos(pos);
+	
+
 	if (Raspberry_guidata.GuiState == GuiState_LfoSelect)
 	{
 		ImGui::Text("LFO assign");
@@ -272,6 +351,8 @@ void Raspberry_RenderScreen()
 	else if (RenderMenu(Raspberry_guidata.GuiState))
 	{
 	}
+
+	Raspberry_PopStyle();
 }
 
 void Raspberry_OutputChangeValue(int output, uint32_t value)

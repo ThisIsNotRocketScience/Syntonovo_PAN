@@ -21,7 +21,6 @@ ImTextureID loadTexture(const char *filename)
 
 	if (error)
 	{
-		//std::cout << "decoder error " << error << ": " << lodepng_error_text(error) << std::endl;
 		return 0;
 	}
 	GLuint tex;
@@ -96,7 +95,7 @@ SDL_Surface* load_PNG(const char* filename)
 													 //give the color value to the pixel of the screenbuffer
 			Uint32* bufp = (Uint32 *)dest->pixels + (y * dest->pitch / 4) / jump + (x / jump);
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
-			*bufp = 0x01000000 * r + 65536 * g + 256 * b + a;
+			* bufp = 0x01000000 * r + 65536 * g + 256 * b + a;
 #else
 			*bufp = 0x01000000 * a + 65536 * b + 256 * g + r;
 #endif
@@ -128,7 +127,7 @@ void GetSerialPorts(int port, int uiport)
 	{
 
 	}
-	
+
 	if (DSPSerial.IsOpen())
 	{
 		unsigned char bytes[8] = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
@@ -141,15 +140,15 @@ void GetSerialPorts(int port, int uiport)
 		{
 			UISerial.Open(uiport, 1000000UL);
 			UISerial.Setup(100000, 100000);
-		
-			
-		}	
+
+
+		}
 	}
 	catch (CSerialException e)
 	{
 
 	}
-	
+
 }
 
 void CloseSerialPorts()
@@ -182,8 +181,8 @@ void UISendCommand(unsigned char command, uint32_t data)
 }
 
 void UIWriteLed(int idx, int value)
-{	
-	uint32_t D = (idx << 16) + (255-value);
+{
+	uint32_t D = (idx << 16) + (255 - value);
 	UISendCommand(0x83, D);
 }
 
@@ -191,7 +190,7 @@ void WriteKnob(int id, uint32_t value)
 {
 	if (DSPSerial.IsOpen() == false) return;
 	char b[4];
-	b[0] = (id>> 0) & 0xFF;
+	b[0] = (id >> 0) & 0xFF;
 	b[1] = (id >> 8) & 0xFF;
 	b[2] = (value >> 8) & 0xFF;
 	b[3] = (value >> 0) & 0xFF;
@@ -288,12 +287,12 @@ static bool MyKnob(const char* label, float* p_value, float v_min, float v_max, 
 	float t = (*p_value - v_min) / (v_max - v_min);
 	float angle = ANGLE_MIN + (ANGLE_MAX - ANGLE_MIN) * t;
 	float angle_cos = cosf(angle), angle_sin = sinf(angle);
-	float radius_inner = radius_outer*0.40f;
+	float radius_inner = radius_outer * 0.40f;
 	draw_list->AddCircleFilled(center, radius_outer, ImGui::GetColorU32(ImGuiCol_FrameBg), 16);
-	draw_list->AddLine(ImVec2(center.x + angle_cos*radius_inner, center.y + angle_sin*radius_inner), ImVec2(center.x + angle_cos*(radius_outer - 2), center.y + angle_sin*(radius_outer - 2)), ImGui::GetColorU32(ImGuiCol_SliderGrabActive), 2.0f);
+	draw_list->AddLine(ImVec2(center.x + angle_cos * radius_inner, center.y + angle_sin * radius_inner), ImVec2(center.x + angle_cos * (radius_outer - 2), center.y + angle_sin * (radius_outer - 2)), ImGui::GetColorU32(ImGuiCol_SliderGrabActive), 2.0f);
 	draw_list->AddCircleFilled(center, radius_inner, ImGui::GetColorU32(is_active ? ImGuiCol_FrameBgActive : is_hovered ? ImGuiCol_FrameBgHovered : ImGuiCol_FrameBg), 16);
 	auto R = ImGui::CalcTextSize(desc);
-	draw_list->AddText(ImVec2(center.x - R.x/2, pos.y - line_height - style.ItemInnerSpacing.y), ImGui::GetColorU32(ImGuiCol_Text), desc);
+	draw_list->AddText(ImVec2(center.x - R.x / 2, pos.y - line_height - style.ItemInnerSpacing.y), ImGui::GetColorU32(ImGuiCol_Text), desc);
 
 	if (is_active || is_hovered)
 	{
@@ -388,11 +387,11 @@ static bool MySlider(const char* label, float* p_value, float v_min, float v_max
 		value_changed = true;
 	}
 
-	float t = ((*p_value - v_min) / (v_max - v_min))-0.5;
+	float t = ((*p_value - v_min) / (v_max - v_min)) - 0.5;
 	t *= 2;
 	auto R = ImGui::CalcTextSize(label);
 	draw_list->AddText(ImVec2(center.x - R.x / 2, pos.y - line_height - style.ItemInnerSpacing.y), ImGui::GetColorU32(ImGuiCol_Text), label);
-	draw_list->AddLine(ImVec2(center.x , center.y -  40), ImVec2(center.x , center.y + 40), ImGui::GetColorU32(ImGuiCol_ButtonHovered), 4);
+	draw_list->AddLine(ImVec2(center.x, center.y - 40), ImVec2(center.x, center.y + 40), ImGui::GetColorU32(ImGuiCol_ButtonHovered), 4);
 	draw_list->AddLine(ImVec2(center.x - 4, center.y - t * 40), ImVec2(center.x + 4, center.y - t * 40), ImGui::GetColorU32(ImGuiCol_Text), 4);
 	if (is_active || is_hovered)
 	{
@@ -407,7 +406,7 @@ static bool MySlider(const char* label, float* p_value, float v_min, float v_max
 
 bool LedButton(const char* label, bool* v)
 {
-	
+
 	ImGuiIO& io = ImGui::GetIO();
 	ImGuiStyle& style = ImGui::GetStyle();
 
@@ -430,7 +429,7 @@ bool LedButton(const char* label, bool* v)
 	//if (pressed) *v = !*v;
 	if (*v)
 	{
-		draw_list->AddCircleFilled(center, radius_outer,IM_COL32(255,255,0,255) , 16);
+		draw_list->AddCircleFilled(center, radius_outer, IM_COL32(255, 255, 0, 255), 16);
 
 	}
 
@@ -454,11 +453,11 @@ bool ImLed(const char* label, bool* v)
 	bool is_hovered = ImGui::IsItemHovered();
 
 
-	draw_list->AddCircleFilled(center, radius_outer, IM_COL32(0,0,0,255), 16);
+	draw_list->AddCircleFilled(center, radius_outer, IM_COL32(0, 0, 0, 255), 16);
 	auto R = ImGui::CalcTextSize(label);
 	draw_list->AddText(ImVec2(center.x - R.x / 2, pos.y - line_height - style.ItemInnerSpacing.y), ImGui::GetColorU32(ImGuiCol_Text), label);
 
-	
+
 	if (*v)
 	{
 		draw_list->AddCircleFilled(center, radius_outer, IM_COL32(255, 255, 0, 255), 16);
@@ -591,9 +590,9 @@ void DoCommand(unsigned char comm, uint32_t data)
 			Teensy_ButtonPressed(Buttons[N].id, Buttons[N].value);
 
 		}
-		printf("incoming button: %d, %d\n",idx, val);
-		
-	//	UIWriteLed(idx, val);
+		printf("incoming button: %d, %d\n", idx, val);
+
+		//	UIWriteLed(idx, val);
 	}
 	break;
 	case 0x82:
@@ -604,9 +603,9 @@ void DoCommand(unsigned char comm, uint32_t data)
 		if (TargetIDX > -1)
 		{
 
-			Knobs[TargetIDX].value = val/1023.0f;
+			Knobs[TargetIDX].value = val / 1023.0f;
 			Teensy_KnobChanged(Knobs[TargetIDX].id, uint32_t(floor((Knobs[TargetIDX].value*65535.0))));
-		//	printf("incoming pot: %d, %d\n", idx, val);
+			//	printf("incoming pot: %d, %d\n", idx, val);
 		}
 	}
 	break;
@@ -633,7 +632,7 @@ int HandleSerial(unsigned char inb)
 		if (SerialCounter > 0)
 		{
 			SerialCounter--;
-			SerialData += inb << ((3-SerialCounter) * 7);
+			SerialData += inb << ((3 - SerialCounter) * 7);
 			if (SerialCounter == 0)
 			{
 				DoCommand(SerialStatus, SerialData);
@@ -707,7 +706,7 @@ int main(int argc, char** argv)
 
 	// Setup style
 	ImGui::StyleColorsLight();
-	
+
 	ImVec4 clear_color = ImVec4(1.0f / 255.0f, 58.0f / 255.0f, 66.0f / 255.0f, 1.00f);
 
 	// racing turqoise: 1,58,66
@@ -715,7 +714,7 @@ int main(int argc, char** argv)
 
 #define RACINGGREEN IM_COL32(1, 58, 66, 255)
 
-	
+
 	ImTextureID BG = 0;// loadTexture("FrontPanel.PNG");
 
 	bool done = false;
@@ -724,7 +723,7 @@ int main(int argc, char** argv)
 	int32_t beatcolor = ImColor::HSV(0.5, 1, 1);
 	int32_t loopcolor = ImColor::HSV(0.75, 1, 1);
 
-	int32_t clklinecolor = ImColor::HSV(0, 1, 1,0.5);
+	int32_t clklinecolor = ImColor::HSV(0, 1, 1, 0.5);
 	int32_t ticklinecolor = ImColor::HSV(0.25, 1, 1, 0.5);;// IM_COL32(0, 128, 255, 255);
 	int32_t beatlinecolor = ImColor::HSV(0.5, 1, 1, 0.5);
 	int32_t looplinecolor = ImColor::HSV(0.75, 1, 1, 0.5);
@@ -739,16 +738,18 @@ int main(int argc, char** argv)
 	unsigned char * pixels;
 	int width, height, bytes_per_pixels;
 
-	
+
 	ImGui::GetStyle().ItemInnerSpacing = ImVec2(5, 5);;
 	ImGui::GetStyle().ItemSpacing = ImVec2(5, 5);
 	ImGui::GetStyle().FramePadding = ImVec2(5, 5);
 	ImGui::GetStyle().Colors[ImGuiCol_WindowBg] = ImVec4(1.0f, 1.0f, 1.0f, .800f);
 
 	static bool parameters = true;
-	GetSerialPorts(dspport,uiport);
+	static bool mainscreen = true;
+	GetSerialPorts(dspport, uiport);
 
 	Teensy_Reset();
+	Raspberry_Init();
 	Raspberry_Reset();
 	Teensy_InitPreset();
 
@@ -767,7 +768,7 @@ int main(int argc, char** argv)
 		{
 			if (Buttons[i].value != LastLedButtonStatus[i])
 			{
-				UIWriteLed(Buttons[i].fpid, Buttons[i].value?0:255);
+				UIWriteLed(Buttons[i].fpid, Buttons[i].value ? 0 : 255);
 				LastLedButtonStatus[i] = Buttons[i].value;
 			}
 		}
@@ -801,12 +802,30 @@ int main(int argc, char** argv)
 		{
 			if (ImGui::BeginMenu("PanSim Windows"))
 			{
-				ImGui::MenuItem("Pan Parameters", NULL, &parameters);
+				ImGui::MenuItem("Pan UI Controls", NULL, &parameters);
+				ImGui::MenuItem("Pan Main Screen", NULL, &mainscreen);
 				ImGui::EndMenu();
 			}
 			ImGui::EndMainMenuBar();
 		}
-		
+		if (mainscreen)
+		{
+			ImGui::PushFont(pFontBold);
+
+			ImGui::Begin("Pan Mainscreen", &parameters, ImGuiWindowFlags_AlwaysAutoResize);
+			ImGui::PushFont(pFont);
+
+
+			ImGui::BeginChild("screen", ImVec2(480, 800), false);
+			Raspberry_RenderScreen();
+			ImGui::EndChild();
+
+			ImGui::PopFont();
+
+
+			ImGui::End();
+			ImGui::PopFont();
+		}
 		if (parameters)
 		{
 			ImGui::PushFont(pFontBold);
@@ -814,17 +833,17 @@ int main(int argc, char** argv)
 				ImGui::Begin("Pan Parameters", &parameters, ImGuiWindowFlags_AlwaysAutoResize);
 				ImGui::PushFont(pFont);
 				ImVec2 pos = ImGui::GetCursorScreenPos();
-				if (BG) ImGui::Image(BG, ImVec2(2534*0.6, 1183*0.6));
+				if (BG) ImGui::Image(BG, ImVec2(2534 * 0.6, 1183 * 0.6));
 				ImGui::SetCursorScreenPos(pos);
 
-				ImGui::LabelText("l1","%d left %d bytes this frame.. %d handled", bytecount - handledbytes, bytecount, handledbytes);
+				ImGui::LabelText("l1", "%d left %d bytes this frame.. %d handled", bytecount - handledbytes, bytecount, handledbytes);
 				//ImVec2 pos = ImGui::GetCursorScreenPos();
 				float xscalefac = 60;
 				float yscalefac = 60;
 				for (int i = 0; i < __KNOB_COUNT; i++)
 				{
 					ImGui::SetCursorScreenPos(ImVec2(pos.x + Knobs[i].x * xscalefac, pos.y + Knobs[i].y * yscalefac));
-					if (Knobs[i].isslider==1)
+					if (Knobs[i].isslider == 1)
 					{
 						if (MySlider(Knobs[i].name, &Knobs[i].value, 0, 1))
 						{
@@ -863,13 +882,8 @@ int main(int argc, char** argv)
 					}
 				}
 
-				ImGui::SetCursorScreenPos(ImVec2(pos.x + TheScreen.x * xscalefac, pos.y + TheScreen.y * yscalefac));
-				ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0, 0, 0, 255));
 
-				ImGui::BeginChild("screen", ImVec2(xscalefac * TheScreen.width, yscalefac * TheScreen.height), true);
-				Raspberry_RenderScreen();
-				ImGui::EndChild();
-				ImGui::PopStyleColor();
+
 				ImGui::PopFont();
 
 
@@ -878,7 +892,7 @@ int main(int argc, char** argv)
 			}
 		}
 
-	
+
 
 		glViewport(0, 0, (int)ImGui::GetIO().DisplaySize.x, (int)ImGui::GetIO().DisplaySize.y);
 		glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);

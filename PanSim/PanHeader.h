@@ -417,7 +417,9 @@ extern void Teensy_ButtonPressed(LedButtonEnum ID, int value);
 
 extern void Raspberry_Reset();
 extern void Raspberry_RenderScreen();
+extern void Raspberry_Init();
 extern void Raspberry_EncoderTurn(EncoderEnum id, int delta);
+
 void Raspberry_ToState(GuiState_t state, int modselect);
 void Raspberry_EditLfo(LfoModulation_t& mod);
 void Raspberry_EditAdsr(AdsrModulation_t& mod);

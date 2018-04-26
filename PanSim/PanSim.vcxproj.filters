@@ -24,6 +24,24 @@
     <Image Include="FrontPanel.PNG">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="UI_ASSIGN KEYBOARD CV.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="UI_ASSIGN LFO.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="UI_HOME.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="UI_MAINBG.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="UI_SPRITESHEET.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="UI_VCO 1 Settings.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\libs\imgui-master\imgui.cpp">
