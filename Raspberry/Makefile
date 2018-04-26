@@ -8,7 +8,7 @@ LDFLAGS=-L/opt/vc/lib -L. -lbrcmEGL -lbrcmGLESv2 -ltftgl -lbcm2835  -I/opt/vc/in
 default: pangui
 all: default
 	
-pangui: pangui.o Combine.o
+pangui: pangui.o Combine.o imgui_es2.o
 	$(CC) -o pangui pangui.o $(LDFLAGS)
 		
 %.o: %.cpp $(DEPS)
