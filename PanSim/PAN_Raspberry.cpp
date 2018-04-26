@@ -1,5 +1,5 @@
 #include "../libs/imgui-master/imgui.h"
-#ifdef WINDOWS
+#ifdef WIN32
 #include <GL/gl3w.h> 
 #endif
 #include "../libs/lodepng-master/lodepng.h"
@@ -78,7 +78,7 @@ ImTextureID Raspberry_LoadTexture(const char *filename)
 	{
 		return 0;
 	}
-#ifdef WINDOWS
+#ifdef WIN32
 	GLuint tex;
 	glEnable(GL_TEXTURE_2D);
 	glGenTextures(1, &tex);

@@ -7,6 +7,7 @@
 #include <GLES2/gl2ext.h>
 #include "../libs/imgui-master/imgui.h"
 #include "imgui_impl_es2.h"
+#include "../PanSim/PanHeader.h"
 
 // Add our helper for creating OpenGL shaders and buffers
 #include "gl_helper.h"
@@ -218,6 +219,9 @@ extern "C"
 
 
 		
+		Raspberry_Init();
+		Raspberry_Reset();
+		
 		for (int qq = 0; qq < 10000; qq++)
 		{
 			glViewport(0, 0, (int)ImGui::GetIO().DisplaySize.x, (int)ImGui::GetIO().DisplaySize.y);
@@ -227,20 +231,7 @@ extern "C"
 
 			ImGui_ImlES_NewFrame();
 
-			if (ImGui::BeginMainMenuBar())
-			{
-
-				if (ImGui::BeginMenu("Edgecutter Windows"))
-				{
-					static bool testout = false;
-					ImGui::MenuItem("Output Waveforms", NULL, &testout);
-					ImGui::EndMenu();
-				}
-				ImGui::EndMainMenuBar();
-			}
-			
-
-			ImGui::Button("button!!");
+			Raspberry_RenderScreen();
 			ImGui::Render();
 			ImGui_ImlES_RenderDrawLists(ImGui::GetDrawData());
 			
