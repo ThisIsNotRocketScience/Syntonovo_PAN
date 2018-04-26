@@ -9,7 +9,7 @@ default: pangui
 all: default
 	
 pangui: pangui.o Combine.o imgui_es2.o
-	$(CC) -o pangui pangui.o $(LDFLAGS)
+	$(CC) -o pangui pangui.o Combine.o imgui_es2.o $(LDFLAGS)
 		
 %.o: %.cpp $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS)
