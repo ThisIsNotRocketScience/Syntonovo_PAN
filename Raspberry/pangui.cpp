@@ -214,6 +214,7 @@ extern "C"
 		// Setup style
 		ImGui::StyleColorsLight();
 
+		ImVec4 clear_color = ImVec4(1.0f / 255.0f, 58.0f / 255.0f, 66.0f / 255.0f, 1.00f);
 
 
 		// See gl_helper.h for more infor or read any OpenGL tutorial for compiling
@@ -247,27 +248,29 @@ extern "C"
 		GLint rotLoc = glGetUniformLocation(program, "rot");
 		for (int qq = 0; qq < 10000; qq++)
 		{
+			ImGui_ImlES_NewFrame();
 
-			//for(i = 0; i <= 36; i++){
-				// Clean screen with black color
-			glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+			if (ImGui::BeginMainMenuBar())
+			{
+
+				if (ImGui::BeginMenu("Edgecutter Windows"))
+				{
+					ImGui::MenuItem("Output Waveforms", NULL, &waveoutputs);
+					ImGui::MenuItem("Edgecutter Parameters", NULL, &parameters);
+					ImGui::MenuItem("Static Envelope", NULL, &staticenv);
+					ImGui::MenuItem("Docurve Test", NULL, &docurvetest);
+					ImGui::MenuItem("Velocity & Repeat Attack Test", NULL, &velocityrepeater);
+					ImGui::EndMenu();
+				}
+				ImGui::EndMainMenuBar();
+			}
+			glViewport(0, 0, (int)ImGui::GetIO().DisplaySize.x, (int)ImGui::GetIO().DisplaySize.y);
+			glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
 			glClear(GL_COLOR_BUFFER_BIT);
-
-			// Bind first vertex buffer
-			glEnableVertexAttribArray(posLoc);
-			glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-			glVertexAttribPointer(posLoc, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-
-			// Bind second vertex buffer
-			glEnableVertexAttribArray(colorLoc);
-			glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
-			glVertexAttribPointer(colorLoc, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-
-			// Set rotation
-			glUniform1f(rotLoc, qq*0.2);
-
-			// Draw triangles, total of 3 vertices
-			glDrawArrays(GL_TRIANGLES, 0, 3);
+			ImGui::Render();
+			ImGui_ImlES_RenderDrawLists(ImGui::GetDrawData());
+			
+			
 
 			fullscreen(display, &info);
 
