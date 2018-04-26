@@ -8,10 +8,9 @@ LDFLAGS=-L/opt/vc/lib -L. -lbrcmEGL -lbrcmGLESv2 -ltftgl -lbcm2835  -I/opt/vc/in
 default: pansim
 all: default
 	
-pansim: pansim.o Combine.o
+pangui: pangui.o Combine.o
 	$(CC) -o pansim pansim.o $(LDFLAGS)
 		
-
 %.o: %.cpp $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS)
 	
