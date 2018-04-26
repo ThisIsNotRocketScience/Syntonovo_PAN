@@ -76,6 +76,7 @@ ImTextureID Raspberry_LoadTexture(const char *filename)
 
 	if (error)
 	{
+		printf("error reading %s\n", filename);
 		return 0;
 	}
 	GLuint tex;

@@ -37,3 +37,4 @@ PanSim/Release/*
 *.otf
 Raspberry/tftgl.c
 *.idb
+*.idb
