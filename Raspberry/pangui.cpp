@@ -231,7 +231,10 @@ extern "C"
 
 			ImGui_ImlES_NewFrame();
 
+			ImGui::BeginChild("screen", ImVec2(480, 800), false);
 			Raspberry_RenderScreen();
+			ImGui::EndChild();
+
 			ImGui::Render();
 			ImGui_ImlES_RenderDrawLists(ImGui::GetDrawData());
 			

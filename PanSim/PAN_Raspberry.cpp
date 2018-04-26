@@ -78,8 +78,9 @@ ImTextureID Raspberry_LoadTexture(const char *filename)
 	{
 		return 0;
 	}
-#ifdef WIN32
 	GLuint tex;
+
+#ifdef WIN32
 	glEnable(GL_TEXTURE_2D);
 	glGenTextures(1, &tex);
 	glBindTexture(GL_TEXTURE_2D, tex);
@@ -87,10 +88,18 @@ ImTextureID Raspberry_LoadTexture(const char *filename)
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, &image[0]);
 
-	return (ImTextureID)tex;
+#else 
+	glGetIntegerv(GL_TEXTURE_BINDING_2D, &last_texture);
+	glGenTextures(1, &tex);
+	glBindTexture(GL_TEXTURE_2D, tex);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, &image[0]);
+	glBindTexture(GL_TEXTURE_2D, last_texture);
 #endif
 
-	return 0;
+	return (ImTextureID)tex;
 };
 
 
