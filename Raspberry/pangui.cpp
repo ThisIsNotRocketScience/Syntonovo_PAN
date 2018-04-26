@@ -170,8 +170,72 @@ void UseNormal()
 
 }
 
+
+char *VERTEX_SHADER_SRC =
+"#version 100\n"
+"attribute vec4 a_position;\n"
+"varying vec2 v_uvcoord;\n"
+"void main() {\n"
+"  gl_Position = a_position;\n"
+"  v_uvcoord = (a_position.xy + 0.5) * 2;\n"
+"}\n";
+
+
+char *FRAGMENT_SHADER_SRC =
+"#version 100\n"
+"precision mediump float;\n"
+"varying vec2 v_uvcoord;\n"
+"uniform sampler2D u_texture;\n"
+"void main() {\n"
+"   gl_FragColor = texture2D(u_texture, v_uvcoord);\n"
+"   //test: gl_FragColor = vec4(0,0,1,1);\n"
+"}\n";
+
+GLuint program;
+
+void InitShaders()
+{
+	program = compileShader(VERTEX_SHADER_SRC, FRAGMENT_SHADER_SRC);
+	if (program == 0) {
+		printf("Failed to create OpenGL shader!\n");
+		return EXIT_FAILURE;
+	}
+
+}
 void RenderQuad()
 {
+	const float quadPositions[] = { 1.0,  1.0, 0.0,
+		-1.0,  1.0, 0.0,
+		-1.0, -1.0, 0.0,
+		-1.0, -1.0, 0.0,
+		1.0, -1.0, 0.0,
+		1.0,  1.0, 0.0 };
+	const float quadTexcoords[] = { 1.0, 1.0,
+		0.0, 1.0,
+		0.0, 0.0,
+		0.0, 0.0,
+		1.0, 0.0,
+		1.0, 1.0 };
+
+	// stop using VBO
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	// setup buffer offsets
+	glVertexAttribPointer(ATTRIB_VERTEX, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), quadPositions);
+	glVertexAttribPointer(ATTRIB_TEXCOORD0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), quadTexcoords);
+
+	// ensure the proper arrays are enabled
+	glEnableVertexAttribArray(ATTRIB_VERTEX);
+	glEnableVertexAttribArray(ATTRIB_TEXCOORD0);
+
+	//Bind Texture and render-to-texture FBO.
+	glBindTexture(GL_TEXTURE_2D, GLid);
+
+	//Actually wanted to render it to render-to-texture FBO, but now testing directly on default FBO.
+	//glBindFramebuffer(GL_FRAMEBUFFER, textureFBO[pixelBuffernum]);
+
+	// draw
+	glDrawArrays(GL_TRIANGLES, 0, 2 * 3);
 
 }
 extern "C"
@@ -182,7 +246,6 @@ extern "C"
 		unsigned int i;
 		struct timeval t1, t2;
 		GLuint vbo[2];
-		GLuint program;
 		double elapsedTime;
 
 
@@ -208,7 +271,7 @@ extern "C"
 		printf("TFT display initialized with EGL! Screen size: %dx%d\n", viewport[2], viewport[3]);
 
 		printf("OpenGL version is (%s)\n", glGetString(GL_VERSION));
-
+		InitShaders();
 
 		// Setup ImGui binding
 		ImGui::CreateContext();
