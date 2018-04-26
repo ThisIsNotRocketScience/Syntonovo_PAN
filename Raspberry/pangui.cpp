@@ -135,13 +135,13 @@ fullscreen(
     DISPMANX_DISPLAY_HANDLE_T display,
     DISPMANX_MODEINFO_T *info)
 {
-    int width = 800;
-    int height = 480 ;
+    int width = 480;
+    int height = 800 ;
 
     VC_IMAGE_TYPE_T type = VC_IMAGE_RGBA32;
     int pitch = ALIGN_UP(width * 4, 32);
     
-	glReadPixels(0,0,800,480, GL_RGBA, GL_UNSIGNED_BYTE, thepix);
+	glReadPixels(0,0,480,800, GL_RGBA, GL_UNSIGNED_BYTE, thepix);
 	
   
   //  printf("displaying snapshot %dx%d\n", width, height);
@@ -195,7 +195,7 @@ extern "C"
 		int result = vc_dispmanx_display_get_info(display, &info);
 
 
-		Setup(800, 480, &info, display);
+		Setup( 480,800, &info, display);
 
 		// Get viewport size
 		GLint viewport[4];
@@ -224,7 +224,7 @@ extern "C"
 		
 		for (int qq = 0; qq < 10000; qq++)
 		{
-			glViewport(0, 0, (int)ImGui::GetIO().DisplaySize.x, (int)ImGui::GetIO().DisplaySize.y);
+			glViewport(0, 0, 480,800);
 			glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
 			glClear(GL_COLOR_BUFFER_BIT);
 
@@ -237,7 +237,8 @@ extern "C"
 
 
 			ImGui::Begin("screen", 0,ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoTitleBar );
-
+ ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+   
 			ImGui::SetWindowSize(ImVec2(480,800));
 
 
@@ -246,7 +247,7 @@ extern "C"
 			ImGui::GetWindowDrawList()->AddLine(ImVec2(480, 0), ImVec2(0,800), IM_COL32(255, 255, 255, 255), 10.0f);
 
 			ImGui::GetWindowDrawList()->AddLine(ImVec2(0, 0), ImVec2(480,800), IM_COL32(255, 255, 255, 255), 10.0f);
-		
+			ImGui::PopStyleVar();
 			ImGui::End();
 
 			ImGui::Render();

@@ -1,39 +1,4 @@
 #include <math.h>
-#include "../libs/glm-0.9.9-a2/glm/mat4x4.hpp"
-#include "../libs/glm-0.9.9-a2/glm/gtc/matrix_transform.hpp"
-#include "../libs/glm-0.9.9-a2/glm/gtc/constants.hpp"
-
-
-static int T = 0;
-
-void Rotate(float matrix[4][4], float angle)
-{
-
-	glm::mat4 Projection = glm::ortho(0, 480, 800, 0);
-	glm::mat4 Rotated = glm::rotate(Projection, angle, glm::vec3(0.0f, 0.0f, 1.0f));
-Rotated = Projection;
-
-	matrix[0][0] = Rotated[0][0];
-	matrix[1][0] = Rotated[1][0];
-	matrix[2][0] = Rotated[2][0];
-	matrix[3][0] = Rotated[3][0];
-
-	matrix[0][1] = Rotated[0][1];
-	matrix[1][1] = Rotated[1][1];
-	matrix[2][1] = Rotated[2][1];
-	matrix[3][1] = Rotated[3][1];
-
-	matrix[0][2] = Rotated[0][2];
-	matrix[1][2] = Rotated[1][2];
-	matrix[2][2] = Rotated[2][2];
-	matrix[3][2] = Rotated[3][2];
-
-	matrix[0][3] = Rotated[0][3];
-	matrix[1][3] = Rotated[1][3];
-	matrix[2][3] = Rotated[2][3];
-	matrix[3][3] = Rotated[3][3];
-}
-
 
 #ifndef WIN32
 
@@ -81,24 +46,19 @@ void ImGui_ImlES_RenderDrawLists(ImDrawData* draw_data)
 	draw_data->ScaleClipRects(io.DisplayFramebufferScale);
 
 	
-	// Setup orthographic projection matrix
-	 float ortho_projectionb[4][4] =
-	{
-        { -2.0f / io.DisplaySize.x, 0.0f,                   0.0f, 0.0f },
-	{ 0.0f,                  2.0f / -io.DisplaySize.y, 0.0f, 0.0f },
-	{ 0.0f,                  0.0f,                  -1.0f, 0.0f },
-	{ sin(T*0.01f),                  sin(T*0.03f),                   0.0f, 1.0f },
-	};
+
+static int T =0 ;
 //
 	float st = sin(T*0.01f);
 	float st2 = sin(T*0.03f);
-	float ortho_projection[4][4] = 
-{
-{0.0f        , 2.0f/800.0f,0.0f,0.0f},
-{2.0f/-480.0f,         0.0f,0.0f,0.0f},
-{0.0f        ,         0.0f,1.0f,0.0f},
-{st          ,         st2,0.0f,1.0f}
-};
+	const float ortho_projection[4][4] =
+        {
+                { 2.0f / io.DisplaySize.x, 0.0f,                   0.0f, 0.0f },
+                { 0.0f,                  2.0f / -io.DisplaySize.y, 0.0f, 0.0f },
+                { 0.0f,                  0.0f,                    -1.0f, 0.0f },
+                { -1.0f,                  1.0f,                   0.0f, 1.0f },
+        };
+
 	T++;
 	
 //	float angle = (T % 360);
