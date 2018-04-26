@@ -1,3 +1,39 @@
+#include <math.h>
+#include "../libs/glm-0.9.9-a2/glm/mat4x4.hpp"
+#include "../libs/glm-0.9.9-a2/glm/gtc/matrix_transform.hpp"
+#include "../libs/glm-0.9.9-a2/glm/gtc/constants.hpp"
+
+
+static int T = 0;
+
+void Rotate(float **matrix, float angle)
+{
+
+	glm::mat4 Projection = glm::ortho(0, 480, 800, 0);
+	glm::mat4 Rotated = glm::rotate(Projection, angle, glm::vec3(0.0f, 0.0f, 1.0f));
+
+	matrix[0][0] = Rotated[0][0];
+	matrix[1][0] = Rotated[1][0];
+	matrix[2][0] = Rotated[2][0];
+	matrix[3][0] = Rotated[3][0];
+
+	matrix[0][1] = Rotated[0][1];
+	matrix[1][1] = Rotated[1][1];
+	matrix[2][1] = Rotated[2][1];
+	matrix[3][1] = Rotated[3][1];
+
+	matrix[0][2] = Rotated[0][2];
+	matrix[1][2] = Rotated[1][2];
+	matrix[2][2] = Rotated[2][2];
+	matrix[3][2] = Rotated[3][2];
+
+	matrix[0][3] = Rotated[0][3];
+	matrix[1][3] = Rotated[1][3];
+	matrix[2][3] = Rotated[2][3];
+	matrix[3][3] = Rotated[3][3];
+}
+
+
 #ifndef WIN32
 
 #include <stdint.h>
@@ -19,6 +55,7 @@ static unsigned int g_VboHandle = 0, g_ElementsHandle = 0;
 // This is the main rendering function that you have to implement and provide to ImGui (via setting up 'RenderDrawListsFn' in the ImGuiIO structure)
 // If text or lines are blurry when integrating ImGui in your engine:
 // - in your Render function, try translating your projection matrix by (0.5f,0.5f) or (0.375f,0.375f)
+
 void ImGui_ImlES_RenderDrawLists(ImDrawData* draw_data)
 {
 	// Backup GL state
@@ -42,14 +79,22 @@ void ImGui_ImlES_RenderDrawLists(ImDrawData* draw_data)
 	float fb_height = io.DisplaySize.y * io.DisplayFramebufferScale.y;
 	draw_data->ScaleClipRects(io.DisplayFramebufferScale);
 
+	
 	// Setup orthographic projection matrix
 	const float ortho_projection[4][4] =
 	{
-		{ 0.0f, 2.0f / io.DisplaySize.x ,     0.0f, 0.0f },
-		{ 2.0f / -io.DisplaySize.y,0.0f, 0.0f, 0.0f },
-		{ 0.0f,                  0.0f,                  -1.0f, 0.0f },
-		{ 1.0f,                  0.0f,                   0.0f, 1.0f },
+		{ 2.0f / io.DisplaySize.x, 0.0f,                   0.0f, 0.0f },
+	{ 0.0f,                  2.0f / -io.DisplaySize.y, 0.0f, 0.0f },
+	{ 0.0f,                  0.0f,                  -1.0f, 0.0f },
+	{ -1.0f,                  1.0f,                   0.0f, 1.0f },
 	};
+	t++;
+	
+	float angle = ((t % 360)
+	
+
+	Rotate(ortho_projection, angle);
+
 	glUseProgram(g_ShaderHandle);
 	glUniform1i(g_AttribLocationTex, 0);
 	glUniformMatrix4fv(g_AttribLocationProjMtx, 1, GL_FALSE, &ortho_projection[0][0]);
