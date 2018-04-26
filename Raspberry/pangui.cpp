@@ -132,8 +132,8 @@ fullscreen(
     DISPMANX_DISPLAY_HANDLE_T display,
     DISPMANX_MODEINFO_T *info)
 {
-    int width = 800;
-    int height = 480 ;
+    int width = 480;
+    int height = 800 ;
 
     VC_IMAGE_TYPE_T type = VC_IMAGE_RGBA32;
     int pitch = ALIGN_UP(width * 4, 32);
@@ -190,7 +190,7 @@ int main(int argv, char** argc){
     int result = vc_dispmanx_display_get_info(display, &info);
     
 
-	Setup(800,480,&info,display);
+	Setup(480,800,&info,display);
 
 	// Get viewport size
 	GLint viewport[4];
