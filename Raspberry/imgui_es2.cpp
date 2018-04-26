@@ -1,5 +1,6 @@
 #ifndef WINDOWS
 
+#include <stdint.h>
 #include "../libs/imgui-master/imgui.h"
 #include "imgui_impl_es2.h"
 #include <GLES2/gl2.h>
@@ -103,12 +104,12 @@ void ImGui_ImlES_RenderDrawLists(ImDrawData* draw_data)
 	glDisable(GL_SCISSOR_TEST);
 }
 
-static const char* ImGui_ImlES_GetClipboardText()
+static const char* ImGui_ImlES_GetClipboardText(void* user_data)
 {
 	return "";
 }
 
-static void ImGui_ImlES_SetClipboardText(const char* text)
+static void ImGui_ImlES_SetClipboardText(void* user_data, const char* text)
 {
 	
 }
@@ -255,7 +256,7 @@ void ImGui_ImlES_NewFrame()
 	io.DisplaySize = ImVec2((float)w, (float)h);
 
 	// Setup time step
-	Uint32	time = 0;
+	uint32_t	time = 0;
 	double current_time = time / 1000.0;
 	io.DeltaTime = g_Time > 0.0 ? (float)(current_time - g_Time) : (float)(1.0f / 60.0f);
 	g_Time = current_time;
