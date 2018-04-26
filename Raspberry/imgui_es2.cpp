@@ -53,10 +53,10 @@ static int T =0 ;
 	float st2 = sin(T*0.03f);
 	const float ortho_projection[4][4] =
         {
-                { 0.0f, -2.0f / io.DisplaySize.x,                    0.0f, 0.0f },
-                { 2.0f / -io.DisplaySize.y,0.0f, 0.0f, 0.0f },
+                { 2.0f / io.DisplaySize.x,         0.0f,0.0f, 0.0f },
+                { 0.0f,   2.0f / -io.DisplaySize.y, 0.0f, 0.0f },
                 { 0.0f,                  0.0f,                    -1.0f, 0.0f },
-                { 1.0f,                  1.0f,                   0.0f, 1.0f },
+                { -1.0f,                  1.0f,                   0.0f, 1.0f },
         };
 
 	T++;
@@ -268,7 +268,7 @@ void ImGui_ImlES_NewFrame()
 	ImGuiIO& io = ImGui::GetIO();
 
 	// Setup display size (every frame to accommodate for window resizing)
-	int w=480, h=800;
+	int w=1024, h=1024;
 	io.DisplaySize = ImVec2((float)w, (float)h);
 	io.DisplayFramebufferScale = ImVec2(w > 0 ? ((float)w / w) : 0, h > 0 ? ((float)h / h) : 0);
 
