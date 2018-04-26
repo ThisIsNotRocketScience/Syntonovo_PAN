@@ -52,9 +52,14 @@
 
 void codecsetup_init()
 {
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < 3; i++) {
     	max11311_set_port(0, i, MODE_ADC_M5_P5V);
-    	max11311_set_port(0, 6 + i, MODE_DAC_0_P10V);
+    }
+    for (int i = 3; i < 6; i++) {
+    	max11311_set_port(0, i, MODE_DAC_0_P10V);
+    }
+    for (int i = 6; i < 12; i++) {
+    	max11311_set_port(0, i, MODE_ADC_M5_P5V);
     }
 
     for (int i = 0; i < 12; i++) {
