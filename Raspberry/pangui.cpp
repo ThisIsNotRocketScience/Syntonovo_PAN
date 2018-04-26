@@ -255,11 +255,8 @@ extern "C"
 
 				if (ImGui::BeginMenu("Edgecutter Windows"))
 				{
-					ImGui::MenuItem("Output Waveforms", NULL, &waveoutputs);
-					ImGui::MenuItem("Edgecutter Parameters", NULL, &parameters);
-					ImGui::MenuItem("Static Envelope", NULL, &staticenv);
-					ImGui::MenuItem("Docurve Test", NULL, &docurvetest);
-					ImGui::MenuItem("Velocity & Repeat Attack Test", NULL, &velocityrepeater);
+					static bool testout = false;
+					ImGui::MenuItem("Output Waveforms", NULL, &testout);
 					ImGui::EndMenu();
 				}
 				ImGui::EndMainMenuBar();
