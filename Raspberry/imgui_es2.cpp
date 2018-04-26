@@ -53,10 +53,10 @@ static int T =0 ;
 	float st2 = sin(T*0.03f);
 	const float ortho_projection[4][4] =
         {
-                { 2.0f / io.DisplaySize.x, 0.0f,                   0.0f, 0.0f },
-                { 0.0f,                  2.0f / -io.DisplaySize.y, 0.0f, 0.0f },
+                { 0.0f, -2.0f / io.DisplaySize.x,                    0.0f, 0.0f },
+                { 2.0f / -io.DisplaySize.y,0.0f, 0.0f, 0.0f },
                 { 0.0f,                  0.0f,                    -1.0f, 0.0f },
-                { -1.0f,                  1.0f,                   0.0f, 1.0f },
+                { 1.0f,                  1.0f,                   0.0f, 1.0f },
         };
 
 	T++;
