@@ -10,7 +10,7 @@
 
 #ifndef SWITCH
 #define REDEFINEDSWITCH
-#define SWITCH(name,�d)
+#define SWITCH(name,id)
 #endif
 
 
