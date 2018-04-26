@@ -35,3 +35,4 @@ PanSim/Release/*
 *.exp
 *.db
 *.otf
+Raspberry/tftgl.c

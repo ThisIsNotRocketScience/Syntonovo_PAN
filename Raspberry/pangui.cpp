@@ -146,8 +146,11 @@ fullscreen(
     
 }
 #include <tftgl.h>
+extern "C" 
+{
 extern unsigned int tftglInitEgl(unsigned int flags);
 extern unsigned int tftglInitDisplay(unsigned int flags);
+}
 unsigned int tadaaaa(unsigned int flags){
 	printf("a") ;
 	unsigned int res;
