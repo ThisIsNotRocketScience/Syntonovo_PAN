@@ -231,9 +231,12 @@ extern "C"
 
 			ImGui_ImlES_NewFrame();
 
-			ImGui::BeginChild("screen", ImVec2(480, 800), false);
+			ImGui::SetNextWindowSize(ImVec2(480,800), ImGuiSetCond_FirstUseEver);
+			ImGui::Begin("edit_window", NULL);
+
+			//ImGui::BeginChild("screen", ImVec2(480, 800), false);
 			Raspberry_RenderScreen();
-			ImGui::EndChild();
+			ImGui::End();
 
 			ImGui::Render();
 			ImGui_ImlES_RenderDrawLists(ImGui::GetDrawData());
