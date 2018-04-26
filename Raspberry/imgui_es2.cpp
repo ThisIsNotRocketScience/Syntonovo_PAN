@@ -241,10 +241,9 @@ bool ImGui_ImlES_Init()
 void ImGui_ImlES_Shutdown()
 {
 	ImGui_ImlES_InvalidateDeviceObjects();
-	ImGui::Shutdown();
 }
 
-void ImGui_ImlES_NewFrame(SDL_Window *window)
+void ImGui_ImlES_NewFrame()
 {
 	if (!g_FontTexture)
 		ImGui_ImlES_CreateDeviceObjects();
