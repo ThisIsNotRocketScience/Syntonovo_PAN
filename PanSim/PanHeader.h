@@ -366,6 +366,8 @@ typedef struct {
 	ModTarget_t target[16];
 } ControlModulation_t;
 
+#define PRESET_NAME_LENGTH 16
+
 typedef struct {
 	uint32_t switches[1];
 
@@ -375,10 +377,11 @@ typedef struct {
 	AdsrModulation_t adsrmod[16];
 	AdModulation_t admod[16];
 	ControlModulation_t ctrlmod[16];
+	char Name[PRESET_NAME_LENGTH];
 } PanPreset_t;
 
 typedef enum {
-	GuiState_Root = -1,
+	GuiState_Root,
 	GuiState_LfoSelect,
 	GuiState_AdsrSelect,
 	GuiState_AdSelect,
@@ -388,7 +391,7 @@ typedef enum {
 	GuiState_Menu_##id,
 #include "PanUiMap.h"
 #undef MENU
-
+	__GuiState_COUNT
 } GuiState_t;
 
 
@@ -432,5 +435,6 @@ void Raspberry_SetAdsrParam(SubParam_t subparam, uint32_t value);
 void Raspberry_SetAdParam(SubParam_t subparam, uint32_t value);
 void Raspberry_OutputChangeValue(int output, uint32_t value);
 void Raspberry_SetSwitches(uint32_t* switches);
+void Raspberry_SetName(char* newname);
 
 #endif

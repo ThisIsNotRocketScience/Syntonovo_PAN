@@ -5,12 +5,25 @@ extern void WriteWithSubKnob(int id, int subid, uint32_t value);
 extern void WriteSwitch(int id, int state);
 extern void WriteSyncLfo(uint8_t* paramids);
 
+PanPreset_t gPresetBank[16];
 PanPreset_t gPreset;
+
+#define MENU(id,button,name) static int const MenuItemCount_##id = 0
+#define ENTRY(name, type, param) + 1
+#define CUSTOMENTRY(name, type, param) + 1
+#define ENDMENU() ;
+#include "PanUiMap.h"
+#undef ENDMENU
+#undef ENTRY
+#undef MENU
+#undef CUSTOMENTRY
+
+
 
 void InitPreset(PanPreset_t& preset)
 {
 	memset(&preset, 0, sizeof(PanPreset_t));
-
+	sprintf_s(preset.Name, PRESET_NAME_LENGTH, "Init");
 	preset.ctrlmod[0].source = ControlModulation_t::Source_note;
 	preset.ctrlmod[0].target[0].param = Output_VCO1_PITCH;
 	preset.ctrlmod[0].target[0].depth = 0x4000;
@@ -207,6 +220,7 @@ void LoadPreset(PanPreset_t& preset)
 	}
 
 	Raspberry_SetSwitches(preset.switches);
+	Raspberry_SetName(preset.Name);
 }
 
 void PresetChangeValue(PanPreset_t& preset, int param, uint16_t value)
@@ -499,7 +513,8 @@ void Teensy_InitPreset()
 	LoadPreset(gPreset);
 }
 
-typedef struct {
+typedef struct 
+{
 	int modid;
 	ModTarget_t target;
 } Teensy_CancelStack_t;

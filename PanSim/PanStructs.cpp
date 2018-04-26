@@ -21,14 +21,12 @@ Knob Knobs[__KNOB_COUNT] = {
 #include "PanControls.h"
 #undef KNOB
 #undef SLIDER
-
 };
 
 Encoder Encoders[__ENCODER_COUNT] = {
-#define ENCODER(iname,ix,iy) {#iname,ix, iy, encoder_##iname},
+#define ENCODER(iname,ix,iy) {(char*)#iname,ix, iy, encoder_##iname},
 #include "PanControls.h"
 #undef ENCODER
-
 };
 
 #define SCREEN(iname,ix,iy,iw,ih) {ix, iy,iw,ih}

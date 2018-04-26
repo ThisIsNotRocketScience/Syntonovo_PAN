@@ -692,7 +692,7 @@ int main(int argc, char** argv)
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
 	SDL_DisplayMode current;
 	SDL_GetCurrentDisplayMode(0, &current);
-	SDL_Window *window = SDL_CreateWindow("Synton PAN Simulator", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 2000, 720, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+	SDL_Window *window = SDL_CreateWindow("Synton PAN Simulator", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 2000, 900, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 	SetupIcon(window);
 	SDL_GLContext glcontext = SDL_GL_CreateContext(window);
 	SDL_GL_SetSwapInterval(1); // Enable vsync
@@ -707,7 +707,7 @@ int main(int argc, char** argv)
 	// Setup style
 	ImGui::StyleColorsLight();
 
-	ImVec4 clear_color = ImVec4(1.0f / 255.0f, 58.0f / 255.0f, 66.0f / 255.0f, 1.00f);
+	ImVec4 clear_color = ImVec4(1.0f / 355.0f, 58.0f / 355.0f, 66.0f / 355.0f, 1.00f);
 
 	// racing turqoise: 1,58,66
 	// haringmuts geel: 255, 234,0 
