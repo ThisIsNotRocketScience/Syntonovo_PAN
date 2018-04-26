@@ -217,37 +217,14 @@ extern "C"
 		ImVec4 clear_color = ImVec4(1.0f / 255.0f, 58.0f / 255.0f, 66.0f / 255.0f, 1.00f);
 
 
-		// See gl_helper.h for more infor or read any OpenGL tutorial for compiling
-		// GLSL shaders (there are quite many on Google).
-		program = compileShader(vertexShaderCode, fragmentShaderCode);
-		if (program == 0) {
-			printf("Failed to create OpenGL shader!\n");
-			return EXIT_FAILURE;
-		}
-
-		// Create two Vertex Buffer Objects
-		glGenBuffers(2, vbo);
-		if (vbo[0] == 0 || vbo[1] == 0) {
-			printf("Failed to create GL_ARRAY_BUFFER! Error: %s\n", glGetErrorStr());
-			return EXIT_FAILURE;
-		}
-
-		// The first buffer holds vertex positions
-		// 3 vertices of 3D vectors of float data
-		glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-		glBufferData(GL_ARRAY_BUFFER, 3 * 3 * sizeof(float), vboVertexData, GL_STATIC_DRAW);
-
-		// The second buffer holds color data for each vertex
-		glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
-		glBufferData(GL_ARRAY_BUFFER, 3 * 3 * sizeof(float), vboColorData, GL_STATIC_DRAW);
-
-		// Get attribute and uniform pointers from GLSL shader (program)
-		glUseProgram(program);
-		GLint posLoc = glGetAttribLocation(program, "pos");
-		GLint colorLoc = glGetAttribLocation(program, "col");
-		GLint rotLoc = glGetUniformLocation(program, "rot");
+		
 		for (int qq = 0; qq < 10000; qq++)
 		{
+			glViewport(0, 0, (int)ImGui::GetIO().DisplaySize.x, (int)ImGui::GetIO().DisplaySize.y);
+			glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
+			glClear(GL_COLOR_BUFFER_BIT);
+
+
 			ImGui_ImlES_NewFrame();
 
 			if (ImGui::BeginMainMenuBar())
@@ -261,9 +238,9 @@ extern "C"
 				}
 				ImGui::EndMainMenuBar();
 			}
-			glViewport(0, 0, (int)ImGui::GetIO().DisplaySize.x, (int)ImGui::GetIO().DisplaySize.y);
-			glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
-			glClear(GL_COLOR_BUFFER_BIT);
+			
+
+			ImGui::Button("button!!");
 			ImGui::Render();
 			ImGui_ImlES_RenderDrawLists(ImGui::GetDrawData());
 			
