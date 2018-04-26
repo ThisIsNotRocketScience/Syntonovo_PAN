@@ -221,6 +221,8 @@ extern "C"
 		
 		Raspberry_Init();
 		Raspberry_Reset();
+		Raspberry_ToState(GuiState_Menu_VCO1, 0);
+
 		
 		for (int qq = 0; qq < 10000; qq++)
 		{
@@ -241,7 +243,7 @@ extern "C"
    
 			ImGui::SetWindowSize(ImVec2(800,480));
 
-
+				
 			Raspberry_RenderScreen();
 
 			ImGui::GetWindowDrawList()->AddLine(ImVec2(480, 0), ImVec2(0,800), IM_COL32(255, 255, 255, 255), 10.0f);
