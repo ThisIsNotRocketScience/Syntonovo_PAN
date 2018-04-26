@@ -5,6 +5,8 @@
 #include <EGL/egl.h>
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
+#include "../libs/imgui-master/imgui.h"
+#include "imgui_impl_es2.h"
 
 // Add our helper for creating OpenGL shaders and buffers
 #include "gl_helper.h"
