@@ -35,7 +35,9 @@ typedef struct Raspberry_GuiResources_t
 	ImTextureID SpriteSheet;
 	ImFont *BigFont;
 	ImFont *SmallFont;
-
+	ImU32 Highlight;
+	ImU32 Normal;
+	ImU32 BGColor;
 	int PageTime;
 } Raspberry_GuiResources_t;
 
@@ -64,7 +66,7 @@ ImTextureID Raspberry_LoadTexture(const char *filename)
 
 
 static Raspberry_GuiData_t Raspberry_guidata;
-static Raspberry_GuiResources_t Raspberry_resources;
+static Raspberry_GuiResources_t res;
 
 void Raspberry_ToState(GuiState_t state, int modselect)
 {
@@ -257,14 +259,14 @@ void RenderMenuTitle(const char *name)
 {
 	ImVec2 curpos = ImGui::GetCursorPos();
 	ImVec2 winpos = ImGui::GetWindowPos();
-	ImGui::PushFont(Raspberry_resources.BigFont);
+	ImGui::PushFont(res.BigFont);
 	ImVec2 S = ImGui::CalcTextSize(name);
 	ImGui::SetCursorPos(ImVec2(curpos.x + 240 - S.x / 2, curpos.y));
 
 	ImGui::Text(name);
 	ImGui::PopFont();
 	int w = 240 - S.x / 2 - 10;
-	float pt = Raspberry_resources.PageTime;
+	float pt = res.PageTime;
 	if (pt > 14) pt = 14;
 	pt /= 14.0f;
 	for (int x = 0; x <w ; x += 20)
@@ -280,13 +282,13 @@ void RenderStartMenu(const char *name)
 {	
 	RenderMenuTitle(name);
 	ImGui::SetCursorPos(ImVec2(50, 80));
-	ImGui::BeginChild("mainitems", ImVec2(300, 600));
+	//ImGui::BeginChild("mainitems", ImVec2(300, 600));
 
 }
 
 void RenderEndMenu()
 {
-	ImGui::EndChild();
+	//ImGui::EndChild();
 
 }
 void RenderCursor(bool active)
@@ -296,8 +298,10 @@ void RenderCursor(bool active)
 	ImVec2 B = ImGui::GetCursorPos();
 	float xx = A.x;
 	float yy = A.y + B.y;
-	ImGui::GetWindowDrawList()->AddLine(ImVec2(xx +3, yy + y), ImVec2(xx+20, yy+y), IM_COL32(255, 255, 0, 255), 2);
-	ImGui::GetWindowDrawList()->AddLine(ImVec2(xx + 3,yy+ y), ImVec2(xx+20,yy+ y), IM_COL32(255, 255, 0, 255), 2);
+	yy += ImGui::GetTextLineHeight() / 2.0f;
+	
+	ImGui::GetWindowDrawList()->AddLine(ImVec2(xx +3, yy ), ImVec2(xx+20, yy), res.Highlight, 4);
+	ImGui::GetWindowDrawList()->AddLine(ImVec2(xx + 3,yy), ImVec2(xx+3,yy+ 600), res.Highlight, 4);
 }
 bool RenderDefaultItems(GuiState_t state)
 {
@@ -328,17 +332,21 @@ void Raspberry_Init()
 {
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
 
-	Raspberry_resources.PageTime = 0;
-	Raspberry_resources.MainBG = Raspberry_LoadTexture("UI_MAINBG.png");
-	Raspberry_resources.SmallFont = io.Fonts->AddFontFromFileTTF("Fontfabric - Panton.otf", 40.0f);
-	Raspberry_resources.BigFont = io.Fonts->AddFontFromFileTTF("Fontfabric - Panton ExtraBold.otf", 54.0f);
+	res.PageTime = 0;
+	res.Highlight = IM_COL32(235, 200, 28,255);
+	res.Normal  = IM_COL32(255, 255, 255, 255);
+	res.BGColor = IM_COL32(0, 58, 66, 255);
+	res.MainBG = Raspberry_LoadTexture("UI_MAINBG.png");
+
+	res.SmallFont = io.Fonts->AddFontFromFileTTF("Fontfabric - Panton.otf", 40.0f);
+	res.BigFont = io.Fonts->AddFontFromFileTTF("Fontfabric - Panton ExtraBold.otf", 54.0f);
 
 }
 
 void Raspberry_PushStyle()
 {
-	ImGui::PushFont(Raspberry_resources.SmallFont);
-	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(255, 255, 255, 255));
+	ImGui::PushFont(res.SmallFont);
+	ImGui::PushStyleColor(ImGuiCol_Text, res.Normal);
 
 }
 
@@ -352,23 +360,23 @@ void Raspberry_RenderScreen()
 {
 	if (Raspberry_guidata.GuiState == Raspberry_guidata.LastGuiState)
 	{
-		Raspberry_resources.PageTime++;
+		res.PageTime++;
 	}
 	else
 	{
 		Raspberry_guidata.LastGuiState = Raspberry_guidata.GuiState;
-		Raspberry_resources.PageTime=0;
+		res.PageTime=0;
 	}
 
 	Raspberry_PushStyle();
 	ImVec2 pos = ImGui::GetCursorScreenPos();
-	if (Raspberry_resources.MainBG)
+	if (res.MainBG)
 	{
-		ImGui::Image(Raspberry_resources.MainBG, ImVec2(480, 800));
+		ImGui::Image(res.MainBG, ImVec2(480, 800));
 	}
 	else
 	{
-		ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(pos.x, pos.y), ImVec2(pos.x + 480, pos.y + 800), IM_COL32(0, 58, 66, 255));
+		ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(pos.x, pos.y), ImVec2(pos.x + 480, pos.y + 800), res.BGColor);
 	}
 	ImGui::SetCursorScreenPos(pos);
 	
