@@ -6,6 +6,7 @@
 typedef struct Raspberry_GuiData_t
 {
 	GuiState_t GuiState;
+	GuiState_t LastGuiState;
 	int ModSelect;
 
 	LfoModulation_t* editLfo;
@@ -34,7 +35,10 @@ typedef struct Raspberry_GuiResources_t
 	ImTextureID SpriteSheet;
 	ImFont *BigFont;
 	ImFont *SmallFont;
+
+	int PageTime;
 } Raspberry_GuiResources_t;
+
 
 ImTextureID Raspberry_LoadTexture(const char *filename)
 {
@@ -184,17 +188,17 @@ void TargetsList()
 	}
 }
 
-void Render_MenuEntry_Value(const char* name, int param)
+void Render_MenuEntry_Value(const char* name, int param, bool active)
 {
 	ImGui::LabelText(name, "%1.3f", (float)((int)Raspberry_guidata.outputValues[param]) * (1.0f / (float)0xFFFF));
 }
 
-void Render_MenuEntry_Pitch(const char* name, int param)
+void Render_MenuEntry_Pitch(const char* name, int param, bool active)
 {
 	ImGui::LabelText(name, "%1.3f", (float)((int)Raspberry_guidata.outputValues[param] - 0x8000) * (1.0f / (float)0x100));
 }
 
-void Render_MenuEntry_Waveform1(const char* name, int param)
+void Render_MenuEntry_Waveform1(const char* name, int param, bool active)
 {
 	bool saw = (Raspberry_guidata.switches[0] >> param) & 1;
 
@@ -207,7 +211,12 @@ void Render_MenuEntry_Waveform1(const char* name, int param)
 	ImGui::Text("%s", saw ? "On" : "Off");
 }
 
-void Render_MenuEntry_Waveform3(const char* name, int param)
+void Render_MenuEntry_Toggle(const char *name, int param, bool active)
+{
+	ImGui::Text(name);
+}
+
+void Render_MenuEntry_Waveform3(const char* name, int param, bool active)
 {
 	bool tri = (Raspberry_guidata.switches[0] >> param) & 1;
 	bool saw = (Raspberry_guidata.switches[0] >> (param + 1)) & 1;
@@ -228,12 +237,12 @@ void Render_MenuEntry_Waveform3(const char* name, int param)
 	ImGui::TextColored(subcol, "U");
 }
 
-void Render_MenuEntry_Pulsewidth(const char* name, int param)
+void Render_MenuEntry_Pulsewidth(const char* name, int param, bool active)
 {
-	ImGui::LabelText(name, "%1.2f %%", (float)((int)Raspberry_guidata.outputValues[param]) * (1.0f / (float)0xFFFF));
+	ImGui::Text(name); ImGui::SameLine(); ImGui::Text( "%1.2f %%", (float)((int)Raspberry_guidata.outputValues[param]) * (1.0f / (float)0xFFFF));
 }
 
-void Render_MenuEntry_FilterMix(const char* name, int param)
+void Render_MenuEntry_FilterMix(const char* name, int param, bool active)
 {
 	int mix1 = (0x10000) - (int)Raspberry_guidata.outputValues[param];
 	int mix2 = (int)Raspberry_guidata.outputValues[param];
@@ -241,31 +250,76 @@ void Render_MenuEntry_FilterMix(const char* name, int param)
 	if (mix1 > 0x8000) mix1 = 0x8000;
 	if (mix2 < 0) mix2 = 0;
 	if (mix2 > 0x8000) mix2 = 0x8000;
-	ImGui::LabelText(name, "%1.2f / %1.2f", (float)mix1 * (1.0f / (float)0x8000), (float)mix2 * (1.0f / (float)0x8000));
+	ImGui::Text(name); ImGui::SameLine();ImGui::Text("%1.2f / %1.2f", (float)mix1 * (1.0f / (float)0x8000), (float)mix2 * (1.0f / (float)0x8000));
 }
 
+void RenderMenuTitle(const char *name)
+{
+	ImVec2 curpos = ImGui::GetCursorPos();
+	ImVec2 winpos = ImGui::GetWindowPos();
+	ImGui::PushFont(Raspberry_resources.BigFont);
+	ImVec2 S = ImGui::CalcTextSize(name);
+	ImGui::SetCursorPos(ImVec2(curpos.x + 240 - S.x / 2, curpos.y));
 
+	ImGui::Text(name);
+	ImGui::PopFont();
+	int w = 240 - S.x / 2 - 10;
+	float pt = Raspberry_resources.PageTime;
+	if (pt > 14) pt = 14;
+	pt /= 14.0f;
+	for (int x = 0; x <w ; x += 20)
+	{
+		float M = ((float)x / (float)w);
+		M *= M;
+		float L = (ImGui::GetTextLineHeight() * M + 10)* pt;
+		ImGui::GetWindowDrawList()->AddLine(ImVec2(winpos.x + x, winpos.y-2), ImVec2(winpos.x + x, winpos.y+L), IM_COL32(255, 255, 255, 255), 1 + x/20);
+		ImGui::GetWindowDrawList()->AddLine(ImVec2(winpos.x + 480-x, winpos.y-2), ImVec2(winpos.x + 480-x, winpos.y+L), IM_COL32(255, 255, 255, 255), 1+x/20);
+	}
+}
+void RenderStartMenu(const char *name)
+{	
+	RenderMenuTitle(name);
+	ImGui::SetCursorPos(ImVec2(50, 80));
+	ImGui::BeginChild("mainitems", ImVec2(300, 600));
+
+}
+
+void RenderEndMenu()
+{
+	ImGui::EndChild();
+
+}
+void RenderCursor(bool active)
+{
+	if (!active) return;
+	ImVec2 A = ImGui::GetWindowPos();
+	ImVec2 B = ImGui::GetCursorPos();
+	float xx = A.x;
+	float yy = A.y + B.y;
+	ImGui::GetWindowDrawList()->AddLine(ImVec2(xx +3, yy + y), ImVec2(xx+20, yy+y), IM_COL32(255, 255, 0, 255), 2);
+	ImGui::GetWindowDrawList()->AddLine(ImVec2(xx + 3,yy+ y), ImVec2(xx+20,yy+ y), IM_COL32(255, 255, 0, 255), 2);
+}
 bool RenderDefaultItems(GuiState_t state)
 {
-#define MENU(id, button, name) \
-	if (state == GuiState_Menu_##id) {
-#define ENDMENU() \
-		return true; \
-	}
+#define MENU(id, button, name) if (state == GuiState_Menu_##id) { RenderStartMenu(name);int currentitem = 0;
+#define ENDMENU() RenderEndMenu(); return true; }
+
 #define ENTRY(name,type,param) \
-	Render_##type(name, param);
+	RenderCursor(currentitem == Raspberry_guidata.LeftEncoderValue?true:false);Render_##type(name, param,currentitem == Raspberry_guidata.LeftEncoderValue?true:false);currentitem++;
 #define CUSTOMENTRY(name,type,param) \
-	Render_##type(name, param);
+	RenderCursor(currentitem == Raspberry_guidata.LeftEncoderValue?true:false);Render_##type(name, param,currentitem == Raspberry_guidata.LeftEncoderValue?true:false);currentitem++;
 #include "PanUiMap.h"
 #undef MENU
 #undef ENDMENU
 #undef ENTRY
 #undef CUSTOMENTRY
-
+	return false;
 }
 
 bool RenderMenu(GuiState_t state)
 {
+	
+
 	return RenderDefaultItems(state);
 	
 }
@@ -274,9 +328,10 @@ void Raspberry_Init()
 {
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
 
-
+	Raspberry_resources.PageTime = 0;
 	Raspberry_resources.MainBG = Raspberry_LoadTexture("UI_MAINBG.png");
-	Raspberry_resources.SmallFont = io.Fonts->AddFontFromFileTTF("ProggyTiny.ttf", 25.0f);
+	Raspberry_resources.SmallFont = io.Fonts->AddFontFromFileTTF("Fontfabric - Panton.otf", 40.0f);
+	Raspberry_resources.BigFont = io.Fonts->AddFontFromFileTTF("Fontfabric - Panton ExtraBold.otf", 54.0f);
 
 }
 
@@ -295,6 +350,16 @@ void Raspberry_PopStyle()
 
 void Raspberry_RenderScreen()
 {
+	if (Raspberry_guidata.GuiState == Raspberry_guidata.LastGuiState)
+	{
+		Raspberry_resources.PageTime++;
+	}
+	else
+	{
+		Raspberry_guidata.LastGuiState = Raspberry_guidata.GuiState;
+		Raspberry_resources.PageTime=0;
+	}
+
 	Raspberry_PushStyle();
 	ImVec2 pos = ImGui::GetCursorScreenPos();
 	if (Raspberry_resources.MainBG)
@@ -310,7 +375,7 @@ void Raspberry_RenderScreen()
 
 	if (Raspberry_guidata.GuiState == GuiState_LfoSelect)
 	{
-		ImGui::Text("LFO assign");
+		RenderStartMenu("LFO assign");
 		if (Raspberry_guidata.editLfo != 0) {
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
 			ImGui::LabelText("Speed", "%d", Raspberry_guidata.editLfo->speed);
@@ -318,10 +383,11 @@ void Raspberry_RenderScreen()
 			ImGui::PopStyleVar();
 			TargetsList();
 		}
+		RenderEndMenu();
 	}
 	else if (Raspberry_guidata.GuiState == GuiState_AdsrSelect)
 	{
-		ImGui::Text("ADSR assign");
+		RenderStartMenu("ADSR assign");
 		if (Raspberry_guidata.editAdsr != 0) {
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
 			ImGui::LabelText("A", "%d", Raspberry_guidata.editAdsr->a);
@@ -331,10 +397,11 @@ void Raspberry_RenderScreen()
 			ImGui::PopStyleVar();
 			TargetsList();
 		}
+		RenderEndMenu();
 	}
 	else if (Raspberry_guidata.GuiState == GuiState_AdSelect)
 	{
-		ImGui::Text("AD assign");
+		RenderStartMenu("AD assign");
 		if (Raspberry_guidata.editAd != 0) {
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
 			ImGui::LabelText("A", "%d", Raspberry_guidata.editAd->a);
@@ -342,11 +409,13 @@ void Raspberry_RenderScreen()
 			ImGui::PopStyleVar();
 			TargetsList();
 		}
+		RenderEndMenu();
 	}
 	else if (Raspberry_guidata.GuiState == GuiState_CtrlSelect)
 	{
-		ImGui::Text("Controller assign");
+		RenderStartMenu("Controller assign");
 		TargetsList();
+		RenderEndMenu();
 	}
 	else if (RenderMenu(Raspberry_guidata.GuiState))
 	{
