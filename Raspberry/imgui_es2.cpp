@@ -46,9 +46,9 @@ void ImGui_ImlES_RenderDrawLists(ImDrawData* draw_data)
 	const float ortho_projection[4][4] =
 	{
 		{ 2.0f / io.DisplaySize.x, 0.0f,                   0.0f, 0.0f },
-	{ 0.0f,                  2.0f / -io.DisplaySize.y, 0.0f, 0.0f },
-	{ 0.0f,                  0.0f,                  -1.0f, 0.0f },
-	{ -1.0f,                  1.0f,                   0.0f, 1.0f },
+		{ 0.0f,                  2.0f / -io.DisplaySize.y, 0.0f, 0.0f },
+		{ 0.0f,                  0.0f,                  -1.0f, 0.0f },
+		{ -1.0f,                  1.0f,                   0.0f, 1.0f },
 	};
 	glUseProgram(g_ShaderHandle);
 	glUniform1i(g_AttribLocationTex, 0);

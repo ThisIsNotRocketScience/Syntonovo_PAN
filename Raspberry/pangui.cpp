@@ -198,10 +198,21 @@ extern "C"
 		GLint viewport[4];
 		glGetIntegerv(GL_VIEWPORT, viewport);
 
-		printf("TFT display initialized with EGL! Screen size: %dx%d\n",
-			viewport[2], viewport[3]);
+		printf("TFT display initialized with EGL! Screen size: %dx%d\n",	viewport[2], viewport[3]);
 
 		printf("OpenGL version is (%s)\n", glGetString(GL_VERSION));
+
+
+		// Setup ImGui binding
+		ImGui::CreateContext();
+		ImGuiIO& io = ImGui::GetIO(); (void)io;
+		//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
+		ImGui_ImlES_Init();
+
+		// Setup style
+		ImGui::StyleColorsLight();
+
+
 
 		// See gl_helper.h for more infor or read any OpenGL tutorial for compiling
 		// GLSL shaders (there are quite many on Google).
@@ -261,7 +272,7 @@ extern "C"
 			//}
 		}
 
-
+		ImGui_ImlES_Shutdown();
 		// Cleanup GLSL shader and two buffers
 		glDeleteProgram(program);
 		glDeleteBuffers(2, vbo);
