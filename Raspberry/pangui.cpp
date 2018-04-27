@@ -174,13 +174,9 @@ void UseNormal()
 static const char* vertexShaderCode = STRINGIFY(
 attribute vec3 pos;
 varying vec2 v_uv;
-uniform float rot;
 void main() {
-	v_uv = (pos.xy + 0.5) * 2;
-
-	float x = pos.x;
-	float y = pos.y;
-	gl_Position = vec4(x, y, pos.z, 1.0);
+	v_uv = (pos.xy + 0.5) * 2.0;
+	gl_Position = vec4(pos.x, pos.y, pos.z, 1.0);
 }
 );
 
