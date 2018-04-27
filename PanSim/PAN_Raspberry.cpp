@@ -1,6 +1,12 @@
 #include "../libs/imgui-master/imgui.h"
 #ifdef WIN32
 #include <GL/gl3w.h> 
+#else
+
+#include <EGL/egl.h>
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
+
 #endif
 #include "../libs/lodepng-master/lodepng.h"
 #include "PanHeader.h"
@@ -583,6 +589,7 @@ void Raspberry_WindowFrame()
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0);
 	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
+
 	ImGui::Begin("screen", 0,   ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar|  ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoTitleBar);
 
 	ImGui::SetWindowSize(ImVec2(480, 800));
