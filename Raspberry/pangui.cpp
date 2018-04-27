@@ -430,11 +430,11 @@ extern "C"
 
 		Raspberry_Init();
 		Raspberry_Reset();
-
+		Raspberry_ToState(GuiState_Boot,0);
 		OpenComm();
-		for(int www=0;www<10;www++)
+		for(int www=0;www<10000;www++)
 		{
-		Raspberry_ToState((GuiState_t)www, 0);
+//		Raspberry_ToState((GuiState_t)www, 0);
 
 		for (int qq = 0; qq < 200; qq++)
 		{
