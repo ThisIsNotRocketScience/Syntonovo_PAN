@@ -186,6 +186,7 @@ void UIWriteLed(int idx, int value)
 	UISendCommand(0x83, D);
 }
 
+
 void WriteKnob(int id, uint32_t value)
 {
 	if (DSPSerial.IsOpen() == false) return;
@@ -210,10 +211,6 @@ void WriteWithSubKnob(int id, int subid, uint32_t value)
 	DSPSerial.Write(b, 4);
 }
 
-void WriteSwitch(int id, int state)
-{
-	//TODO
-}
 
 void WriteSyncLfo(uint8_t* paramids)
 {
@@ -239,6 +236,20 @@ void set(setpara_t& para)
 
 	DSPSerial.Write(b, 4);
 }
+
+
+void WriteSwitch(int id, int state)
+{
+	setpara_t sp;
+
+	sp.paramid = 0xfdfe;
+	sp.value = id | ((state>0)?0x200:0x100);
+	
+	set(sp);
+
+	//TODO
+}
+
 
 void note_on(int noteid, int notevel)
 {
@@ -551,38 +562,38 @@ int T = 0;
 int SerialStatus = 0;
 int SerialCounter = 0;
 uint32_t SerialData = 0;
-
-int FindKnobIDX(int in)
+Raspberry_GuiData_t incoming;
+unsigned char *RaspberryPointer;
+uint32_t RaspberryOffset = sizeof(Raspberry_GuiData_t);
+void AddIncomingByte(unsigned char b)
 {
-	for (int i = 0; i < __KNOB_COUNT; i++)
+	if (RaspberryOffset < sizeof(Raspberry_GuiData_t))
 	{
-		if (Knobs[i].frontpanelidx == in)
+		RaspberryPointer[RaspberryOffset] = b;
+		RaspberryOffset++;
+		if (RaspberryOffset == sizeof(Raspberry_GuiData_t))
 		{
-			return i;
+			
 		}
 	}
-	return -1;
-}
-int FindButtonIDX(int in)
-{
-	for (int i = 0; i < __LEDBUTTON_COUNT; i++)
-	{
-		if (Buttons[i].fpid == in)
-		{
-			return i;
-		}
-	}
-	return -1;
 }
 void DoCommand(unsigned char comm, uint32_t data)
 {
 	switch (comm)
 	{
+	case 0xe0:
+	{
+		int encoder = data >> 8;
+		int delta = data & 7;
+		if (delta == 2) delta = -1;
+		Teensy_EncoderRotate(encoder, delta);
+	}
+	break;
 	case 0x81:
 	{
 		uint16_t idx = data >> 8;
 		uint16_t val = data & 0xff;
-		int N = FindButtonIDX(idx);
+		int N = Teensy_FindButtonIDX(idx);
 		if (N > -1)
 		{
 			Buttons[N].value = ((val == 0) ? true : false);
@@ -599,7 +610,7 @@ void DoCommand(unsigned char comm, uint32_t data)
 	{
 		uint16_t idx = data >> 16;
 		uint16_t val = data & 0xffff;
-		int TargetIDX = FindKnobIDX(idx);
+		int TargetIDX = Teensy_FindKnobIDX(idx);
 		if (TargetIDX > -1)
 		{
 
@@ -615,6 +626,38 @@ void DoCommand(unsigned char comm, uint32_t data)
 	case 0x91:
 		printf("0x91: %d\n", data);
 		break;
+#ifdef SIMULATEINCOMINGSERIAL
+	case 0xd0:
+	{
+		//printf("Incoming Guistate\n");
+		RaspberryOffset = 0;
+		RaspberryPointer = (unsigned char *)&incoming;
+		unsigned char b1 = data & 255;
+		unsigned char b2 = (data >> 8) & 255;
+		unsigned char b3 = (data >> 16) & 255;
+		AddIncomingByte(b1);
+		AddIncomingByte(b2);
+		AddIncomingByte(b3);
+
+	}
+	break;
+	case 0xd1:
+	{
+		//printf("GuistatePacket\n");
+		unsigned char b1 = data & 255;
+		unsigned char b2 = (data >> 8) & 255;
+		unsigned char b3 = (data >> 16) & 255;
+		AddIncomingByte(b1);
+		AddIncomingByte(b2);
+		AddIncomingByte(b3);
+	}
+		break;
+	case 0xd2:
+	{
+		memcpy(&Raspberry_guidata, &incoming, sizeof(Raspberry_GuiData_t));
+	}break;
+#endif
+
 	}
 }
 
@@ -880,7 +923,23 @@ int main(int argc, char** argv)
 					ImGui::SetCursorScreenPos(ImVec2(pos.x + Encoders[i].x * xscalefac, pos.y + Encoders[i].y * yscalefac));
 					if (MyEncoder(Encoders[i].name, &Encoders[i].pos, &Encoders[i].delta))
 					{
-						Raspberry_EncoderTurn(Encoders[i].id, Encoders[i].delta);
+						Teensy_EncoderPress(i);
+
+					}
+
+					char name[300];
+					sprintf(name, "ENCL%d", i);
+					ImGui::SetCursorScreenPos(ImVec2(pos.x + (Encoders[i].x -0.6) * xscalefac, (pos.y+0.3) + Encoders[i].y * yscalefac));
+					if (ImGui::Button(name))
+					{
+
+						Teensy_EncoderRotate(i, -1);
+					}
+					ImGui::SetCursorScreenPos(ImVec2(pos.x +( Encoders[i].x +0.6)* xscalefac,( pos.y+0.3) + Encoders[i].y * yscalefac));
+					sprintf(name, "ENCR%d", i);
+					if (ImGui::Button(name))
+					{
+						Teensy_EncoderRotate(i, 1);
 					}
 				}
 

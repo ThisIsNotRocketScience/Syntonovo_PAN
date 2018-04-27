@@ -71,6 +71,9 @@
     <ClCompile Include="PAN_Raspberry.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="PAN_Raspberry_Interface.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\libs\SDL2-2.0.7\lib\x86\SDL2main.lib" />

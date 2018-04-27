@@ -180,6 +180,7 @@
     <ClCompile Include="PanSim.cpp" />
     <ClCompile Include="PanStructs.cpp" />
     <ClCompile Include="PAN_Raspberry.cpp" />
+    <ClCompile Include="PAN_Raspberry_Interface.cpp" />
     <ClCompile Include="PAN_TeensyUI.cpp" />
   </ItemGroup>
   <ItemGroup>

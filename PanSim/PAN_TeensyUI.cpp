@@ -1,3 +1,6 @@
+#pragma GCC diagnostic ignored "-Wswitch"
+#pragma GCC diagnostic ignored "-Wwrite-strings"
+
 #include "PanHeader.h"
 
 extern void WriteKnob(int id, uint32_t value);
@@ -23,7 +26,13 @@ PanPreset_t gPreset;
 void InitPreset(PanPreset_t& preset)
 {
 	memset(&preset, 0, sizeof(PanPreset_t));
-	sprintf_s(preset.Name, PRESET_NAME_LENGTH, "Init");
+	preset.Name[0] = 'I';
+	preset.Name[1] = 'n';
+	preset.Name[2] = 'i';
+	preset.Name[3] = 't';
+	preset.Name[4] = '\0';
+
+	
 	preset.ctrlmod[0].source = ControlModulation_t::Source_note;
 	preset.ctrlmod[0].target[0].param = Output_VCO1_PITCH;
 	preset.ctrlmod[0].target[0].depth = 0x4000;
@@ -86,7 +95,8 @@ void InitPreset(PanPreset_t& preset)
 	preset.switches[0] |= (1 << Switch_SEL6SAW);
 	preset.switches[0] |= (1 << Switch_SEL7SAW);
 
-	preset.switches[0] |= (1 << Switch_SEL2SUB);
+	preset.switches[0] |= (1 << Switch_SEL2SAW);
+
 	preset.switches[0] |= (1 << Switch_SEL3SAW);
 	preset.switches[0] |= (1 << Switch_SEL3SQR); 
 	preset.switches[0] |= (1 << Switch_SEL1SQR);
@@ -197,7 +207,7 @@ void LoadPreset(PanPreset_t& preset)
 #define OUTPUT_VIRT(name,codecport,codecpin, type,id, style,defaultvalue) \
 	OUTPUT(name,codecport,codecpin,type,id,style,defaultvalue);
 #define SWITCH(name,id) \
-	WriteSwitch(id, (preset.switches[0]>>id) & 1);
+	//WriteSwitch(id, (preset.switches[0]>>id) & 1);
 #include "../interface/paramdef.h"
 #undef OUTPUT
 #undef OUTPUT_VIRT
@@ -943,7 +953,8 @@ void Teensy_ToState(GuiState_t state, int modselect = -1)
 		}
 	}
 
-	if (state == GuiState_CtrlSelect && modselect != -1) {
+	if (state == GuiState_CtrlSelect && modselect != -1)
+	{
 		modselect = CtrlMod(gPreset, LedButtonToSource(modselect));
 	}
 
@@ -1618,4 +1629,143 @@ modes:
 void Teensy_Reset()
 {
 	Teensy_guidata.GuiState = GuiState_Root;
+}
+
+
+
+int Teensy_FindKnobIDX(int in)
+{
+	for (int i = 0; i < __KNOB_COUNT; i++)
+	{
+		if (Knobs[i].frontpanelidx == in)
+		{
+			return i;
+		}
+	}
+	return -1;
+}
+int Teensy_FindButtonIDX(int in)
+{
+	for (int i = 0; i < __LEDBUTTON_COUNT; i++)
+	{
+		if (Buttons[i].fpid == in)
+		{
+			return i;
+		}
+	}
+	return -1;
+}
+
+void Teensy_EncoderPress(int id)
+{
+
+}
+
+#define MENU(id,button,name) static int const TeensyMenuItemCount_##id = 0
+#define ENTRY(name, type, param) + 1
+#define CUSTOMENTRY(name, type, param) + 1
+#define ENDMENU() ;
+#include "PanUiMap.h"
+#undef ENDMENU
+#undef ENTRY
+#undef MENU
+#undef CUSTOMENTRY
+
+
+bool RightDelta_MenuEntry_Value(const char *name, int param, int delta)
+{
+	int32_t val = Raspberry_guidata.outputValues[param] + delta*100;
+	if (val < 0) val = 0;
+	if (val > 0xffff) val = 0xffff;
+	Raspberry_guidata.outputValues[param] = val;
+
+	return true;
+}
+bool RightDelta_MenuEntry_Percentage(const char *name, int param, int delta) { return RightDelta_MenuEntry_Value(name, param, delta); };
+bool RightDelta_MenuEntry_Pitch(const char *name, int param, int delta) { return RightDelta_MenuEntry_Value(name, param, delta); };
+bool RightDelta_MenuEntry_FilterMix(const char *name, int param, int delta) { return RightDelta_MenuEntry_Value(name, param, delta); };
+
+void Teensy_Switch(int switchid, int newval)
+{
+	Raspberry_guidata.switches[0] &= ~ (1 << switchid);
+	Raspberry_guidata.switches[0] |= newval << switchid;
+	WriteSwitch(switchid, newval);
+}
+
+bool RightDelta_MenuEntry_EffectType(const char *name, int param, int delta)
+{
+	int current = DecodeCurrentEffect(Raspberry_guidata.switches[0]);
+	int neweffect = (current + delta + 8) % 8;
+	int a = (neweffect >> 0) & 1;
+	int b = (neweffect >> 1) & 1;
+	int c = (neweffect >> 2) & 1;
+	int d = (neweffect >> 3) & 1;
+	Teensy_Switch(Switch_SELEF1, a);
+	Teensy_Switch(Switch_SELEF2, b);
+	Teensy_Switch(Switch_SELEF3, c);
+	Teensy_Switch(Switch_SELEF4, d);
+	
+	
+	return true;
+	
+};
+
+bool RightDelta_MenuEntry_EffectParam1(const char *name, int param, int delta) { return RightDelta_MenuEntry_Value(name, param, delta); };
+bool RightDelta_MenuEntry_EffectParam2(const char *name, int param, int delta) { return RightDelta_MenuEntry_Value(name, param, delta); };
+bool RightDelta_MenuEntry_EffectParam3(const char *name, int param, int delta) { return RightDelta_MenuEntry_Value(name, param, delta); };
+bool RightDelta_MenuEntry_Toggle(const char *name, int param,int delta)
+{
+	if (delta < 0)
+	{
+		Raspberry_guidata.switches[0] |= (1<<param);
+	}
+	else
+	{
+		Raspberry_guidata.switches[0] &= ~(1 << param);
+	}
+	WriteSwitch(param, (Raspberry_guidata.switches[0] >> param) & 1);
+	return true;
+}
+
+void Teensy_EncoderRotate(int id, int delta)
+{
+	if (id == 0)
+	{
+		Raspberry_guidata.LeftEncoderValue -= delta;
+#define MENU(id, button, name) if (Raspberry_guidata.GuiState == GuiState_Menu_##id) {int max = TeensyMenuItemCount_##id; if (max <1) return;Raspberry_guidata.LeftEncoderValue = (Raspberry_guidata.LeftEncoderValue + max)%max;
+#define ENDMENU() Raspberry_guidata.dirty = true;return; };
+
+#include "PanUiMap.h"
+#undef MENU
+#undef ENDMENU
+
+	}
+	else
+	{
+#define MENU(id, button, name) if (Raspberry_guidata.GuiState == GuiState_Menu_##id) { int currentitem = 0;
+#define ENDMENU()  return ; }
+
+#define ENTRY(name,type,param) \
+	if (currentitem == Raspberry_guidata.LeftEncoderValue) \
+		{\
+			if (RightDelta_##type(name, param,delta))\
+			{\
+					Raspberry_guidata.dirty = true;\
+			};\
+			return;\
+		};\
+		currentitem++;
+#define CUSTOMENTRY(name,type,param) \
+	if (currentitem == Raspberry_guidata.LeftEncoderValue) {if(RightDelta_##type(name, param,delta)){Raspberry_guidata.dirty = true;};return;};currentitem++;
+#include "PanUiMap.h"
+#undef MENU
+#undef ENDMENU
+#undef ENTRY
+#undef CUSTOMENTRY
+
+
+		
+	}
+
+	
 }
