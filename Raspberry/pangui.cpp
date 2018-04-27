@@ -170,6 +170,28 @@ void UseNormal()
 
 }
 
+#define STRINGIFY(x) #x
+static const char* vertexShaderCode = STRINGIFY(
+attribute vec3 pos;
+varying vec2 v_uv;
+uniform float rot;
+void main() {
+	v_uv = (pos.xy + 0.5) * 2;
+
+	float x = pos.x;
+	float y = pos.y;
+	gl_Position = vec4(x, y, pos.z, 1.0);
+}
+);
+
+static const char* fragmentShaderCode = STRINGIFY(
+	varying vec2 v_uv;
+	uniform sampler2D u_texture
+void main() {
+	gl_FragColor = texture2D(u_texture, v_uv);
+	gl_FragColor.xy += v_uv.xy;
+}
+);
 
 char *VERTEX_SHADER_SRC =
 "#version 100\n"
@@ -195,7 +217,7 @@ GLuint program;
 
 void InitShaders()
 {
-	program = compileShader(VERTEX_SHADER_SRC, FRAGMENT_SHADER_SRC);
+	program = compileShader(vertexShaderCode, fragmentShaderCode);
 	if (program == 0) {
 		printf("Failed to create OpenGL shader!\n");
 		return EXIT_FAILURE;
@@ -203,49 +225,70 @@ void InitShaders()
 
 }
 
-class quad {
-public:
-	quad() {
-		GLfloat vertices[] = { // format = x, y, z, u, v
-			-1.0f, -1.0f, 0.0f,  0.0f, 0.0f,     1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
-			1.0f,  1.0f, 0.0f,  1.0f, 1.0f,    -1.0f,  1.0f, 0.0f, 0.0f, 1.0f
-		};
+GLuint vbo[2];
 
-		glGenVertexArrays(1, &vao); // vao saves state of array buffer, element array, etc
-		glGenBuffers(1, &vbo); // vbo stores vertex data
-
-		GLint curr_vao; // original state
-		glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &curr_vao);
-
-		glBindVertexArray(vao);
-		glBindBuffer(GL_ARRAY_BUFFER, vbo);
-
-		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 5, nullptr);
-		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 5, (void*)(sizeof(float) * 3));
-
-		glEnableVertexAttribArray(0);
-		glEnableVertexAttribArray(1);
-
-		glBindVertexArray(curr_vao);
-	}
-
-	~quad() {
-		glDeleteVertexArrays(1, &vao);
-		glDeleteBuffers(1, &vbo);
-	}
-
-	GLuint vao, vbo;
+// The following array holds vec3 data of 
+// three vertex positions
+static const GLfloat vboVertexData[] = {
+	-1.0f, -1.0f, 0.0f,
+	1.0f, -1.0f, 0.0f,
+	0.0f,  1.0f, 0.0f,
 };
 
-quad c;
+// The following array holds vec3 dara of 
+// three vertex colors 
+static const GLfloat vboColorData[] = {
+	1.0f, 0.0f, 0.0f,
+	0.0f, 1.0f, 0.0f,
+	0.0f, 0.0f, 1.0f,
+};
+
+
+void SetupBuffers()
+{
+	// Create two Vertex Buffer Objects
+		glGenBuffers(2, vbo);
+	if (vbo[0] == 0 || vbo[1] == 0) {
+		printf("Failed to create GL_ARRAY_BUFFER! Error: %s\n", glGetErrorStr());
+		return EXIT_FAILURE;
+	}
+
+	// The first buffer holds vertex positions
+	// 3 vertices of 3D vectors of float data
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
+	glBufferData(GL_ARRAY_BUFFER, 3 * 3 * sizeof(float), vboVertexData, GL_STATIC_DRAW);
+
+	// The second buffer holds color data for each vertex
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
+	glBufferData(GL_ARRAY_BUFFER, 3 * 3 * sizeof(float), vboColorData, GL_STATIC_DRAW);
+
+	// Get attribute and uniform pointers from GLSL shader (program)
+	glUseProgram(program);
+	GLint posLoc = glGetAttribLocation(program, "pos");
+	GLint colorLoc = glGetAttribLocation(program, "col");
+
+}
 void RenderQuad()
 {
 	
-	glUseProgram(program);
+	GLint posLoc = glGetAttribLocation(program, "pos");
+	GLint uvLoc = glGetAttribLocation(program, "uv");
 	
-	glBindVertexArray(q.vao);
+	// Bind first vertex buffer
+	glEnableVertexAttribArray(posLoc);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
+	glVertexAttribPointer(posLoc, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+
+	// Bind second vertex buffer
+	glEnableVertexAttribArray(colorLoc);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
+	glVertexAttribPointer(colorLoc, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+
+	// Set rotation
+	glUniform1f(rotLoc, qq*0.2);
+
+
+	glUseProgram(program);	
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, m_hTexture[0]);
 	glDrawArrays(GL_TRIANGLE_FAN, 0, 4);	
@@ -287,6 +330,8 @@ extern "C"
 
 		printf("OpenGL version is (%s)\n", glGetString(GL_VERSION));
 		InitShaders();
+		SetupBuffers();
+		MakeFrameBuffer();
 
 		// Setup ImGui binding
 		ImGui::CreateContext();
@@ -299,7 +344,7 @@ extern "C"
 
 		ImVec4 clear_color = ImVec4(1.0f / 255.0f, 58.0f / 255.0f, 66.0f / 255.0f, 1.00f);
 		glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
-		MakeFrameBuffer();
+		
 
 
 		Raspberry_Init();
