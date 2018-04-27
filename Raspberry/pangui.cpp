@@ -202,41 +202,54 @@ void InitShaders()
 	}
 
 }
+
+class quad {
+public:
+	quad() {
+		GLfloat vertices[] = { // format = x, y, z, u, v
+			-1.0f, -1.0f, 0.0f,  0.0f, 0.0f,     1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+			1.0f,  1.0f, 0.0f,  1.0f, 1.0f,    -1.0f,  1.0f, 0.0f, 0.0f, 1.0f
+		};
+
+		glGenVertexArrays(1, &vao); // vao saves state of array buffer, element array, etc
+		glGenBuffers(1, &vbo); // vbo stores vertex data
+
+		GLint curr_vao; // original state
+		glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &curr_vao);
+
+		glBindVertexArray(vao);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo);
+
+		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 5, nullptr);
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 5, (void*)(sizeof(float) * 3));
+
+		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
+
+		glBindVertexArray(curr_vao);
+	}
+
+	~quad() {
+		glDeleteVertexArrays(1, &vao);
+		glDeleteBuffers(1, &vbo);
+	}
+
+	GLuint vao, vbo;
+};
+
+quad c;
 void RenderQuad()
 {
-	const float quadPositions[] = { 1.0,  1.0, 0.0,
-		-1.0,  1.0, 0.0,
-		-1.0, -1.0, 0.0,
-		-1.0, -1.0, 0.0,
-		1.0, -1.0, 0.0,
-		1.0,  1.0, 0.0 };
-	const float quadTexcoords[] = { 1.0, 1.0,
-		0.0, 1.0,
-		0.0, 0.0,
-		0.0, 0.0,
-		1.0, 0.0,
-		1.0, 1.0 };
-
-	// stop using VBO
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	// setup buffer offsets
-	glVertexAttribPointer(ATTRIB_VERTEX, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), quadPositions);
-	glVertexAttribPointer(ATTRIB_TEXCOORD0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), quadTexcoords);
-
-	// ensure the proper arrays are enabled
-	glEnableVertexAttribArray(ATTRIB_VERTEX);
-	glEnableVertexAttribArray(ATTRIB_TEXCOORD0);
-
-	//Bind Texture and render-to-texture FBO.
-	glBindTexture(GL_TEXTURE_2D, GLid);
-
-	//Actually wanted to render it to render-to-texture FBO, but now testing directly on default FBO.
-	//glBindFramebuffer(GL_FRAMEBUFFER, textureFBO[pixelBuffernum]);
-
-	// draw
+	
 	glUseProgram(program);
-	glDrawArrays(GL_TRIANGLES, 0, 2 * 3);
+	
+	glBindVertexArray(q.vao);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, m_hTexture[0]);
+	glDrawArrays(GL_TRIANGLE_FAN, 0, 4);	
+	glBindTexture(GL_TEXTURE_2D, 0);	
 	glUseProgram(0);
 
 }
