@@ -220,7 +220,7 @@ void InitShaders()
 	program = compileShader(vertexShaderCode, fragmentShaderCode);
 	if (program == 0) {
 		printf("Failed to create OpenGL shader!\n");
-		return EXIT_FAILURE;
+		return;
 	}
 
 }
@@ -247,7 +247,7 @@ void SetupBuffers()
 		glGenBuffers(2, vbo);
 	if (vbo[0] == 0 || vbo[1] == 0) {
 		printf("Failed to create GL_ARRAY_BUFFER! Error: %s\n", glGetErrorStr());
-		return EXIT_FAILURE;
+		return ;
 	}
 
 	// The first buffer holds vertex positions
@@ -274,8 +274,6 @@ void RenderQuad()
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
 	glVertexAttribPointer(posLoc, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 
-	// Set rotation
-	glUniform1f(rotLoc, qq*0.2);
 
 
 	glUseProgram(program);	
