@@ -39,3 +39,4 @@ Raspberry/tftgl.c
 *.idb
 *.idb
 Raspberry/Debug/vc141.idb
+*.TTF

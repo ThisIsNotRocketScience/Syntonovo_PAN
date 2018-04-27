@@ -1,4 +1,7 @@
 #pragma once
+
+//#define SIMULATEINCOMINGSERIAL
+
 #ifndef SYNTONPAN
 #define SYNTONPAN
 #include <string>
@@ -391,8 +394,42 @@ typedef enum {
 	GuiState_Menu_##id,
 #include "PanUiMap.h"
 #undef MENU
+	GuiState_Boot,
 	__GuiState_COUNT
 } GuiState_t;
+
+
+
+typedef struct Raspberry_GuiData_t
+{
+	GuiState_t GuiState;
+	GuiState_t LastGuiState;
+	int ModSelect;
+
+
+	LfoModulation_t* editLfo;
+	AdsrModulation_t* editAdsr;
+	AdModulation_t* editAd;
+	ControlModulation_t* editCtrl;
+	ModTarget_t* editTargets;
+
+
+	int selectTarget;
+
+	LfoModulation_t dataLfo;
+	AdsrModulation_t dataAdsr;
+	AdModulation_t dataAd;
+	ControlModulation_t dataCtrl;
+
+	uint32_t outputValues[256];
+	uint32_t switches[1];
+
+	char PresetName[PRESET_NAME_LENGTH];
+	uint32_t LeftEncoderValue;
+	uint32_t RightEncoderValue;
+	bool dirty;
+} Raspberry_GuiData_t;
+
 
 
 inline GuiState_t ButtonToMenu(int buttonid)
@@ -417,6 +454,11 @@ extern void Teensy_Reset();
 extern void Teensy_InitPreset();
 extern void Teensy_KnobChanged(KnobEnum ID, uint32_t value);
 extern void Teensy_ButtonPressed(LedButtonEnum ID, int value);
+extern void Teensy_EncoderPress(int id);
+extern void Teensy_EncoderRotate(int id, int delta);
+
+extern int Teensy_FindKnobIDX(int in);
+extern int Teensy_FindButtonIDX(int in);
 
 extern void Raspberry_Reset();
 extern void Raspberry_RenderScreen();
@@ -437,4 +479,11 @@ void Raspberry_OutputChangeValue(int output, uint32_t value);
 void Raspberry_SetSwitches(uint32_t* switches);
 void Raspberry_SetName(char* newname);
 void Raspberry_WindowFrame();
+
+int DecodeCurrentEffect(uint32_t switches);
+
+extern Raspberry_GuiData_t Raspberry_guidata;
+
+
+
 #endif

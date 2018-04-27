@@ -33,6 +33,20 @@ Encoder Encoders[__ENCODER_COUNT] = {
 Screen TheScreen =
 #include "PanControls.h"
 ;
+
+
 #undef SCREEN
+
+int DecodeCurrentEffect(uint32_t switches)
+{
+	int a = (switches >> Switch_SELEF1) & 1;
+	int b = (switches >> Switch_SELEF2) & 1;
+	int c = (switches >> Switch_SELEF3) & 1;
+	int d = (switches >> Switch_SELEF4) & 1;
+	return (a)+(b << 1) + (c << 2) + (d << 3);
+}
+
+Raspberry_GuiData_t Raspberry_guidata;
+
 
 
