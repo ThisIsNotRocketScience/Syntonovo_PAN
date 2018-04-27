@@ -235,7 +235,9 @@ void RenderQuad()
 	//glBindFramebuffer(GL_FRAMEBUFFER, textureFBO[pixelBuffernum]);
 
 	// draw
+	glUseProgram(program);
 	glDrawArrays(GL_TRIANGLES, 0, 2 * 3);
+	glUseProgram(0);
 
 }
 extern "C"
@@ -318,6 +320,7 @@ extern "C"
 			ImGui_ImlES_RenderDrawLists(ImGui::GetDrawData());
 
 			UseNormal();
+
 			RenderQuad();
 
 			fullscreen(display, &info);
