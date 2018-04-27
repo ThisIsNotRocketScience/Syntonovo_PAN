@@ -88,6 +88,9 @@ void InitPreset(PanPreset_t& preset)
 
 	preset.paramvalue[Output_MASTER_PITCH] = 0x8000;
 
+	preset.switches[0] |= (1 << Switch_SELEF4);
+
+
 	preset.switches[0] |= (1 << Switch_SEL1SAW) ;
 	
 	preset.switches[0] |= (1 << Switch_SEL4SAW);
@@ -101,6 +104,8 @@ void InitPreset(PanPreset_t& preset)
 	preset.switches[0] |= (1 << Switch_SEL3SQR); 
 	preset.switches[0] |= (1 << Switch_SEL1SQR);
 
+	preset.switches[0] |= (1 << Switch_SELVCF2L0);
+	preset.switches[0] |= (1 << Switch_SELVCF2L1);
 
 	preset.switches[0] |= (1 << Switch_SELMOST2);
 	preset.switches[0] |= (1 << Switch_SELMOST3);
@@ -1696,10 +1701,10 @@ bool RightDelta_MenuEntry_EffectType(const char *name, int param, int delta)
 {
 	int current = DecodeCurrentEffect(Raspberry_guidata.switches[0]);
 	int neweffect = (current + delta + 8) % 8;
-	int a = (neweffect >> 0) & 1;
-	int b = (neweffect >> 1) & 1;
-	int c = (neweffect >> 2) & 1;
-	int d = (neweffect >> 3) & 1;
+	int a = (neweffect >> 0) & 1?0:1;
+	int b = (neweffect >> 1) & 1?0:1;
+	int c = (neweffect >> 2) & 1?0:1;
+	int d =1;
 	Teensy_Switch(Switch_SELEF1, a);
 	Teensy_Switch(Switch_SELEF2, b);
 	Teensy_Switch(Switch_SELEF3, c);
