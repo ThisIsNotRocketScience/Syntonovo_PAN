@@ -172,21 +172,25 @@ void UseNormal()
 
 #define STRINGIFY(x) #x
 static const char* vertexShaderCode = STRINGIFY(
-attribute vec3 pos;
-varying vec2 v_uv;
-void main() {
-	v_uv = (pos.xy + 0.5) * 2.0;
-	gl_Position = vec4(pos.x, pos.y, pos.z, 1.0);
-}
+	attribute vec3 pos;
+	varying vec2 v_uv;
+	void main() 
+	{
+		v_uv = (pos.yx) * 0.5 + vec2(0.5);
+		v_uv.x *=480.0/1024.0;
+		v_uv.y *=800.0/1024.0;
+		v_uv.y += 224.0/1024.0;
+		gl_Position = vec4(pos.x, pos.y, pos.z, 1.0);
+	}
 );
 
 static const char* fragmentShaderCode = STRINGIFY(
 	varying vec2 v_uv;
-	uniform sampler2D u_texture
-void main() {
-	gl_FragColor = texture2D(u_texture, v_uv);
-	gl_FragColor.xy += v_uv.xy;
-}
+	uniform sampler2D u_texture;
+	void main() {
+		gl_FragColor = texture2D(u_texture, v_uv);
+	
+	}
 );
 
 char *VERTEX_SHADER_SRC =
@@ -349,14 +353,11 @@ extern "C"
 			ImGui::Begin("screen", 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoTitleBar);
 			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 
-			ImGui::SetWindowSize(ImVec2(800, 480));
+			ImGui::SetWindowSize(ImVec2(480, 800));
 
 
 			Raspberry_RenderScreen();
 
-			ImGui::GetWindowDrawList()->AddLine(ImVec2(480, 0), ImVec2(0, 800), IM_COL32(255, 255, 255, 255), 10.0f);
-
-			ImGui::GetWindowDrawList()->AddLine(ImVec2(0, 0), ImVec2(480, 800), IM_COL32(255, 255, 255, 255), 10.0f);
 			ImGui::PopStyleVar();
 			ImGui::End();
 
