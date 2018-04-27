@@ -10,66 +10,74 @@
 
 #include "shiftctrl.h"
 
-static uint32_t shiftctrl_flags;
+static volatile int shiftctrl_update_needed = 1;
+static volatile uint32_t shiftctrl_flags = 0;
 
 void shiftctrl_init()
 {
+	shiftctrl_update_needed = 1;
 	shiftctrl_flags = 0;
-	shiftctlr_update();
+	shiftctrl_update();
 }
 
 void shiftctrl_set(int flag)
 {
 	shiftctrl_flags |= (1 << flag);
-	shiftctlr_update();
+	shiftctrl_update_needed = 1;
+	//shiftctrl_update();
 }
 
 void shiftctrl_clear(int flag)
 {
 	shiftctrl_flags &= ~(1 << flag);
-	shiftctlr_update();
+	shiftctrl_update_needed = 1;
+	//shiftctrl_update();
 }
 
-void shiftctlr_update()
+void shiftctrl_update()
 {
-	GPIO->DIR[1] |= 1U << 31;
-	GPIO->CLR[1] |= 1U << 31;
+	if (shiftctrl_update_needed) {
+		shiftctrl_update_needed = 0;
+		uint32_t flags = shiftctrl_flags;
 
-	__NOP();
-	__NOP();
-	__NOP();
-	__NOP();
-	__NOP();
-	__NOP();
-	__NOP();
-	__NOP();
+		GPIO->DIR[1] |= 1U << 31;
+		GPIO->CLR[1] |= 1U << 31;
 
-	spi_transfer_t xfer;
-	xfer.txData = &shiftctrl_flags;
-	xfer.rxData = 0;
-	xfer.configFlags = kSPI_FrameAssert;
-	xfer.dataSize = 4;
-	volatile status_t s = SPI_MasterTransferBlocking(SPI_8_PERIPHERAL, &xfer);
+		__NOP();
+		__NOP();
+		__NOP();
+		__NOP();
+		__NOP();
+		__NOP();
+		__NOP();
+		__NOP();
 
-	__NOP();
-	__NOP();
-	__NOP();
-	__NOP();
-	__NOP();
-	__NOP();
-	__NOP();
-	__NOP();
+		spi_transfer_t xfer;
+		xfer.txData = &flags;
+		xfer.rxData = 0;
+		xfer.configFlags = kSPI_FrameAssert;
+		xfer.dataSize = 4;
+		volatile status_t s = SPI_MasterTransferBlocking(SPI_8_PERIPHERAL, &xfer);
 
-	GPIO->SET[1] |= 1U << 31;
+		__NOP();
+		__NOP();
+		__NOP();
+		__NOP();
+		__NOP();
+		__NOP();
+		__NOP();
+		__NOP();
 
-	__NOP();
-	__NOP();
-	__NOP();
-	__NOP();
-	__NOP();
-	__NOP();
-	__NOP();
-	__NOP();
+		GPIO->SET[1] |= 1U << 31;
 
+		__NOP();
+		__NOP();
+		__NOP();
+		__NOP();
+		__NOP();
+		__NOP();
+		__NOP();
+		__NOP();
+	}
 }
 

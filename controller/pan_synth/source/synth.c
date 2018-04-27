@@ -1122,21 +1122,7 @@ void synth_run()
 			pad_value[i] = (int32_t)pad_adc_value[i] - (int32_t)pad_calibration[i];
 		}
 
-#if 0
-		for (int i = 0; i < 6; i++) {
-			ports_value(i+6, adc_value[i]);
-		}
-
-		for (int i = 12; i < 96; i++) {
-			uint16_t lfo = (lfo_update(i) >> 2) + 0x8000;
-			uint16_t adsr = adsr_update(i);
-			ports_value(i, ((uint32_t)lfo * (uint32_t)adsr) >> 16);
-		}
-
-		for (int i = 0; i < 6; i++) {
-			ports_input(i, &adc_value[i]);
-		}
-#endif
+		shiftctrl_update();
 	}
 }
 
