@@ -106,7 +106,17 @@ float DepthLabel(int depth)
 
 void TargetsList()
 {
-	if (!Raspberry_guidata.editTargets) return;
+	
+	ModTarget_t *t = 0;
+	switch (Raspberry_guidata.GuiState)
+	{
+	case GuiState_AdSelect: t = Raspberry_guidata.dataAd.target; break;
+	case GuiState_AdsrSelect: t = Raspberry_guidata.dataAdsr.target; break;
+	case GuiState_CtrlSelect: t = Raspberry_guidata.dataCtrl.target; break;
+	case GuiState_LfoSelect: t = Raspberry_guidata.dataLfo.target; break;
+	}
+	
+	if (!t) return;
 
 	ImGui::Columns(2);
 
@@ -114,9 +124,9 @@ void TargetsList()
 		if (i == Raspberry_guidata.selectTarget) {
 			ImGui::PushStyleColor(ImGuiCol_Text, 0xFFFFFFFF);
 		}
-		if (Raspberry_guidata.editTargets[i].param != 0) {
-			ImGui::Text(ParamLabel(Raspberry_guidata.editTargets[i].param)); ImGui::NextColumn();
-			ImGui::Text("%1.3f", DepthLabel(Raspberry_guidata.editTargets[i].depth)); ImGui::NextColumn();
+		if (t[i].param != 0) {
+			ImGui::Text(ParamLabel(t[i].param)); ImGui::NextColumn();
+			ImGui::Text("%1.3f", DepthLabel(t[i].depth)); ImGui::NextColumn();
 		}
 		if (i == Raspberry_guidata.selectTarget) {
 			ImGui::PopStyleColor();
@@ -429,45 +439,52 @@ void Raspberry_RenderScreen()
 	if (Raspberry_guidata.GuiState == GuiState_LfoSelect)
 	{
 		RenderStartMenu("LFO assign");
-		if (Raspberry_guidata.editLfo != 0)
-		{
-			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
-			ImGui::LabelText("Speed", "%d", Raspberry_guidata.editLfo->speed);
-			ImGui::LabelText("Shape", "%d", Raspberry_guidata.editLfo->shape);
-			ImGui::PopStyleVar();
-			TargetsList();
-		}
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
+		ImGui::LabelText("Speed", "%d", Raspberry_guidata.dataLfo.speed);
+		ImGui::LabelText("Shape", "%d", Raspberry_guidata.dataLfo.shape);
+		ImGui::PopStyleVar();
+		TargetsList();
+		
 		RenderEndMenu();
 	}
 	else if (Raspberry_guidata.GuiState == GuiState_AdsrSelect)
 	{
 		RenderStartMenu("ADSR assign");
-		if (Raspberry_guidata.editAdsr != 0) {
-			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
-			ImGui::LabelText("A", "%d", Raspberry_guidata.editAdsr->a);
-			ImGui::LabelText("D", "%d", Raspberry_guidata.editAdsr->d);
-			ImGui::LabelText("S", "%d", Raspberry_guidata.editAdsr->s);
-			ImGui::LabelText("R", "%d", Raspberry_guidata.editAdsr->r);
-			ImGui::PopStyleVar();
-			TargetsList();
-		}
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
+		ImGui::LabelText("A", "%d", Raspberry_guidata.dataAdsr.a);
+		ImGui::LabelText("D", "%d", Raspberry_guidata.dataAdsr.d);
+		ImGui::LabelText("S", "%d", Raspberry_guidata.dataAdsr.s);
+		ImGui::LabelText("R", "%d", Raspberry_guidata.dataAdsr.r);
+		ImGui::PopStyleVar();
+		TargetsList();
+		
 		RenderEndMenu();
 	}
 	else if (Raspberry_guidata.GuiState == GuiState_AdSelect)
 	{
 		RenderStartMenu("AD assign");
-		if (Raspberry_guidata.editAd != 0) {
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
-			ImGui::LabelText("A", "%d", Raspberry_guidata.editAd->a);
-			ImGui::LabelText("D", "%d", Raspberry_guidata.editAd->d);
+			ImGui::LabelText("A", "%d", Raspberry_guidata.dataAd.a);
+			ImGui::LabelText("D", "%d", Raspberry_guidata.dataAd.d);
 			ImGui::PopStyleVar();
 			TargetsList();
-		}
+		
 		RenderEndMenu();
 	}
 	else if (Raspberry_guidata.GuiState == GuiState_CtrlSelect)
 	{
-		RenderStartMenu("Controller assign");
+		/*Source_none,
+
+			Source_left_mod,
+			Source_right_mod,
+			Source_x,
+			Source_y,
+			Source_z,
+			Source_zprime,
+			Source_note,
+			Source_vel*/
+		const char ControllerNames[__ModSource_COUNT][20] = { "NONE", "Left mod","Right mod","X-pression","Y-pression","Z-pression","Z'-pression","Note"," Velocity" };
+		RenderStartMenu(ControllerNames[Raspberry_guidata.dataCtrl.source] );
 		TargetsList();
 		RenderEndMenu();
 	}

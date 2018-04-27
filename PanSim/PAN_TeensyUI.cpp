@@ -33,7 +33,7 @@ void InitPreset(PanPreset_t& preset)
 	preset.Name[4] = '\0';
 
 	
-	preset.ctrlmod[0].source = ControlModulation_t::Source_note;
+	preset.ctrlmod[0].source = ModSource_t::Source_note;
 	preset.ctrlmod[0].target[0].param = Output_VCO1_PITCH;
 	preset.ctrlmod[0].target[0].depth = 0x4000;
 	preset.ctrlmod[0].target[1].param = Output_VCO2_PITCH;
@@ -167,29 +167,29 @@ void WriteCtrl(PanPreset_t& preset, int i)
 		if (param == 0) continue;
 
 		switch (preset.ctrlmod[i].source) {
-		case ControlModulation_t::Source_left_mod:
+		case ModSource_t::Source_left_mod:
 			//todo
 			//WriteWithSubKnob(param, Sub)
 			break;
-		case ControlModulation_t::Source_right_mod:
+		case ModSource_t::Source_right_mod:
 			//todo
 			break;
-		case ControlModulation_t::Source_x:
+		case ModSource_t::Source_x:
 			WriteWithSubKnob(param, Sub_x, preset.ctrlmod[i].target[j].depth);
 			break;
-		case ControlModulation_t::Source_y:
+		case ModSource_t::Source_y:
 			WriteWithSubKnob(param, Sub_y, preset.ctrlmod[i].target[j].depth);
 			break;
-		case ControlModulation_t::Source_z:
+		case ModSource_t::Source_z:
 			WriteWithSubKnob(param, Sub_z, preset.ctrlmod[i].target[j].depth);
 			break;
-		case ControlModulation_t::Source_zprime:
+		case ModSource_t::Source_zprime:
 			WriteWithSubKnob(param, Sub_zprime, preset.ctrlmod[i].target[j].depth);
 			break;
-		case ControlModulation_t::Source_note:
+		case ModSource_t::Source_note:
 			WriteWithSubKnob(param, Sub_note, preset.ctrlmod[i].target[j].depth);
 			break;
-		case ControlModulation_t::Source_vel:
+		case ModSource_t::Source_vel:
 			WriteWithSubKnob(param, Sub_vel, preset.ctrlmod[i].target[j].depth);
 			break;
 		}
@@ -212,7 +212,7 @@ void LoadPreset(PanPreset_t& preset)
 #define OUTPUT_VIRT(name,codecport,codecpin, type,id, style,defaultvalue) \
 	OUTPUT(name,codecport,codecpin,type,id,style,defaultvalue);
 #define SWITCH(name,id) \
-	//WriteSwitch(id, (preset.switches[0]>>id) & 1);
+	WriteSwitch(id, (preset.switches[0]>>id) & 1);
 #include "../interface/paramdef.h"
 #undef OUTPUT
 #undef OUTPUT_VIRT
@@ -450,35 +450,35 @@ void WriteCtrlDepth(int param, int source, uint16_t depth)
 {
 	switch (source)
 	{
-	case ControlModulation_t::Source_left_mod:
+	case ModSource_t::Source_left_mod:
 		//WriteWithSubKnob(param, Sub_lfo_, 0);
 		// todo
 		break;
-	case ControlModulation_t::Source_right_mod:
+	case ModSource_t::Source_right_mod:
 		// todo
 		break;
-	case ControlModulation_t::Source_x:
+	case ModSource_t::Source_x:
 		WriteWithSubKnob(param, Sub_x, depth);
 		break;
-	case ControlModulation_t::Source_y:
+	case ModSource_t::Source_y:
 		WriteWithSubKnob(param, Sub_y, depth);
 		break;
-	case ControlModulation_t::Source_z:
+	case ModSource_t::Source_z:
 		WriteWithSubKnob(param, Sub_z, depth);
 		break;
-	case ControlModulation_t::Source_zprime:
+	case ModSource_t::Source_zprime:
 		WriteWithSubKnob(param, Sub_zprime, depth);
 		break;
-	case ControlModulation_t::Source_note:
+	case ModSource_t::Source_note:
 		WriteWithSubKnob(param, Sub_note, depth);
 		break;
-	case ControlModulation_t::Source_vel:
+	case ModSource_t::Source_vel:
 		WriteWithSubKnob(param, Sub_vel, depth);
 		break;
 	}
 }
 
-void PresetChangeCtrlSource(PanPreset_t& preset, int mod, ControlModulation_t::ModSource_t value)
+void PresetChangeCtrlSource(PanPreset_t& preset, int mod, ModSource_t value)
 {
 	int oldsource = preset.ctrlmod[mod].source;
 	preset.ctrlmod[mod].source = value;
@@ -528,6 +528,11 @@ void Teensy_InitPreset()
 	LoadPreset(gPreset);
 }
 
+void Teensy_ReSendPreset()
+{
+	LoadPreset(gPreset);
+}
+
 typedef struct 
 {
 	int modid;
@@ -552,35 +557,35 @@ typedef struct
 
 static Teensy_GuiData_t Teensy_guidata;
 
-ControlModulation_t::ModSource_t LedButtonToSource(int ledbuttonid)
+ModSource_t LedButtonToSource(int ledbuttonid)
 {
 	switch (ledbuttonid)
 	{
-	case ledbutton_LEFT_MOD: return ControlModulation_t::Source_left_mod;
-	case ledbutton_RIGHT_MOD: return ControlModulation_t::Source_right_mod;
-	case ledbutton_X: return ControlModulation_t::Source_x;
-	case ledbutton_Y: return ControlModulation_t::Source_y;
-	case ledbutton_Z: return ControlModulation_t::Source_z;
-	case ledbutton_ZPRIME: return ControlModulation_t::Source_zprime;
-	case ledbutton_KBCV: return ControlModulation_t::Source_note;
-	case ledbutton_VELOCITY: return ControlModulation_t::Source_vel;
+	case ledbutton_LEFT_MOD: return ModSource_t::Source_left_mod;
+	case ledbutton_RIGHT_MOD: return ModSource_t::Source_right_mod;
+	case ledbutton_X: return ModSource_t::Source_x;
+	case ledbutton_Y: return ModSource_t::Source_y;
+	case ledbutton_Z: return ModSource_t::Source_z;
+	case ledbutton_ZPRIME: return ModSource_t::Source_zprime;
+	case ledbutton_KBCV: return ModSource_t::Source_note;
+	case ledbutton_VELOCITY: return ModSource_t::Source_vel;
 	}
 
-	return ControlModulation_t::Source_none;
+	return ModSource_t::Source_none;
 }
 
-int SourceToLedButton(ControlModulation_t::ModSource_t source)
+int SourceToLedButton(ModSource_t source)
 {
 	switch (source)
 	{
-	case ControlModulation_t::Source_left_mod: return ledbutton_LEFT_MOD;
-	case ControlModulation_t::Source_right_mod: return ledbutton_RIGHT_MOD;
-	case ControlModulation_t::Source_x: return ledbutton_X;
-	case ControlModulation_t::Source_y: return ledbutton_Y;
-	case ControlModulation_t::Source_z: return ledbutton_Z;
-	case ControlModulation_t::Source_zprime: return ledbutton_ZPRIME;
-	case ControlModulation_t::Source_note: return ledbutton_KBCV;
-	case ControlModulation_t::Source_vel: return ledbutton_VELOCITY;
+	case ModSource_t::Source_left_mod: return ledbutton_LEFT_MOD;
+	case ModSource_t::Source_right_mod: return ledbutton_RIGHT_MOD;
+	case ModSource_t::Source_x: return ledbutton_X;
+	case ModSource_t::Source_y: return ledbutton_Y;
+	case ModSource_t::Source_z: return ledbutton_Z;
+	case ModSource_t::Source_zprime: return ledbutton_ZPRIME;
+	case ModSource_t::Source_note: return ledbutton_KBCV;
+	case ModSource_t::Source_vel: return ledbutton_VELOCITY;
 	}
 
 	return -1;
@@ -815,7 +820,7 @@ bool IsCtrlModActive(PanPreset_t& preset, int mod)
 	return false;
 }
 
-int CtrlMod(PanPreset_t& preset, ControlModulation_t::ModSource_t source)
+int CtrlMod(PanPreset_t& preset, ModSource_t source)
 {
 	int firstEmpty = -1;
 	for (int i = 0; i < 16; i++)
@@ -1676,24 +1681,28 @@ void Teensy_EncoderPress(int id)
 #undef MENU
 #undef CUSTOMENTRY
 
-
 bool RightDelta_MenuEntry_Value(const char *name, int param, int delta)
 {
-	int32_t val = Raspberry_guidata.outputValues[param] + delta*100;
+	int32_t val = gPreset.paramvalue[param] + delta*100;
 	if (val < 0) val = 0;
 	if (val > 0xffff) val = 0xffff;
-	Raspberry_guidata.outputValues[param] = val;
+	
+	Raspberry_OutputChangeValue(param, value);
+	PresetChangeValue(gPreset, param, value);
 
 	return true;
 }
+
 bool RightDelta_MenuEntry_Percentage(const char *name, int param, int delta) { return RightDelta_MenuEntry_Value(name, param, delta); };
 bool RightDelta_MenuEntry_Pitch(const char *name, int param, int delta) { return RightDelta_MenuEntry_Value(name, param, delta); };
 bool RightDelta_MenuEntry_FilterMix(const char *name, int param, int delta) { return RightDelta_MenuEntry_Value(name, param, delta); };
 
 void Teensy_Switch(int switchid, int newval)
 {
-	Raspberry_guidata.switches[0] &= ~ (1 << switchid);
-	Raspberry_guidata.switches[0] |= newval << switchid;
+	gPreset.switches[0] &= ~(1 << switchid);
+	gPreset.switches[0] |= newval << switchid;
+	Raspberry_guidata.switches[0] = gPreset.switches[0];
+	Raspberry_guidata.dirty = 1;
 	WriteSwitch(switchid, newval);
 }
 
@@ -1710,25 +1719,23 @@ bool RightDelta_MenuEntry_EffectType(const char *name, int param, int delta)
 	Teensy_Switch(Switch_SELEF3, c);
 	Teensy_Switch(Switch_SELEF4, d);
 	
-	
 	return true;
-	
 };
 
 bool RightDelta_MenuEntry_EffectParam1(const char *name, int param, int delta) { return RightDelta_MenuEntry_Value(name, param, delta); };
 bool RightDelta_MenuEntry_EffectParam2(const char *name, int param, int delta) { return RightDelta_MenuEntry_Value(name, param, delta); };
 bool RightDelta_MenuEntry_EffectParam3(const char *name, int param, int delta) { return RightDelta_MenuEntry_Value(name, param, delta); };
+
 bool RightDelta_MenuEntry_Toggle(const char *name, int param,int delta)
 {
 	if (delta < 0)
 	{
-		Raspberry_guidata.switches[0] |= (1<<param);
+		Teensy_Switch(param, 1);
 	}
 	else
 	{
-		Raspberry_guidata.switches[0] &= ~(1 << param);
+		Teensy_Switch(param, 0);
 	}
-	WriteSwitch(param, (Raspberry_guidata.switches[0] >> param) & 1);
 	return true;
 }
 

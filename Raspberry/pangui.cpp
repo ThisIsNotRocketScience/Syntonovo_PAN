@@ -286,11 +286,18 @@ void RenderQuad()
 	glUseProgram(0);
 
 }
+
+extern void OpenComm();
+extern void UpdateComm();
+
 extern "C"
 {
 
 	int main(int argv, char** argc)
 	{
+
+		
+
 		unsigned int i;
 		struct timeval t1, t2;
 		GLuint vbo[2];
@@ -316,6 +323,7 @@ extern "C"
 		GLint viewport[4];
 		glGetIntegerv(GL_VIEWPORT, viewport);
 
+
 		printf("TFT display initialized with EGL! Screen size: %dx%d\n", viewport[2], viewport[3]);
 
 		printf("OpenGL version is (%s)\n", glGetString(GL_VERSION));
@@ -339,12 +347,15 @@ extern "C"
 
 		Raspberry_Init();
 		Raspberry_Reset();
+
+		OpenComm();
 		for(int www=0;www<10;www++)
-{
+		{
 		Raspberry_ToState((GuiState_t)www, 0);
 
 		for (int qq = 0; qq < 200; qq++)
 		{
+			UpdateComm();
 			glViewport(0, 0, 800, 480);
 			glClear(GL_COLOR_BUFFER_BIT);
 

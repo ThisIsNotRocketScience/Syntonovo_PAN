@@ -78,10 +78,6 @@ void Raspberry_ToState(GuiState_t state, int modselect)
 {
 	Raspberry_guidata.GuiState = state;
 	Raspberry_guidata.ModSelect = modselect;
-	Raspberry_guidata.editLfo = 0;
-	Raspberry_guidata.editAdsr = 0;
-	Raspberry_guidata.editAd = 0;
-	Raspberry_guidata.editTargets = 0;
 	Raspberry_guidata.selectTarget = -1;
 	Raspberry_guidata.dirty = true;
 }
@@ -90,8 +86,6 @@ void Raspberry_ToState(GuiState_t state, int modselect)
 void Raspberry_EditLfo(LfoModulation_t& mod)
 {
 	memcpy(&Raspberry_guidata.dataLfo, &mod, sizeof(LfoModulation_t));
-	Raspberry_guidata.editLfo = &Raspberry_guidata.dataLfo;
-	Raspberry_guidata.editTargets = &Raspberry_guidata.dataLfo.target[0];
 
 	Raspberry_guidata.dirty = true;
 }
@@ -99,24 +93,18 @@ void Raspberry_EditLfo(LfoModulation_t& mod)
 void Raspberry_EditAdsr(AdsrModulation_t& mod)
 {
 	memcpy(&Raspberry_guidata.dataAdsr, &mod, sizeof(AdsrModulation_t));
-	Raspberry_guidata.editAdsr = &Raspberry_guidata.dataAdsr;
-	Raspberry_guidata.editTargets = &Raspberry_guidata.dataAdsr.target[0];
 	Raspberry_guidata.dirty = true;
 }
 
 void Raspberry_EditAd(AdModulation_t& mod)
 {
 	memcpy(&Raspberry_guidata.dataAd, &mod, sizeof(AdModulation_t));
-	Raspberry_guidata.editAd = &Raspberry_guidata.dataAd;
-	Raspberry_guidata.editTargets = &Raspberry_guidata.dataAd.target[0];
 	Raspberry_guidata.dirty = true;
 }
 
 void Raspberry_EditCtrl(ControlModulation_t& mod)
 {
 	memcpy(&Raspberry_guidata.dataCtrl, &mod, sizeof(ControlModulation_t));
-	Raspberry_guidata.editCtrl = &Raspberry_guidata.dataCtrl;
-	Raspberry_guidata.editTargets = &Raspberry_guidata.dataCtrl.target[0];
 	Raspberry_guidata.dirty = true;
 }
 
@@ -128,8 +116,6 @@ void Raspberry_SelectTarget(int target)
 
 void Raspberry_UpdateTarget(int target, int param, int depth)
 {
-	Raspberry_guidata.editTargets[target].param = param;
-	Raspberry_guidata.editTargets[target].depth = depth;
 	Raspberry_guidata.dirty = true;
 }
 
@@ -137,10 +123,10 @@ void Raspberry_SetLfoParam(SubParam_t subparam, uint32_t value)
 {
 	switch (subparam) {
 	case Sub_lfo_shape:
-		Raspberry_guidata.editLfo->shape = value;
+		Raspberry_guidata.dataLfo.shape = value;
 		break;
 	case Sub_lfo_speed:
-		Raspberry_guidata.editLfo->speed = value;
+		Raspberry_guidata.dataLfo.speed = value;
 		break;
 	}
 	Raspberry_guidata.dirty = true;
@@ -150,16 +136,16 @@ void Raspberry_SetAdsrParam(SubParam_t subparam, uint32_t value)
 {
 	switch (subparam) {
 	case Sub_adsr_a:
-		Raspberry_guidata.editAdsr->a = value;
+		Raspberry_guidata.dataAdsr.a = value;
 		break;
 	case Sub_adsr_d:
-		Raspberry_guidata.editAdsr->d = value;
+		Raspberry_guidata.dataAdsr.d = value;
 		break;
 	case Sub_adsr_s:
-		Raspberry_guidata.editAdsr->s = value;
+		Raspberry_guidata.dataAdsr.s = value;
 		break;
 	case Sub_adsr_r:
-		Raspberry_guidata.editAdsr->r = value;
+		Raspberry_guidata.dataAdsr.r = value;
 		break;
 	}
 	Raspberry_guidata.dirty = true;
@@ -169,10 +155,10 @@ void Raspberry_SetAdParam(SubParam_t subparam, uint32_t value)
 {
 	switch (subparam) {
 	case Sub_ad_a:
-		Raspberry_guidata.editAd->a = value;
+		Raspberry_guidata.dataAd.a = value;
 		break;
 	case Sub_ad_d:
-		Raspberry_guidata.editAd->d = value;
+		Raspberry_guidata.dataAd.d = value;
 		break;
 	}
 	Raspberry_guidata.dirty = true;

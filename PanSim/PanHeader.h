@@ -353,19 +353,21 @@ typedef struct {
 	ModTarget_t target[16];
 } AdModulation_t;
 
-typedef struct {
-	enum ModSource_t {
-		Source_none,
+enum ModSource_t {
+	Source_none,
 
-		Source_left_mod,
-		Source_right_mod,
-		Source_x,
-		Source_y,
-		Source_z,
-		Source_zprime,
-		Source_note,
-		Source_vel
-	} source;
+	Source_left_mod,
+	Source_right_mod,
+	Source_x,
+	Source_y,
+	Source_z,
+	Source_zprime,
+	Source_note,
+	Source_vel,
+	__ModSource_COUNT
+};
+typedef struct {
+	ModSource_t source;
 	ModTarget_t target[16];
 } ControlModulation_t;
 
@@ -405,14 +407,6 @@ typedef struct Raspberry_GuiData_t
 	GuiState_t GuiState;
 	GuiState_t LastGuiState;
 	int ModSelect;
-
-
-	LfoModulation_t* editLfo;
-	AdsrModulation_t* editAdsr;
-	AdModulation_t* editAd;
-	ControlModulation_t* editCtrl;
-	ModTarget_t* editTargets;
-
 
 	int selectTarget;
 
@@ -481,7 +475,7 @@ void Raspberry_SetName(char* newname);
 void Raspberry_WindowFrame();
 
 int DecodeCurrentEffect(uint32_t switches);
-
+void Teensy_ReSendPreset();
 extern Raspberry_GuiData_t Raspberry_guidata;
 
 

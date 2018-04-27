@@ -253,6 +253,10 @@ void note_on(int noteid, int notevel)
 	setpara.paramid = 0x02fc;
 	setpara.value = noteid | (notevel << 8);
 	set(setpara);
+
+	uint32_t D = (noteid << 16) + (notevel);
+	UISendCommand(0x70, D);
+
 }
 
 void note_off(int noteid, int notevel)
@@ -261,6 +265,8 @@ void note_off(int noteid, int notevel)
 	setpara.paramid = 0x01fc;
 	setpara.value = noteid | (notevel << 8);
 	set(setpara);
+	uint32_t D = (noteid << 16) + (notevel);
+	UISendCommand(0x71, D);
 }
 
 
@@ -870,6 +876,14 @@ int main(int argc, char** argv)
 			{
 				ImGui::Begin("Pan Parameters", &parameters, ImGuiWindowFlags_AlwaysAutoResize);
 				ImGui::PushFont(pFont);
+				if (ImGui::Button("Resend All Data"))
+				{
+					Teensy_ReSendPreset();
+					UISendCommand(0x60, 0);
+
+				}
+				ImGui::SameLine();
+				ImGui::Text("preset size in bytes: %d", sizeof(PanPreset_t));
 				ImVec2 pos = ImGui::GetCursorScreenPos();
 				if (BG) ImGui::Image(BG, ImVec2(2534 * 0.6f, 1183 * 0.6f));
 				ImGui::SetCursorScreenPos(pos);
