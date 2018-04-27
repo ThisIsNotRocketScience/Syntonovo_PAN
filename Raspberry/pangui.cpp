@@ -350,16 +350,7 @@ extern "C"
 			UseFrameBuffer();
 			ImGui_ImlES_NewFrame();
 
-			ImGui::Begin("screen", 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoTitleBar);
-			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
-
-			ImGui::SetWindowSize(ImVec2(480, 800));
-
-
-			Raspberry_RenderScreen();
-
-			ImGui::PopStyleVar();
-			ImGui::End();
+			Raspberry_WindowFrame();
 
 			ImGui::Render();
 			ImGui_ImlES_RenderDrawLists(ImGui::GetDrawData());

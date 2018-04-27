@@ -575,3 +575,23 @@ void Raspberry_Reset()
 {
 	Raspberry_guidata.GuiState = GuiState_Root;
 }
+
+
+void Raspberry_WindowFrame()
+{
+
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0);
+	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
+	ImGui::Begin("screen", 0,   ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar|  ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoTitleBar);
+
+	ImGui::SetWindowSize(ImVec2(480, 800));
+
+
+	Raspberry_RenderScreen();
+
+	ImGui::End();
+	ImGui::PopStyleVar();
+	ImGui::PopStyleVar();
+	ImGui::PopStyleVar();
+}

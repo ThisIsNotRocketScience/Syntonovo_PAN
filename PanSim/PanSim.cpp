@@ -810,7 +810,9 @@ int main(int argc, char** argv)
 		}
 		if (mainscreen)
 		{
-			ImGui::PushFont(pFontBold);
+			ImGui::SetNextWindowPos(ImVec2(10, 30));
+			Raspberry_WindowFrame();
+			/*ImGui::PushFont(pFontBold);
 
 			ImGui::Begin("Pan Mainscreen", &parameters, ImGuiWindowFlags_AlwaysAutoResize);
 			ImGui::PushFont(pFont);
@@ -824,7 +826,7 @@ int main(int argc, char** argv)
 
 
 			ImGui::End();
-			ImGui::PopFont();
+			ImGui::PopFont();*/
 		}
 		if (parameters)
 		{

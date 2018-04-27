@@ -436,5 +436,5 @@ void Raspberry_SetAdParam(SubParam_t subparam, uint32_t value);
 void Raspberry_OutputChangeValue(int output, uint32_t value);
 void Raspberry_SetSwitches(uint32_t* switches);
 void Raspberry_SetName(char* newname);
-
+void Raspberry_WindowFrame();
 #endif
