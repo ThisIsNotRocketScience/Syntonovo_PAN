@@ -347,8 +347,8 @@ void Raspberry_Init()
 	res.RootBG = Raspberry_LoadTexture("UI_ROOTBG.png");
 	res.LeftIndicator = Raspberry_LoadTexture("UI_LEFT.png");
 	res.RightIndicator = Raspberry_LoadTexture("UI_RIGHT.png");
-	res.SmallFont = io.Fonts->AddFontFromFileTTF("CORBEL.TTF", 40.0f);
-	res.BigFont = io.Fonts->AddFontFromFileTTF("CORBELB.TTF", 54.0f);
+	res.SmallFont = io.Fonts->AddFontFromFileTTF("Fontfabric - Panton.otf", 40.0f);
+	res.BigFont = io.Fonts->AddFontFromFileTTF("Fontfabric - Panton ExtraBold.otf", 54.0f);
 	
 	for (int i = 0; i < __GuiState_COUNT; i++)
 	{

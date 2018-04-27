@@ -241,13 +241,9 @@ void set(setpara_t& para)
 void WriteSwitch(int id, int state)
 {
 	setpara_t sp;
-
 	sp.paramid = 0xfdfe;
-	sp.value = id | ((state>0)?0x200:0x100);
-	
+	sp.value = id | ((state>0)?0x200:0x100);	
 	set(sp);
-
-	//TODO
 }
 
 
@@ -698,7 +694,6 @@ int main(int argc, char** argv)
 
 	HMIDIIN hMidiDevice[255] = { 0 };
 	DWORD nMidiPort = 0;
-	UINT nMidiDeviceNum;
 	MMRESULT rv;
 
 	int dspport = 0;
@@ -779,8 +774,7 @@ int main(int argc, char** argv)
 	ImFont* pFontBold = io.Fonts->AddFontFromFileTTF("ProggyTiny.ttf", 10.0f);
 
 	unsigned char * pixels;
-	int width, height, bytes_per_pixels;
-
+	
 
 	ImGui::GetStyle().ItemInnerSpacing = ImVec2(5, 5);;
 	ImGui::GetStyle().ItemSpacing = ImVec2(5, 5);
@@ -801,7 +795,6 @@ int main(int argc, char** argv)
 	para.value = 3;
 	set(para);
 
-	int LastLedStatus[__LED_COUNT];
 	bool LastLedButtonStatus[__LEDBUTTON_COUNT];
 #define __SERIALINBUFFERSIZE 100000
 	unsigned char buffer[__SERIALINBUFFERSIZE];
@@ -878,7 +871,7 @@ int main(int argc, char** argv)
 				ImGui::Begin("Pan Parameters", &parameters, ImGuiWindowFlags_AlwaysAutoResize);
 				ImGui::PushFont(pFont);
 				ImVec2 pos = ImGui::GetCursorScreenPos();
-				if (BG) ImGui::Image(BG, ImVec2(2534 * 0.6, 1183 * 0.6));
+				if (BG) ImGui::Image(BG, ImVec2(2534 * 0.6f, 1183 * 0.6f));
 				ImGui::SetCursorScreenPos(pos);
 
 				ImGui::LabelText("l1", "%d left %d bytes this frame.. %d handled", bytecount - handledbytes, bytecount, handledbytes);
