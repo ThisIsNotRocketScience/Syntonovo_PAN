@@ -11,7 +11,7 @@
 #include <termios.h>
 #include <sys/ioctl.h>
 #include <linux/serial.h>
-
+#include <termios.h>
 #include <iostream>
 #include <list>
 
@@ -112,24 +112,87 @@ list<string> getComList() {
 	// Return the lsit of detected comports
 	return comList;
 }
-
+int USB = 0;
+extern void ByteReceived(unsigned char byte);
 void UpdateComm()
 {
+  if (USB == 0) return;
 
+  int bytes_avail;
+  ioctl(USB, FIONREAD, &bytes_avail);
+  unsigned char bytes[100];
+while (bytes_avail>0)
+{
+ int toread = bytes_avail;
+if (toread > 100) toread = 100;
+
+int n = read( USB, &bytes, toread );
+for(int i = 0;i<toread;i++)
+{
+ByteReceived(bytes[i]);
+}
+bytes_avail -= toread;
+}
+	
 };
 
-void OpenComm() {
+void OpenIt(string port)
+{
+ USB = open( port.c_str(), O_RDWR| O_NOCTTY );
+
+struct termios tty;
+struct termios tty_old;
+memset (&tty, 0, sizeof tty);
+
+/* Error Handling */
+if ( tcgetattr ( USB, &tty ) != 0 ) {
+   std::cout << "Error " << errno << " from tcgetattr: " << strerror(errno) << std::endl;
+}
+
+/* Save old tty parameters */
+tty_old = tty;
+
+/* Set Baud Rate */
+cfsetospeed (&tty, (speed_t)B9600);
+cfsetispeed (&tty, (speed_t)B9600);
+
+/* Setting other Port Stuff */
+tty.c_cflag     &=  ~PARENB;            // Make 8n1
+tty.c_cflag     &=  ~CSTOPB;
+tty.c_cflag     &=  ~CSIZE;
+tty.c_cflag     |=  CS8;
+
+tty.c_cflag     &=  ~CRTSCTS;           // no flow control
+tty.c_cc[VMIN]   =  1;                  // read doesn't block
+tty.c_cc[VTIME]  =  5;                  // 0.5 seconds read timeout
+tty.c_cflag     |=  CREAD | CLOCAL;     // turn on READ & ignore ctrl lines
+
+/* Make raw */
+cfmakeraw(&tty);
+
+/* Flush Port, then applies attributes */
+tcflush( USB, TCIFLUSH );
+if ( tcsetattr ( USB, TCSANOW, &tty ) != 0) {
+   std::cout << "Error " << errno << " from tcsetattr" << std::endl;
+}
+
+
+
+}
+void OpenComm() 
+{
 	printf("Scanning for serialports..\n");
 	list<string> l = getComList();
-	//if (l.size() == 1) return;
+
 	string notthatone = "/dev/ttyAMA0";
 	list<string>::iterator it = l.begin();
-	while (it != l.end()) {
+	while (it != l.end()) 
+	{
 		cout << *it << endl;
-		if( *it != notthatone);
+		if( *it != notthatone)
 		{
 			printf("trying to open %s\n", (*it).c_str());
-			OpenComm(*it);
+			OpenIt(*it);
 			return;
 		}
 		else
@@ -139,7 +202,6 @@ void OpenComm() {
 		it++;
 	}
 
-	return 0;
 }
 
 #endif
