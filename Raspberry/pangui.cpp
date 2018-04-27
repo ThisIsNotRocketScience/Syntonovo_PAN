@@ -176,7 +176,7 @@ static const char* vertexShaderCode = STRINGIFY(
 	varying vec2 v_uv;
 	void main() 
 	{
-		v_uv = (pos.yx) * 0.5 + vec2(0.5);
+		v_uv = vec2(-pos.y,-pos.x) * 0.5 + vec2(0.5);
 		v_uv.x *=480.0/1024.0;
 		v_uv.y *=800.0/1024.0;
 		v_uv.y += 224.0/1024.0;
@@ -339,10 +339,11 @@ extern "C"
 
 		Raspberry_Init();
 		Raspberry_Reset();
-		Raspberry_ToState(GuiState_Menu_VCO1, 0);
+		for(int www=0;www<10;www++)
+{
+		Raspberry_ToState((GuiState_t)www, 0);
 
-
-		for (int qq = 0; qq < 1000; qq++)
+		for (int qq = 0; qq < 200; qq++)
 		{
 			glViewport(0, 0, 800, 480);
 			glClear(GL_COLOR_BUFFER_BIT);
@@ -363,7 +364,7 @@ extern "C"
 
 			//}
 		}
-
+}
 		ImGui_ImlES_Shutdown();
 		// Cleanup GLSL shader and two buffers
 		glDeleteProgram(program);

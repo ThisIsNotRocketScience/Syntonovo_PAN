@@ -96,6 +96,7 @@ ImTextureID Raspberry_LoadTexture(const char *filename)
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, &image[0]);
 
 #else 
+	GLint last_texture;
 	glGetIntegerv(GL_TEXTURE_BINDING_2D, &last_texture);
 	glGenTextures(1, &tex);
 	glBindTexture(GL_TEXTURE_2D, tex);
