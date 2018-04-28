@@ -6,6 +6,10 @@
 #define SYNTONPAN
 #include <string>
 
+#define LED_BLINK 2
+#define LED_ON 1
+#define LED_OFF 0
+
 #define KNOB(name,x,y,min,max,idx,lbl) +1
 const int knobcount = 0
 #include "PanControls.h"
@@ -158,6 +162,7 @@ public:
 	LedButtonEnum id;
 	int fpid;
 	bool value;
+	int ledmode;
 };
 
 extern aLedButton Buttons[];
@@ -391,6 +396,8 @@ typedef enum {
 	GuiState_AdsrSelect,
 	GuiState_AdSelect,
 	GuiState_CtrlSelect,
+	GuiState_SelectBanks,
+	GuiState_SelectSaveSlot,
 
 #define MENU(id, buttonid, name) \
 	GuiState_Menu_##id,
@@ -422,6 +429,9 @@ typedef struct Raspberry_GuiData_t
 	uint32_t LeftEncoderValue;
 	uint32_t RightEncoderValue;
 	bool dirty;
+	int banks[2];
+	int activeslot;
+	int activebank;
 } Raspberry_GuiData_t;
 
 
@@ -477,6 +487,8 @@ void Raspberry_WindowFrame();
 int DecodeCurrentEffect(uint32_t switches);
 void Teensy_ReSendPreset();
 extern Raspberry_GuiData_t Raspberry_guidata;
+void LoadPreset(PanPreset_t& preset);
+void SetLedButton(int id, int mode);
 
 
 
