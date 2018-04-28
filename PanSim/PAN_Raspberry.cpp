@@ -480,10 +480,13 @@ void Raspberry_RenderScreen()
 	{
 		guirow_state_t row;
 		RenderStartMenu("LFO assign",row);
-		SR(); ImGui::LabelText("Speed", "%d", Raspberry_guidata.dataLfo.speed); ER();
-		SR(); ImGui::LabelText("Shape", "%d", Raspberry_guidata.dataLfo.shape); ER();
-		
-		TargetsList(2,row);
+		if (Raspberry_guidata.ModSelect != -1) {
+
+			SR(); ImGui::LabelText("Speed", "%d", Raspberry_guidata.dataLfo.speed); ER();
+			SR(); ImGui::LabelText("Shape", "%d", Raspberry_guidata.dataLfo.shape); ER();
+
+			TargetsList(2, row);
+		}
 		
 		RenderEndMenu();
 	}
@@ -491,11 +494,13 @@ void Raspberry_RenderScreen()
 	{
 		guirow_state_t row;
 		RenderStartMenu("ADSR assign", row);
-		SR(); Render_KeyValue("A", Raspberry_guidata.dataAdsr.a, row); ER();
-		SR(); Render_KeyValue("D", Raspberry_guidata.dataAdsr.d, row); ER();
-		SR(); Render_KeyValue("S", Raspberry_guidata.dataAdsr.s, row); ER();
-		SR(); Render_KeyValue("R", Raspberry_guidata.dataAdsr.r, row); ER();
-		TargetsList(4,row);
+		if (Raspberry_guidata.ModSelect != -1) {
+			SR(); Render_KeyValue("A", Raspberry_guidata.dataAdsr.a, row); ER();
+			SR(); Render_KeyValue("D", Raspberry_guidata.dataAdsr.d, row); ER();
+			SR(); Render_KeyValue("S", Raspberry_guidata.dataAdsr.s, row); ER();
+			SR(); Render_KeyValue("R", Raspberry_guidata.dataAdsr.r, row); ER();
+			TargetsList(4, row);
+		}
 		
 		RenderEndMenu();
 	}
@@ -504,11 +509,12 @@ void Raspberry_RenderScreen()
 		guirow_state_t row;
 
 		RenderStartMenu("AD assign",row);
-		SR(); Render_KeyValue("A", Raspberry_guidata.dataAd.a, row); ER();
-		SR(); Render_KeyValue("D", Raspberry_guidata.dataAd.d, row); ER();
+		if (Raspberry_guidata.ModSelect != -1) {
+			SR(); Render_KeyValue("A", Raspberry_guidata.dataAd.a, row); ER();
+			SR(); Render_KeyValue("D", Raspberry_guidata.dataAd.d, row); ER();
 
-		TargetsList(2,row);
-		
+			TargetsList(2, row);
+		}
 		RenderEndMenu();
 	}
 	else if (Raspberry_guidata.GuiState == GuiState_CtrlSelect)

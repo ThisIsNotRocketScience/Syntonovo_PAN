@@ -189,6 +189,26 @@ void SCT0_IRQHandler(void)
 #endif
 }
 
+uint32_t timer_value_nonisr()
+{
+	__disable_irq();
+	uint32_t highcount = sctimer_counter << 16;
+	uint32_t timervalue = SCT0->COUNT;
+
+	// but now the counter may have already overflowed! so highcount may be outdated.
+	// must read COUNT first, because the overflow may happen also between reading COUNT and STATE.
+	int overflow = SCT0->STATE != sctimer_state;
+	__enable_irq();
+
+	// if there was an overflow, and the timer was close to beginning of its range,
+	// assume that it did indeed overflow since last interrupt.
+	if (overflow && timervalue < 32768) {
+			highcount += 65536;
+	}
+
+	return highcount + timervalue;
+}
+
 
 typedef void (*portfunc_write_t)(int ic, int ch, uint16_t value);
 
@@ -318,7 +338,7 @@ void control_cb(int param, int subparam, uint16_t value)
 		break;
 	case 6:
 		synth_param[param].adsr_s = value;
-		adsr_set_s(param, value);
+		adsr_set_s(param, value << 16);
 		break;
 	case 7:
 		synth_param[param].adsr_r = value;
@@ -586,29 +606,14 @@ void mixtwo_2(int ctrlid, int port, int levelctrlid, int mixctrlid)
 	}
 }
 
-void do_output_VCO1_MIX2(int ctrlid, int port)
-{
-	mixtwo_2(ctrlid, port, VCO1_LEVEL, VCO1_VCFMIX);
-}
-
-void do_output_VCO2_MIX2(int ctrlid, int port)
-{
-	mixtwo_2(ctrlid, port, VCO2_LEVEL, VCO2_VCFMIX);
-}
-
-void do_output_VCO3_MIX2(int ctrlid, int port)
-{
-	mixtwo_2(ctrlid, port, VCO3_LEVEL, VCO3_VCFMIX);
-}
-
-void do_output_RM1_MIX2(int ctrlid, int port)
-{
-	mixtwo_2(ctrlid, port, RM1_LEVEL, RM1_VCFMIX);
-}
-
 void do_output_VCO1_MIX1(int ctrlid, int port)
 {
 	mixtwo_1(ctrlid, port, VCO1_LEVEL, VCO1_VCFMIX);
+}
+
+void do_output_VCO1_MIX2(int ctrlid, int port)
+{
+	mixtwo_2(ctrlid, port, VCO1_LEVEL, VCO1_VCFMIX);
 }
 
 void do_output_VCO2_MIX1(int ctrlid, int port)
@@ -616,35 +621,19 @@ void do_output_VCO2_MIX1(int ctrlid, int port)
 	mixtwo_1(ctrlid, port, VCO2_LEVEL, VCO2_VCFMIX);
 }
 
+void do_output_VCO2_MIX2(int ctrlid, int port)
+{
+	mixtwo_2(ctrlid, port, VCO2_LEVEL, VCO2_VCFMIX);
+}
+
 void do_output_VCO3_MIX1(int ctrlid, int port)
 {
 	mixtwo_1(ctrlid, port, VCO3_LEVEL, VCO3_VCFMIX);
 }
 
-void do_output_RM1_MIX1(int ctrlid, int port)
+void do_output_VCO3_MIX2(int ctrlid, int port)
 {
-	mixtwo_1(ctrlid, port, RM1_LEVEL, RM1_VCFMIX);
-}
-
-void do_output_VCO4567_MIX2(int ctrlid, int port)
-{
-	mixtwo_2(ctrlid, port, VCO4567_LEVEL, VCO4567_VCFMIX);
-}
-
-void do_output_WHITENS_MIX1(int ctrlid, int port)
-{
-	mixtwo_1(ctrlid, port, WHITENS_LEVEL, WHITENS_VCFMIX);
-}
-
-void do_output_DIGINS_MIX1(int ctrlid, int port)
-{
-	mixtwo_1(ctrlid, port, DIGINS_LEVEL, DIGINS_VCFMIX);
-}
-
-
-void do_output_EXT_MIX1(int ctrlid, int port)
-{
-	mixtwo_1(ctrlid, port, EXT_LEVEL, EXT_VCFMIX);
+	mixtwo_2(ctrlid, port, VCO3_LEVEL, VCO3_VCFMIX);
 }
 
 void do_output_VCO4567_MIX1(int ctrlid, int port)
@@ -652,9 +641,34 @@ void do_output_VCO4567_MIX1(int ctrlid, int port)
 	mixtwo_1(ctrlid, port, VCO4567_LEVEL, VCO4567_VCFMIX);
 }
 
+void do_output_VCO4567_MIX2(int ctrlid, int port)
+{
+	mixtwo_2(ctrlid, port, VCO4567_LEVEL, VCO4567_VCFMIX);
+}
+
+void do_output_RM1_MIX1(int ctrlid, int port)
+{
+	mixtwo_1(ctrlid, port, RM1_LEVEL, RM1_VCFMIX);
+}
+
+void do_output_RM1_MIX2(int ctrlid, int port)
+{
+	mixtwo_2(ctrlid, port, RM1_LEVEL, RM1_VCFMIX);
+}
+
+void do_output_WHITENS_MIX1(int ctrlid, int port)
+{
+	mixtwo_1(ctrlid, port, WHITENS_LEVEL, WHITENS_VCFMIX);
+}
+
 void do_output_WHITENS_MIX2(int ctrlid, int port)
 {
 	mixtwo_2(ctrlid, port, WHITENS_LEVEL, WHITENS_VCFMIX);
+}
+
+void do_output_DIGINS_MIX1(int ctrlid, int port)
+{
+	mixtwo_1(ctrlid, port, DIGINS_LEVEL, DIGINS_VCFMIX);
 }
 
 void do_output_DIGINS_MIX2(int ctrlid, int port)
@@ -662,9 +676,24 @@ void do_output_DIGINS_MIX2(int ctrlid, int port)
 	mixtwo_2(ctrlid, port, DIGINS_LEVEL, DIGINS_VCFMIX);
 }
 
+void do_output_EXT_MIX1(int ctrlid, int port)
+{
+	mixtwo_1(ctrlid, port, EXT_LEVEL, EXT_VCFMIX);
+}
+
 void do_output_EXT_MIX2(int ctrlid, int port)
 {
 	mixtwo_2(ctrlid, port, EXT_LEVEL, EXT_VCFMIX);
+}
+
+void do_output_CLEANF_L_LIN(int ctrlid, int port)
+{
+	linpan_l(ctrlid, port, CLEANF_LIN, CLEANF_PAN);
+}
+
+void do_output_CLEANF_R_LIN(int ctrlid, int port)
+{
+	linpan_r(ctrlid, port, CLEANF_LIN, CLEANF_PAN);
 }
 
 void do_output_VCF1_L_LIN(int ctrlid, int port)
@@ -679,22 +708,32 @@ void do_output_VCF1_R_LIN(int ctrlid, int port)
 
 void do_output_VCF2_L_LIN(int ctrlid, int port)
 {
-	linpan_l(ctrlid, port, VCF2_LIN, VCF2_PAN);
+	// fix: VCF2 panning is reversed
+	linpan_r(ctrlid, port, VCF2_LIN, VCF2_PAN);
 }
 
 void do_output_VCF2_R_LIN(int ctrlid, int port)
 {
-	linpan_r(ctrlid, port, VCF2_LIN, VCF2_PAN);
+	// fix: VCF2 panning is reversed
+	linpan_l(ctrlid, port, VCF2_LIN, VCF2_PAN);
 }
 
-void do_output_CLEANF_L_LIN(int ctrlid, int port)
+void do_output_CLEANF_L_LOG(int ctrlid, int port)
 {
-	linpan_l(ctrlid, port, CLEANF_LIN, CLEANF_PAN);
+	int result = (synth_param[CLEANF_L_LOG].last != synth_param[VCF2_LEVEL].last) || doing_reset;
+	synth_param[CLEANF_L_LOG].last = synth_param[CLEANF_LEVEL].last;
+	if (result) {
+		ports_value(port, synth_param[ctrlid].last);
+	}
 }
 
-void do_output_CLEANF_R_LIN(int ctrlid, int port)
+void do_output_CLEANF_R_LOG(int ctrlid, int port)
 {
-	linpan_r(ctrlid, port, CLEANF_LIN, CLEANF_PAN);
+	int result = (synth_param[CLEANF_R_LOG].last != synth_param[VCF2_LEVEL].last) || doing_reset;
+	synth_param[CLEANF_R_LOG].last = synth_param[CLEANF_LEVEL].last;
+	if (result) {
+		ports_value(port, synth_param[ctrlid].last);
+	}
 }
 
 void do_output_VCF1_L_LOG(int ctrlid, int port)
@@ -733,22 +772,9 @@ void do_output_VCF2_R_LOG(int ctrlid, int port)
 	}
 }
 
-void do_output_CLEANF_L_LOG(int ctrlid, int port)
+void virt_CLEANF_LIN()
 {
-	int result = (synth_param[CLEANF_L_LOG].last != synth_param[VCF2_LEVEL].last) || doing_reset;
-	synth_param[CLEANF_L_LOG].last = synth_param[CLEANF_LEVEL].last;
-	if (result) {
-		ports_value(port, synth_param[ctrlid].last);
-	}
-}
-
-void do_output_CLEANF_R_LOG(int ctrlid, int port)
-{
-	int result = (synth_param[CLEANF_R_LOG].last != synth_param[VCF2_LEVEL].last) || doing_reset;
-	synth_param[CLEANF_R_LOG].last = synth_param[CLEANF_LEVEL].last;
-	if (result) {
-		ports_value(port, synth_param[ctrlid].last);
-	}
+	process_param_lin(CLEANF_LIN);
 }
 
 void virt_VCF1_LIN()
@@ -761,24 +787,24 @@ void virt_VCF2_LIN()
 	process_param_lin(VCF2_LIN);
 }
 
-void virt_CLEANF_LIN()
+void virt_CLEANF_LEVEL()
 {
-	process_param_lin(CLEANF_LIN);
+	process_param_log_add(CLEANF_LEVEL, 0xFFFF - (int32_t)synth_param[MASTER_LEVEL].last);
 }
 
 void virt_VCF1_LEVEL()
 {
-	process_param_log(VCF1_LEVEL);
+	process_param_log_add(VCF1_LEVEL, 0xFFFF - (int32_t)synth_param[MASTER_LEVEL].last);
 }
 
 void virt_VCF2_LEVEL()
 {
-	process_param_log(VCF2_LEVEL);
+	process_param_log_add(VCF2_LEVEL, 0xFFFF - (int32_t)synth_param[MASTER_LEVEL].last);
 }
 
-void virt_CLEANF_LEVEL()
+void virt_CLEANF_PAN()
 {
-	process_param_log(CLEANF_LEVEL);
+	process_param_lin(CLEANF_PAN);
 }
 
 void virt_VCF1_PAN()
@@ -789,11 +815,6 @@ void virt_VCF1_PAN()
 void virt_VCF2_PAN()
 {
 	process_param_lin(VCF2_PAN);
-}
-
-void virt_CLEANF_PAN()
-{
-	process_param_lin(CLEANF_PAN);
 }
 
 void virt_VCO1_VCFMIX()
@@ -809,6 +830,11 @@ void virt_VCO2_VCFMIX()
 void virt_VCO3_VCFMIX()
 {
 	process_param_lin(VCO3_VCFMIX);
+}
+
+void virt_VCO4567_VCFMIX()
+{
+	process_param_lin(VCO4567_VCFMIX);
 }
 
 void virt_RM1_VCFMIX()
@@ -831,11 +857,6 @@ void virt_EXT_VCFMIX()
 	process_param_lin(EXT_VCFMIX);
 }
 
-void virt_VCO4567_VCFMIX()
-{
-	process_param_lin(VCO4567_VCFMIX);
-}
-
 void virt_VCO4567_DRY_MIX()
 {
 	process_param_lin(VCO4567_DRY_MIX);
@@ -854,6 +875,11 @@ void virt_VCO2_LEVEL()
 void virt_VCO3_LEVEL()
 {
 	process_param_lin(VCO3_LEVEL);
+}
+
+void virt_VCO4567_LEVEL()
+{
+	process_param_lin(VCO4567_LEVEL);
 }
 
 void virt_RM1_LEVEL()
@@ -876,15 +902,15 @@ void virt_EXT_LEVEL()
 	process_param_lin(EXT_LEVEL);
 }
 
-void virt_VCO4567_LEVEL()
-{
-	process_param_lin(VCO4567_LEVEL);
-}
-
 void virt_NOTE()
 {
 	//synth_param[NOTE].last = note_to_voltage(synth_param[NOTE].value);
 	synth_param[NOTE].last = synth_param[NOTE].value;
+}
+
+void virt_MASTER_LEVEL()
+{
+	synth_param[MASTER_LEVEL].last = synth_param[MASTER_LEVEL].value;
 }
 
 int process_param_note(int ctrlid, int32_t notevalue, int modrange)

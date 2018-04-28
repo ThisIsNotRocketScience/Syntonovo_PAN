@@ -9,6 +9,8 @@
 #include "intrinsic.h"
 #include <math.h>
 
+extern uint32_t timer_value_nonisr();
+
 typedef struct _ad_state
 {
 	uint32_t a;
@@ -18,6 +20,7 @@ typedef struct _ad_state
 	uint32_t d_const;
 	uint8_t state;
 	uint8_t gate;
+	uint32_t time;
 } ad_state_t;
 
 #define AD_COUNT (256)
@@ -48,13 +51,13 @@ void ad_init()
 void ad_set_a(int adid, uint32_t a)
 {
 	ad_state[adid].a = a;
-	ad_state[adid].a_const = (uint32_t)((float)0xFFFFFFFF * (1.0f - expf(-1.0f / (float)a)));
+	ad_state[adid].a_const = (uint32_t)((float)0xFFFFFFFF * (1.0f - expf(-10.0f / (float)a)));
 }
 
 void ad_set_d(int adid, uint32_t d)
 {
 	ad_state[adid].d = d;
-	ad_state[adid].d_const = (uint32_t)((float)0xFFFFFFFF * expf(-1.0f / (float)d));
+	ad_state[adid].d_const = (uint32_t)((float)0xFFFFFFFF * expf(-10.0f / (float)d));
 }
 
 void ad_set_gate(int adid, int gate)
@@ -71,14 +74,29 @@ void ad_set_gate(int adid, int gate)
 
 uint16_t ad_update(int adid)
 {
+	uint32_t timer_count = timer_value_nonisr();
+	uint32_t timer_delta = timer_count - ad_state[adid].time;
+
+	if (timer_delta > 0x40000) timer_delta = 1;
+	else
+		timer_delta >>= 13;
 	ad_state_t* ad = &ad_state[adid];
+
+	if (timer_delta == 0) {
+		return ad->value >> 15;
+	}
+	ad_state[adid].time = timer_count;
+
 	switch (ad->state) {
 	case 1: // attack
+		while (timer_delta--)
 		{
 			uint32_t v = umlal32_hi(ad->value, (0xFFFFFFFF - ad->value), ad->a_const);
 			if (v > 0x7FFFFFFF) {
 				v = 0x7FFFFFFF;
 				ad->state = 2;
+				ad->value = v;
+				break;
 			}
 			ad->value = v;
 		}
@@ -86,7 +104,9 @@ uint16_t ad_update(int adid)
 	case 2:
 		break;
 	default: // decay
-		ad->value = umull32_hi(ad->value, ad->d_const);
+		while (timer_delta--) {
+			ad->value = umull32_hi(ad->value, ad->d_const);
+		}
 		break;
 	}
 

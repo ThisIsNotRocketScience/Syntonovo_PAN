@@ -8,6 +8,8 @@
 #include <math.h>
 #include "lfo.h"
 
+extern uint32_t timer_value_nonisr();
+
 uint16_t waveform[2049];
 
 static void waveform_init()
@@ -40,6 +42,7 @@ typedef struct _lfo_state
 {
 	uint32_t phase;
 	uint32_t add;
+	uint32_t time;
 } lfo_state_t;
 
 #define LFO_COUNT (256)
@@ -64,12 +67,15 @@ void lfo_init()
 
 uint16_t lfo_update(int lfoid)
 {
-	uint32_t phase = lfo_state[lfoid].phase + lfo_state[lfoid].add;
+	uint32_t timercount = timer_value_nonisr();
+	uint32_t timerdelta = timercount - lfo_state[lfoid].time;
+	lfo_state[lfoid].time = timercount;
+	uint32_t phase = lfo_state[lfoid].phase + (lfo_state[lfoid].add * (timerdelta >> 11));
 	lfo_state[lfoid].phase = phase;
 	return waveform_sample(phase);
 }
 
 void lfo_set_speed(int lfoid, uint16_t speed)
 {
-	lfo_state[lfoid].add = (uint32_t) (((float)(1 << 26L)) * expf(-(float)(65535 - speed) * 0.0001f));
+	lfo_state[lfoid].add = (uint32_t) (((float)(1 << 24L)) * expf(-(float)(65535 - speed) * 0.0001f));
 }
