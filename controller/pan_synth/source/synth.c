@@ -162,8 +162,17 @@ int32_t abs(int32_t x)
 	return x;
 }
 
-void update_porta_time()
+void update_porta_time(int retrigger)
 {
+	if (!shiftctrl_flag_state(SELPORTAMENTO)
+		|| (shiftctrl_flag_state(SELSTACCATO) && !retrigger))
+	{
+		// no portamento
+		porta_timer_shift = 14;
+		porta_time = synth_param[NOTE].value - synth_param[NOTE].last;
+		return;
+	}
+
 	porta_time = (abs((int32_t)(synth_param[NOTE].value - synth_param[NOTE].last)) * 256) / porta_divider;
 	porta_timer_shift = 14;
 	int div = porta_divider;
@@ -287,12 +296,18 @@ static void update_note()
 	}
 
 	int note_change = (notestack_first().note << 8) != synth_param[NOTE].value;
+
+	int retrigger = 1;
+	if (synth_param[GATE].value != 0xffff) {
+		retrigger = 0;
+		note_change = 1;
+	}
+
 	synth_param[NOTE].value = notestack_first().note << 8;
-	update_porta_time();
+	update_porta_time(retrigger);
 	virt_NOTE();
 
 	if (synth_param[GATE].value != 0xffff) {
-		note_change = 1;
 		synth_param[GATE].value = 0xffff;
 		virt_GATE();
 	}
