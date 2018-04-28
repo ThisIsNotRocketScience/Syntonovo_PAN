@@ -699,12 +699,14 @@ void do_output_VCF1_R_LIN(int ctrlid, int port)
 
 void do_output_VCF2_L_LIN(int ctrlid, int port)
 {
-	linpan_l(ctrlid, port, VCF2_LIN, VCF2_PAN);
+	// fix: VCF2 panning is reversed
+	linpan_r(ctrlid, port, VCF2_LIN, VCF2_PAN);
 }
 
 void do_output_VCF2_R_LIN(int ctrlid, int port)
 {
-	linpan_r(ctrlid, port, VCF2_LIN, VCF2_PAN);
+	// fix: VCF2 panning is reversed
+	linpan_l(ctrlid, port, VCF2_LIN, VCF2_PAN);
 }
 
 void do_output_CLEANF_L_LIN(int ctrlid, int port)
