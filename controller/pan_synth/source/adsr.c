@@ -9,6 +9,8 @@
 #include "intrinsic.h"
 #include <math.h>
 
+extern uint32_t timer_value_nonisr();
+
 typedef struct _adsr_state
 {
 	uint32_t a;
@@ -21,6 +23,7 @@ typedef struct _adsr_state
 	uint32_t r_const;
 	uint8_t state;
 	uint8_t gate;
+	uint32_t time;
 } adsr_state_t;
 
 #define ADSR_COUNT (256)
@@ -56,24 +59,24 @@ void adsr_init()
 void adsr_set_a(int adsrid, uint32_t a)
 {
 	adsr_state[adsrid].a = a;
-	adsr_state[adsrid].a_const = (uint32_t)((float)0xFFFFFFFF * (1.0f - expf(-1.0f / (float)a)));
+	adsr_state[adsrid].a_const = (uint32_t)((float)0xFFFFFFFF * (1.0f - expf(-10.0f / (float)a)));
 }
 
 void adsr_set_d(int adsrid, uint32_t d)
 {
 	adsr_state[adsrid].d = d;
-	adsr_state[adsrid].d_const = (uint32_t)((float)0x7FFFFFFF * (1.0f - expf(-1.0f / (float)d)));
+	adsr_state[adsrid].d_const = (uint32_t)((float)0x7FFFFFFF * (1.0f - expf(-10.0f / (float)d)));
 }
 
 void adsr_set_s(int adsrid, uint32_t s)
 {
-	adsr_state[adsrid].s = s;
+	adsr_state[adsrid].s = s >> 1;
 }
 
 void adsr_set_r(int adsrid, uint32_t r)
 {
 	adsr_state[adsrid].r = r;
-	adsr_state[adsrid].r_const = (uint32_t)((float)0xFFFFFFFF * expf(-1.0f / (float)r));
+	adsr_state[adsrid].r_const = (uint32_t)((float)0xFFFFFFFF * expf(-4.0f / (float)r));
 }
 
 void adsr_set_gate(int adsrid, int gate)
@@ -90,25 +93,42 @@ void adsr_set_gate(int adsrid, int gate)
 
 uint16_t adsr_update(int adsrid)
 {
+	uint32_t timer_count = timer_value_nonisr();
+	uint32_t timer_delta = timer_count - adsr_state[adsrid].time;
+
+	if (timer_delta > 0x40000) timer_delta = 1;
+	else timer_delta >>= 13;
 	adsr_state_t* adsr = &adsr_state[adsrid];
+
+	if (timer_delta == 0) {
+		return adsr->value >> 15;
+	}
+	adsr->time = timer_count;
+
 	switch (adsr->state) {
 	case 1: // attack
+		while (timer_delta--)
 		{
 			uint32_t v = umlal32_hi(adsr->value, (0xFFFFFFFF - adsr->value), adsr->a_const);
 			if (v > 0x7FFFFFFF) {
 				v = 0x7FFFFFFF;
 				adsr->state = 2;
+				adsr->value = v;
+				break;
 			}
 			adsr->value = v;
 		}
 		break;
 	case 2: // decay
+		while (timer_delta--)
 		{
-			adsr->value = smlal32_hi(adsr->value, (adsr->s - adsr->value), adsr->d_const);
+			adsr->value = smlal32_hi(adsr->value, (int32_t)adsr->s - (int32_t)adsr->value, adsr->d_const);
 		}
 		break;
 	default: // release
-		adsr->value = umull32_hi(adsr->value, adsr->r_const);
+		while (timer_delta--) {
+			adsr->value = umull32_hi(adsr->value, adsr->r_const);
+		}
 		break;
 	}
 

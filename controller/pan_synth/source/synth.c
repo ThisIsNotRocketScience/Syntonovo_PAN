@@ -189,6 +189,26 @@ void SCT0_IRQHandler(void)
 #endif
 }
 
+uint32_t timer_value_nonisr()
+{
+	__disable_irq();
+	uint32_t highcount = sctimer_counter << 16;
+	uint32_t timervalue = SCT0->COUNT;
+
+	// but now the counter may have already overflowed! so highcount may be outdated.
+	// must read COUNT first, because the overflow may happen also between reading COUNT and STATE.
+	int overflow = SCT0->STATE != sctimer_state;
+	__enable_irq();
+
+	// if there was an overflow, and the timer was close to beginning of its range,
+	// assume that it did indeed overflow since last interrupt.
+	if (overflow && timervalue < 32768) {
+			highcount += 65536;
+	}
+
+	return highcount + timervalue;
+}
+
 
 typedef void (*portfunc_write_t)(int ic, int ch, uint16_t value);
 
@@ -318,7 +338,7 @@ void control_cb(int param, int subparam, uint16_t value)
 		break;
 	case 6:
 		synth_param[param].adsr_s = value;
-		adsr_set_s(param, value);
+		adsr_set_s(param, value << 16);
 		break;
 	case 7:
 		synth_param[param].adsr_r = value;
