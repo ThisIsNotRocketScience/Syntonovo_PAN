@@ -87,6 +87,16 @@ void InitPreset(PanPreset_t& preset)
 	
 	preset.paramvalue[Output_MASTER_LEVEL] = 0xFFFF;
 
+	preset.paramvalue[Output_X_DEADZONE] = 0x2000;
+	preset.paramvalue[Output_Y_DEADZONE] = 0x2000;
+	preset.paramvalue[Output_Z_DEADZONE] = 0x2000;
+
+	preset.paramvalue[Output_X_SCALE] = 0x2000;
+	preset.paramvalue[Output_Y_SCALE] = 0x2000;
+	preset.paramvalue[Output_Z_SCALE] = 0x2000;
+
+	preset.paramvalue[Output_ZPRIME_SPEED] = 0xa000;
+
 	preset.paramvalue[Output_MASTER_PITCH] = 0x8000;
 
 	preset.switches[0] |= (1 << Switch_SELEF4);
