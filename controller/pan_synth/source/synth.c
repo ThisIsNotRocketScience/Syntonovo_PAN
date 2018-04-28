@@ -155,6 +155,12 @@ static int32_t bipolar_signed_scale(int32_t value, int16_t scale)
 	return r;
 }
 
+int32_t abs(int32_t x)
+{
+	if (x < 0) return -x;
+	// else
+	return x;
+}
 
 void update_porta_time()
 {
@@ -1023,7 +1029,7 @@ int process_param_note(int ctrlid, int32_t notevalue, int modrange)
 	if (synth_param[ctrlid].zprime) {
 		modvalue += bipolar_signed_scale(zprime_value, synth_param[ctrlid].zprime);
 	}
-	value += signed_scale(modvalue, modrange * 0x4000 / 128);
+	value += bipolar_signed_scale(modvalue, modrange * (0x8000 / 128));
 
 	if (value < 0) value = 0;
 	else if (value > 65535) value = 65535;
@@ -1073,7 +1079,7 @@ void virt_VCO5_PITCH()
 	value = note_add(value, note_scale(synth_param[VCO4_PITCH].value, 72 * 0x4000 / 128));
 	value += signed_scale(synth_param[VCO5_PITCH].value, 36 * 0x4000 / 256);
 
-	process_param_note(VCO5_PITCH, value, 36 * 0x4000 / 256);
+	process_param_note(VCO5_PITCH, value, 36);
 }
 
 void virt_VCO6_PITCH()
@@ -1082,7 +1088,7 @@ void virt_VCO6_PITCH()
 	value = note_add(value, note_scale(synth_param[VCO4_PITCH].value, 72 * 0x4000 / 128));
 	value += signed_scale(synth_param[VCO6_PITCH].value, 36 * 0x4000 / 256);
 
-	process_param_note(VCO6_PITCH, value, 36 * 0x4000 / 256);
+	process_param_note(VCO6_PITCH, value, 36);
 }
 
 void virt_VCO7_PITCH()
@@ -1091,7 +1097,7 @@ void virt_VCO7_PITCH()
 	value = note_add(value, note_scale(synth_param[VCO4_PITCH].value, 72 * 0x4000 / 128));
 	value += signed_scale(synth_param[VCO7_PITCH].value, 36 * 0x4000 / 256);
 
-	process_param_note(VCO7_PITCH, value, 36 * 0x4000 / 256);
+	process_param_note(VCO7_PITCH, value, 36);
 }
 
 void virt_GATE()
@@ -1224,7 +1230,7 @@ void synth_run()
 		}
 
 		for (int i = 0; i < 9; i++) {
-			pad_value[i] = (int32_t)pad_adc_value[i] - (int32_t)pad_calibration[i];
+			pad_value[i] = -((int32_t)pad_adc_value[i] - (int32_t)pad_calibration[i]);
 		}
 
 		zprime_value = hp_update(&zprime_hp, pad_value[KEYBOARD_Z]);
