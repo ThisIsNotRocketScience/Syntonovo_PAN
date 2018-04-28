@@ -169,7 +169,7 @@ void update_porta_time(int retrigger)
 	{
 		// no portamento
 		porta_timer_shift = 14;
-		porta_time = synth_param[NOTE].value - synth_param[NOTE].last;
+		porta_time = abs(synth_param[NOTE].value - synth_param[NOTE].last);
 		return;
 	}
 
@@ -842,17 +842,17 @@ void virt_VCF2_LIN()
 
 void virt_CLEANF_LEVEL()
 {
-	process_param_log_add(CLEANF_LEVEL, 0xFFFF - (int32_t)synth_param[MASTER_LEVEL].last);
+	process_param_log_add(CLEANF_LEVEL, (int32_t)synth_param[MASTER_LEVEL].last - 0xFFFF);
 }
 
 void virt_VCF1_LEVEL()
 {
-	process_param_log_add(VCF1_LEVEL, 0xFFFF - (int32_t)synth_param[MASTER_LEVEL].last);
+	process_param_log_add(VCF1_LEVEL, (int32_t)synth_param[MASTER_LEVEL].last - 0xFFFF);
 }
 
 void virt_VCF2_LEVEL()
 {
-	process_param_log_add(VCF2_LEVEL, 0xFFFF - (int32_t)synth_param[MASTER_LEVEL].last);
+	process_param_log_add(VCF2_LEVEL, (int32_t)synth_param[MASTER_LEVEL].last - 0xFFFF);
 }
 
 void virt_CLEANF_PAN()
