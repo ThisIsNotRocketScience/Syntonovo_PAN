@@ -175,8 +175,8 @@ void TargetsList(int offsetrow, guirow_state_t &row)
 			row.active = false;
 		}
 		if (t[i].param != 0) {
-			MenuRightAlignLabel(ParamLabel(t[i].param),row); ImGui::SameLine();
-			ImGui::Text("%1.3f", DepthLabel(t[i].depth)); 
+
+			SR();	MenuRightAlignLabel(ParamLabel(t[i].param), row); ImGui::SameLine(); ImGui::Text("%1.3f", DepthLabel(t[i].depth)); ER();
 		}
 		if (i == Raspberry_guidata.selectTarget) {
 		}
@@ -304,9 +304,9 @@ void RenderMenuTitle(const char *name)
 	float pt = (float)res.PageTime;
 	if (pt > 14) pt = 14;
 	pt /= 14.0f;
-	float distance[11] = { 0,10,30,40,50,70,80,90,110,120,130 };
+	float distance[13] = { 0,10,30, 40,50, 70,80,90,110,120,140,150,160 };
 	
-	for (int i = 0; i <11 ; i ++)
+	for (int i = 0; i <13 ; i ++)
 	{
 		float x = w - (distance[i] * 1);
 		float L = (ImGui::GetTextLineHeight() * pow(0.6,distance[i]/10.0f) + 20)* pt;

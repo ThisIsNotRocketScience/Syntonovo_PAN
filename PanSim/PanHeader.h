@@ -334,28 +334,28 @@ typedef struct PanGui_t
 } PanGui_t;
 
 typedef struct {
-	uint8_t param;
+	uint16_t param;
 	uint16_t depth;
 } ModTarget_t;
 
 typedef struct {
+	ModTarget_t target[16];
 	uint16_t speed;
 	uint16_t shape;
-	ModTarget_t target[16];
 } LfoModulation_t;
 
 typedef struct {
+	ModTarget_t target[16];
 	uint16_t a;
 	uint16_t d;
 	uint16_t s;
 	uint16_t r;
-	ModTarget_t target[16];
 } AdsrModulation_t;
 
 typedef struct {
+	ModTarget_t target[16];
 	uint16_t a;
 	uint16_t d;
-	ModTarget_t target[16];
 } AdModulation_t;
 
 enum ModSource_t {
