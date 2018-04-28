@@ -105,6 +105,50 @@ unsigned short Pots[POTCOUNT];
 unsigned short PotStable[POTCOUNT] = {0};
 unsigned short PotAvg[POTCOUNT];
 unsigned short LastPotAvg[POTCOUNT] = {0};
+
+
+#define RANGEBITS 10
+
+
+int32_t iabs(int32_t x)
+{
+  if (x < 0) return -x;
+  return x;
+}
+
+struct smooth_state_t
+{
+  int32_t g;
+  int32_t low1z;
+  int32_t low2z;
+  int32_t bandz;
+};
+smooth_state_t PotSmooth[POTCOUNT];
+
+void smooth_init(struct smooth_state_t* s, int g0)
+{
+  // g = 2-2/*(1+tan(pi*wc))
+  s->g = g0;
+  s->low1z = 0;
+  s->low2z = 0;
+  s->bandz = 0;
+}
+
+int smooth(struct smooth_state_t* s, int in)
+{
+  int bandz = s->low2z - s->low1z;
+  int g = s->g + iabs(bandz);
+  if (g >= 1<<RANGEBITS) g = (1<<RANGEBITS) - 1;
+
+  int low1 = s->low1z + ((g*(in - s->low1z)) >> RANGEBITS);
+  int low2 = s->low2z + ((g*(low1 - s->low2z)) >> RANGEBITS);
+  s->low1z = low1;
+  s->low2z = low2;
+
+  return low1;
+}
+
+
 /*
   38 31 5
   24 16 4
@@ -289,7 +333,10 @@ void setup()
   pinMode(ENC2A, INPUT_PULLUP);
   pinMode(ENC2B, INPUT_PULLUP);
 
-
+  for(int i =0 ;i<POTCOUNT;i++)
+  {
+    smooth_init( & PotSmooth[i],50);
+  }
   pinMode(LEDDAT, OUTPUT);
   pinMode(LEDCLK, OUTPUT);
   pinMode(LEDLATCH, OUTPUT);
@@ -490,10 +537,12 @@ void SendPot(unsigned char idx, uint16_t value)
   SendCommand(0x82, D);
 }
 
-
+int blinkcount;
+int blink;
 void ScanButtons()
 {
-
+  blinkcount++;
+  blink = (blinkcount%1000)<500?64:0;
   digitalWrite(BUTTONLATCH, LOW);
   digitalWrite(BUTTONLATCH, HIGH);
 
@@ -519,8 +568,13 @@ void ScanButtons()
   }
   for (int i = 0; i < __LEDBUTTON_COUNT; i++)
   {
-    LEDTarget[Buttons[i].fpid] = Buttons[i].value ? 255 : 0;
+    switch(Buttons[i].ledmode)
+   { 
+    case LED_OFF: LEDTarget[Buttons[i].fpid] = 0;break;
+    case LED_ON: LEDTarget[Buttons[i].fpid] = 255;break;
+    case LED_BLINK: LEDTarget[Buttons[i].fpid] = blink;break;
 
+    }
 
   }
 
@@ -606,7 +660,7 @@ void loop()
   int highestpot = 0;
   for (int i = 0 ; i < POTCOUNT; i++)
   {
-    PotAvg[i] =  ( PotAvg[i] * 7 + Pots[i]) / 8;
+    PotAvg[i] =  smooth(&PotSmooth[i],  Pots[i]);
     if (PotAvg[i] != LastPotAvg[i])
     {
 
@@ -675,6 +729,9 @@ void Teensy_LoadSDPreset(int bank, int slot)
   Teensy_BuildPresetName(bank, slot);
   if (!SD.begin(BUILTIN_SDCARD))
   {
+    InitPreset(gPreset);
+    LoadPreset(gPreset);
+
     return;
   }
   File myFile = SD.open(presetname, FILE_READ);
@@ -684,8 +741,15 @@ void Teensy_LoadSDPreset(int bank, int slot)
     unsigned char *b = (unsigned char *)&p;
     myFile.read(b, sizeof(PanPreset_t));
     myFile.close();
+    
+    memcpy(&gPreset, &p, sizeof(PanPreset_t));
+    LoadPreset(gPreset);
 
-    LoadPreset(p);
+  }
+  else
+  {
+      InitPreset(gPreset);
+    LoadPreset(gPreset);
 
   }
 

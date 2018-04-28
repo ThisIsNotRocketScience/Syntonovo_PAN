@@ -417,7 +417,7 @@ static bool MySlider(const char* label, float* p_value, float v_min, float v_max
 	return value_changed;
 }
 
-bool LedButton(const char* label, bool* v)
+bool LedButton(const char* label, int mode)
 {
 
 	ImGuiIO& io = ImGui::GetIO();
@@ -440,9 +440,14 @@ bool LedButton(const char* label, bool* v)
 	draw_list->AddText(ImVec2(center.x - R.x / 2, pos.y - line_height - style.ItemInnerSpacing.y), ImGui::GetColorU32(ImGuiCol_Text), label);
 
 	//if (pressed) *v = !*v;
-	if (*v)
+	if (mode == LED_ON)
 	{
 		draw_list->AddCircleFilled(center, radius_outer, IM_COL32(255, 255, 0, 255), 16);
+
+	}
+	if (mode == LED_BLINK)
+	{
+		draw_list->AddCircleFilled(center, radius_outer, IM_COL32(100, 255, 0, 255), 16);
 
 	}
 
@@ -566,6 +571,30 @@ int SerialCounter = 0;
 uint32_t SerialData = 0;
 Raspberry_GuiData_t incoming;
 unsigned char *RaspberryPointer;
+char presetname[30];
+void Teensy_BuildPresetName(int bank, int slot)
+{
+	sprintf(presetname, "pan%d_%d.prs", bank, slot);
+}
+
+
+void Teensy_LoadSDPreset(int bank, int slot)
+{
+	Teensy_BuildPresetName(bank, slot);
+	FILE *F = fopen(presetname, "rb+");
+	if (F)
+	{
+		PanPreset_t inc;
+		fread(&inc, sizeof(PanPreset_t), 1, F);
+		LoadPreset(inc);
+	}
+}
+void Teensy_SaveSDPreset(int bank, int slot)
+{
+	Teensy_BuildPresetName(bank, slot);
+}
+
+
 uint32_t RaspberryOffset = sizeof(Raspberry_GuiData_t);
 void AddIncomingByte(unsigned char b)
 {
@@ -791,8 +820,11 @@ int main(int argc, char** argv)
 	static bool mainscreen = true;
 	GetSerialPorts(dspport, uiport);
 
-	//Teensy_Reset();
-	//Teensy_InitPreset();
+	if (UISerial.IsOpen() == false)
+	{
+		Teensy_Reset();
+		Teensy_InitPreset();
+	}
 	Raspberry_Init();
 	Raspberry_Reset();
 	
@@ -878,7 +910,7 @@ int main(int argc, char** argv)
 				ImGui::PushFont(pFont);
 				if (ImGui::Button("Resend All Data"))
 				{
-				//	Teensy_ReSendPreset();
+					if (UISerial.IsOpen() == false) Teensy_ReSendPreset();
 					UISendCommand(0x60, 0);
 
 				}
@@ -914,7 +946,8 @@ int main(int argc, char** argv)
 				for (int i = 0; i < __LEDBUTTON_COUNT; i++)
 				{
 					ImGui::SetCursorScreenPos(ImVec2(pos.x + Buttons[i].x * xscalefac, pos.y + Buttons[i].y * yscalefac));
-					if (LedButton(Buttons[i].name, &Buttons[i].value))
+					bool b = Buttons[i].value;
+					if (LedButton(Buttons[i].name, Buttons[i].ledmode ))
 					{
 						Teensy_ButtonPressed(Buttons[i].id, Buttons[i].value);
 
@@ -980,6 +1013,7 @@ int main(int argc, char** argv)
 			midiInClose(hMidiDevice[i]);
 		}
 	}
+
 	ImGui_ImplSdlGL3_Shutdown();
 	ImGui::DestroyContext();
 	CloseSerialPorts();
