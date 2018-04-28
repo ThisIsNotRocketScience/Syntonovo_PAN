@@ -328,21 +328,28 @@ inline const char* ParamToName(int paramid)
 	return "Unnamed";
 }
 
+#pragma pack(1)
+
+#ifdef WIN32
+#define PACK
+#else
+#define PACK  __attribute__((packed))
+#endif
 typedef struct PanGui_t
 {
 	
 } PanGui_t;
 
 typedef struct {
-	uint16_t param;
+	uint8_t param;
 	uint16_t depth;
-} ModTarget_t;
+} PACK ModTarget_t;
 
 typedef struct {
 	ModTarget_t target[16];
 	uint16_t speed;
 	uint16_t shape;
-} LfoModulation_t;
+} PACK LfoModulation_t;
 
 typedef struct {
 	ModTarget_t target[16];
@@ -350,15 +357,15 @@ typedef struct {
 	uint16_t d;
 	uint16_t s;
 	uint16_t r;
-} AdsrModulation_t;
+} PACK AdsrModulation_t;
 
 typedef struct {
 	ModTarget_t target[16];
 	uint16_t a;
 	uint16_t d;
-} AdModulation_t;
+} PACK  AdModulation_t;
 
-enum ModSource_t {
+enum ModSource_t: unsigned char {
 	Source_none,
 
 	Source_left_mod,
@@ -379,8 +386,7 @@ typedef struct {
 #define PRESET_NAME_LENGTH 16
 
 typedef struct {
-	uint32_t switches[1];
-
+	uint32_t switches[2];
 	uint16_t paramvalue[256];
 
 	LfoModulation_t lfomod[16];
@@ -388,9 +394,9 @@ typedef struct {
 	AdModulation_t admod[16];
 	ControlModulation_t ctrlmod[16];
 	char Name[PRESET_NAME_LENGTH];
-} PanPreset_t;
+} PACK PanPreset_t;
 
-typedef enum {
+typedef enum: unsigned char{
 	GuiState_Root,
 	GuiState_LfoSelect,
 	GuiState_AdsrSelect,
@@ -407,14 +413,13 @@ typedef enum {
 	__GuiState_COUNT
 } GuiState_t;
 
-#pragma pack(8)
 typedef struct Raspberry_GuiData_t
 {
 	GuiState_t GuiState;
 	
 	int ModSelect;
-
 	int selectTarget;
+	char PresetName[PRESET_NAME_LENGTH];
 
 	ControlModulation_t dataCtrl;
 	LfoModulation_t dataLfo;
@@ -422,16 +427,15 @@ typedef struct Raspberry_GuiData_t
 	AdModulation_t dataAd;
 
 	uint32_t outputValues[256];
-	uint32_t switches[1];
+	uint32_t switches[2];
 
-	char PresetName[PRESET_NAME_LENGTH];
 	uint32_t LeftEncoderValue;
 	uint32_t RightEncoderValue;
 	bool dirty;
 	int banks[2];
 	int activeslot;
 	int activebank;
-} Raspberry_GuiData_t;
+} PACK  Raspberry_GuiData_t;
 
 #pragma pack()
 

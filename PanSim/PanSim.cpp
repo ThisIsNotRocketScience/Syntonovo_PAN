@@ -768,7 +768,7 @@ int main(int argc, char** argv)
 		printf("Error: %s\n", SDL_GetError());
 		return -1;
 	}
-
+	printf("sizeof modsource: %d\n", sizeof(ModSource_t));
 	HMIDIIN hMidiDevice[255] = { 0 };
 	DWORD nMidiPort = 0;
 	MMRESULT rv;
