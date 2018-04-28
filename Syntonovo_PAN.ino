@@ -10,6 +10,113 @@
 #include "PanSim/PanStructs.cpp"
 #include "PanSim/PAN_Raspberry_Interface.cpp"
 
+
+const int POTPIN[6] = {39, 24, 20, 21, 22, 23};
+
+#define LEDCOUNT 104
+#define BUTTONCOUNT 104
+
+unsigned char LEDs[LEDCOUNT];
+unsigned char LEDTarget[LEDCOUNT];
+unsigned char HWButtons[BUTTONCOUNT];
+unsigned char LastButtons[BUTTONCOUNT];
+unsigned int ButtonTarget[BUTTONCOUNT];
+
+
+struct denoise_state_t
+{
+  int counter;
+  int down;
+  unsigned char pressed:4;
+  unsigned char released:4;
+  int longpressed;
+  int lastcounter;
+};
+
+denoise_state_t Denoise[BUTTONCOUNT];
+denoise_state_t ENC1A;
+denoise_state_t ENC1B;
+denoise_state_t ENC2A;
+denoise_state_t ENC2B;
+
+
+#define LONGPRESSCYCLES 1000
+
+int pressed(struct denoise_state_t *state)
+{
+  if (state->pressed == 1)
+  {
+    state->pressed = 0;
+    return 1;
+  }
+  return 0;
+}
+
+int released(struct denoise_state_t *state)
+{
+  if (state->released== 1)
+  {
+    state->released = 0;
+    return 1;
+  }
+  return 0;
+}
+
+
+void denoise(int sw_down, struct denoise_state_t *state)
+{
+  if (sw_down)
+  {
+    state->counter++;
+  }
+  else
+  {
+    state->counter--;
+  }
+
+
+  if (state->counter < 2)
+  {
+    if (state->lastcounter == 2)
+    {
+      state->pressed = 1;
+    }
+    state->counter = 1;
+    state->down = 1;
+  }
+  else
+  {
+    if (state->counter > 30)
+    {
+      if (state->lastcounter == 30)
+      {
+        state->released = 1;
+      }
+      state->counter = 31;
+      state->down = 0;
+    }
+  }
+
+  if (state->down > 0)
+  {
+    if (state->longpressed>-1) state->longpressed++;
+  }
+  else
+  {
+    state->longpressed = 0; 
+  }
+
+  state->lastcounter = state->counter;
+  
+  if (state->longpressed >= LONGPRESSCYCLES)
+  {
+    state->longpressed = LONGPRESSCYCLES; 
+  }
+}
+
+
+
+
 void WriteKnob(int id, uint32_t value)
 {
   char b[4];
@@ -159,20 +266,6 @@ int smooth(struct smooth_state_t* s, int in)
   22 44 B
   23 45 A
 */
-
-const int POTPIN[6] = {39, 24, 20, 21, 22, 23};
-
-#define LEDCOUNT 104
-#define BUTTONCOUNT 104
-
-unsigned char LEDs[LEDCOUNT];
-
-unsigned char LEDTarget[LEDCOUNT];
-
-
-unsigned char HWButtons[BUTTONCOUNT];
-unsigned char LastButtons[BUTTONCOUNT];
-unsigned int ButtonTarget[BUTTONCOUNT];
 
 IntervalTimer KeyboardTimer;
 int KB[20] = {0, 1, 2, 3, 4, 5, 6, 19, 7, 18, 8, 17, 9, 16, 10, 15, 11, 14, 12, 13};
@@ -534,6 +627,7 @@ void SendRaspberryState()
   unsigned char *b = (unsigned char * ) &Raspberry_guidata;
   uint sent = 0 ;
   byte commandb = 0xd0;
+  unsigned char cb = 0;
   while (sent < sizeof(Raspberry_GuiData_t) )
   {
     byte b1 = *b++;
@@ -556,94 +650,6 @@ void SendPot(unsigned char idx, uint16_t value)
   uint32_t D = (idx << 16) + value;
   SendCommand(0x82, D);
 }
-
-struct denoise_state_t
-{
-  int counter;
-  int down;
-  unsigned char pressed:4;
-  unsigned char released:4;
-  int longpressed;
-  int lastcounter;
-};
-
-#define LONGPRESSCYCLES 1000
-
-int pressed(struct denoise_state_t *state)
-{
-  if (state->pressed == 1)
-  {
-    state->pressed = 0;
-    return 1;
-  }
-  return 0;
-}
-
-int released(struct denoise_state_t *state)
-{
-  if (state->released== 1)
-  {
-    state->released = 0;
-    return 1;
-  }
-  return 0;
-}
-
-
-void denoise(int sw_down, struct denoise_state_t *state)
-{
-  if (sw_down)
-  {
-    state->counter++;
-  }
-  else
-  {
-    state->counter--;
-  }
-
-//state->pressed = 0;
-//state->released = 0;
-
-  if (state->counter < 2)
-  {
-    if (state->lastcounter == 2)
-    {
-      state->pressed = 1;
-    }
-    state->counter = 1;
-    state->down = 1;
-  }
-  else
-  {
-    if (state->counter > 30)
-    {
-      if (state->lastcounter == 30)
-      {
-        state->released = 1;
-      }
-      state->counter = 31;
-      state->down = 0;
-    }
-  }
-
-  if (state->down > 0)
-  {
-    if (state->longpressed>-1) state->longpressed++;
-  }
-  else
-  {
-    state->longpressed = 0; 
-  }
-
-  state->lastcounter = state->counter;
-  
-  if (state->longpressed >= LONGPRESSCYCLES)
-  {
-    state->longpressed = LONGPRESSCYCLES; 
-  }
-}
-
-denoise_state_t Denoise[BUTTONCOUNT];
 int blinkcount;
 int blink;
 void ScanButtons()
@@ -665,7 +671,7 @@ void ScanButtons()
     {
       if (released(&Denoise[i]))
       {
-      int N = Teensy_FindButtonIDX(i);
+      //int N = Teensy_FindButtonIDX(i);
       //if (N>-1)   Teensy_ButtonPressed(Buttons[N].id, 0);
       };
     }

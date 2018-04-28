@@ -180,9 +180,9 @@ ENDMENU()
 
 MENU(EFFECTS, ledbutton_Cleanfeed_FX, "Global FX")
 CUSTOMENTRY("Type", MenuEntry_EffectType, Output_VCA_FXPOT1)
-CUSTOMENTRY("Parameter 1", MenuEntry_EffectParam1, Output_VCA_FXPOT1)
+CUSTOMENTRY("Parameter 1", MenuEntry_EffectParam1, Output_VCA_FXPOT3)
 CUSTOMENTRY("Parameter 2", MenuEntry_EffectParam2, Output_VCA_FXPOT2)
-CUSTOMENTRY("Parameter 3", MenuEntry_EffectParam3, Output_VCA_FXPOT3)
+CUSTOMENTRY("Parameter 3", MenuEntry_EffectParam3, Output_VCA_FXPOT1)
 
 CUSTOMENTRY("CLNFD", MenuEntry_Toggle, Switch_SELEFFECT3)
 CUSTOMENTRY("VCF 1", MenuEntry_Toggle, Switch_SELEFFECT1)

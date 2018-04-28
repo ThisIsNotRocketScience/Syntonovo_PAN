@@ -185,14 +185,16 @@ void TargetsList(int offsetrow, guirow_state_t &row)
 
 char EffectChipStrings[8][4][24] = {
 
-	{"Chorus - reverb","Reverb mix","Chorus rate","Chorus mix"},
-{"Flange - reverb","Reverb mix","Flange rate","Flange mix" },
-{"Tremolo - reverb","Reverb mix","Tremolo rate","Tremolo mix"},
-{"Pitch shift","Pitch +/- 4 semitones","-","-"},
-{"Pitch - echo","Pitch shift","Echo delay","Echo mix"},
-{"Test","-","-","-"},
-{"Reverb 1","Reverb time","HF filter","LF filter"},
-{"Reverb 2","Reverb time","HF filter","LF filter"}
+{    "Chorus - reverb" ,"Reverb mix","Chorus rate","Chorus mix"},
+{    "Flange - reverb","Reverb mix","Flange rate","Flange mix" },
+{    "Tremolo - reverb","Reverb mix","Tremolo rate","Tremolo mix"},
+{    "Pitch shift","Pitch +/- 4 semitones","-","-"},
+
+{    "Pitch - echo","Pitch shift","Echo delay","Echo mix"},
+{    "Test","-","-","-"},
+{    "Reverb 1","Reverb time","HF filter","LF filter"},
+{    "Reverb 2","Reverb time","HF filter","LF filter"}
+
 };
 void Render_MenuEntry_Percentage(const char* name, int param, guirow_state_t &rowstate)
 {
@@ -531,12 +533,13 @@ void Raspberry_RenderScreen()
 			Source_vel*/
 		const char ControllerNames[__ModSource_COUNT][20] = { "NONE", "Left mod","Right mod","X-pression","Y-pression","Z-pression","Z'-pression","Note"," Velocity" };
 		guirow_state_t row;
-		if (Raspberry_guidata.dataCtrl.source < __ModSource_COUNT)
-		{
-			RenderStartMenu(ControllerNames[Raspberry_guidata.dataCtrl.source], row);
+		int Header = 0;
+		if (Raspberry_guidata.dataCtrl.source < __ModSource_COUNT) Header = Raspberry_guidata.dataCtrl.source;
+		
+			RenderStartMenu(ControllerNames[Header], row);
 			TargetsList(0, row);
 			RenderEndMenu();
-		}
+		
 	}
 	else if (RenderMenu(Raspberry_guidata.GuiState))
 	{

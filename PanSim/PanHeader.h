@@ -372,8 +372,8 @@ enum ModSource_t {
 	__ModSource_COUNT
 };
 typedef struct {
-	ModSource_t source;
 	ModTarget_t target[16];
+	ModSource_t source;
 } ControlModulation_t;
 
 #define PRESET_NAME_LENGTH 16
@@ -407,8 +407,7 @@ typedef enum {
 	__GuiState_COUNT
 } GuiState_t;
 
-
-
+#pragma pack(8)
 typedef struct Raspberry_GuiData_t
 {
 	GuiState_t GuiState;
@@ -417,10 +416,10 @@ typedef struct Raspberry_GuiData_t
 
 	int selectTarget;
 
+	ControlModulation_t dataCtrl;
 	LfoModulation_t dataLfo;
 	AdsrModulation_t dataAdsr;
 	AdModulation_t dataAd;
-	ControlModulation_t dataCtrl;
 
 	uint32_t outputValues[256];
 	uint32_t switches[1];
@@ -434,7 +433,7 @@ typedef struct Raspberry_GuiData_t
 	int activebank;
 } Raspberry_GuiData_t;
 
-
+#pragma pack()
 
 inline GuiState_t ButtonToMenu(int buttonid)
 {

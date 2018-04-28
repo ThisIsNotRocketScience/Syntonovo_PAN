@@ -52,12 +52,28 @@ void InitPreset(PanPreset_t& preset)
 	preset.adsrmod[0].d = 0x200;
 	preset.adsrmod[0].s = 0x4000;
 	preset.adsrmod[0].r = 0x20;
+
+#define REGULARENV
+//#define ZDEPTHMOD 
+
+#ifdef REGULARENV
 	preset.adsrmod[0].target[0].param = Output_VCF1_LIN;
 	preset.adsrmod[0].target[0].depth = 0x4000;
 	preset.adsrmod[0].target[1].param = Output_VCF2_LIN;
 	preset.adsrmod[0].target[1].depth = 0x4000;
 	preset.adsrmod[0].target[2].param = Output_CLEANF_LIN;
 	preset.adsrmod[0].target[2].depth = 0x4000;
+#endif
+
+#ifdef ZDEPTHMOD
+	preset.ctrlmod[1].source = ModSource_t::Source_z;
+	preset.ctrlmod[1].target[0].param = Output_VCF1_LIN;
+	preset.ctrlmod[1].target[0].depth = 0x7fff;
+	preset.ctrlmod[1].target[1].param = Output_VCF2_LIN;
+	preset.ctrlmod[1].target[1].depth = 0x7fff;
+	preset.ctrlmod[1].target[2].param = Output_CLEANF_LIN;
+	preset.ctrlmod[1].target[2].depth = 0x7fff;
+#endif
 
 	preset.paramvalue[Output_VCO1_LEVEL] = 0xffff;
 
@@ -87,13 +103,13 @@ void InitPreset(PanPreset_t& preset)
 	
 	preset.paramvalue[Output_MASTER_LEVEL] = 0xFFFF;
 
-	preset.paramvalue[Output_X_DEADZONE] = 0x2000;
-	preset.paramvalue[Output_Y_DEADZONE] = 0x2000;
-	preset.paramvalue[Output_Z_DEADZONE] = 0x2000;
+	preset.paramvalue[Output_X_DEADZONE] = 0x200;
+	preset.paramvalue[Output_Y_DEADZONE] = 0x200;
+	preset.paramvalue[Output_Z_DEADZONE] = 0x200;
 
 	preset.paramvalue[Output_X_SCALE] = 0x2000;
 	preset.paramvalue[Output_Y_SCALE] = 0x2000;
-	preset.paramvalue[Output_Z_SCALE] = 0x2000;
+	preset.paramvalue[Output_Z_SCALE] = 0x6000;
 
 	preset.paramvalue[Output_ZPRIME_SPEED] = 0xa000;
 
@@ -305,6 +321,7 @@ void PresetChangeAdsrDepth(PanPreset_t& preset, int mod, int index, uint16_t val
 {
 	preset.adsrmod[mod].target[index].depth = value;
 	WriteWithSubKnob(preset.adsrmod[mod].target[index].param, Sub_adsr_depth, value);
+	Raspberry_EditAdsr(preset.adsrmod[mod]);
 }
 
 int PresetChangeAdsrAddParam(PanPreset_t& preset, int mod, int param, int depth)
@@ -321,6 +338,7 @@ int PresetChangeAdsrAddParam(PanPreset_t& preset, int mod, int param, int depth)
 	WriteWithSubKnob(param, Sub_adsr_s, preset.adsrmod[mod].s);
 	WriteWithSubKnob(param, Sub_adsr_r, preset.adsrmod[mod].r);
 	WriteWithSubKnob(param, Sub_adsr_depth, depth);
+	Raspberry_EditAdsr(preset.adsrmod[mod]);
 	return emptyindex;
 }
 
@@ -331,6 +349,8 @@ int PresetChangeAdsrRemoveParam(PanPreset_t& preset, int mod, int param)
 		if (preset.adsrmod[mod].target[i].param == param) {
 			preset.adsrmod[mod].target[i].param = 0;
 			WriteWithSubKnob(param, Sub_adsr_depth, 0);
+			Raspberry_EditAdsr(preset.adsrmod[mod]);
+
 			return i;
 		}
 	}
@@ -361,12 +381,15 @@ void PresetChangeAdParam(PanPreset_t& preset, int mod, SubParam_t subparam, uint
 		break;
 	}
 	}
+
+	Raspberry_EditAd(preset.admod[mod]);
 }
 
 void PresetChangeAdDepth(PanPreset_t& preset, int mod, int index, uint16_t value)
 {
 	preset.admod[mod].target[index].depth = value;
 	WriteWithSubKnob(preset.admod[mod].target[index].param, Sub_ad_depth, value);
+	Raspberry_EditAd(preset.admod[mod]);
 }
 
 int PresetChangeAdAddParam(PanPreset_t& preset, int mod, int param, int depth)
@@ -381,6 +404,7 @@ int PresetChangeAdAddParam(PanPreset_t& preset, int mod, int param, int depth)
 	WriteWithSubKnob(param, Sub_ad_a, preset.admod[mod].a);
 	WriteWithSubKnob(param, Sub_ad_d, preset.admod[mod].d);
 	WriteWithSubKnob(param, Sub_ad_depth, depth);
+	Raspberry_EditAd(preset.admod[mod]);
 	return emptyindex;
 }
 
@@ -391,9 +415,11 @@ int PresetChangeAdRemoveParam(PanPreset_t& preset, int mod, int param)
 		if (preset.admod[mod].target[i].param == param) {
 			preset.admod[mod].target[i].param = 0;
 			WriteWithSubKnob(param, Sub_ad_depth, 0);
+			Raspberry_EditAd(preset.admod[mod]);
 			return i;
 		}
 	}
+
 	return -1;
 }
 
@@ -421,12 +447,15 @@ void PresetChangeLfoParam(PanPreset_t& preset, int mod, SubParam_t subparam, uin
 		break;
 	}
 	}
+	Raspberry_EditLfo(preset.lfomod[mod]);
 }
 
 void PresetChangeLfoDepth(PanPreset_t& preset, int mod, int index, uint16_t value)
 {
 	preset.lfomod[mod].target[index].depth = value;
 	WriteWithSubKnob(preset.lfomod[mod].target[index].param, Sub_lfo_depth, value);
+	Raspberry_EditLfo(preset.lfomod[mod]);
+
 }
 
 int PresetChangeLfoAddParam(PanPreset_t& preset, int mod, int param, int depth)
@@ -441,6 +470,8 @@ int PresetChangeLfoAddParam(PanPreset_t& preset, int mod, int param, int depth)
 	WriteWithSubKnob(param, Sub_lfo_speed, preset.lfomod[mod].speed);
 	WriteWithSubKnob(param, Sub_lfo_shape, preset.lfomod[mod].shape);
 	WriteWithSubKnob(param, Sub_lfo_depth, depth);
+	Raspberry_EditLfo(preset.lfomod[mod]);
+
 	return emptyindex;
 }
 
@@ -451,6 +482,8 @@ int PresetChangeLfoRemoveParam(PanPreset_t& preset, int mod, int param)
 		if (preset.lfomod[mod].target[i].param == param) {
 			preset.lfomod[mod].target[i].param = 0;
 			WriteWithSubKnob(param, Sub_lfo_depth, 0);
+			Raspberry_EditLfo(preset.lfomod[mod]);
+
 			return i;
 		}
 	}
@@ -487,6 +520,8 @@ void WriteCtrlDepth(int param, int source, uint16_t depth)
 		WriteWithSubKnob(param, Sub_vel, depth);
 		break;
 	}
+
+
 }
 
 void PresetChangeCtrlSource(PanPreset_t& preset, int mod, ModSource_t value)
@@ -498,13 +533,18 @@ void PresetChangeCtrlSource(PanPreset_t& preset, int mod, ModSource_t value)
 		int param = preset.ctrlmod[mod].target[i].param;
 		WriteCtrlDepth(param, oldsource, 0);
 		WriteCtrlDepth(param, value, preset.ctrlmod[mod].target[i].depth);
+
+
 	}
+	Raspberry_EditCtrl(preset.ctrlmod[mod]);
 }
 
 void PresetChangeCtrlDepth(PanPreset_t& preset, int mod, int index, uint16_t value)
 {
 	preset.ctrlmod[mod].target[index].depth = value;
 	WriteCtrlDepth(preset.ctrlmod[mod].target[index].param, preset.ctrlmod[mod].source, value);
+	Raspberry_EditCtrl(preset.ctrlmod[mod]);
+
 }
 
 int PresetChangeCtrlAddParam(PanPreset_t& preset, int mod, int param, int depth)
@@ -517,6 +557,8 @@ int PresetChangeCtrlAddParam(PanPreset_t& preset, int mod, int param, int depth)
 	preset.ctrlmod[mod].target[emptyindex].param = param;
 	preset.ctrlmod[mod].target[emptyindex].depth = depth;
 	WriteCtrlDepth(param, preset.ctrlmod[mod].source, depth);
+	Raspberry_EditCtrl(preset.ctrlmod[mod]);
+
 	return emptyindex;
 }
 
@@ -527,6 +569,8 @@ int PresetChangeCtrlRemoveParam(PanPreset_t& preset, int mod, int param)
 		if (preset.ctrlmod[mod].target[i].param == param) {
 			preset.ctrlmod[mod].target[i].param = 0;
 			WriteCtrlDepth(param, preset.ctrlmod[mod].source, 0);
+			Raspberry_EditCtrl(preset.ctrlmod[mod]);
+
 			return i;
 		}
 	}
@@ -1531,25 +1575,77 @@ void Teensy_ModChangeDepth(int target, uint32_t value)
 	break;
 	}
 }
+void SetSwitch(SwitchEnum SwitchID);
+bool GetSwitch(SwitchEnum SwitchID);
+void ToggleSwitch(SwitchEnum SwitchID);
+void ClearSwitch(SwitchEnum SwitchID);
+
+void SetSwitch(SwitchEnum SwitchID)
+{
+	int switchset = ((int)SwitchID) / 32;
+	gPreset.switches[switchset] &= ~(1 << (SwitchID - switchset * 32));
+	gPreset.switches[switchset] |=  (1 << (SwitchID - switchset * 32));
+	Raspberry_guidata.switches[0] = gPreset.switches[0];
+	Raspberry_guidata.dirty = 1;
+	WriteSwitch(SwitchID, 1);
+}
+
+bool GetSwitch(SwitchEnum SwitchID)
+{
+	int switchset = ((int)SwitchID) / 32;
+	if ((gPreset.switches[switchset] >>  (SwitchID - switchset * 32))&1)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+void ToggleSwitch(SwitchEnum SwitchID)
+{
+	if (GetSwitch(SwitchID)) ClearSwitch(SwitchID); else SetSwitch(SwitchID);
+
+}
+
+void ClearSwitch(SwitchEnum SwitchID)
+{
+	int switchset = ((int)SwitchID) / 32;
+	gPreset.switches[switchset] &= ~(1 << (SwitchID - switchset*32));
+	Raspberry_guidata.switches[0] = gPreset.switches[0];
+	Raspberry_guidata.dirty = 1;
+	WriteSwitch(SwitchID, 0);
+
+}
 
 bool Teensy_ActivateMenu(int buttonid)
 {
 	GuiState_t menu = ButtonToMenu(buttonid);
 
 	if (menu != GuiState_Root) {
+		
+		if (menu == Raspberry_guidata.GuiState)
+		{
+			switch (menu)
+			{
+			case GuiState_Menu_EFFECTS:
+				if (buttonid == ledbutton_Cleanfeed_FX)
+				{
+					ToggleSwitch(Switch_SELEFFECT3);
+				}
+				if (buttonid == ledbutton_VCF1_FX)
+				{
+					ToggleSwitch(Switch_SELEFFECT1);
+				}
+				if (buttonid == ledbutton_VCF2_FX)
+				{
+					ToggleSwitch(Switch_SELEFFECT2);
+				}
+			}
+		}
 		Teensy_ToState(menu, 0);
 
-
-#define MENU(id, button, name) \
-		if (menu == GuiState_Menu_##id) {
-#define ENDMENU() \
-		}
-#define ENTRY(name,type,param) \
-		Raspberry_OutputChangeValue(param, gPreset.paramvalue[param]);
-#include "PanUiMap.h"
-#undef MENU
-#undef ENDMENU
-#undef ENTRY
 
 		return true;
 	}
@@ -1848,22 +1944,18 @@ bool RightDelta_MenuEntry_Percentage(const char *name, int param, int delta) { r
 bool RightDelta_MenuEntry_Pitch(const char *name, int param, int delta) { return RightDelta_MenuEntry_Value(name, param, delta); };
 bool RightDelta_MenuEntry_FilterMix(const char *name, int param, int delta) { return RightDelta_MenuEntry_Value(name, param, delta); };
 
-void Teensy_Switch(int switchid, int newval)
+void Teensy_Switch(SwitchEnum switchid, int newval)
 {
-	gPreset.switches[0] &= ~(1 << switchid);
-	gPreset.switches[0] |= newval << switchid;
-	Raspberry_guidata.switches[0] = gPreset.switches[0];
-	Raspberry_guidata.dirty = 1;
-	WriteSwitch(switchid, newval);
+	if (newval) SetSwitch(switchid); else ClearSwitch(switchid);
 }
 
 bool RightDelta_MenuEntry_EffectType(const char *name, int param, int delta)
 {
 	int current = DecodeCurrentEffect(Raspberry_guidata.switches[0]);
 	int neweffect = (current + delta + 8) % 8;
-	int a = (neweffect >> 0) & 1 ? 0 : 1;
-	int b = (neweffect >> 1) & 1 ? 0 : 1;
-	int c = (neweffect >> 2) & 1 ? 0 : 1;
+	int a = ((neweffect >> 0) & 1) ? 0 : 1;
+	int b = ((neweffect >> 1) & 1) ? 0 : 1;
+	int c = ((neweffect >> 2) & 1) ? 0 : 1;
 	int d = 1;
 	Teensy_Switch(Switch_SELEF1, a);
 	Teensy_Switch(Switch_SELEF2, b);
@@ -1877,7 +1969,7 @@ bool RightDelta_MenuEntry_EffectParam1(const char *name, int param, int delta) {
 bool RightDelta_MenuEntry_EffectParam2(const char *name, int param, int delta) { return RightDelta_MenuEntry_Value(name, param, delta); };
 bool RightDelta_MenuEntry_EffectParam3(const char *name, int param, int delta) { return RightDelta_MenuEntry_Value(name, param, delta); };
 
-bool RightDelta_MenuEntry_Toggle(const char *name, int param, int delta)
+bool RightDelta_MenuEntry_Toggle(const char *name, SwitchEnum param, int delta)
 {
 	if (delta < 0)
 	{
