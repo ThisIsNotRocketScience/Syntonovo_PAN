@@ -442,36 +442,45 @@ void Raspberry_RenderScreen()
 	if (Raspberry_guidata.GuiState == GuiState_LfoSelect)
 	{
 		RenderStartMenu("LFO assign");
-		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
-		ImGui::LabelText("Speed", "%d", Raspberry_guidata.dataLfo.speed);
-		ImGui::LabelText("Shape", "%d", Raspberry_guidata.dataLfo.shape);
-		ImGui::PopStyleVar();
-		TargetsList();
+
+		if (Raspberry_guidata.ModSelect != -1) {
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
+			ImGui::LabelText("Speed", "%d", Raspberry_guidata.dataLfo.speed);
+			ImGui::LabelText("Shape", "%d", Raspberry_guidata.dataLfo.shape);
+			ImGui::PopStyleVar();
+			TargetsList();
+		}
 		
 		RenderEndMenu();
 	}
 	else if (Raspberry_guidata.GuiState == GuiState_AdsrSelect)
 	{
 		RenderStartMenu("ADSR assign");
-		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
-		ImGui::LabelText("A", "%d", Raspberry_guidata.dataAdsr.a);
-		ImGui::LabelText("D", "%d", Raspberry_guidata.dataAdsr.d);
-		ImGui::LabelText("S", "%d", Raspberry_guidata.dataAdsr.s);
-		ImGui::LabelText("R", "%d", Raspberry_guidata.dataAdsr.r);
-		ImGui::PopStyleVar();
-		TargetsList();
+		
+		if (Raspberry_guidata.ModSelect != -1) {
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
+			ImGui::LabelText("A", "%d", Raspberry_guidata.dataAdsr.a);
+			ImGui::LabelText("D", "%d", Raspberry_guidata.dataAdsr.d);
+			ImGui::LabelText("S", "%d", Raspberry_guidata.dataAdsr.s);
+			ImGui::LabelText("R", "%d", Raspberry_guidata.dataAdsr.r);
+			ImGui::PopStyleVar();
+			TargetsList();
+		}
 		
 		RenderEndMenu();
 	}
 	else if (Raspberry_guidata.GuiState == GuiState_AdSelect)
 	{
 		RenderStartMenu("AD assign");
+		
+		if (Raspberry_guidata.ModSelect != -1) {
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
 			ImGui::LabelText("A", "%d", Raspberry_guidata.dataAd.a);
 			ImGui::LabelText("D", "%d", Raspberry_guidata.dataAd.d);
 			ImGui::PopStyleVar();
 			TargetsList();
-		
+		}
+
 		RenderEndMenu();
 	}
 	else if (Raspberry_guidata.GuiState == GuiState_CtrlSelect)

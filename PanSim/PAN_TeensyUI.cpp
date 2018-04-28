@@ -1053,6 +1053,7 @@ bool Teensy_FindModulation(int ledbutton)
 					Teensy_guidata.TargetSelect = j;
 					SelectMod();
 					UpdateTargets();
+					Raspberry_ToState(Teensy_guidata.GuiState, Teensy_guidata.ModSelect);
 					Raspberry_EditLfo(gPreset.lfomod[Teensy_guidata.ModSelect]);
 					Raspberry_SelectTarget(Teensy_guidata.TargetSelect);
 					return true;
@@ -1063,6 +1064,7 @@ bool Teensy_FindModulation(int ledbutton)
 		Teensy_guidata.ModSelect = firstEmpty;
 		Teensy_guidata.TargetSelect = -1;
 		SelectMod();
+		Raspberry_ToState(Teensy_guidata.GuiState, Teensy_guidata.ModSelect);
 		Raspberry_EditLfo(gPreset.lfomod[Teensy_guidata.ModSelect]);
 		UpdateTargets();
 	}
@@ -1079,6 +1081,7 @@ bool Teensy_FindModulation(int ledbutton)
 					Teensy_guidata.TargetSelect = j;
 					SelectMod();
 					UpdateTargets();
+					Raspberry_ToState(Teensy_guidata.GuiState, Teensy_guidata.ModSelect);
 					Raspberry_EditAdsr(gPreset.adsrmod[Teensy_guidata.ModSelect]);
 					Raspberry_SelectTarget(Teensy_guidata.TargetSelect);
 					return true;
@@ -1089,6 +1092,7 @@ bool Teensy_FindModulation(int ledbutton)
 		Teensy_guidata.ModSelect = firstEmpty;
 		Teensy_guidata.TargetSelect = -1;
 		SelectMod();
+		Raspberry_ToState(Teensy_guidata.GuiState, Teensy_guidata.ModSelect);
 		Raspberry_EditAdsr(gPreset.adsrmod[Teensy_guidata.ModSelect]);
 		UpdateTargets();
 	}
@@ -1105,6 +1109,7 @@ bool Teensy_FindModulation(int ledbutton)
 					Teensy_guidata.TargetSelect = j;
 					SelectMod();
 					UpdateTargets();
+					Raspberry_ToState(Teensy_guidata.GuiState, Teensy_guidata.ModSelect);
 					Raspberry_EditAd(gPreset.admod[Teensy_guidata.ModSelect]);
 					Raspberry_SelectTarget(Teensy_guidata.TargetSelect);
 					return true;
@@ -1115,6 +1120,7 @@ bool Teensy_FindModulation(int ledbutton)
 		Teensy_guidata.ModSelect = firstEmpty;
 		Teensy_guidata.TargetSelect = -1;
 		SelectMod();
+		Raspberry_ToState(Teensy_guidata.GuiState, Teensy_guidata.ModSelect);
 		Raspberry_EditAd(gPreset.admod[Teensy_guidata.ModSelect]);
 		UpdateTargets();
 	}
@@ -1260,7 +1266,8 @@ void Teensy_SelectTarget(int ledbutton)
 			target = PresetChangeLfoAddParam(gPreset, Teensy_guidata.ModSelect, param, 0);
 			if (target != -1) {
 				SyncLfo(gPreset, Teensy_guidata.ModSelect);
-				Raspberry_UpdateTarget(target, param, 0);
+				Raspberry_EditLfo(gPreset.lfomod[Teensy_guidata.ModSelect]);
+				//Raspberry_UpdateTarget(target, param, 0);
 				Buttons[ledbutton].value = true;
 				Teensy_guidata.lastAddedLedButton = ledbutton;
 				Teensy_guidata.lastAddedTarget = target;
@@ -1280,7 +1287,8 @@ void Teensy_SelectTarget(int ledbutton)
 			Teensy_UnmapPrevious(param);
 			target = PresetChangeAdsrAddParam(gPreset, Teensy_guidata.ModSelect, param, 0);
 			if (target != -1) {
-				Raspberry_UpdateTarget(target, param, 0);
+				Raspberry_EditAdsr(gPreset.adsrmod[Teensy_guidata.ModSelect]);
+				//Raspberry_UpdateTarget(target, param, 0);
 				Buttons[ledbutton].value = true;
 				Teensy_guidata.lastAddedLedButton = ledbutton;
 				Teensy_guidata.lastAddedTarget = target;
@@ -1300,7 +1308,8 @@ void Teensy_SelectTarget(int ledbutton)
 			Teensy_UnmapPrevious(param);
 			target = PresetChangeAdAddParam(gPreset, Teensy_guidata.ModSelect, param, 0);
 			if (target != -1) {
-				Raspberry_UpdateTarget(target, param, 0);
+				Raspberry_EditAd(gPreset.admod[Teensy_guidata.ModSelect]);
+				//Raspberry_UpdateTarget(target, param, 0);
 				Buttons[ledbutton].value = true;
 				Teensy_guidata.lastAddedLedButton = ledbutton;
 				Teensy_guidata.lastAddedTarget = target;
@@ -1320,7 +1329,8 @@ void Teensy_SelectTarget(int ledbutton)
 			Teensy_UnmapPrevious(param);
 			target = PresetChangeCtrlAddParam(gPreset, Teensy_guidata.ModSelect, param, 0);
 			if (target != -1) {
-				Raspberry_UpdateTarget(target, param, 0);
+				Raspberry_EditCtrl(gPreset.ctrlmod[Teensy_guidata.ModSelect]);
+				//Raspberry_UpdateTarget(target, param, 0);
 				Buttons[ledbutton].value = true;
 				Teensy_guidata.lastAddedLedButton = ledbutton;
 				Teensy_guidata.lastAddedTarget = target;
@@ -1420,26 +1430,26 @@ void Teensy_ModChangeDepth(int target, uint32_t value)
 	{
 	case GuiState_LfoSelect:
 	{
-		Raspberry_UpdateTarget(target, gPreset.lfomod[Teensy_guidata.ModSelect].target[target].param, value);
 		PresetChangeLfoDepth(gPreset, Teensy_guidata.ModSelect, target, value);
+		Raspberry_UpdateTarget(target, gPreset.lfomod[Teensy_guidata.ModSelect].target[target].param, value);
 	}
 	break;
 	case GuiState_AdsrSelect:
 	{
-		Raspberry_UpdateTarget(target, gPreset.adsrmod[Teensy_guidata.ModSelect].target[target].param, value);
 		PresetChangeAdsrDepth(gPreset, Teensy_guidata.ModSelect, target, value);
+		Raspberry_UpdateTarget(target, gPreset.adsrmod[Teensy_guidata.ModSelect].target[target].param, value);
 	}
 	break;
 	case GuiState_AdSelect:
 	{
-		Raspberry_UpdateTarget(target, gPreset.admod[Teensy_guidata.ModSelect].target[target].param, value);
 		PresetChangeAdDepth(gPreset, Teensy_guidata.ModSelect, target, value);
+		Raspberry_UpdateTarget(target, gPreset.admod[Teensy_guidata.ModSelect].target[target].param, value);
 	}
 	break;
 	case GuiState_CtrlSelect:
 	{
-		Raspberry_UpdateTarget(target, gPreset.ctrlmod[Teensy_guidata.ModSelect].target[target].param, value);
 		PresetChangeCtrlDepth(gPreset, Teensy_guidata.ModSelect, target, value);
+		Raspberry_UpdateTarget(target, gPreset.ctrlmod[Teensy_guidata.ModSelect].target[target].param, value);
 	}
 	break;
 	}
