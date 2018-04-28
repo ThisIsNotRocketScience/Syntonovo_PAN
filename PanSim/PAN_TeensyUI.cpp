@@ -32,7 +32,6 @@ void InitPreset(PanPreset_t& preset)
 	preset.Name[3] = 't';
 	preset.Name[4] = '\0';
 
-	
 	preset.ctrlmod[0].source = ModSource_t::Source_note;
 	preset.ctrlmod[0].target[0].param = Output_VCO1_PITCH;
 	preset.ctrlmod[0].target[0].depth = 0x4000;
@@ -595,7 +594,7 @@ void UpdateMenuButtons()
 {
 #define MENU(id, button, name) \
 	if (Teensy_guidata.GuiState == GuiState_Menu_##id) { \
-		Buttons[button].value = true;
+		Buttons[button].value = true;Buttons[ledbutton_CANCEL_LEFT].value = true;;Buttons[ledbutton_CANCEL_RIGHT].value = true;
 #define ENDMENU() \
 		return; \
 	}

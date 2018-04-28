@@ -188,20 +188,20 @@ void BK(int base, int mkbkid, int val)
 
 int ConvertVelocity(int i)
 {
-  if (i<50) return 127;
-  if (i>2000) return 1;
-  
-  return 127-(((i-50)*127)/(2000-50));
+  if (i < 50) return 127;
+  if (i > 2000) return 1;
+
+  return 127 - (((i - 50) * 127) / (2000 - 50));
 }
 void DoNoteOn(int n, int v)
 {
-  note_on(n,v);
+  note_on(n, v);
 
 }
 
 void DoNoteOff(int n)
 {
-  note_off(n,127);
+  note_off(n, 127);
 }
 
 int ScanSetup = 0;
@@ -209,29 +209,29 @@ void ScanKeyboard()
 {
 
   NoteT++;
-    int offs = ScanSetup * 6;
-    for (int z = 0; z < 6; z++) StateNewStage[z + offs] = STATE_IDLE;
+  int offs = ScanSetup * 6;
+  for (int z = 0; z < 6; z++) StateNewStage[z + offs] = STATE_IDLE;
 
-    MK(offs, 0, digitalReadFast(KeyboardMKBK[0]));
-    BK(offs, 0, digitalReadFast(KeyboardMKBK[1]));
-    MK(offs, 1, digitalReadFast(KeyboardMKBK[2]));
-    BK(offs, 1, digitalReadFast(KeyboardMKBK[3]));
-    MK(offs, 2, digitalReadFast(KeyboardMKBK[4]));
-    BK(offs, 2, digitalReadFast(KeyboardMKBK[5]));
-    MK(offs, 3, digitalReadFast(KeyboardMKBK[6]));
-    BK(offs, 3, digitalReadFast(KeyboardMKBK[7]));
-    MK(offs, 4, digitalReadFast(KeyboardMKBK[8]));
-    BK(offs, 4, digitalReadFast(KeyboardMKBK[9]));
-    MK(offs, 5, digitalReadFast(KeyboardMKBK[10]));
-    BK(offs, 5, digitalReadFast(KeyboardMKBK[11]));
+  MK(offs, 0, digitalReadFast(KeyboardMKBK[0]));
+  BK(offs, 0, digitalReadFast(KeyboardMKBK[1]));
+  MK(offs, 1, digitalReadFast(KeyboardMKBK[2]));
+  BK(offs, 1, digitalReadFast(KeyboardMKBK[3]));
+  MK(offs, 2, digitalReadFast(KeyboardMKBK[4]));
+  BK(offs, 2, digitalReadFast(KeyboardMKBK[5]));
+  MK(offs, 3, digitalReadFast(KeyboardMKBK[6]));
+  BK(offs, 3, digitalReadFast(KeyboardMKBK[7]));
+  MK(offs, 4, digitalReadFast(KeyboardMKBK[8]));
+  BK(offs, 4, digitalReadFast(KeyboardMKBK[9]));
+  MK(offs, 5, digitalReadFast(KeyboardMKBK[10]));
+  BK(offs, 5, digitalReadFast(KeyboardMKBK[11]));
 
-    for (int z = 0; z < 6; z++) StateNew[z + offs] = StateNewStage[z + offs];
+  for (int z = 0; z < 6; z++) StateNew[z + offs] = StateNewStage[z + offs];
 
-    digitalWriteFast(KeyboardSink[ScanSetup], LOW);
-    ScanSetup = (ScanSetup + 1)%8;
-    digitalWriteFast(KeyboardSink[ScanSetup], HIGH);
+  digitalWriteFast(KeyboardSink[ScanSetup], LOW);
+  ScanSetup = (ScanSetup + 1) % 8;
+  digitalWriteFast(KeyboardSink[ScanSetup], HIGH);
 
-  
+
 
 }
 
@@ -241,9 +241,9 @@ void UpdateKeyboard()
   {
     if (State[i] != StateNew[i])
     {
-      int sink = (i/6);
-      int scan = (i%6);
-      int Note = scan*8 + sink;
+      int sink = (i / 6);
+      int scan = (i % 6);
+      int Note = scan * 8 + sink;
       switch (StateNew[i])
       {
         case STATE_IDLE:
@@ -262,7 +262,7 @@ void UpdateKeyboard()
 
 void KeyboardSetup()
 {
-  
+
   for (int i = 0 ; i < 12; i++)
   {
     KeyboardMKBK[i] = KB[KeyboardMKBK[i]];
@@ -281,8 +281,9 @@ void KeyboardSetup()
 
 void setup()
 {
- KeyboardSetup();
- 
+
+  KeyboardSetup();
+
   pinMode(ENC1A, INPUT_PULLUP);
   pinMode(ENC1B, INPUT_PULLUP);
   pinMode(ENC2A, INPUT_PULLUP);
@@ -310,7 +311,7 @@ void setup()
   {
     pinMode(POTPIN[i], OUTPUT);
   }
-  
+
   Serial4.begin(1400000);
   delay(2000);
   Teensy_Reset();
@@ -320,6 +321,7 @@ void setup()
   }
 
   Teensy_InitPreset();
+  Teensy_InitSD();
 
   Serial.begin(1000000);
 
@@ -424,9 +426,9 @@ unsigned char buffer[10] =
 
 void SendButton(unsigned char idx, unsigned char value)
 {
-  #ifndef SIMLINK
+#ifndef SIMLINK
   return;
-  #endif
+#endif
 
   uint32_t D = (idx << 8) + value;
   D = ConvertDat(D);
@@ -452,9 +454,9 @@ void SendCommand(unsigned char command, uint32_t data)
 
 void SendEncoder(int encoder, int delta)
 {
-  #ifndef SIMLINK
+#ifndef SIMLINK
   return;
-  #endif
+#endif
 
   if (delta < 0) delta = 2;
   SendCommand(0xe0, (encoder << 8) + delta);
@@ -480,9 +482,9 @@ void SendRaspberryState()
 
 void SendPot(unsigned char idx, uint16_t value)
 {
-    #ifndef SIMLINK
+#ifndef SIMLINK
   return;
-  #endif
+#endif
 
   uint32_t D = (idx << 16) + value;
   SendCommand(0x82, D);
@@ -509,19 +511,19 @@ void ScanButtons()
         Buttons[N].value = ((HWButtons[i] == 0) ? true : false);
         Teensy_ButtonPressed(Buttons[N].id, Buttons[N].value);
       }
-    
+
       LastButtons[i] = HWButtons[i];
       SendButton(i, HWButtons[i]);
     }
-     //LEDTarget[Buttons[i].fpid] = Buttons[i].value?255:0;
+    //LEDTarget[Buttons[i].fpid] = Buttons[i].value?255:0;
   }
   for (int i = 0; i < __LEDBUTTON_COUNT; i++)
-    {
-LEDTarget[Buttons[i].fpid] = Buttons[i].value ? 255 : 0;
-        
-      
-    }
-    
+  {
+    LEDTarget[Buttons[i].fpid] = Buttons[i].value ? 255 : 0;
+
+
+  }
+
 
 }
 
@@ -560,10 +562,10 @@ void DoCommand(unsigned char comm, uint32_t data)
       {
         uint16_t idx = data >> 16;
         uint16_t val = data & 0xffff;
-        #ifndef SIMLINK
+#ifndef SIMLINK
         return;
-        #endif
-      LEDTarget[idx] = val ;
+#endif
+        LEDTarget[idx] = val ;
       }
       break;
   }
@@ -644,7 +646,9 @@ void loop()
   {
     LEDs[i] = LEDTarget[i];
   }
-  if (Raspberry_guidata.dirty)
+
+  static int lastsend = millis();
+  if (Raspberry_guidata.dirty && millis() - lastsend > 20)
   {
     Raspberry_guidata.dirty = false;
     SendRaspberryState();
@@ -655,4 +659,72 @@ void loop()
   SendLeds();
 }
 
+char presetname[30];
+void Teensy_BuildPresetName(int bank, int slot)
+{
+  sprintf(presetname, "pan%d_%d.prs", bank, slot);
+}
+
+
+#include <SD.h>
+#include <SPI.h>
+
+void Teensy_LoadSDPreset(int bank, int slot)
+{
+
+  Teensy_BuildPresetName(bank, slot);
+  if (!SD.begin(BUILTIN_SDCARD))
+  {
+    return;
+  }
+  File myFile = SD.open(presetname, FILE_READ);
+
+  if (myFile) {
+    PanPreset_t p;
+    unsigned char *b = (unsigned char *)&p;
+    myFile.read(b, sizeof(PanPreset_t));
+    myFile.close();
+
+    LoadPreset(p);
+
+  }
+
+}
+
+void Teensy_InitSD()
+{
+  for (int i = 0; i < 8; i++)
+  {
+    for (int j = 0; j < 8; j++)
+    {
+      Teensy_BuildPresetName(i, j);
+      if (!SD.begin(BUILTIN_SDCARD))
+      {
+        return;
+      }
+      if (SD.exists(presetname) == false)
+      {
+          Teensy_SaveSDPreset(i, j);
+      }
+    }
+  }
+
+}
+
+void Teensy_SaveSDPreset(int bank, int slot)
+{
+  Teensy_BuildPresetName(bank, slot);
+  if (!SD.begin(BUILTIN_SDCARD))
+  {
+    return;
+  }
+  File myFile = SD.open(presetname, FILE_WRITE);
+
+  if (myFile) {
+    unsigned char *b = (unsigned char *)&gPreset;
+    myFile.seek(0);
+    myFile.write(b, sizeof(PanPreset_t));
+    myFile.close();
+  }
+}
 
