@@ -605,6 +605,10 @@ void UpdateMenuButtons()
 
 void SetLedButton(int id, int mode)
 {
+	if (id < 0 || id >= __LEDBUTTON_COUNT)
+	{
+		return;
+	}
 	if (mode > 0)
 	{
 		Buttons[id].value = true;
@@ -1817,12 +1821,13 @@ void Teensy_EncoderPress(int id)
 
 bool RightDelta_MenuEntry_Value(const char *name, int param, int delta)
 {
-	int32_t val = gPreset.paramvalue[param] + delta * 100;
+	int OrigVal = gPreset.paramvalue[param];
+	int32_t val = OrigVal+ delta * 1000;
 	if (val < 0) val = 0;
 	if (val > 0xffff) val = 0xffff;
 
-	Raspberry_OutputChangeValue(param, value);
-	PresetChangeValue(gPreset, param, value);
+	Raspberry_OutputChangeValue(param, val);
+	PresetChangeValue(gPreset, param, val);
 
 	return true;
 }

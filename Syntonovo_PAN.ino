@@ -1,4 +1,11 @@
 //#define SIMLINK
+//#define SILENTMODE
+
+#ifdef SILENTMODE
+#ifdef  SIMLINK
+#undef SIMLINK
+#endif
+#endif
 #include "PanSim/PAN_TeensyUI.cpp"
 #include "PanSim/PanStructs.cpp"
 #include "PanSim/PAN_Raspberry_Interface.cpp"
@@ -246,7 +253,9 @@ void DoNoteOff(int n)
   note_off(n, 127);
 }
 
+int ScanSetupGuard[10];
 int ScanSetup = 0;
+int ScanSetupGuard2[10];
 void ScanKeyboard()
 {
 
@@ -271,6 +280,8 @@ void ScanKeyboard()
 
   digitalWriteFast(KeyboardSink[ScanSetup], LOW);
   ScanSetup = (ScanSetup + 1) % 8;
+//  Serial.println();
+//  Serial.println(ScanSetup);
   digitalWriteFast(KeyboardSink[ScanSetup], HIGH);
 
 
@@ -435,6 +446,18 @@ void ScanPots()
     {
       if ((i & (1 << j)) > 0) digitalWrite(POTPIN[j], HIGH); else digitalWrite(POTPIN[j], LOW);
     }
+     __asm__("nop\n\t"); 
+
+ __asm__("nop\n\t"); 
+
+ __asm__("nop\n\t"); 
+
+ __asm__("nop\n\t"); 
+
+ __asm__("nop\n\t"); 
+
+ __asm__("nop\n\t"); 
+
     Pots[i] = analogRead(POTSADC);
   }
 }
@@ -486,6 +509,10 @@ void SendButton(unsigned char idx, unsigned char value)
 
 void SendCommand(unsigned char command, uint32_t data)
 {
+  #ifdef SILENTMODE
+  return;
+  #endif
+  
   uint8_t buffer[10];
   uint32_t D = ConvertDat(data);
   buffer[0] = command;
@@ -723,7 +750,7 @@ void Teensy_BuildPresetName(int bank, int slot)
 
 void Teensy_LoadSDPreset(int bank, int slot)
 {
-
+  
   Teensy_BuildPresetName(bank, slot);
   if (!SD.begin(BUILTIN_SDCARD))
   {

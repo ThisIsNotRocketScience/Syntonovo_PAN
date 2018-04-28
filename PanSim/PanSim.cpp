@@ -822,6 +822,7 @@ int main(int argc, char** argv)
 
 	if (UISerial.IsOpen() == false)
 	{
+		parameters = true;
 		Teensy_Reset();
 		Teensy_InitPreset();
 	}
