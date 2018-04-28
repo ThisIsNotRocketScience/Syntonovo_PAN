@@ -405,7 +405,7 @@ typedef enum {
 typedef struct Raspberry_GuiData_t
 {
 	GuiState_t GuiState;
-	GuiState_t LastGuiState;
+	
 	int ModSelect;
 
 	int selectTarget;

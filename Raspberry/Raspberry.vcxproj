@@ -154,6 +154,7 @@
     <ClCompile Include="Combine.cpp" />
     <ClCompile Include="imgui_es2.cpp" />
     <ClCompile Include="Raspberry.cpp" />
+    <ClCompile Include="SerialSearcher.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui_impl_es2.h" />

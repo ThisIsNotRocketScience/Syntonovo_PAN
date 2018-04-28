@@ -27,6 +27,9 @@
     <ClCompile Include="..\libs\gl3w-master\src\gl3w.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SerialSearcher.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui_impl_es2.h">

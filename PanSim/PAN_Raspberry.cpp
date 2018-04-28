@@ -405,6 +405,9 @@ void RenderBootScreen()
 		ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(pos.x, pos.y), ImVec2(pos.x + 480, pos.y + 800), res.BGColor);
 	}
 }
+
+GuiState_t LastGuiState;
+
 void Raspberry_RenderScreen()
 {
 	if (BootTime < 10)
@@ -413,13 +416,13 @@ void Raspberry_RenderScreen()
 		RenderBootScreen();
 		return;
 	}
-	if (Raspberry_guidata.GuiState == Raspberry_guidata.LastGuiState)
+	if (Raspberry_guidata.GuiState == LastGuiState)
 	{
 		res.PageTime++;
 	}
 	else
 	{
-		Raspberry_guidata.LastGuiState = Raspberry_guidata.GuiState;
+		LastGuiState = Raspberry_guidata.GuiState;
 		res.PageTime=0;
 	}
 

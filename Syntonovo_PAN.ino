@@ -1,4 +1,4 @@
-
+//#define SIMLINK
 #include "PanSim/PAN_TeensyUI.cpp"
 #include "PanSim/PanStructs.cpp"
 #include "PanSim/PAN_Raspberry_Interface.cpp"
@@ -131,7 +131,8 @@ unsigned int ButtonTarget[BUTTONCOUNT];
 IntervalTimer KeyboardTimer;
 
 int KB[20] = {0, 1, 2, 3, 4, 5, 6, 19, 7, 18, 8, 17, 9, 16, 10, 15, 11, 14, 12, 13};
-int KeyboardMKBK[12] = {0, 2, 4, 6, 8, 10, 12, 14, 16, 17, 19, 18};
+int KeyboardMKBK[12] = {0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 19, 17};
+
 int KeyboardSink[8] =  {1, 3, 5, 7, 9, 11, 13, 15};
 
 
@@ -423,6 +424,9 @@ unsigned char buffer[10] =
 
 void SendButton(unsigned char idx, unsigned char value)
 {
+  #ifndef SIMLINK
+  return;
+  #endif
 
   uint32_t D = (idx << 8) + value;
   D = ConvertDat(D);
@@ -448,6 +452,10 @@ void SendCommand(unsigned char command, uint32_t data)
 
 void SendEncoder(int encoder, int delta)
 {
+  #ifndef SIMLINK
+  return;
+  #endif
+
   if (delta < 0) delta = 2;
   SendCommand(0xe0, (encoder << 8) + delta);
 }
@@ -472,6 +480,10 @@ void SendRaspberryState()
 
 void SendPot(unsigned char idx, uint16_t value)
 {
+    #ifndef SIMLINK
+  return;
+  #endif
+
   uint32_t D = (idx << 16) + value;
   SendCommand(0x82, D);
 }
@@ -497,12 +509,19 @@ void ScanButtons()
         Buttons[N].value = ((HWButtons[i] == 0) ? true : false);
         Teensy_ButtonPressed(Buttons[N].id, Buttons[N].value);
       }
-
+    
       LastButtons[i] = HWButtons[i];
       SendButton(i, HWButtons[i]);
     }
+     //LEDTarget[Buttons[i].fpid] = Buttons[i].value?255:0;
   }
-
+  for (int i = 0; i < __LEDBUTTON_COUNT; i++)
+    {
+LEDTarget[Buttons[i].fpid] = Buttons[i].value ? 255 : 0;
+        
+      
+    }
+    
 
 }
 
@@ -541,9 +560,10 @@ void DoCommand(unsigned char comm, uint32_t data)
       {
         uint16_t idx = data >> 16;
         uint16_t val = data & 0xffff;
-        LEDTarget[idx] = val ;
-        SendCommand(0x90, idx);
-        SendCommand(0x91, val);
+        #ifndef SIMLINK
+        return;
+        #endif
+      LEDTarget[idx] = val ;
       }
       break;
   }

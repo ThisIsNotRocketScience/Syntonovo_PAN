@@ -628,7 +628,7 @@ void DoCommand(unsigned char comm, uint32_t data)
 	case 0x91:
 		printf("0x91: %d\n", data);
 		break;
-#ifdef SIMULATEINCOMINGSERIAL
+//#ifdef SIMULATEINCOMINGSERIAL
 	case 0xd0:
 	{
 		//printf("Incoming Guistate\n");
@@ -658,7 +658,7 @@ void DoCommand(unsigned char comm, uint32_t data)
 	{
 		memcpy(&Raspberry_guidata, &incoming, sizeof(Raspberry_GuiData_t));
 	}break;
-#endif
+//#endif
 
 	}
 }

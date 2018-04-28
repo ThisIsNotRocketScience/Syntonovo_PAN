@@ -126,6 +126,89 @@ const unsigned int gTextureSize = 1024;
 GLuint       m_hTexture[2];  // Texture handles
 GLuint       m_hFBO[2];      // Handles for Frame Buffer Objects
 
+int SerialStatus = 0;
+int SerialCounter = 0;
+uint32_t SerialData = 0;
+Raspberry_GuiData_t incoming;
+unsigned char *RaspberryPointer;
+uint32_t RaspberryOffset = sizeof(Raspberry_GuiData_t);
+void AddIncomingByte(unsigned char b)
+{
+	if (RaspberryOffset < sizeof(Raspberry_GuiData_t))
+	{
+		RaspberryPointer[RaspberryOffset] = b;
+		RaspberryOffset++;
+		if (RaspberryOffset == sizeof(Raspberry_GuiData_t))
+		{
+
+		}
+	}
+}
+void DoCommand(unsigned char comm, uint32_t data)
+{
+	switch (comm)
+	{
+	case 0xd0:
+	{
+		//printf("Incoming Guistate\n");
+		RaspberryOffset = 0;
+		RaspberryPointer = (unsigned char *)&incoming;
+		unsigned char b1 = data & 255;
+		unsigned char b2 = (data >> 8) & 255;
+		unsigned char b3 = (data >> 16) & 255;
+		AddIncomingByte(b1);
+		AddIncomingByte(b2);
+		AddIncomingByte(b3);
+
+	}
+	break;
+	case 0xd1:
+	{
+		//printf("GuistatePacket\n");
+		unsigned char b1 = data & 255;
+		unsigned char b2 = (data >> 8) & 255;
+		unsigned char b3 = (data >> 16) & 255;
+		AddIncomingByte(b1);
+		AddIncomingByte(b2);
+		AddIncomingByte(b3);
+	}
+	break;
+	case 0xd2:
+	{
+		memcpy(&Raspberry_guidata, &incoming, sizeof(Raspberry_GuiData_t));
+	}break;
+	//#endif
+
+	}
+}
+
+int ByteReceived(unsigned char inb)
+{
+	if ((inb & 0x80) == 0x80)
+	{
+		SerialStatus = inb;
+		SerialCounter = 4;
+		SerialData = 0;
+		return 1;
+	}
+	else
+	{
+		if (SerialCounter > 0)
+		{
+			SerialCounter--;
+			SerialData += inb << ((3 - SerialCounter) * 7);
+			if (SerialCounter == 0)
+			{
+				DoCommand(SerialStatus, SerialData);
+			}
+			return 1;
+		}
+
+	}
+	return 0;
+}
+
+
 void MakeFrameBuffer()
 {
 	glGenTextures(2, m_hTexture);
