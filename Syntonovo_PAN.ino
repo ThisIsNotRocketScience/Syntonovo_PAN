@@ -32,8 +32,6 @@ void WriteWithSubKnob(int id, int subid, uint32_t value)
   Serial4.write(b, 4);
 }
 
-
-
 typedef struct setpara_t
 {
   uint16_t paramid;
@@ -43,13 +41,10 @@ typedef struct setpara_t
 void doset(struct setpara_t& para)
 {
   char b[4];
-
-  //b[0] = 1;
   b[0] = (para.paramid >> 0) & 0xFF;
   b[1] = (para.paramid >> 8) & 0xFF;
   b[2] = (para.value >> 8) & 0xFF;
   b[3] = (para.value >> 0) & 0xFF;
-
   Serial4.write(b, 4);
 }
 
@@ -562,6 +557,93 @@ void SendPot(unsigned char idx, uint16_t value)
   SendCommand(0x82, D);
 }
 
+struct denoise_state_t
+{
+  int counter;
+  int down;
+  unsigned char pressed:4;
+  unsigned char released:4;
+  int longpressed;
+  int lastcounter;
+};
+
+#define LONGPRESSCYCLES 1000
+
+int pressed(struct denoise_state_t *state)
+{
+  if (state->pressed == 1)
+  {
+    state->pressed = 0;
+    return 1;
+  }
+  return 0;
+}
+
+int released(struct denoise_state_t *state)
+{
+  if (state->released== 1)
+  {
+    state->released = 0;
+    return 1;
+  }
+  return 0;
+}
+
+
+void denoise(int sw_down, struct denoise_state_t *state)
+{
+  if (sw_down)
+  {
+    state->counter++;
+  }
+  else
+  {
+    state->counter--;
+  }
+
+//state->pressed = 0;
+//state->released = 0;
+
+  if (state->counter < 2)
+  {
+    if (state->lastcounter == 2)
+    {
+      state->pressed = 1;
+    }
+    state->counter = 1;
+    state->down = 1;
+  }
+  else
+  {
+    if (state->counter > 30)
+    {
+      if (state->lastcounter == 30)
+      {
+        state->released = 1;
+      }
+      state->counter = 31;
+      state->down = 0;
+    }
+  }
+
+  if (state->down > 0)
+  {
+    if (state->longpressed>-1) state->longpressed++;
+  }
+  else
+  {
+    state->longpressed = 0; 
+  }
+
+  state->lastcounter = state->counter;
+  
+  if (state->longpressed >= LONGPRESSCYCLES)
+  {
+    state->longpressed = LONGPRESSCYCLES; 
+  }
+}
+
+denoise_state_t Denoise[BUTTONCOUNT];
 int blinkcount;
 int blink;
 void ScanButtons()
@@ -573,22 +655,23 @@ void ScanButtons()
 
   for (int i = 0 ; i < BUTTONCOUNT; i++)
   {
-    HWButtons[i] =   ( digitalRead(BUTTONDAT) == HIGH) ? 255 : 0;
+    denoise(digitalRead(BUTTONDAT)?1:0,&Denoise[i]);
+    if (pressed(&Denoise[i]))
+    {
+      int N = Teensy_FindButtonIDX(i);
+      if (N>-1) Teensy_ButtonPressed(Buttons[N].id, 1);
+    }
+    else
+    {
+      if (released(&Denoise[i]))
+      {
+      int N = Teensy_FindButtonIDX(i);
+      //if (N>-1)   Teensy_ButtonPressed(Buttons[N].id, 0);
+      };
+    }
 
     digitalWrite(BUTTONCLK, LOW);
     digitalWrite(BUTTONCLK, HIGH);
-    if (HWButtons[i] != LastButtons[i])
-    {
-      int N = Teensy_FindButtonIDX(i);
-      if (N > -1)
-      {
-        Buttons[N].value = ((HWButtons[i] == 0) ? true : false);
-        Teensy_ButtonPressed(Buttons[N].id, Buttons[N].value);
-      }
-
-      LastButtons[i] = HWButtons[i];
-      SendButton(i, HWButtons[i]);
-    }
     //LEDTarget[Buttons[i].fpid] = Buttons[i].value?255:0;
   }
   for (int i = 0; i < __LEDBUTTON_COUNT; i++)

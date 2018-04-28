@@ -84,6 +84,8 @@ void InitPreset(PanPreset_t& preset)
 	preset.paramvalue[Output_VCO5_PITCH] = 0x8000;
 	preset.paramvalue[Output_VCO6_PITCH] = 0x8000;
 	preset.paramvalue[Output_VCO7_PITCH] = 0x8000;
+	
+	preset.paramvalue[Output_MASTER_LEVEL] = 0xFFFF;
 
 	preset.paramvalue[Output_MASTER_PITCH] = 0x8000;
 
