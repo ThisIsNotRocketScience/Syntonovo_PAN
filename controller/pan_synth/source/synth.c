@@ -30,6 +30,11 @@ int doing_reset = 0;
 struct hp_state_t zprime_hp;
 int32_t zprime_value;
 
+uint32_t porta_timer_count = 0;
+int32_t porta_time;
+int32_t porta_divider = 256;
+int32_t porta_timer_shift = 14;
+
 const int KEYBOARD_X = 0;
 const int KEYBOARD_Y = 1;
 const int KEYBOARD_Z = 2;
@@ -150,6 +155,19 @@ static int32_t bipolar_signed_scale(int32_t value, int16_t scale)
 	return r;
 }
 
+
+void update_porta_time()
+{
+	porta_time = (abs((int32_t)(synth_param[NOTE].value - synth_param[NOTE].last)) * 256) / porta_divider;
+	porta_timer_shift = 14;
+	int div = porta_divider;
+	while (porta_time < 1 && div > 4) {
+		porta_timer_shift++;
+		div >>= 1;
+		porta_time = (abs((int32_t)(synth_param[NOTE].value - synth_param[NOTE].last)) * 256) / div;
+	}
+}
+
 uint16_t synth_mapping_note()
 {
 	return synth_param[NOTE].value >> 8;
@@ -264,6 +282,7 @@ static void update_note()
 
 	int note_change = (notestack_first().note << 8) != synth_param[NOTE].value;
 	synth_param[NOTE].value = notestack_first().note << 8;
+	update_porta_time();
 	virt_NOTE();
 
 	if (synth_param[GATE].value != 0xffff) {
@@ -918,7 +937,41 @@ void virt_EXT_LEVEL()
 void virt_NOTE()
 {
 	//synth_param[NOTE].last = note_to_voltage(synth_param[NOTE].value);
-	synth_param[NOTE].last = synth_param[NOTE].value;
+	//synth_param[NOTE].last = synth_param[NOTE].value;
+
+	uint32_t timer_count = timer_value_nonisr();
+	uint32_t timer_delta = timer_count - porta_timer_count;
+
+	timer_delta >>= porta_timer_shift;
+	if (timer_delta == 0) return;
+	porta_timer_count = timer_count;
+	if (timer_delta > 100) timer_delta = 100;
+
+	int32_t porta_time_scaled = porta_time * (int32_t)timer_delta;
+
+	int32_t newvalue = synth_param[NOTE].last;
+
+	if (newvalue < synth_param[NOTE].value) {
+		newvalue += porta_time_scaled;
+		if (newvalue > synth_param[NOTE].value) {
+			newvalue = synth_param[NOTE].value;
+		}
+	}
+	else if (newvalue > synth_param[NOTE].value) {
+		newvalue -= porta_time_scaled;
+		if (newvalue < synth_param[NOTE].value) {
+			newvalue = synth_param[NOTE].value;
+		}
+	}
+	synth_param[NOTE].last = newvalue;
+}
+
+void virt_PORTAMENTO_TIME()
+{
+	if (synth_param[PORTAMENTO_TIME].value != synth_param[PORTAMENTO_TIME].last) {
+		porta_divider = 256 + ((int32_t)synth_param[PORTAMENTO_TIME].value * 8);
+		synth_param[PORTAMENTO_TIME].value = synth_param[PORTAMENTO_TIME].last;
+	}
 }
 
 void virt_MASTER_LEVEL()
