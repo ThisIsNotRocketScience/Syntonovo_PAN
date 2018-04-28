@@ -11,6 +11,7 @@
 void shiftctrl_init();
 void shiftctrl_set(int flag);
 void shiftctrl_clear(int flag);
+int shiftctrl_flag_state(int flag);
 void shiftctrl_update();
 
 #endif /* SHIFTCTRL_H_ */
