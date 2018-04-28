@@ -787,15 +787,15 @@ int main(int argc, char** argv)
 	ImGui::GetStyle().FramePadding = ImVec2(5, 5);
 	ImGui::GetStyle().Colors[ImGuiCol_WindowBg] = ImVec4(1.0f, 1.0f, 1.0f, .800f);
 
-	static bool parameters = true;
+	static bool parameters = false;
 	static bool mainscreen = true;
 	GetSerialPorts(dspport, uiport);
 
-	Teensy_Reset();
+	//Teensy_Reset();
+	//Teensy_InitPreset();
 	Raspberry_Init();
 	Raspberry_Reset();
-	Teensy_InitPreset();
-
+	
 	setpara_t para;
 	para.paramid = 0xfcfe;
 	para.value = 3;
@@ -878,7 +878,7 @@ int main(int argc, char** argv)
 				ImGui::PushFont(pFont);
 				if (ImGui::Button("Resend All Data"))
 				{
-					Teensy_ReSendPreset();
+				//	Teensy_ReSendPreset();
 					UISendCommand(0x60, 0);
 
 				}

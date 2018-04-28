@@ -152,9 +152,7 @@ if ( tcgetattr ( USB, &tty ) != 0 ) {
 /* Save old tty parameters */
 tty_old = tty;
 
-/* Set Baud Rate */
-cfsetospeed (&tty, (speed_t)B9600);
-cfsetispeed (&tty, (speed_t)B9600);
+tty.c_ispeed = tty.c_ospeed = 1000000;
 
 /* Setting other Port Stuff */
 tty.c_cflag     &=  ~PARENB;            // Make 8n1
@@ -169,6 +167,14 @@ tty.c_cflag     |=  CREAD | CLOCAL;     // turn on READ & ignore ctrl lines
 
 /* Make raw */
 cfmakeraw(&tty);
+
+tty.c_cflag |= (CLOCAL | CREAD);   // Enable the receiver and set local mode
+tty.c_cflag &= ~CSTOPB;            // 1 stop bit
+tty.c_cflag &= ~CRTSCTS;           // Disable hardware flow control
+tty.c_cc[VMIN] = 1;
+tty.c_cc[VTIME] = 2;
+
+
 
 /* Flush Port, then applies attributes */
 tcflush( USB, TCIFLUSH );
