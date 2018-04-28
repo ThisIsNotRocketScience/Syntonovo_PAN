@@ -1008,6 +1008,29 @@ void virt_ZPRIME_SPEED()
 	}
 }
 
+void virt_X_DEADZONE()
+{
+}
+
+void virt_Y_DEADZONE()
+{
+}
+
+void virt_Z_DEADZONE()
+{
+}
+
+void virt_X_SCALE()
+{
+}
+
+void virt_Y_SCALE()
+{
+}
+
+void virt_Z_SCALE()
+{
+}
 
 int process_param_note(int ctrlid, int32_t notevalue, int modrange)
 {
@@ -1225,6 +1248,39 @@ void synth_init()
     pad_init();
 }
 
+const int negate[9] = { 1, 1, 0,  0, 0, 0,  0, 0, 0 };
+
+int32_t pad_threshold(int32_t value, int i)
+{
+	int dz = 0;
+	int scale = 0x100;
+
+	if (negate[i]) value = -value;
+
+	switch (i) {
+	case 0:
+		dz = synth_param[X_DEADZONE].value >> 3;
+		scale = synth_param[X_SCALE].value >> 3;
+		break;
+	case 1:
+		dz = synth_param[Y_DEADZONE].value >> 3;
+		scale = synth_param[Y_SCALE].value >> 3;
+		break;
+	case 2:
+		dz = synth_param[Z_DEADZONE].value >> 3;
+		scale = synth_param[Z_SCALE].value >> 3;
+		break;
+	}
+	if (value < -dz) value += dz;
+	else if (value > dz) value -= dz;
+	else return 0;
+
+	value = (value * scale) / 0x100;
+	if (value < -32767) return -32767;
+	else if (value > 32767) value = 32767;
+	return value;
+}
+
 void synth_run()
 {
 	int last_trigger = 0;
@@ -1245,7 +1301,7 @@ void synth_run()
 		}
 
 		for (int i = 0; i < 9; i++) {
-			pad_value[i] = -((int32_t)pad_adc_value[i] - (int32_t)pad_calibration[i]);
+			pad_value[i] = pad_threshold(((int32_t)pad_adc_value[i] - (int32_t)pad_calibration[i]), i);
 		}
 
 		zprime_value = hp_update(&zprime_hp, pad_value[KEYBOARD_Z]);
