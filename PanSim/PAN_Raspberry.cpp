@@ -531,10 +531,12 @@ void Raspberry_RenderScreen()
 			Source_vel*/
 		const char ControllerNames[__ModSource_COUNT][20] = { "NONE", "Left mod","Right mod","X-pression","Y-pression","Z-pression","Z'-pression","Note"," Velocity" };
 		guirow_state_t row;
-
-		RenderStartMenu(ControllerNames[Raspberry_guidata.dataCtrl.source],row );
-		TargetsList(0, row);
-		RenderEndMenu();
+		if (Raspberry_guidata.dataCtrl.source < __ModSource_COUNT)
+		{
+			RenderStartMenu(ControllerNames[Raspberry_guidata.dataCtrl.source], row);
+			TargetsList(0, row);
+			RenderEndMenu();
+		}
 	}
 	else if (RenderMenu(Raspberry_guidata.GuiState))
 	{

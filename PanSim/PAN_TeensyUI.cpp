@@ -972,7 +972,6 @@ void Teensy_ToState(GuiState_t state, int modselect = -1)
 	Teensy_guidata.TargetSelect = -1;
 
 	SelectMod();
-	Raspberry_ToState(state, modselect);
 
 	if (modselect != -1) {
 		if (state == GuiState_LfoSelect) {
@@ -988,6 +987,7 @@ void Teensy_ToState(GuiState_t state, int modselect = -1)
 			Raspberry_EditCtrl(gPreset.ctrlmod[modselect]);
 		}
 	}
+	Raspberry_ToState(state, modselect);
 
 	UpdateTargets();
 }
