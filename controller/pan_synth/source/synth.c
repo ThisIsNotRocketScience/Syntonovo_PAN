@@ -17,6 +17,7 @@ void ports_value(int portid, uint16_t value);
 #include "lfo.h"
 #include "adsr.h"
 #include "ad.h"
+#include "hp.h"
 
 #include "spi_sched.h"
 #include "control.h"
@@ -25,6 +26,9 @@ void ports_value(int portid, uint16_t value);
 
 static volatile int reset = 0;
 int doing_reset = 0;
+
+struct hp_state_t zprime_hp;
+int32_t zprime_value;
 
 const int KEYBOARD_X = 0;
 const int KEYBOARD_Y = 1;
@@ -411,6 +415,9 @@ int process_param_lin(int ctrlid)
 	if (synth_param[ctrlid].z) {
 		value += bipolar_signed_scale(pad_value[KEYBOARD_Z], synth_param[ctrlid].z);
 	}
+	if (synth_param[ctrlid].zprime) {
+		value += bipolar_signed_scale(zprime_value, synth_param[ctrlid].zprime);
+	}
 
 	if (value < 0) value = 0;
 	else if (value > 65535) value = 65535;
@@ -453,6 +460,9 @@ int process_param_inv(int ctrlid)
 	if (synth_param[ctrlid].z) {
 		value += bipolar_signed_scale(pad_value[KEYBOARD_Z], synth_param[ctrlid].z);
 	}
+	if (synth_param[ctrlid].zprime) {
+		value += bipolar_signed_scale(zprime_value, synth_param[ctrlid].zprime);
+	}
 
 	if (value < 0) value = 65535;
 	else if (value > 65535) value = 0;
@@ -492,6 +502,9 @@ int process_param_log_add(int ctrlid, int32_t add)
 	}
 	if (synth_param[ctrlid].z) {
 		value += bipolar_signed_scale(pad_value[KEYBOARD_Z], synth_param[ctrlid].z);
+	}
+	if (synth_param[ctrlid].zprime) {
+		value += bipolar_signed_scale(zprime_value, synth_param[ctrlid].zprime);
 	}
 
 	if (value < 0) value = 65535;
@@ -913,6 +926,15 @@ void virt_MASTER_LEVEL()
 	synth_param[MASTER_LEVEL].last = synth_param[MASTER_LEVEL].value;
 }
 
+void virt_ZPRIME_SPEED()
+{
+	if (synth_param[ZPRIME_SPEED].value != synth_param[ZPRIME_SPEED].last) {
+		hp_set_speed(&zprime_hp, synth_param[ZPRIME_SPEED].value);
+		synth_param[ZPRIME_SPEED].last = synth_param[ZPRIME_SPEED].value;
+	}
+}
+
+
 int process_param_note(int ctrlid, int32_t notevalue, int modrange)
 {
 	int result = doing_reset;
@@ -944,6 +966,9 @@ int process_param_note(int ctrlid, int32_t notevalue, int modrange)
 	}
 	if (synth_param[ctrlid].z) {
 		modvalue += bipolar_signed_scale(pad_value[KEYBOARD_Z], synth_param[ctrlid].z);
+	}
+	if (synth_param[ctrlid].zprime) {
+		modvalue += bipolar_signed_scale(zprime_value, synth_param[ctrlid].zprime);
 	}
 	value += signed_scale(modvalue, modrange * 0x4000 / 128);
 
@@ -1102,6 +1127,7 @@ void synth_init()
     lfo_init();
     adsr_init();
     ad_init();
+    hp_init(&zprime_hp);
 
     //shiftctrl_set(SEL1TRI);
     //shiftctrl_set(SEL1SAW);
@@ -1147,6 +1173,8 @@ void synth_run()
 		for (int i = 0; i < 9; i++) {
 			pad_value[i] = (int32_t)pad_adc_value[i] - (int32_t)pad_calibration[i];
 		}
+
+		zprime_value = hp_update(&zprime_hp, pad_value[KEYBOARD_Z]);
 
 		shiftctrl_update();
 	}
