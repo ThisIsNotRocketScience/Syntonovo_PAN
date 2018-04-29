@@ -541,7 +541,6 @@ void Raspberry_RenderScreen()
 	else if (Raspberry_guidata.GuiState == GuiState_SavePreset)
 	{
 		guirow_state_t row;
-
 		RenderStartMenu("Save Preset?", row);
 		ImVec2 p = ImGui::GetCursorPos();
 		ImGui::Text("Please press target");
@@ -550,10 +549,16 @@ void Raspberry_RenderScreen()
 		ImGui::Text("button to save ");
 		RenderEndMenu();
 	}
+	else if (Raspberry_guidata.GuiState == GuiState_InitPatch)
+	{
+		guirow_state_t row;
+		RenderStartMenu("Reset to init patch?", row);
+		ImGui::Text("Press final to reset");
+		RenderEndMenu();
+	}
 	else if (Raspberry_guidata.GuiState == GuiState_SelectBanks)
 	{
 		guirow_state_t row;
-
 		RenderStartMenu("Select bank?", row);
 		ImGui::Text("Please select:");
 		RenderEndMenu();
@@ -618,4 +623,85 @@ void Raspberry_WindowFrame()
 	ImGui::PopStyleVar();
 	ImGui::PopStyleVar();
 	ImGui::PopStyleVar();
+}
+
+uint32_t RaspberryOffset = sizeof(Raspberry_GuiData_t);
+Raspberry_GuiData_t incoming;
+unsigned char *RaspberryPointer;
+
+void AddIncomingByte(unsigned char b)
+{
+	if (RaspberryOffset < sizeof(Raspberry_GuiData_t))
+	{
+		RaspberryPointer[RaspberryOffset] = b;
+		RaspberryOffset++;
+		if (RaspberryOffset == sizeof(Raspberry_GuiData_t))
+		{
+
+		}
+	}
+}
+
+int Written = 0;
+void DoDataCommands(unsigned char comm, uint32_t data)
+{
+	switch (comm)
+	{
+		//#ifdef SIMULATEINCOMINGSERIAL
+	case 0xd0:
+	{
+		//printf("Incoming Guistate\n");
+		RaspberryOffset = 0;
+		RaspberryPointer = (unsigned char *)&incoming;
+		unsigned char b1 = data & 255;
+		unsigned char b2 = (data >> 8) & 255;
+		unsigned char b3 = (data >> 16) & 255;
+		AddIncomingByte(b1);
+		AddIncomingByte(b2);
+		AddIncomingByte(b3);
+
+	}
+	break;
+	case 0xd1:
+	{
+		//printf("GuistatePacket\n");
+		unsigned char b1 = data & 255;
+		unsigned char b2 = (data >> 8) & 255;
+		unsigned char b3 = (data >> 16) & 255;
+		AddIncomingByte(b1);
+		AddIncomingByte(b2);
+		AddIncomingByte(b3);
+	}
+	break;
+	case 0xd2:
+	{
+		if (0) {
+			printf("%d %d\n", RaspberryOffset, sizeof(Raspberry_GuiData_t));
+			unsigned char *a = (unsigned char*)&Raspberry_guidata;
+			unsigned char *b = (unsigned char*)&incoming;
+			unsigned char cb = 0;
+			for (int i = 0; i < sizeof(Raspberry_GuiData_t); i++)
+			{
+				if (cb != b[i]) printf("hmm\n");
+				cb++;
+
+			}
+		}
+		memcpy(&Raspberry_guidata, &incoming, sizeof(Raspberry_GuiData_t));
+	}break;
+	case 0xd3:
+	{
+		RaspberryPointer = (unsigned char *)&incoming;
+
+		unsigned char b1 = data & 255;
+		unsigned char b2 = (data >> 8) & 255;
+		unsigned short offs = (data >> 16) & 255;
+		RaspberryPointer[offs] = b1;
+		RaspberryPointer[offs+1] = b2;
+
+	}
+		break;
+	}
+	//#endif
+
 }

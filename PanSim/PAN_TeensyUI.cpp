@@ -118,6 +118,7 @@ void InitPreset(PanPreset_t& preset)
 	preset.paramvalue[Output_ZPRIME_SPEED] = 0xa000;
 
 	preset.paramvalue[Output_MASTER_PITCH] = 0x8000;
+	preset.paramvalue[Output_MASTER_PITCH2] = 0x8000;
 
 	preset.switches[0] |= (1 << Switch_SELEF4);
 
@@ -654,7 +655,7 @@ void UpdateMenuButtons()
 {
 #define MENU(id, button, name) \
 	if (Teensy_guidata.GuiState == GuiState_Menu_##id) { \
-		SetLedButton(button, LED_ON);SetLedButton(ledbutton_CANCEL_LEFT, LED_BLINK);SetLedButton(ledbutton_CANCEL_RIGHT, LED_BLINK);
+		SetLedButton(button, LED_ON);SetLedButton(ledbutton_CANCEL_LEFT, LED_ON);SetLedButton(ledbutton_CANCEL_RIGHT, LED_ON);
 #define ENDMENU() \
 		return; \
 	}
@@ -746,6 +747,11 @@ void UpdateTargets()
 		SetLedButton(SourceToLedButton(gPreset.ctrlmod[Teensy_guidata.ModSelect].source), LED_ON);
 		
 		break;
+	case GuiState_InitPatch:
+		SetLedButton(ledbutton_CANCEL_RIGHT, LED_ON);
+		SetLedButton(ledbutton_FINAL, LED_ON);
+		break;
+
 	case GuiState_SelectBanks:
 		SetLedButton(ledbutton_LEFT_MORE, LED_ON);
 		SetLedButton(ledbutton_RIGHT_MORE, LED_ON);
@@ -1511,14 +1517,29 @@ void Teensy_SelectTarget(int ledbutton)
 
 void Teensy_Cancel(int side)
 {
-	Teensy_ToState(GuiState_Root, 0);
+	if (Teensy_guidata.GuiState == GuiState_Root)
+	{ 
+		Teensy_ToState(GuiState_InitPatch);
+	}
+	else
+	{
+		Teensy_ToState(GuiState_Root, 0);
+	}
+	
 }
 
 void Teensy_Final()
 {
+
 	if (Teensy_guidata.GuiState == GuiState_Root)
 	{
 		Teensy_ToState(GuiState_SavePreset);
+	}
+	else if (Teensy_guidata.GuiState == GuiState_InitPatch)
+	{
+		InitPreset(gPreset);
+		LoadPreset(gPreset);
+		Teensy_ToState(GuiState_Root);
 	}
 	else
 	{
@@ -1833,6 +1854,7 @@ void Teensy_NumberHandler(int N)
 			Teensy_ToState(GuiState_Root);
 		}
 		break;
+	
 	case GuiState_SelectBanks:
 	{
 		int newbank = N % 8;
