@@ -30,6 +30,9 @@ int doing_reset = 0;
 struct hp_state_t zprime_hp;
 int32_t zprime_value;
 
+int sustain_gate = 0;
+int una_corda_release = 0;
+
 uint32_t porta_timer_count = 0;
 int32_t porta_time;
 int32_t porta_divider = 256;
@@ -324,8 +327,10 @@ void ports_input(int portid, uint16_t* value)
 static void update_note()
 {
 	if (notestack_empty()) {
-		synth_param[GATE].value = 0;
+		synth_param[GATE].value = sustain_gate ? 0xFFFF : 0;
 		synth_param[RETRIGGER].value = 0;
+		virt_GATE();
+		virt_RETRIGGER();
 		return;
 	}
 
@@ -505,11 +510,11 @@ int process_param_lin(int ctrlid)
 		value += bipolar_signed_scale(lfo, synth_param[ctrlid].lfo_depth);
 	}
 	if (synth_param[ctrlid].adsr_depth) {
-		uint16_t adsr = adsr_update(ctrlid);
+		uint16_t adsr = adsr_update(ctrlid, una_corda_release);
 		value += signed_scale(adsr, synth_param[ctrlid].adsr_depth);
 	}
 	if (synth_param[ctrlid].ad_depth) {
-		uint16_t ad = ad_update(ctrlid);
+		uint16_t ad = ad_update(ctrlid, una_corda_release);
 		value += signed_scale(ad, synth_param[ctrlid].ad_depth);
 	}
 	if (synth_param[ctrlid].x) {
@@ -568,11 +573,11 @@ int process_param_inv(int ctrlid)
 		value += bipolar_signed_scale(lfo, synth_param[ctrlid].lfo_depth);
 	}
 	if (synth_param[ctrlid].adsr_depth) {
-		uint16_t adsr = adsr_update(ctrlid);
+		uint16_t adsr = adsr_update(ctrlid, una_corda_release);
 		value += signed_scale(adsr, synth_param[ctrlid].adsr_depth);
 	}
 	if (synth_param[ctrlid].ad_depth) {
-		uint16_t ad = ad_update(ctrlid);
+		uint16_t ad = ad_update(ctrlid, una_corda_release);
 		value += signed_scale(ad, synth_param[ctrlid].ad_depth);
 	}
 	if (synth_param[ctrlid].x) {
@@ -634,11 +639,11 @@ int process_param_log_add(int ctrlid, int32_t add, int32_t addchase)
 		value += signed_scale(lfo, synth_param[ctrlid].lfo_depth);
 	}
 	if (synth_param[ctrlid].adsr_depth) {
-		uint16_t adsr = adsr_update(ctrlid);
+		uint16_t adsr = adsr_update(ctrlid, una_corda_release);
 		value += signed_scale(adsr, synth_param[ctrlid].adsr_depth);
 	}
 	if (synth_param[ctrlid].ad_depth) {
-		uint16_t ad = ad_update(ctrlid);
+		uint16_t ad = ad_update(ctrlid, una_corda_release);
 		value += signed_scale(ad, synth_param[ctrlid].ad_depth);
 	}
 	if (synth_param[ctrlid].x) {
@@ -1203,11 +1208,11 @@ int process_param_note(int ctrlid, int32_t notevalue, int modrange)
 		modvalue += signed_scale(lfo, synth_param[ctrlid].lfo_depth);
 	}
 	if (synth_param[ctrlid].adsr_depth) {
-		uint16_t adsr = adsr_update(ctrlid);
+		uint16_t adsr = adsr_update(ctrlid, una_corda_release);
 		modvalue += signed_scale(adsr, synth_param[ctrlid].adsr_depth);
 	}
 	if (synth_param[ctrlid].ad_depth) {
-		uint16_t ad = ad_update(ctrlid);
+		uint16_t ad = ad_update(ctrlid, una_corda_release);
 		modvalue += signed_scale(ad, synth_param[ctrlid].ad_depth);
 	}
 	if (synth_param[ctrlid].x) {
@@ -1466,10 +1471,6 @@ int32_t pad_threshold(int32_t value, int i)
 
 void synth_run()
 {
-	int last_trigger = 0;
-	int last_release = 0;
-	int last_timer_value = 0;
-	volatile int overflow = 0;
 	for (;;) {
 
 		doing_reset = reset;
@@ -1488,6 +1489,19 @@ void synth_run()
 		}
 
 		zprime_value = hp_update(&zprime_hp, pad_value[KEYBOARD_Z]);
+
+		if (shiftctrl_flag_state(SELSUSTAINL) && pad_value[PAD_SUSL] > 500 && synth_param[GATE].value == 0xFFFF)
+			sustain_gate = 1;
+		else if (shiftctrl_flag_state(SELSUSTAINR) && pad_value[PAD_SUSR] > 500 && synth_param[GATE].value == 0xFFFF)
+			sustain_gate = 1;
+		else
+			sustain_gate = 0;
+
+		una_corda_release = 0;
+		if (shiftctrl_flag_state(SELUNACL) && pad_value[PAD_UNACL] > 500)
+			una_corda_release += (pad_value[PAD_UNACL] - 500) << 8;
+		if (shiftctrl_flag_state(SELUNACR) && pad_value[PAD_UNACR] > 500)
+			una_corda_release += (pad_value[PAD_UNACR] - 500) << 8;
 
 		shiftctrl_update();
 	}

@@ -75,7 +75,7 @@ void ad_set_gate(int adid, int gate, int reset)
 	ad_state[adid].gate = !!gate;
 }
 
-uint16_t ad_update(int adid)
+uint16_t ad_update(int adid, int release_dampen)
 {
 	uint32_t timer_count = timer_value_nonisr();
 	uint32_t timer_delta = timer_count - ad_state[adid].time;
@@ -107,10 +107,14 @@ uint16_t ad_update(int adid)
 	case 2:
 		break;
 	default: // decay
+	{
+		uint32_t d_const = ad->d_const - release_dampen;
+		if (d_const > ad->d_const) d_const = 0;
 		while (timer_delta--) {
-			ad->value = umull32_hi(ad->value, ad->d_const);
+			ad->value = umull32_hi(ad->value, d_const);
 		}
 		break;
+	}
 	}
 
 	return ad->value >> 15;

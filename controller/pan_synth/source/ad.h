@@ -11,7 +11,7 @@
 #include <stdint.h>
 
 void ad_init();
-uint16_t ad_update(int lfoid);
+uint16_t ad_update(int lfoid, int release_dampen);
 
 void ad_set_a(int adid, uint32_t a);
 void ad_set_d(int adid, uint32_t d);
