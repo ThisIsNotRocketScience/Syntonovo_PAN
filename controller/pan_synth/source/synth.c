@@ -30,6 +30,8 @@ int doing_reset = 0;
 struct hp_state_t zprime_hp;
 int32_t zprime_value;
 
+int32_t pad_bend_value = 0;
+
 uint32_t porta_timer_count = 0;
 int32_t porta_time;
 int32_t porta_divider = 256;
@@ -420,6 +422,9 @@ void control_cb(int param, int subparam, uint16_t value)
 	case 17:
 		synth_param[param].vel = value;
 		break;
+	case 18:
+		synth_param[param].pad = value;
+		break;
 	}
 }
 
@@ -457,6 +462,9 @@ int process_param_lin(int ctrlid)
 	}
 	if (synth_param[ctrlid].zprime) {
 		value += bipolar_signed_scale(zprime_value, synth_param[ctrlid].zprime);
+	}
+	if (synth_param[ctrlid].pad) {
+		value += bipolar_signed_scale(pad_bend_value, synth_param[ctrlid].pad);
 	}
 
 	if (value < 0) value = 0;
@@ -503,6 +511,9 @@ int process_param_inv(int ctrlid)
 	if (synth_param[ctrlid].zprime) {
 		value += bipolar_signed_scale(zprime_value, synth_param[ctrlid].zprime);
 	}
+	if (synth_param[ctrlid].pad) {
+		value += bipolar_signed_scale(pad_bend_value, synth_param[ctrlid].pad);
+	}
 
 	if (value < 0) value = 65535;
 	else if (value > 65535) value = 0;
@@ -545,6 +556,9 @@ int process_param_log_add(int ctrlid, int32_t add)
 	}
 	if (synth_param[ctrlid].zprime) {
 		value += bipolar_signed_scale(zprime_value, synth_param[ctrlid].zprime);
+	}
+	if (synth_param[ctrlid].pad) {
+		value += bipolar_signed_scale(pad_bend_value, synth_param[ctrlid].pad);
 	}
 
 	if (value < 0) value = 65535;
@@ -1042,6 +1056,7 @@ int process_param_note(int ctrlid, int32_t notevalue, int modrange)
 	int32_t value = notevalue;
 
 	value += (int32_t)synth_param[MASTER_PITCH].last - 0x8000;
+	value += (int32_t)synth_param[MASTER_PITCH2].last - 0x8000;
 	int modvalue = 0;
 	if (synth_param[ctrlid].lfo_depth) {
 		uint16_t lfo = (lfo_update(ctrlid) >> 2) + 0x8000;
@@ -1066,6 +1081,9 @@ int process_param_note(int ctrlid, int32_t notevalue, int modrange)
 	}
 	if (synth_param[ctrlid].zprime) {
 		modvalue += bipolar_signed_scale(zprime_value, synth_param[ctrlid].zprime);
+	}
+	if (synth_param[ctrlid].pad) {
+		modvalue += bipolar_signed_scale(pad_bend_value, synth_param[ctrlid].pad);
 	}
 	value += bipolar_signed_scale(modvalue, modrange * (0x8000 / 128));
 
@@ -1154,6 +1172,11 @@ void virt_RETRIGGER()
 void virt_MASTER_PITCH()
 {
 	synth_param[MASTER_PITCH].last = (((int32_t)synth_param[MASTER_PITCH].value - 0x8000) * 12) / 128 + 0x8000;
+}
+
+void virt_MASTER_PITCH2()
+{
+	synth_param[MASTER_PITCH2].last = synth_param[MASTER_PITCH2].value;
 }
 
 void synth_mapping_virt()
@@ -1305,6 +1328,7 @@ void synth_run()
 		}
 
 		zprime_value = hp_update(&zprime_hp, pad_value[KEYBOARD_Z]);
+		pad_bend_value = pad_value[PAD_PBL] + pad_value[PAD_PBR];
 
 		shiftctrl_update();
 	}

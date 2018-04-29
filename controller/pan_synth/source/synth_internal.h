@@ -46,6 +46,7 @@ typedef struct _param_t
 	int16_t zprime;
 	int16_t note;
 	int16_t vel;
+	int16_t pad;
 } param_t;
 
 #define SYNTH_PARAM_COUNT (256)
