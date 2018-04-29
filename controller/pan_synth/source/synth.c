@@ -343,6 +343,14 @@ static void update_note()
 	update_porta_time(retrigger);
 	virt_NOTE();
 
+	if (note_change || retrigger) {
+		for (int i = 0; i < SYNTH_PARAM_COUNT; i++) {
+			if (synth_param[i].flags & SubParamFlags_LfoRetrigger) {
+				lfo_reset(i, synth_param[i].lfo_reset_phase);
+			}
+		}
+	}
+
 	if (synth_param[GATE].value != 0xffff) {
 		synth_param[GATE].value = 0xffff;
 		virt_GATE();
@@ -459,6 +467,12 @@ void control_cb(int param, int subparam, uint16_t value)
 	case 18:
 		synth_param[param].pad = value;
 		break;
+	case 19:
+		synth_param[param].lfo_reset_phase = value;
+		break;
+	case 32:
+		synth_param[param].flags = value;
+		break;
 	}
 }
 
@@ -466,8 +480,8 @@ int process_param_lin(int ctrlid)
 {
 	int result = doing_reset;
 
-	adsr_set_gate(ctrlid, synth_param[GATE].value);
-	ad_set_gate(ctrlid, synth_param[GATE].value);
+	adsr_set_gate(ctrlid, synth_param[GATE].value, synth_param[ctrlid].flags & SubParamFlags_AdsrRetrigger);
+	ad_set_gate(ctrlid, synth_param[GATE].value, synth_param[ctrlid].flags & SubParamFlags_AdRetrigger);
 
 	int32_t value = synth_param[ctrlid].value;
 	if (synth_param[ctrlid].note) {
@@ -514,8 +528,8 @@ int process_param_inv(int ctrlid)
 {
 	int result = doing_reset;
 
-	adsr_set_gate(ctrlid, synth_param[GATE].value);
-	ad_set_gate(ctrlid, synth_param[GATE].value);
+	adsr_set_gate(ctrlid, synth_param[GATE].value, synth_param[ctrlid].flags & SubParamFlags_AdsrRetrigger);
+	ad_set_gate(ctrlid, synth_param[GATE].value, synth_param[ctrlid].flags & SubParamFlags_AdRetrigger);
 
 	int32_t value = synth_param[ctrlid].value;
 	if (synth_param[ctrlid].note) {
@@ -563,8 +577,8 @@ int process_param_log_add(int ctrlid, int32_t add, int32_t addchase)
 {
 	int result = doing_reset;
 
-	adsr_set_gate(ctrlid, synth_param[GATE].value);
-	ad_set_gate(ctrlid, synth_param[GATE].value);
+	adsr_set_gate(ctrlid, synth_param[GATE].value, synth_param[ctrlid].flags & SubParamFlags_AdsrRetrigger);
+	ad_set_gate(ctrlid, synth_param[GATE].value, synth_param[ctrlid].flags & SubParamFlags_AdRetrigger);
 
 	int32_t value = synth_param[ctrlid].value + add;
 	if (value < 0) value = 0;
@@ -1118,8 +1132,8 @@ int process_param_note(int ctrlid, int32_t notevalue, int modrange)
 {
 	int result = doing_reset;
 
-	adsr_set_gate(ctrlid, synth_param[GATE].value);
-	ad_set_gate(ctrlid, synth_param[GATE].value);
+	adsr_set_gate(ctrlid, synth_param[GATE].value, synth_param[ctrlid].flags & SubParamFlags_AdsrRetrigger);
+	ad_set_gate(ctrlid, synth_param[GATE].value, synth_param[ctrlid].flags & SubParamFlags_AdRetrigger);
 
 	int32_t value = notevalue;
 

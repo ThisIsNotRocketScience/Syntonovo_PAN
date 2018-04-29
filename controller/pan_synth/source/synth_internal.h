@@ -21,6 +21,7 @@ void do_output_log(int ctrlid, int port);
 typedef struct _param_t
 {
 	uint16_t port;
+	uint16_t flags;
 
 	uint16_t last;
 
@@ -29,6 +30,7 @@ typedef struct _param_t
 	uint16_t lfo_speed;
 	int16_t lfo_depth;
 	int16_t lfo_shape;
+	uint16_t lfo_reset_phase;
 
 	uint16_t adsr_a;
 	uint16_t adsr_d;
@@ -48,6 +50,15 @@ typedef struct _param_t
 	int16_t vel;
 	int16_t pad;
 } param_t;
+
+enum SubParamFlags_t
+{
+	SubParamFlags_AdsrRetrigger = 1,
+	SubParamFlags_AdRetrigger = 2,
+	SubParamFlags_LfoRetrigger = 4,
+
+	SubParamFlags_max = 0xffff
+};
 
 #define SYNTH_PARAM_COUNT (256)
 param_t synth_param[SYNTH_PARAM_COUNT];

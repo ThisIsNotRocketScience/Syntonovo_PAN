@@ -13,6 +13,7 @@
 void lfo_init();
 uint16_t lfo_update(int lfoid);
 
+void lfo_reset(int lfoid, uint16_t phase);
 void lfo_set_speed(int lfoid, uint16_t speed);
 
 #endif /* LFO_H_ */

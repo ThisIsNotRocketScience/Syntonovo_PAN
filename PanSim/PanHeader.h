@@ -281,7 +281,19 @@ enum SubParam_t
 	Sub_zprime,
 	Sub_note,
 	Sub_vel,
-	Sub_pad
+	Sub_pad,
+	Sub_lfo_reset_phase,
+
+	Sub_flags = 32
+};
+
+enum SubParamFlags_t
+{
+	SubParamFlags_AdsrRetrigger = 1,
+	SubParamFlags_AdRetrigger = 2,
+	SubParamFlags_LfoRetrigger = 4,
+
+	SubParamFlags_max = 0xffff
 };
 
 inline int ParamToButton(int paramid)

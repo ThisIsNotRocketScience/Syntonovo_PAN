@@ -60,10 +60,13 @@ void ad_set_d(int adid, uint32_t d)
 	ad_state[adid].d_const = (uint32_t)((float)0xFFFFFFFF * expf(-10.0f / (float)d));
 }
 
-void ad_set_gate(int adid, int gate)
+void ad_set_gate(int adid, int gate, int reset)
 {
 	if (gate && !ad_state[adid].gate) {
 		ad_state[adid].state = 1;
+		if (reset) {
+			ad_state[adid].value = 0;
+		}
 	}
 	else if (!gate) {
 		ad_state[adid].state = 0;
