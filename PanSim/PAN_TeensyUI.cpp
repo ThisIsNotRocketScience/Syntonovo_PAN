@@ -751,6 +751,28 @@ void UpdateTargets()
 		SetLedButton(ledbutton_RIGHT_8, Raspberry_guidata.banks[1] == 7 ? LED_ON : LED_BLINK);
 
 		break;
+	case GuiState_SavePreset:
+		SetLedButton(ledbutton_CANCEL_RIGHT, LED_ON);
+		SetLedButton(ledbutton_CANCEL_LEFT, LED_ON);
+
+		SetLedButton(ledbutton_LEFT_1,  LED_BLINK);
+		SetLedButton(ledbutton_LEFT_2,  LED_BLINK);
+		SetLedButton(ledbutton_LEFT_3,  LED_BLINK);
+		SetLedButton(ledbutton_LEFT_4,  LED_BLINK);
+		SetLedButton(ledbutton_LEFT_5,  LED_BLINK);
+		SetLedButton(ledbutton_LEFT_6,  LED_BLINK);
+		SetLedButton(ledbutton_LEFT_7,  LED_BLINK);
+		SetLedButton(ledbutton_LEFT_8,  LED_BLINK);
+		SetLedButton(ledbutton_RIGHT_1, LED_BLINK);
+		SetLedButton(ledbutton_RIGHT_2, LED_BLINK);
+		SetLedButton(ledbutton_RIGHT_3, LED_BLINK);
+		SetLedButton(ledbutton_RIGHT_4, LED_BLINK);
+		SetLedButton(ledbutton_RIGHT_5, LED_BLINK);
+		SetLedButton(ledbutton_RIGHT_6, LED_BLINK);
+		SetLedButton(ledbutton_RIGHT_7, LED_BLINK);
+		SetLedButton(ledbutton_RIGHT_8, LED_BLINK);
+
+		break;
 	default:
 		UpdateMenuButtons();
 		return;
@@ -759,6 +781,9 @@ void UpdateTargets()
 	// Modulation buttons
 	switch (Teensy_guidata.GuiState)
 	{
+	case GuiState_Root:
+		SetLedButton(ledbutton_FINAL, LED_ON);
+		break;
 	case GuiState_LfoSelect:
 	{
 		if (Teensy_guidata.ModSelect >= 0) {
@@ -1470,11 +1495,18 @@ void Teensy_Cancel(int side)
 
 void Teensy_Final()
 {
-	Teensy_guidata.GuiState = GuiState_Root;
-	Teensy_guidata.ModSelect = -1;
-	Teensy_guidata.TargetSelect = -1;
+	if (Teensy_guidata.GuiState == GuiState_Root)
+	{
+		Teensy_ToState(GuiState_SavePreset);
+	}
+	else
+	{
+		Teensy_guidata.GuiState = GuiState_Root;
+		Teensy_guidata.ModSelect = -1;
+		Teensy_guidata.TargetSelect = -1;
 
-	Raspberry_ToState(Teensy_guidata.GuiState, Teensy_guidata.ModSelect);
+		Raspberry_ToState(Teensy_guidata.GuiState, Teensy_guidata.ModSelect);
+	}
 	UpdateTargets();
 }
 
@@ -1773,6 +1805,15 @@ void Teensy_NumberHandler(int N)
 {
 	switch (Raspberry_guidata.GuiState)
 	{
+		case GuiState_SavePreset:
+		{
+			int bankside = N / 8;
+			int bank = Raspberry_guidata.banks[bankside];
+			int preset = N % 8;
+			Teensy_SaveSDPreset(bank, preset);
+			Teensy_ToState(GuiState_Root);
+		}
+		break;
 	case GuiState_SelectBanks:
 	{
 		int newbank = N % 8;

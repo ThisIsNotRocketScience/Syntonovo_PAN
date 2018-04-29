@@ -404,7 +404,7 @@ typedef enum: unsigned char{
 	GuiState_CtrlSelect,
 	GuiState_SelectBanks,
 	GuiState_SelectSaveSlot,
-
+	GuiState_SavePreset,
 #define MENU(id, buttonid, name) \
 	GuiState_Menu_##id,
 #include "PanUiMap.h"

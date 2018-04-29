@@ -519,6 +519,23 @@ void Raspberry_RenderScreen()
 		}
 		RenderEndMenu();
 	}
+	else if (Raspberry_guidata.GuiState == GuiState_SavePreset)
+	{
+		guirow_state_t row;
+
+		RenderStartMenu("Save Preset?", row);
+		ImGui::Text("Please press target");
+		ImGui::Text("button to save ");
+		RenderEndMenu();
+	}
+	else if (Raspberry_guidata.GuiState == GuiState_SelectBanks)
+	{
+		guirow_state_t row;
+
+		RenderStartMenu("Select bank?", row);
+		ImGui::Text("Please select:");
+		RenderEndMenu();
+	}
 	else if (Raspberry_guidata.GuiState == GuiState_CtrlSelect)
 	{
 		/*Source_none,
