@@ -19,7 +19,7 @@ extern "C"
 	extern unsigned int tftglInitEgl(unsigned int flags);
 	extern unsigned int tftglInitDisplay(unsigned int flags);
 }
-bool exit = false;
+bool bexit = false;
 
 
 uint32_t vc_image_ptr;
@@ -179,7 +179,7 @@ void DoCommand(unsigned char comm, uint32_t data)
 		memcpy(&Raspberry_guidata, &incoming, sizeof(Raspberry_GuiData_t));
 	}break;
 	case 0xd3:
-		exit = true;
+		bexit = true;
 		break;
 	//#endif
 
@@ -434,9 +434,11 @@ extern "C"
 
 		Raspberry_Init();
 		Raspberry_Reset();
-
+		Raspberry_ToState(GuiState_Boot,0);
 		OpenComm();
-		while (!exit)
+
+		while (!bexit)
+
 		{
 			UpdateComm();
 			glViewport(0, 0, 800, 480);

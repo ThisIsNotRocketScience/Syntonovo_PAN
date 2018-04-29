@@ -21,6 +21,10 @@ PanPreset_t gPreset;
 #undef MENU
 #undef CUSTOMENTRY
 
+void SetSwitch(SwitchEnum SwitchID);
+bool GetSwitch(SwitchEnum SwitchID);
+void ToggleSwitch(SwitchEnum SwitchID);
+void ClearSwitch(SwitchEnum SwitchID);
 
 
 void InitPreset(PanPreset_t& preset)
@@ -156,7 +160,7 @@ void WriteLfo(PanPreset_t& preset, int i)
 		int param = preset.lfomod[i].target[j].param;
 		if (param == 0) continue;
 		synclfo[j] = param;
-		WriteWithSubKnob(param, Sub_lfo_depth, preset.lfomod[i].target[i].depth);
+		WriteWithSubKnob(param, Sub_lfo_depth, preset.lfomod[i].target[j].depth);
 		WriteWithSubKnob(param, Sub_lfo_speed, preset.lfomod[i].speed);
 		WriteWithSubKnob(param, Sub_lfo_shape, preset.lfomod[i].shape);
 	}
@@ -168,7 +172,7 @@ void WriteAdsr(PanPreset_t& preset, int i)
 	for (int j = 0; j < 16; j++) {
 		int param = preset.adsrmod[i].target[j].param;
 		if (param == 0) continue;
-		WriteWithSubKnob(param, Sub_adsr_depth, preset.adsrmod[i].target[i].depth);
+		WriteWithSubKnob(param, Sub_adsr_depth, preset.adsrmod[i].target[j].depth);
 		WriteWithSubKnob(param, Sub_adsr_a, preset.adsrmod[i].a);
 		WriteWithSubKnob(param, Sub_adsr_d, preset.adsrmod[i].d);
 		WriteWithSubKnob(param, Sub_adsr_s, preset.adsrmod[i].s);
@@ -181,7 +185,7 @@ void WriteAd(PanPreset_t& preset, int i)
 	for (int j = 0; j < 16; j++) {
 		int param = preset.admod[i].target[j].param;
 		if (param == 0) continue;
-		WriteWithSubKnob(param, Sub_ad_depth, preset.admod[i].target[i].depth);
+		WriteWithSubKnob(param, Sub_ad_depth, preset.admod[i].target[j].depth);
 		WriteWithSubKnob(param, Sub_ad_a, preset.admod[i].a);
 		WriteWithSubKnob(param, Sub_ad_d, preset.admod[i].d);
 	}
@@ -683,7 +687,7 @@ void UpdateTargets()
 	{
 		SetLedButton(i, LED_OFF);	
 	}
-
+	SetLedButton(ledbutton_VCF1_Routing, GetSwitch(Switch_SELVCF2POST)?LED_ON:LED_OFF);
 	int ActivePresetButton = Raspberry_guidata.activebank * 8 + Raspberry_guidata.activeslot;
 
 	SetLedButton(ledbutton_LEFT_1, ActivePresetButton == 0 ? LED_ON : LED_OFF);
@@ -706,12 +710,18 @@ void UpdateTargets()
 
 	switch (Teensy_guidata.GuiState) {
 	case GuiState_LfoSelect:
+		SetLedButton(ledbutton_CANCEL_RIGHT, LED_ON);
+		SetLedButton(ledbutton_CANCEL_LEFT, LED_ON);
+		SetLedButton(ledbutton_FINAL, LED_ON);
 		SetLedButton(ledbutton_LFO, LED_ON);
 		if (Teensy_guidata.ModSelect != -1) {			
 			SetLedButton(ledbutton_SOURCE_LFO, LED_ON);
 		}
 		break;
 	case GuiState_AdsrSelect:
+		SetLedButton(ledbutton_CANCEL_RIGHT, LED_ON);
+		SetLedButton(ledbutton_CANCEL_LEFT, LED_ON);
+		SetLedButton(ledbutton_FINAL, LED_ON);
 		SetLedButton(ledbutton_ADSR, LED_ON);
 		if (Teensy_guidata.ModSelect != -1) {
 			SetLedButton(ledbutton_SOURCE_ADSR, LED_ON);
@@ -719,6 +729,9 @@ void UpdateTargets()
 		}
 		break;
 	case GuiState_AdSelect:
+		SetLedButton(ledbutton_CANCEL_RIGHT, LED_ON);
+		SetLedButton(ledbutton_CANCEL_LEFT, LED_ON);
+		SetLedButton(ledbutton_FINAL, LED_ON);
 		SetLedButton(ledbutton_AD, LED_ON);
 		if (Teensy_guidata.ModSelect != -1) {
 			SetLedButton(ledbutton_SOURCE_AD, LED_ON);
@@ -726,6 +739,10 @@ void UpdateTargets()
 		}
 		break;
 	case GuiState_CtrlSelect:
+		SetLedButton(ledbutton_CANCEL_RIGHT, LED_ON);
+		SetLedButton(ledbutton_CANCEL_LEFT, LED_ON);
+		SetLedButton(ledbutton_FINAL, LED_ON);
+
 		SetLedButton(SourceToLedButton(gPreset.ctrlmod[Teensy_guidata.ModSelect].source), LED_ON);
 		
 		break;
@@ -773,7 +790,11 @@ void UpdateTargets()
 		SetLedButton(ledbutton_RIGHT_8, LED_BLINK);
 
 		break;
+	case GuiState_Root:
+		SetLedButton(ledbutton_FINAL, LED_ON);
+		UpdateMenuButtons();
 	default:
+
 		UpdateMenuButtons();
 		return;
 	}
@@ -1607,10 +1628,6 @@ void Teensy_ModChangeDepth(int target, uint32_t value)
 	break;
 	}
 }
-void SetSwitch(SwitchEnum SwitchID);
-bool GetSwitch(SwitchEnum SwitchID);
-void ToggleSwitch(SwitchEnum SwitchID);
-void ClearSwitch(SwitchEnum SwitchID);
 
 void SetSwitch(SwitchEnum SwitchID)
 {
@@ -1884,6 +1901,7 @@ modes:
 	case ledbutton_RIGHT_6: Teensy_NumberHandler(13); break;
 	case ledbutton_RIGHT_7: Teensy_NumberHandler(14); break;
 	case ledbutton_RIGHT_8: Teensy_NumberHandler(15); break;
+	case ledbutton_VCF1_Routing: ToggleSwitch(Switch_SELVCF2POST); UpdateTargets(); break;
 	case ledbutton_LEFT_MORE:
 	case ledbutton_RIGHT_MORE:
 		if (Raspberry_guidata.GuiState == GuiState_SelectBanks)
