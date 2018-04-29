@@ -281,7 +281,8 @@ enum SubParam_t
 	Sub_zprime,
 	Sub_note,
 	Sub_vel,
-	Sub_pad,
+	Sub_pad_l,
+	Sub_pad_r,
 	Sub_lfo_reset_phase,
 
 	Sub_flags = 32
