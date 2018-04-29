@@ -27,6 +27,29 @@ void ports_value(int portid, uint16_t value);
 static volatile int reset = 0;
 int doing_reset = 0;
 
+struct peak_state_t
+{
+	int32_t values[32];
+	int index;
+};
+
+int32_t peak_handle(struct peak_state_t* state, int32_t value)
+{
+	state->index++;
+	state->index &= 31;
+	state->values[state->index] = value;
+
+	int32_t max = -0x80000000;
+	for (int i = 0; i < 32; i++) {
+		if (state->values[i] > max) max = state->values[i];
+	}
+
+	return max;
+}
+
+struct peak_state_t peak_state_z;
+
+struct hp_state_t zprime_lp;
 struct hp_state_t zprime_hp;
 int32_t zprime_value;
 
@@ -1269,7 +1292,7 @@ void virt_VCO2_PITCH()
 	value = note_add(value, note_scale(synth_param[VCO1_PITCH].value, 24 * 0x4000 / 128));
 	value = note_add(value, note_scale(synth_param[VCO2_PITCH].value, 4 * 0x4000 / 128));
 
-	process_param_note(VCO2_PITCH, value, 4);
+	process_param_note(VCO2_PITCH, value, 24);
 }
 
 void virt_VCO3_PITCH()
@@ -1278,7 +1301,7 @@ void virt_VCO3_PITCH()
 	value = note_add(value, note_scale(synth_param[VCO1_PITCH].value, 24 * 0x4000 / 128));
 	value = note_add(value, note_scale(synth_param[VCO3_PITCH].value, 4 * 0x4000 / 128));
 
-	process_param_note(VCO3_PITCH, value, 4);
+	process_param_note(VCO3_PITCH, value, 24);
 }
 
 void virt_VCO4_PITCH()
@@ -1286,7 +1309,7 @@ void virt_VCO4_PITCH()
 	int32_t value = signed_scale(synth_param[NOTE].last, synth_param[VCO4_PITCH].note);
 	value = note_add(value, note_scale(synth_param[VCO4_PITCH].value, 72 * 0x4000 / 128));
 
-	process_param_note(VCO4_PITCH, value, 72);
+	process_param_note(VCO4_PITCH, value, 24);
 }
 
 void virt_VCO5_PITCH()
@@ -1295,7 +1318,7 @@ void virt_VCO5_PITCH()
 	value = note_add(value, note_scale(synth_param[VCO4_PITCH].value, 72 * 0x4000 / 128));
 	value += signed_scale(synth_param[VCO5_PITCH].value, 36 * 0x4000 / 256);
 
-	process_param_note(VCO5_PITCH, value, 36);
+	process_param_note(VCO5_PITCH, value, 24);
 }
 
 void virt_VCO6_PITCH()
@@ -1304,7 +1327,7 @@ void virt_VCO6_PITCH()
 	value = note_add(value, note_scale(synth_param[VCO4_PITCH].value, 72 * 0x4000 / 128));
 	value += signed_scale(synth_param[VCO6_PITCH].value, 36 * 0x4000 / 256);
 
-	process_param_note(VCO6_PITCH, value, 36);
+	process_param_note(VCO6_PITCH, value, 24);
 }
 
 void virt_VCO7_PITCH()
@@ -1313,7 +1336,7 @@ void virt_VCO7_PITCH()
 	value = note_add(value, note_scale(synth_param[VCO4_PITCH].value, 72 * 0x4000 / 128));
 	value += signed_scale(synth_param[VCO7_PITCH].value, 36 * 0x4000 / 256);
 
-	process_param_note(VCO7_PITCH, value, 36);
+	process_param_note(VCO7_PITCH, value, 24);
 }
 
 void virt_GATE()
@@ -1412,7 +1435,10 @@ void synth_init()
     lfo_init();
     adsr_init();
     ad_init();
+    hp_init(&zprime_lp);
     hp_init(&zprime_hp);
+
+	hp_set_speed(&zprime_lp, 0xF000);
 
     //shiftctrl_set(SEL1TRI);
     //shiftctrl_set(SEL1SAW);
@@ -1488,7 +1514,10 @@ void synth_run()
 			pad_value[i] = pad_threshold(((int32_t)pad_adc_value[i] - (int32_t)pad_calibration[i]), i);
 		}
 
-		zprime_value = hp_update(&zprime_hp, pad_value[KEYBOARD_Z]);
+		pad_value[KEYBOARD_Z] = peak_handle(&peak_state_z, pad_value[KEYBOARD_Z]);
+
+		int32_t zprime_tmp = lp_update(&zprime_lp, pad_value[KEYBOARD_Z]);
+		zprime_value = hp_update(&zprime_hp, zprime_tmp);
 
 		if (shiftctrl_flag_state(SELSUSTAINL) && pad_value[PAD_SUSL] > 500 && synth_param[GATE].value == 0xFFFF)
 			sustain_gate = 1;

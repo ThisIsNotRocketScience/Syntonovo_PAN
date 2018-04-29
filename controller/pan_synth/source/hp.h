@@ -23,4 +23,6 @@ void hp_init(struct hp_state_t* hp);
 int32_t hp_update(struct hp_state_t* hp, int32_t value);
 void hp_set_speed(struct hp_state_t* hp, uint16_t speed);
 
+int32_t lp_update(struct hp_state_t* hp, int32_t value);
+
 #endif /* HP_H_ */
