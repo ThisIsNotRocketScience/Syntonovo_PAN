@@ -156,7 +156,7 @@ void WriteLfo(PanPreset_t& preset, int i)
 		int param = preset.lfomod[i].target[j].param;
 		if (param == 0) continue;
 		synclfo[j] = param;
-		WriteWithSubKnob(param, Sub_lfo_depth, preset.lfomod[i].target[i].depth);
+		WriteWithSubKnob(param, Sub_lfo_depth, preset.lfomod[i].target[j].depth);
 		WriteWithSubKnob(param, Sub_lfo_speed, preset.lfomod[i].speed);
 		WriteWithSubKnob(param, Sub_lfo_shape, preset.lfomod[i].shape);
 	}
@@ -168,7 +168,7 @@ void WriteAdsr(PanPreset_t& preset, int i)
 	for (int j = 0; j < 16; j++) {
 		int param = preset.adsrmod[i].target[j].param;
 		if (param == 0) continue;
-		WriteWithSubKnob(param, Sub_adsr_depth, preset.adsrmod[i].target[i].depth);
+		WriteWithSubKnob(param, Sub_adsr_depth, preset.adsrmod[i].target[j].depth);
 		WriteWithSubKnob(param, Sub_adsr_a, preset.adsrmod[i].a);
 		WriteWithSubKnob(param, Sub_adsr_d, preset.adsrmod[i].d);
 		WriteWithSubKnob(param, Sub_adsr_s, preset.adsrmod[i].s);
@@ -181,7 +181,7 @@ void WriteAd(PanPreset_t& preset, int i)
 	for (int j = 0; j < 16; j++) {
 		int param = preset.admod[i].target[j].param;
 		if (param == 0) continue;
-		WriteWithSubKnob(param, Sub_ad_depth, preset.admod[i].target[i].depth);
+		WriteWithSubKnob(param, Sub_ad_depth, preset.admod[i].target[j].depth);
 		WriteWithSubKnob(param, Sub_ad_a, preset.admod[i].a);
 		WriteWithSubKnob(param, Sub_ad_d, preset.admod[i].d);
 	}
