@@ -48,8 +48,12 @@ typedef struct _param_t
 	int16_t zprime;
 	int16_t note;
 	int16_t vel;
-	int16_t pad_l;
-	int16_t pad_r;
+	int16_t pad_l_depth;
+	int16_t pad_r_depth;
+	int16_t sus_l_depth;
+	int16_t sus_r_depth;
+	int16_t unac_l_depth;
+	int16_t unac_r_depth;
 } param_t;
 
 enum SubParamFlags_t

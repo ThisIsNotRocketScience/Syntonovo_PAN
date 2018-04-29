@@ -30,9 +30,6 @@ int doing_reset = 0;
 struct hp_state_t zprime_hp;
 int32_t zprime_value;
 
-int32_t pad_left_value = 0;
-int32_t pad_right_value = 0;
-
 uint32_t porta_timer_count = 0;
 int32_t porta_time;
 int32_t porta_divider = 256;
@@ -41,12 +38,12 @@ int32_t porta_timer_shift = 14;
 const int KEYBOARD_X = 0;
 const int KEYBOARD_Y = 1;
 const int KEYBOARD_Z = 2;
-const int PAD_PBL = 3;
-const int PAD_MBL = 4;
-const int PAD_SBL = 5;
-const int PAD_PBR = 6;
-const int PAD_MBR = 7;
-const int PAD_SBR = 8;
+const int PAD_MODL = 3;
+const int PAD_SUSL = 4;
+const int PAD_UNACL = 5;
+const int PAD_MODR = 6;
+const int PAD_SUSR = 7;
+const int PAD_UNACR = 8;
 uint16_t pad_adc_value[9];
 uint16_t pad_calibration[9] = {0};
 int32_t pad_value[9];
@@ -466,13 +463,25 @@ void control_cb(int param, int subparam, uint16_t value)
 		synth_param[param].vel = value;
 		break;
 	case 18:
-		synth_param[param].pad_l = value;
+		synth_param[param].lfo_reset_phase = value;
 		break;
 	case 19:
-		synth_param[param].pad_r = value;
+		synth_param[param].pad_l_depth = value;
 		break;
 	case 20:
-		synth_param[param].lfo_reset_phase = value;
+		synth_param[param].pad_r_depth = value;
+		break;
+	case 21:
+		synth_param[param].sus_l_depth = value;
+		break;
+	case 22:
+		synth_param[param].sus_r_depth = value;
+		break;
+	case 23:
+		synth_param[param].unac_l_depth = value;
+		break;
+	case 24:
+		synth_param[param].unac_r_depth = value;
 		break;
 	case 32:
 		synth_param[param].flags = value;
@@ -515,11 +524,23 @@ int process_param_lin(int ctrlid)
 	if (synth_param[ctrlid].zprime) {
 		value += bipolar_signed_scale(zprime_value, synth_param[ctrlid].zprime);
 	}
-	if (synth_param[ctrlid].pad_l) {
-		value += bipolar_signed_scale(pad_left_value, synth_param[ctrlid].pad_l);
+	if (synth_param[ctrlid].pad_l_depth) {
+		value += bipolar_signed_scale(pad_value[PAD_MODL], synth_param[ctrlid].pad_l_depth);
 	}
-	if (synth_param[ctrlid].pad_r) {
-		value += bipolar_signed_scale(pad_left_value, synth_param[ctrlid].pad_r);
+	if (synth_param[ctrlid].pad_r_depth) {
+		value += bipolar_signed_scale(pad_value[PAD_MODR], synth_param[ctrlid].pad_r_depth);
+	}
+	if (synth_param[ctrlid].sus_l_depth) {
+		value += bipolar_signed_scale(pad_value[PAD_SUSL], synth_param[ctrlid].sus_l_depth);
+	}
+	if (synth_param[ctrlid].sus_r_depth) {
+		value += bipolar_signed_scale(pad_value[PAD_SUSR], synth_param[ctrlid].sus_r_depth);
+	}
+	if (synth_param[ctrlid].unac_l_depth) {
+		value += bipolar_signed_scale(pad_value[PAD_UNACL], synth_param[ctrlid].unac_l_depth);
+	}
+	if (synth_param[ctrlid].unac_r_depth) {
+		value += bipolar_signed_scale(pad_value[PAD_UNACR], synth_param[ctrlid].unac_r_depth);
 	}
 
 	if (value < 0) value = 0;
@@ -566,11 +587,23 @@ int process_param_inv(int ctrlid)
 	if (synth_param[ctrlid].zprime) {
 		value += bipolar_signed_scale(zprime_value, synth_param[ctrlid].zprime);
 	}
-	if (synth_param[ctrlid].pad_l) {
-		value += bipolar_signed_scale(pad_left_value, synth_param[ctrlid].pad_l);
+	if (synth_param[ctrlid].pad_l_depth) {
+		value += bipolar_signed_scale(pad_value[PAD_MODL], synth_param[ctrlid].pad_l_depth);
 	}
-	if (synth_param[ctrlid].pad_r) {
-		value += bipolar_signed_scale(pad_left_value, synth_param[ctrlid].pad_r);
+	if (synth_param[ctrlid].pad_r_depth) {
+		value += bipolar_signed_scale(pad_value[PAD_MODR], synth_param[ctrlid].pad_r_depth);
+	}
+	if (synth_param[ctrlid].sus_l_depth) {
+		value += bipolar_signed_scale(pad_value[PAD_SUSL], synth_param[ctrlid].sus_l_depth);
+	}
+	if (synth_param[ctrlid].sus_r_depth) {
+		value += bipolar_signed_scale(pad_value[PAD_SUSR], synth_param[ctrlid].sus_r_depth);
+	}
+	if (synth_param[ctrlid].unac_l_depth) {
+		value += bipolar_signed_scale(pad_value[PAD_UNACL], synth_param[ctrlid].unac_l_depth);
+	}
+	if (synth_param[ctrlid].unac_r_depth) {
+		value += bipolar_signed_scale(pad_value[PAD_UNACR], synth_param[ctrlid].unac_r_depth);
 	}
 
 	if (value < 0) value = 65535;
@@ -620,11 +653,23 @@ int process_param_log_add(int ctrlid, int32_t add, int32_t addchase)
 	if (synth_param[ctrlid].zprime) {
 		value += bipolar_signed_scale(zprime_value, synth_param[ctrlid].zprime);
 	}
-	if (synth_param[ctrlid].pad_l) {
-		value += bipolar_signed_scale(pad_left_value, synth_param[ctrlid].pad_l);
+	if (synth_param[ctrlid].pad_l_depth) {
+		value += bipolar_signed_scale(pad_value[PAD_MODL], synth_param[ctrlid].pad_l_depth);
 	}
-	if (synth_param[ctrlid].pad_r) {
-		value += bipolar_signed_scale(pad_left_value, synth_param[ctrlid].pad_r);
+	if (synth_param[ctrlid].pad_r_depth) {
+		value += bipolar_signed_scale(pad_value[PAD_MODR], synth_param[ctrlid].pad_r_depth);
+	}
+	if (synth_param[ctrlid].sus_l_depth) {
+		value += bipolar_signed_scale(pad_value[PAD_SUSL], synth_param[ctrlid].sus_l_depth);
+	}
+	if (synth_param[ctrlid].sus_r_depth) {
+		value += bipolar_signed_scale(pad_value[PAD_SUSR], synth_param[ctrlid].sus_r_depth);
+	}
+	if (synth_param[ctrlid].unac_l_depth) {
+		value += bipolar_signed_scale(pad_value[PAD_UNACL], synth_param[ctrlid].unac_l_depth);
+	}
+	if (synth_param[ctrlid].unac_r_depth) {
+		value += bipolar_signed_scale(pad_value[PAD_UNACR], synth_param[ctrlid].unac_r_depth);
 	}
 
 	if (value < 0) value = 65535;
@@ -1177,11 +1222,23 @@ int process_param_note(int ctrlid, int32_t notevalue, int modrange)
 	if (synth_param[ctrlid].zprime) {
 		modvalue += bipolar_signed_scale(zprime_value, synth_param[ctrlid].zprime);
 	}
-	if (synth_param[ctrlid].pad_l) {
-		modvalue += bipolar_signed_scale(pad_left_value, synth_param[ctrlid].pad_l);
+	if (synth_param[ctrlid].pad_l_depth) {
+		modvalue += bipolar_signed_scale(pad_value[PAD_MODL], synth_param[ctrlid].pad_l_depth);
 	}
-	if (synth_param[ctrlid].pad_r) {
-		modvalue += bipolar_signed_scale(pad_left_value, synth_param[ctrlid].pad_r);
+	if (synth_param[ctrlid].pad_r_depth) {
+		modvalue += bipolar_signed_scale(pad_value[PAD_MODR], synth_param[ctrlid].pad_r_depth);
+	}
+	if (synth_param[ctrlid].sus_l_depth) {
+		modvalue += bipolar_signed_scale(pad_value[PAD_SUSL], synth_param[ctrlid].sus_l_depth);
+	}
+	if (synth_param[ctrlid].sus_r_depth) {
+		modvalue += bipolar_signed_scale(pad_value[PAD_SUSR], synth_param[ctrlid].sus_r_depth);
+	}
+	if (synth_param[ctrlid].unac_l_depth) {
+		modvalue += bipolar_signed_scale(pad_value[PAD_UNACL], synth_param[ctrlid].unac_l_depth);
+	}
+	if (synth_param[ctrlid].unac_r_depth) {
+		modvalue += bipolar_signed_scale(pad_value[PAD_UNACR], synth_param[ctrlid].unac_r_depth);
 	}
 	value += bipolar_signed_scale(modvalue, modrange * (0x8000 / 128));
 
@@ -1431,8 +1488,6 @@ void synth_run()
 		}
 
 		zprime_value = hp_update(&zprime_hp, pad_value[KEYBOARD_Z]);
-		pad_left_value = pad_value[PAD_PBL];
-		pad_right_value = pad_value[PAD_PBR];
 
 		shiftctrl_update();
 	}
