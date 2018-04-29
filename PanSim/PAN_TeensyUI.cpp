@@ -239,7 +239,7 @@ void LoadPreset(PanPreset_t& preset)
 #define OUTPUT_VIRT(name,codecport,codecpin, type,id, style,defaultvalue) \
 	OUTPUT(name,codecport,codecpin,type,id,style,defaultvalue);
 #define SWITCH(name,id) \
-	WriteSwitch(id, (preset.switches[0]>>id) & 1);
+	WriteSwitch(id, (preset.switches[id/32]>>(id%32)) & 1);
 #include "../interface/paramdef.h"
 #undef OUTPUT
 #undef OUTPUT_VIRT
@@ -1618,6 +1618,7 @@ void SetSwitch(SwitchEnum SwitchID)
 	gPreset.switches[switchset] &= ~(1 << (SwitchID - switchset * 32));
 	gPreset.switches[switchset] |=  (1 << (SwitchID - switchset * 32));
 	Raspberry_guidata.switches[0] = gPreset.switches[0];
+	Raspberry_guidata.switches[1] = gPreset.switches[1];
 	Raspberry_guidata.dirty = 1;
 	WriteSwitch(SwitchID, 1);
 }
@@ -1646,6 +1647,7 @@ void ClearSwitch(SwitchEnum SwitchID)
 	int switchset = ((int)SwitchID) / 32;
 	gPreset.switches[switchset] &= ~(1 << (SwitchID - switchset*32));
 	Raspberry_guidata.switches[0] = gPreset.switches[0];
+	Raspberry_guidata.switches[1] = gPreset.switches[1];
 	Raspberry_guidata.dirty = 1;
 	WriteSwitch(SwitchID, 0);
 
