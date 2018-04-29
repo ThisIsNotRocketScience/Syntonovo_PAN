@@ -19,6 +19,7 @@ extern "C"
 	extern unsigned int tftglInitEgl(unsigned int flags);
 	extern unsigned int tftglInitDisplay(unsigned int flags);
 }
+bool bexit = false;
 
 
 uint32_t vc_image_ptr;
@@ -177,6 +178,9 @@ void DoCommand(unsigned char comm, uint32_t data)
 	{
 		memcpy(&Raspberry_guidata, &incoming, sizeof(Raspberry_GuiData_t));
 	}break;
+	case 0xd3:
+		bexit = true;
+		break;
 	//#endif
 
 	}
@@ -432,11 +436,9 @@ extern "C"
 		Raspberry_Reset();
 		Raspberry_ToState(GuiState_Boot,0);
 		OpenComm();
-		for(int www=0;www<10000;www++)
-		{
-//		Raspberry_ToState((GuiState_t)www, 0);
 
-		for (int qq = 0; qq < 200; qq++)
+		while (!bexit)
+
 		{
 			UpdateComm();
 			glViewport(0, 0, 800, 480);
@@ -456,9 +458,7 @@ extern "C"
 
 			fullscreen(display, &info);
 
-			//}
 		}
-}
 		ImGui_ImlES_Shutdown();
 		// Cleanup GLSL shader and two buffers
 		glDeleteProgram(program);

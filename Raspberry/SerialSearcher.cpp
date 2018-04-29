@@ -116,86 +116,86 @@ int USB = 0;
 extern void ByteReceived(unsigned char byte);
 void UpdateComm()
 {
-  if (USB == 0) return;
+	if (USB == 0) return;
 
-  int bytes_avail;
-  ioctl(USB, FIONREAD, &bytes_avail);
-  unsigned char bytes[100];
-while (bytes_avail>0)
-{
- int toread = bytes_avail;
-if (toread > 100) toread = 100;
+	int bytes_avail;
+	ioctl(USB, FIONREAD, &bytes_avail);
+	unsigned char bytes[30000];
+	while (bytes_avail > 0)
+	{
+		int toread = bytes_avail;
+		if (toread > 30000) toread = 30000;
 
-int n = read( USB, &bytes, toread );
-for(int i = 0;i<toread;i++)
-{
-ByteReceived(bytes[i]);
-}
-bytes_avail -= toread;
-}
-	
+		int n = read(USB, &bytes, toread);
+		for (int i = 0; i < toread; i++)
+		{
+			ByteReceived(bytes[i]);
+		}
+		bytes_avail -= toread;
+	}
+
 };
 
 void OpenIt(string port)
 {
- USB = open( port.c_str(), O_RDWR| O_NOCTTY );
+	USB = open(port.c_str(), O_RDWR | O_NOCTTY);
 
-struct termios tty;
-struct termios tty_old;
-memset (&tty, 0, sizeof tty);
+	struct termios tty;
+	struct termios tty_old;
+	memset(&tty, 0, sizeof tty);
 
-/* Error Handling */
-if ( tcgetattr ( USB, &tty ) != 0 ) {
-   std::cout << "Error " << errno << " from tcgetattr: " << strerror(errno) << std::endl;
+	/* Error Handling */
+	if (tcgetattr(USB, &tty) != 0) {
+		std::cout << "Error " << errno << " from tcgetattr: " << strerror(errno) << std::endl;
+	}
+
+	/* Save old tty parameters */
+	tty_old = tty;
+
+	tty.c_ispeed = tty.c_ospeed = 1000000;
+
+	/* Setting other Port Stuff */
+	tty.c_cflag &= ~PARENB;            // Make 8n1
+	tty.c_cflag &= ~CSTOPB;
+	tty.c_cflag &= ~CSIZE;
+	tty.c_cflag |= CS8;
+
+	tty.c_cflag &= ~CRTSCTS;           // no flow control
+	tty.c_cc[VMIN] = 1;                  // read doesn't block
+	tty.c_cc[VTIME] = 5;                  // 0.5 seconds read timeout
+	tty.c_cflag |= CREAD | CLOCAL;     // turn on READ & ignore ctrl lines
+
+	/* Make raw */
+	cfmakeraw(&tty);
+
+	tty.c_cflag |= (CLOCAL | CREAD);   // Enable the receiver and set local mode
+	tty.c_cflag &= ~CSTOPB;            // 1 stop bit
+	tty.c_cflag &= ~CRTSCTS;           // Disable hardware flow control
+	tty.c_cc[VMIN] = 1;
+	tty.c_cc[VTIME] = 2;
+
+
+
+	/* Flush Port, then applies attributes */
+	tcflush(USB, TCIFLUSH);
+	if (tcsetattr(USB, TCSANOW, &tty) != 0) {
+		std::cout << "Error " << errno << " from tcsetattr" << std::endl;
+	}
+
+
+
 }
-
-/* Save old tty parameters */
-tty_old = tty;
-
-tty.c_ispeed = tty.c_ospeed = 1000000;
-
-/* Setting other Port Stuff */
-tty.c_cflag     &=  ~PARENB;            // Make 8n1
-tty.c_cflag     &=  ~CSTOPB;
-tty.c_cflag     &=  ~CSIZE;
-tty.c_cflag     |=  CS8;
-
-tty.c_cflag     &=  ~CRTSCTS;           // no flow control
-tty.c_cc[VMIN]   =  1;                  // read doesn't block
-tty.c_cc[VTIME]  =  5;                  // 0.5 seconds read timeout
-tty.c_cflag     |=  CREAD | CLOCAL;     // turn on READ & ignore ctrl lines
-
-/* Make raw */
-cfmakeraw(&tty);
-
-tty.c_cflag |= (CLOCAL | CREAD);   // Enable the receiver and set local mode
-tty.c_cflag &= ~CSTOPB;            // 1 stop bit
-tty.c_cflag &= ~CRTSCTS;           // Disable hardware flow control
-tty.c_cc[VMIN] = 1;
-tty.c_cc[VTIME] = 2;
-
-
-
-/* Flush Port, then applies attributes */
-tcflush( USB, TCIFLUSH );
-if ( tcsetattr ( USB, TCSANOW, &tty ) != 0) {
-   std::cout << "Error " << errno << " from tcsetattr" << std::endl;
-}
-
-
-
-}
-void OpenComm() 
+void OpenComm()
 {
 	printf("Scanning for serialports..\n");
 	list<string> l = getComList();
 
 	string notthatone = "/dev/ttyAMA0";
 	list<string>::iterator it = l.begin();
-	while (it != l.end()) 
+	while (it != l.end())
 	{
 		cout << *it << endl;
-		if( *it != notthatone)
+		if (*it != notthatone)
 		{
 			printf("trying to open %s\n", (*it).c_str());
 			OpenIt(*it);

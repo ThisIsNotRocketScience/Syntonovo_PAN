@@ -1,6 +1,6 @@
 //#define SIMLINK
-//#define SILENTMODE
-//#define SDDEBUG
+#define SILENTMODE
+#define SDDEBUG
 
 
 #ifdef SILENTMODE
@@ -838,13 +838,12 @@ void Teensy_BuildPresetName(int bank, int slot)
 
 #include <SD.h>
 #include <SPI.h>
-bool hasSD = false;
 
 void Teensy_LoadSDPreset(int bank, int slot)
 {
   
   Teensy_BuildPresetName(bank, slot);
-  if (!hasSD)
+  if (!SD.begin(BUILTIN_SDCARD))
   {
     InitPreset(gPreset);
     LoadPreset(gPreset);
@@ -874,20 +873,15 @@ void Teensy_LoadSDPreset(int bank, int slot)
 
 void Teensy_InitSD()
 {
-   if (!SD.begin(BUILTIN_SDCARD))
-  {
-    #ifdef SDDEBUG
-    Serial.println("no sdcard!");
-    #endif
-    return;
-  }
-  hasSD = true;
   for (int i = 0; i < 8; i++)
   {
     for (int j = 0; j < 8; j++)
     {
       Teensy_BuildPresetName(i, j);
-     
+      if (!SD.begin(BUILTIN_SDCARD))
+      {
+        return;
+      }
       if (SD.exists(presetname) == false)
       {
           Teensy_SaveSDPreset(i, j);
@@ -905,7 +899,7 @@ void Teensy_SaveSDPreset(int bank, int slot)
     Serial.println(presetname);
     #endif
    
-   if (!hasSD)
+   if (!SD.begin(BUILTIN_SDCARD))
   {
     #ifdef SDDEBUG
     Serial.print("no sd! - ");

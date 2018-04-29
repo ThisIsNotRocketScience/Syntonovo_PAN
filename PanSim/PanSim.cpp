@@ -417,7 +417,7 @@ static bool MySlider(const char* label, float* p_value, float v_min, float v_max
 	return value_changed;
 }
 
-bool LedButton(const char* label, bool* v)
+bool LedButton(const char* label, int mode)
 {
 
 	ImGuiIO& io = ImGui::GetIO();
@@ -440,9 +440,14 @@ bool LedButton(const char* label, bool* v)
 	draw_list->AddText(ImVec2(center.x - R.x / 2, pos.y - line_height - style.ItemInnerSpacing.y), ImGui::GetColorU32(ImGuiCol_Text), label);
 
 	//if (pressed) *v = !*v;
-	if (*v)
+	if (mode == LED_ON)
 	{
 		draw_list->AddCircleFilled(center, radius_outer, IM_COL32(255, 255, 0, 255), 16);
+
+	}
+	if (mode == LED_BLINK)
+	{
+		draw_list->AddCircleFilled(center, radius_outer, IM_COL32(100, 255, 0, 255), 16);
 
 	}
 
@@ -566,6 +571,30 @@ int SerialCounter = 0;
 uint32_t SerialData = 0;
 Raspberry_GuiData_t incoming;
 unsigned char *RaspberryPointer;
+char presetname[30];
+void Teensy_BuildPresetName(int bank, int slot)
+{
+	sprintf(presetname, "pan%d_%d.prs", bank, slot);
+}
+
+
+void Teensy_LoadSDPreset(int bank, int slot)
+{
+	Teensy_BuildPresetName(bank, slot);
+	FILE *F = fopen(presetname, "rb+");
+	if (F)
+	{
+		PanPreset_t inc;
+		fread(&inc, sizeof(PanPreset_t), 1, F);
+		LoadPreset(inc);
+	}
+}
+void Teensy_SaveSDPreset(int bank, int slot)
+{
+	Teensy_BuildPresetName(bank, slot);
+}
+
+
 uint32_t RaspberryOffset = sizeof(Raspberry_GuiData_t);
 void AddIncomingByte(unsigned char b)
 {
@@ -656,6 +685,18 @@ void DoCommand(unsigned char comm, uint32_t data)
 		break;
 	case 0xd2:
 	{
+		if (0) {
+			printf("%d %d\n", RaspberryOffset, sizeof(Raspberry_GuiData_t));
+			unsigned char *a = (unsigned char*)&Raspberry_guidata;
+			unsigned char *b = (unsigned char*)&incoming;
+			unsigned char cb = 0;
+			for (int i = 0; i < sizeof(Raspberry_GuiData_t); i++)
+			{
+				if (cb!= b[i]) printf("hmm\n");
+				cb++;
+
+			}
+		}
 		memcpy(&Raspberry_guidata, &incoming, sizeof(Raspberry_GuiData_t));
 	}break;
 //#endif
@@ -689,6 +730,36 @@ int HandleSerial(unsigned char inb)
 	return 0;
 }
 
+void SendLocalCommand(unsigned char command, uint32_t data)
+{
+	uint8_t buffer[10];
+	uint32_t D = ConvertDat(data);
+	buffer[0] = command;
+	buffer[1] = (D & 127);
+	buffer[2] = (((D >> 8) & 127));
+	buffer[3] = (((D >> 16) & 127));
+	buffer[4] = (((D >> 24) & 127));
+	DoCommand(command, data);
+};
+
+void SendRaspberryState()
+{
+	unsigned char *b = (unsigned char *)&Raspberry_guidata;
+	uint32_t sent = 0;
+	unsigned char commandb = 0xd0;
+	while (sent < sizeof(Raspberry_GuiData_t))
+	{
+		byte b1 = *b++;
+		byte b2 = *b++;
+		byte b3 = *b++;
+		SendLocalCommand(commandb, b1 + (b2 << 8) + (b3 << 16));
+		sent += 3;
+		commandb = 0xd1;
+	}
+	SendLocalCommand(0xd2, 0);
+
+}
+
 
 int main(int argc, char** argv)
 {
@@ -697,7 +768,7 @@ int main(int argc, char** argv)
 		printf("Error: %s\n", SDL_GetError());
 		return -1;
 	}
-
+	printf("sizeof modsource: %d\n", sizeof(ModSource_t));
 	HMIDIIN hMidiDevice[255] = { 0 };
 	DWORD nMidiPort = 0;
 	MMRESULT rv;
@@ -791,8 +862,12 @@ int main(int argc, char** argv)
 	static bool mainscreen = true;
 	GetSerialPorts(dspport, uiport);
 
-	//Teensy_Reset();
-	//Teensy_InitPreset();
+	if (UISerial.IsOpen() == false)
+	{
+		parameters = true;
+		Teensy_Reset();
+		Teensy_InitPreset();
+	}
 	Raspberry_Init();
 	Raspberry_Reset();
 	
@@ -872,13 +947,23 @@ int main(int argc, char** argv)
 		}
 		if (parameters)
 		{
+			if (UISerial.IsOpen() == false)
+			{
+				if (Raspberry_guidata.dirty )
+				{
+					Raspberry_guidata.dirty = false;
+					SendRaspberryState();
+				}
+				
+			}
+
 			ImGui::PushFont(pFontBold);
 			{
 				ImGui::Begin("Pan Parameters", &parameters, ImGuiWindowFlags_AlwaysAutoResize);
 				ImGui::PushFont(pFont);
 				if (ImGui::Button("Resend All Data"))
 				{
-				//	Teensy_ReSendPreset();
+					if (UISerial.IsOpen() == false) Teensy_ReSendPreset();
 					UISendCommand(0x60, 0);
 
 				}
@@ -914,7 +999,8 @@ int main(int argc, char** argv)
 				for (int i = 0; i < __LEDBUTTON_COUNT; i++)
 				{
 					ImGui::SetCursorScreenPos(ImVec2(pos.x + Buttons[i].x * xscalefac, pos.y + Buttons[i].y * yscalefac));
-					if (LedButton(Buttons[i].name, &Buttons[i].value))
+					bool b = Buttons[i].value;
+					if (LedButton(Buttons[i].name, Buttons[i].ledmode ))
 					{
 						Teensy_ButtonPressed(Buttons[i].id, Buttons[i].value);
 
@@ -980,6 +1066,7 @@ int main(int argc, char** argv)
 			midiInClose(hMidiDevice[i]);
 		}
 	}
+
 	ImGui_ImplSdlGL3_Shutdown();
 	ImGui::DestroyContext();
 	CloseSerialPorts();

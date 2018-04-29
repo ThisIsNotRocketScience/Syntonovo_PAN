@@ -6,6 +6,10 @@
 #define SYNTONPAN
 #include <string>
 
+#define LED_BLINK 2
+#define LED_ON 1
+#define LED_OFF 0
+
 #define KNOB(name,x,y,min,max,idx,lbl) +1
 const int knobcount = 0
 #include "PanControls.h"
@@ -158,6 +162,7 @@ public:
 	LedButtonEnum id;
 	int fpid;
 	bool value;
+	int ledmode;
 };
 
 extern aLedButton Buttons[];
@@ -323,6 +328,13 @@ inline const char* ParamToName(int paramid)
 	return "Unnamed";
 }
 
+#pragma pack(1)
+
+#ifdef WIN32
+#define PACK
+#else
+#define PACK  __attribute__((packed))
+#endif
 typedef struct PanGui_t
 {
 	
@@ -331,29 +343,29 @@ typedef struct PanGui_t
 typedef struct {
 	uint8_t param;
 	uint16_t depth;
-} ModTarget_t;
+} PACK ModTarget_t;
 
 typedef struct {
+	ModTarget_t target[16];
 	uint16_t speed;
 	uint16_t shape;
-	ModTarget_t target[16];
-} LfoModulation_t;
+} PACK LfoModulation_t;
 
 typedef struct {
+	ModTarget_t target[16];
 	uint16_t a;
 	uint16_t d;
 	uint16_t s;
 	uint16_t r;
-	ModTarget_t target[16];
-} AdsrModulation_t;
+} PACK AdsrModulation_t;
 
 typedef struct {
+	ModTarget_t target[16];
 	uint16_t a;
 	uint16_t d;
-	ModTarget_t target[16];
-} AdModulation_t;
+} PACK  AdModulation_t;
 
-enum ModSource_t {
+enum ModSource_t: unsigned char {
 	Source_none,
 
 	Source_left_mod,
@@ -367,15 +379,14 @@ enum ModSource_t {
 	__ModSource_COUNT
 };
 typedef struct {
-	ModSource_t source;
 	ModTarget_t target[16];
+	ModSource_t source;
 } ControlModulation_t;
 
 #define PRESET_NAME_LENGTH 16
 
 typedef struct {
-	uint32_t switches[1];
-
+	uint32_t switches[2];
 	uint16_t paramvalue[256];
 
 	LfoModulation_t lfomod[16];
@@ -383,15 +394,17 @@ typedef struct {
 	AdModulation_t admod[16];
 	ControlModulation_t ctrlmod[16];
 	char Name[PRESET_NAME_LENGTH];
-} PanPreset_t;
+} PACK PanPreset_t;
 
-typedef enum {
+typedef enum: unsigned char{
 	GuiState_Root,
 	GuiState_LfoSelect,
 	GuiState_AdsrSelect,
 	GuiState_AdSelect,
 	GuiState_CtrlSelect,
-
+	GuiState_SelectBanks,
+	GuiState_SelectSaveSlot,
+	GuiState_SavePreset,
 #define MENU(id, buttonid, name) \
 	GuiState_Menu_##id,
 #include "PanUiMap.h"
@@ -400,31 +413,31 @@ typedef enum {
 	__GuiState_COUNT
 } GuiState_t;
 
-
-
 typedef struct Raspberry_GuiData_t
 {
 	GuiState_t GuiState;
 	
 	int ModSelect;
-
 	int selectTarget;
+	char PresetName[PRESET_NAME_LENGTH];
 
+	ControlModulation_t dataCtrl;
 	LfoModulation_t dataLfo;
 	AdsrModulation_t dataAdsr;
 	AdModulation_t dataAd;
-	ControlModulation_t dataCtrl;
 
 	uint32_t outputValues[256];
-	uint32_t switches[1];
+	uint32_t switches[2];
 
-	char PresetName[PRESET_NAME_LENGTH];
 	uint32_t LeftEncoderValue;
 	uint32_t RightEncoderValue;
 	bool dirty;
-} Raspberry_GuiData_t;
+	int banks[2];
+	int activeslot;
+	int activebank;
+} PACK  Raspberry_GuiData_t;
 
-
+#pragma pack()
 
 inline GuiState_t ButtonToMenu(int buttonid)
 {
@@ -477,6 +490,8 @@ void Raspberry_WindowFrame();
 int DecodeCurrentEffect(uint32_t switches);
 void Teensy_ReSendPreset();
 extern Raspberry_GuiData_t Raspberry_guidata;
+void LoadPreset(PanPreset_t& preset);
+void SetLedButton(int id, int mode);
 
 
 

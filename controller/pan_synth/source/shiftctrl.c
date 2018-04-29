@@ -12,26 +12,48 @@
 
 static volatile int shiftctrl_update_needed = 1;
 static volatile uint32_t shiftctrl_flags = 0;
+static volatile uint32_t shiftctrl_extra_flags = 0;
 
 void shiftctrl_init()
 {
 	shiftctrl_update_needed = 1;
 	shiftctrl_flags = 0;
+	shiftctrl_extra_flags = 0;
 	shiftctrl_update();
 }
 
 void shiftctrl_set(int flag)
 {
-	shiftctrl_flags |= (1 << flag);
-	shiftctrl_update_needed = 1;
+	if (flag < 32) {
+		shiftctrl_flags |= (1 << flag);
+		shiftctrl_update_needed = 1;
+	}
+	else {
+		shiftctrl_extra_flags |= (1 << (flag - 32));
+	}
 	//shiftctrl_update();
 }
 
 void shiftctrl_clear(int flag)
 {
-	shiftctrl_flags &= ~(1 << flag);
-	shiftctrl_update_needed = 1;
+	if (flag < 32) {
+		shiftctrl_flags &= ~(1 << flag);
+		shiftctrl_update_needed = 1;
+	}
+	else {
+		shiftctrl_extra_flags &= ~(1 << (flag - 32));
+	}
 	//shiftctrl_update();
+}
+
+int shiftctrl_flag_state(int flag)
+{
+	if (flag < 32) {
+		return (shiftctrl_flags >> flag) & 1;
+	}
+	else {
+		return (shiftctrl_extra_flags >> (flag - 32)) & 1;
+	}
 }
 
 void shiftctrl_update()

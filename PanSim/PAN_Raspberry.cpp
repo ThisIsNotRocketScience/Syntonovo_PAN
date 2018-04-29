@@ -21,15 +21,6 @@
 #undef MENU
 #undef CUSTOMENTRY
 
-typedef struct guirow_state_t
-{
-	float left;
-	float right;
-	float top;
-	float bottom;
-	bool active;
-} guirow_state_t;
-
 
 typedef struct Raspberry_GuiResources_t
 {
@@ -50,6 +41,49 @@ typedef struct Raspberry_GuiResources_t
 
 	ImTextureID BgImages[__GuiState_COUNT];
 } Raspberry_GuiResources_t;
+
+
+extern Raspberry_GuiData_t Raspberry_guidata;
+static Raspberry_GuiResources_t res;
+
+#define SR() PushRowStyle(row);
+#define ER() PopRowStyle(row);NextRow(row);
+
+
+typedef struct guirow_state_t
+{
+	float left;
+	float right;
+	float top;
+	float bottom;
+	int currentitem;
+	bool active;
+} guirow_state_t;
+
+void PushRowStyle(guirow_state_t &rowstate)
+{
+	if (rowstate.active)
+	{
+		ImGui::PushStyleColor(ImGuiCol_Text, res.Highlight);
+	}
+}
+void PopRowStyle(guirow_state_t &rowstate)
+{
+	if (rowstate.active)
+	{
+		ImGui::PopStyleColor();
+	}
+}
+
+void RenderCursor(guirow_state_t &rowstate);
+
+void NextRow(guirow_state_t &rowstate)
+{
+	RenderCursor(rowstate);
+	rowstate.currentitem++;
+	rowstate.active = rowstate.currentitem == Raspberry_guidata.LeftEncoderValue ? true : false;
+	rowstate.top = ImGui::GetCursorPos().y;
+}
 
 
 ImTextureID Raspberry_LoadTexture(const char *filename)
@@ -90,8 +124,6 @@ ImTextureID Raspberry_LoadTexture(const char *filename)
 };
 
 
-extern Raspberry_GuiData_t Raspberry_guidata;
-static Raspberry_GuiResources_t res;
 
 
 const char* ParamLabel(int param)
@@ -104,7 +136,19 @@ float DepthLabel(int depth)
 	return (float)(int16_t)depth * (1.0f / 0x4000);
 }
 
-void TargetsList()
+void MenuRightAlignLabel(const char *name, guirow_state_t &rowstate)
+{
+	ImVec2 cp = ImGui::GetCursorPos();
+	ImVec2 sz = ImGui::CalcTextSize(name);
+	float left = 240 - sz.x;
+	ImGui::SetCursorPos(ImVec2(240 - sz.x - 10, cp.y));
+	ImGui::Text(name);
+	rowstate.left = left;
+	rowstate.right = left + sz.x + 10;
+}
+
+
+void TargetsList(int offsetrow, guirow_state_t &row)
 {
 	
 	ModTarget_t *t = 0;
@@ -118,42 +162,39 @@ void TargetsList()
 	
 	if (!t) return;
 
-	ImGui::Columns(2);
+	
+	row.active = false;
 
 	for (int i = 0; i < 16; i++) {
+
 		if (i == Raspberry_guidata.selectTarget) {
-			ImGui::PushStyleColor(ImGuiCol_Text, 0xFFFFFFFF);
+			row.active = true;
+		}
+		else
+		{
+			row.active = false;
 		}
 		if (t[i].param != 0) {
-			ImGui::Text(ParamLabel(t[i].param)); ImGui::NextColumn();
-			ImGui::Text("%1.3f", DepthLabel(t[i].depth)); ImGui::NextColumn();
+
+			SR();	MenuRightAlignLabel(ParamLabel(t[i].param), row); ImGui::SameLine(); ImGui::Text("%1.3f", DepthLabel(t[i].depth)); ER();
 		}
 		if (i == Raspberry_guidata.selectTarget) {
-			ImGui::PopStyleColor();
 		}
 	}
 }
 
-void MenuRightAlignLabel(const char *name, guirow_state_t &rowstate)
-{
-	ImVec2 cp = ImGui::GetCursorPos();
-	ImVec2 sz = ImGui::CalcTextSize(name);
-	float left = 240 - sz.x;
-	ImGui::SetCursorPos(ImVec2(240 - sz.x-10 , cp.y));
-	ImGui::Text(name);
-	rowstate.left =  left ;
-	rowstate.right = left + sz.x + 10;
-}
 char EffectChipStrings[8][4][24] = {
 
-	{"Chorus - reverb","Reverb mix","Chorus rate","Chorus mix"},
-{"Flange - reverb","Reverb mix","Flange rate","Flange mix" },
-{"Tremolo - reverb","Reverb mix","Tremolo rate","Tremolo mix"},
-{"Pitch shift","Pitch +/- 4 semitones","-","-"},
-{"Pitch - echo","Pitch shift","Echo delay","Echo mix"},
-{"Test","-","-","-"},
-{"Reverb 1","Reverb time","HF filter","LF filter"},
-{"Reverb 2","Reverb time","HF filter","LF filter"}
+{    "Chorus - reverb" ,"Reverb mix","Chorus rate","Chorus mix"},
+{    "Flange - reverb","Reverb mix","Flange rate","Flange mix" },
+{    "Tremolo - reverb","Reverb mix","Tremolo rate","Tremolo mix"},
+{    "Pitch shift","Pitch +/- 4 semitones","-","-"},
+
+{    "Pitch - echo","Pitch shift","Echo delay","Echo mix"},
+{    "Test","-","-","-"},
+{    "Reverb 1","Reverb time","HF filter","LF filter"},
+{    "Reverb 2","Reverb time","HF filter","LF filter"}
+
 };
 void Render_MenuEntry_Percentage(const char* name, int param, guirow_state_t &rowstate)
 {
@@ -187,6 +228,13 @@ void Render_MenuEntry_EffectParam3(const char* name, int param, guirow_state_t &
 	int currenteffect = DecodeCurrentEffect(Raspberry_guidata.switches[0]);;
 	Render_MenuEntry_Percentage(EffectChipStrings[currenteffect][3], param, rowstate);
 }
+
+void Render_KeyValue(const char* name, int value, guirow_state_t &rowstate)
+{
+	MenuRightAlignLabel(name, rowstate); ImGui::SameLine();
+	ImGui::Text("%1.3f", (float)((int)value) * (1.0f / (float)0xFFFF));
+}
+
 
 void Render_MenuEntry_Value(const char* name, int param, guirow_state_t &rowstate)
 {
@@ -256,23 +304,25 @@ void RenderMenuTitle(const char *name)
 	float pt = (float)res.PageTime;
 	if (pt > 14) pt = 14;
 	pt /= 14.0f;
-	float distance[5] = { 0,10,30,40,50 };
-	float len[5] = { 1.0,0.8,0.6,0.6,0.6 };
-
-	for (int i = 0; i <5 ; i ++)
+	float distance[13] = { 0,10,30, 40,50, 70,80,90,110,120,140,150,160 };
+	
+	for (int i = 0; i <13 ; i ++)
 	{
-		float M = ((float)(i) / (float)5);
-		M *= M;
-		float x = w - (distance[i] * 2)*M;
-		float L = (ImGui::GetTextLineHeight() * len[i] + 20)* pt;
-		ImGui::GetWindowDrawList()->AddLine(ImVec2(curspos.x + x, curspos.y-2), ImVec2(curspos.x + x, curspos.y+L), IM_COL32(255, 255, 255, 255), 1 + (float)(5-i)*3);
-		ImGui::GetWindowDrawList()->AddLine(ImVec2(curspos.x + 480-x, curspos.y-2), ImVec2(curspos.x + 480-x, curspos.y+L), IM_COL32(255, 255, 255, 255), 1+(float)(5-i)*3);
+		float x = w - (distance[i] * 1);
+		float L = (ImGui::GetTextLineHeight() * pow(0.6,distance[i]/10.0f) + 20)* pt;
+		ImGui::GetWindowDrawList()->AddLine(ImVec2(curspos.x + x, curspos.y-2), ImVec2(curspos.x + x, curspos.y+L), IM_COL32(255, 255, 255, 255),5);
+		ImGui::GetWindowDrawList()->AddLine(ImVec2(curspos.x + 480-x, curspos.y-2), ImVec2(curspos.x + 480-x, curspos.y+L), IM_COL32(255, 255, 255, 255), 5);
 	}
 }
-void RenderStartMenu(const char *name)
+void RenderStartMenu(const char *name, guirow_state_t &row)
 {	
 	RenderMenuTitle(name);
 	ImGui::SetCursorPos(ImVec2(50, 80));
+	row.active = Raspberry_guidata.LeftEncoderValue == 0;
+	row.left = 0;
+	row.right = 0;
+	row.top = ImGui::GetCursorPos().y;
+	row.currentitem = 0;
 	//ImGui::BeginChild("mainitems", ImVec2(300, 600));
 
 }
@@ -284,20 +334,7 @@ void RenderEndMenu()
 }
 
 
-void PushRowStyle(guirow_state_t &rowstate)
-{
-	if (rowstate.active)
-	{
-		ImGui::PushStyleColor(ImGuiCol_Text, res.Highlight);
-	}
-}
-void PopRowStyle(guirow_state_t &rowstate)
-{
-	if (rowstate.active)
-	{
-		ImGui::PopStyleColor();
-	}
-}
+
 void RenderCursor( guirow_state_t &rowstate)
 {
 	if (!rowstate.active) return;
@@ -317,13 +354,13 @@ void RenderCursor( guirow_state_t &rowstate)
 }
 bool RenderDefaultItems(GuiState_t state)
 {
-#define MENU(id, button, name) if (state == GuiState_Menu_##id) { RenderStartMenu(name);int currentitem = 0;guirow_state_t rowstate={0,0,0,0,currentitem == Raspberry_guidata.LeftEncoderValue?true:false};rowstate.top = ImGui::GetCursorPos().y;
+#define MENU(id, button, name) if (state == GuiState_Menu_##id) { guirow_state_t rowstate;RenderStartMenu(name,rowstate);rowstate.top = ImGui::GetCursorPos().y;
 #define ENDMENU() RenderEndMenu(); return true; }
 
 #define ENTRY(name,type,param) \
-	PushRowStyle(rowstate);Render_##type(name, param,rowstate);RenderCursor(rowstate);PopRowStyle(rowstate);currentitem++;rowstate.active = currentitem == Raspberry_guidata.LeftEncoderValue?true:false;rowstate.top = ImGui::GetCursorPos().y;
+	PushRowStyle(rowstate);Render_##type(name, param,rowstate);PopRowStyle(rowstate);NextRow(rowstate);
 #define CUSTOMENTRY(name,type,param) \
-	PushRowStyle(rowstate);Render_##type(name, param,rowstate);RenderCursor(rowstate);PopRowStyle(rowstate);currentitem++;rowstate.active = currentitem == Raspberry_guidata.LeftEncoderValue?true:false;rowstate.top = ImGui::GetCursorPos().y;
+	PushRowStyle(rowstate);Render_##type(name, param,rowstate);PopRowStyle(rowstate);NextRow(rowstate);
 #include "PanUiMap.h"
 #undef MENU
 #undef ENDMENU
@@ -342,6 +379,8 @@ bool RenderMenu(GuiState_t state)
 
 void Raspberry_Init()
 {
+	memset(&Raspberry_guidata, 0, sizeof(Raspberry_GuiData_t));
+	
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
 	res.encoderbarmargin = 10;
 	res.encoderheight = 600;
@@ -438,40 +477,63 @@ void Raspberry_RenderScreen()
 		ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(pos.x, pos.y), ImVec2(pos.x + 480, pos.y + 800), res.BGColor);
 	}
 	ImGui::SetCursorPos(pos);
-	
+
 	if (Raspberry_guidata.GuiState == GuiState_LfoSelect)
 	{
-		RenderStartMenu("LFO assign");
-		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
-		ImGui::LabelText("Speed", "%d", Raspberry_guidata.dataLfo.speed);
-		ImGui::LabelText("Shape", "%d", Raspberry_guidata.dataLfo.shape);
-		ImGui::PopStyleVar();
-		TargetsList();
+		guirow_state_t row;
+		RenderStartMenu("LFO assign",row);
+		if (Raspberry_guidata.ModSelect != -1) {
+
+			SR(); ImGui::LabelText("Speed", "%d", Raspberry_guidata.dataLfo.speed); ER();
+			SR(); ImGui::LabelText("Shape", "%d", Raspberry_guidata.dataLfo.shape); ER();
+
+			TargetsList(2, row);
+		}
 		
 		RenderEndMenu();
 	}
 	else if (Raspberry_guidata.GuiState == GuiState_AdsrSelect)
 	{
-		RenderStartMenu("ADSR assign");
-		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
-		ImGui::LabelText("A", "%d", Raspberry_guidata.dataAdsr.a);
-		ImGui::LabelText("D", "%d", Raspberry_guidata.dataAdsr.d);
-		ImGui::LabelText("S", "%d", Raspberry_guidata.dataAdsr.s);
-		ImGui::LabelText("R", "%d", Raspberry_guidata.dataAdsr.r);
-		ImGui::PopStyleVar();
-		TargetsList();
+		guirow_state_t row;
+		RenderStartMenu("ADSR assign", row);
+		if (Raspberry_guidata.ModSelect != -1) {
+			SR(); Render_KeyValue("A", Raspberry_guidata.dataAdsr.a, row); ER();
+			SR(); Render_KeyValue("D", Raspberry_guidata.dataAdsr.d, row); ER();
+			SR(); Render_KeyValue("S", Raspberry_guidata.dataAdsr.s, row); ER();
+			SR(); Render_KeyValue("R", Raspberry_guidata.dataAdsr.r, row); ER();
+			TargetsList(4, row);
+		}
 		
 		RenderEndMenu();
 	}
 	else if (Raspberry_guidata.GuiState == GuiState_AdSelect)
 	{
-		RenderStartMenu("AD assign");
-			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
-			ImGui::LabelText("A", "%d", Raspberry_guidata.dataAd.a);
-			ImGui::LabelText("D", "%d", Raspberry_guidata.dataAd.d);
-			ImGui::PopStyleVar();
-			TargetsList();
-		
+		guirow_state_t row;
+
+		RenderStartMenu("AD assign",row);
+		if (Raspberry_guidata.ModSelect != -1) {
+			SR(); Render_KeyValue("A", Raspberry_guidata.dataAd.a, row); ER();
+			SR(); Render_KeyValue("D", Raspberry_guidata.dataAd.d, row); ER();
+
+			TargetsList(2, row);
+		}
+		RenderEndMenu();
+	}
+	else if (Raspberry_guidata.GuiState == GuiState_SavePreset)
+	{
+		guirow_state_t row;
+
+		RenderStartMenu("Save Preset?", row);
+		ImGui::Text("Please press target");
+		ImGui::Text("button to save ");
+		RenderEndMenu();
+	}
+	else if (Raspberry_guidata.GuiState == GuiState_SelectBanks)
+	{
+		guirow_state_t row;
+
+		RenderStartMenu("Select bank?", row);
+		ImGui::Text("Please select:");
 		RenderEndMenu();
 	}
 	else if (Raspberry_guidata.GuiState == GuiState_CtrlSelect)
@@ -487,9 +549,14 @@ void Raspberry_RenderScreen()
 			Source_note,
 			Source_vel*/
 		const char ControllerNames[__ModSource_COUNT][20] = { "NONE", "Left mod","Right mod","X-pression","Y-pression","Z-pression","Z'-pression","Note"," Velocity" };
-		RenderStartMenu(ControllerNames[Raspberry_guidata.dataCtrl.source] );
-		TargetsList();
-		RenderEndMenu();
+		guirow_state_t row;
+		int Header = 0;
+		if (Raspberry_guidata.dataCtrl.source < __ModSource_COUNT) Header = Raspberry_guidata.dataCtrl.source;
+		
+			RenderStartMenu(ControllerNames[Header], row);
+			TargetsList(0, row);
+			RenderEndMenu();
+		
 	}
 	else if (RenderMenu(Raspberry_guidata.GuiState))
 	{

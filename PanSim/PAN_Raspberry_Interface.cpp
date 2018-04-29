@@ -116,6 +116,22 @@ void Raspberry_SelectTarget(int target)
 
 void Raspberry_UpdateTarget(int target, int param, int depth)
 {
+	if (Raspberry_guidata.GuiState == GuiState_LfoSelect) {
+		Raspberry_guidata.dataLfo.target[target].param = param;
+		Raspberry_guidata.dataLfo.target[target].depth = depth;
+	}
+	else if (Raspberry_guidata.GuiState == GuiState_AdsrSelect) {
+		Raspberry_guidata.dataAdsr.target[target].param = param;
+		Raspberry_guidata.dataAdsr.target[target].depth = depth;
+	}
+	else if (Raspberry_guidata.GuiState == GuiState_AdSelect) {
+		Raspberry_guidata.dataAd.target[target].param = param;
+		Raspberry_guidata.dataAd.target[target].depth = depth;
+	}
+	else if (Raspberry_guidata.GuiState == GuiState_CtrlSelect) {
+		Raspberry_guidata.dataCtrl.target[target].param = param;
+		Raspberry_guidata.dataCtrl.target[target].depth = depth;
+	}
 	Raspberry_guidata.dirty = true;
 }
 
