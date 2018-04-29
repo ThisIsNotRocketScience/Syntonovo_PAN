@@ -569,8 +569,6 @@ int T = 0;
 int SerialStatus = 0;
 int SerialCounter = 0;
 uint32_t SerialData = 0;
-Raspberry_GuiData_t incoming;
-unsigned char *RaspberryPointer;
 char presetname[30];
 void Teensy_BuildPresetName(int bank, int slot)
 {
@@ -595,19 +593,6 @@ void Teensy_SaveSDPreset(int bank, int slot)
 }
 
 
-uint32_t RaspberryOffset = sizeof(Raspberry_GuiData_t);
-void AddIncomingByte(unsigned char b)
-{
-	if (RaspberryOffset < sizeof(Raspberry_GuiData_t))
-	{
-		RaspberryPointer[RaspberryOffset] = b;
-		RaspberryOffset++;
-		if (RaspberryOffset == sizeof(Raspberry_GuiData_t))
-		{
-			
-		}
-	}
-}
 void DoCommand(unsigned char comm, uint32_t data)
 {
 	switch (comm)
@@ -657,49 +642,9 @@ void DoCommand(unsigned char comm, uint32_t data)
 	case 0x91:
 		printf("0x91: %d\n", data);
 		break;
-//#ifdef SIMULATEINCOMINGSERIAL
-	case 0xd0:
-	{
-		//printf("Incoming Guistate\n");
-		RaspberryOffset = 0;
-		RaspberryPointer = (unsigned char *)&incoming;
-		unsigned char b1 = data & 255;
-		unsigned char b2 = (data >> 8) & 255;
-		unsigned char b3 = (data >> 16) & 255;
-		AddIncomingByte(b1);
-		AddIncomingByte(b2);
-		AddIncomingByte(b3);
-
-	}
-	break;
-	case 0xd1:
-	{
-		//printf("GuistatePacket\n");
-		unsigned char b1 = data & 255;
-		unsigned char b2 = (data >> 8) & 255;
-		unsigned char b3 = (data >> 16) & 255;
-		AddIncomingByte(b1);
-		AddIncomingByte(b2);
-		AddIncomingByte(b3);
-	}
+	default:
+		DoDataCommands(comm, data);
 		break;
-	case 0xd2:
-	{
-		if (0) {
-			printf("%d %d\n", RaspberryOffset, sizeof(Raspberry_GuiData_t));
-			unsigned char *a = (unsigned char*)&Raspberry_guidata;
-			unsigned char *b = (unsigned char*)&incoming;
-			unsigned char cb = 0;
-			for (int i = 0; i < sizeof(Raspberry_GuiData_t); i++)
-			{
-				if (cb!= b[i]) printf("hmm\n");
-				cb++;
-
-			}
-		}
-		memcpy(&Raspberry_guidata, &incoming, sizeof(Raspberry_GuiData_t));
-	}break;
-//#endif
 
 	}
 }

@@ -423,6 +423,7 @@ typedef enum: unsigned char{
 	GuiState_SelectBanks,
 	GuiState_SelectSaveSlot,
 	GuiState_SavePreset,
+	GuiState_InitPatch,
 #define MENU(id, buttonid, name) \
 	GuiState_Menu_##id,
 #include "PanUiMap.h"
@@ -511,6 +512,6 @@ extern Raspberry_GuiData_t Raspberry_guidata;
 void LoadPreset(PanPreset_t& preset);
 void SetLedButton(int id, int mode);
 
-
+void DoDataCommands(unsigned char comm, uint32_t data);
 
 #endif
