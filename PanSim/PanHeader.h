@@ -396,6 +396,7 @@ enum ModSource_t: unsigned char {
 	Source_vel,
 	__ModSource_COUNT
 };
+
 typedef struct {
 	ModTarget_t target[16];
 	ModSource_t source;
@@ -460,10 +461,11 @@ typedef struct Raspberry_GuiData_t
 
 inline GuiState_t ButtonToMenu(int buttonid)
 {
-#define MENU(id, button, name) \
-	if (buttonid == button) return GuiState_Menu_##id;
+#define EXTRABUTTON(id, button) if (buttonid == button) return GuiState_Menu_##id;
+#define MENU(id, button, name) if (buttonid == button) return GuiState_Menu_##id;
 #include "PanUiMap.h"
 #undef MENU
+#undef EXTRABUTTON
 	return GuiState_Root;
 }
 
