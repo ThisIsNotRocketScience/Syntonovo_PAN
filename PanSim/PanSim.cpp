@@ -685,6 +685,18 @@ void DoCommand(unsigned char comm, uint32_t data)
 		break;
 	case 0xd2:
 	{
+		if (0) {
+			printf("%d %d\n", RaspberryOffset, sizeof(Raspberry_GuiData_t));
+			unsigned char *a = (unsigned char*)&Raspberry_guidata;
+			unsigned char *b = (unsigned char*)&incoming;
+			unsigned char cb = 0;
+			for (int i = 0; i < sizeof(Raspberry_GuiData_t); i++)
+			{
+				if (cb!= b[i]) printf("hmm\n");
+				cb++;
+
+			}
+		}
 		memcpy(&Raspberry_guidata, &incoming, sizeof(Raspberry_GuiData_t));
 	}break;
 //#endif
@@ -718,6 +730,36 @@ int HandleSerial(unsigned char inb)
 	return 0;
 }
 
+void SendLocalCommand(unsigned char command, uint32_t data)
+{
+	uint8_t buffer[10];
+	uint32_t D = ConvertDat(data);
+	buffer[0] = command;
+	buffer[1] = (D & 127);
+	buffer[2] = (((D >> 8) & 127));
+	buffer[3] = (((D >> 16) & 127));
+	buffer[4] = (((D >> 24) & 127));
+	DoCommand(command, data);
+};
+
+void SendRaspberryState()
+{
+	unsigned char *b = (unsigned char *)&Raspberry_guidata;
+	uint32_t sent = 0;
+	unsigned char commandb = 0xd0;
+	while (sent < sizeof(Raspberry_GuiData_t))
+	{
+		byte b1 = *b++;
+		byte b2 = *b++;
+		byte b3 = *b++;
+		SendLocalCommand(commandb, b1 + (b2 << 8) + (b3 << 16));
+		sent += 3;
+		commandb = 0xd1;
+	}
+	SendLocalCommand(0xd2, 0);
+
+}
+
 
 int main(int argc, char** argv)
 {
@@ -726,7 +768,7 @@ int main(int argc, char** argv)
 		printf("Error: %s\n", SDL_GetError());
 		return -1;
 	}
-
+	printf("sizeof modsource: %d\n", sizeof(ModSource_t));
 	HMIDIIN hMidiDevice[255] = { 0 };
 	DWORD nMidiPort = 0;
 	MMRESULT rv;
@@ -822,6 +864,7 @@ int main(int argc, char** argv)
 
 	if (UISerial.IsOpen() == false)
 	{
+		parameters = true;
 		Teensy_Reset();
 		Teensy_InitPreset();
 	}
@@ -904,6 +947,16 @@ int main(int argc, char** argv)
 		}
 		if (parameters)
 		{
+			if (UISerial.IsOpen() == false)
+			{
+				if (Raspberry_guidata.dirty )
+				{
+					Raspberry_guidata.dirty = false;
+					SendRaspberryState();
+				}
+				
+			}
+
 			ImGui::PushFont(pFontBold);
 			{
 				ImGui::Begin("Pan Parameters", &parameters, ImGuiWindowFlags_AlwaysAutoResize);

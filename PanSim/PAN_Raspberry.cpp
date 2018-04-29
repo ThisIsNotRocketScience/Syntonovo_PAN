@@ -175,8 +175,8 @@ void TargetsList(int offsetrow, guirow_state_t &row)
 			row.active = false;
 		}
 		if (t[i].param != 0) {
-			MenuRightAlignLabel(ParamLabel(t[i].param),row); ImGui::SameLine();
-			ImGui::Text("%1.3f", DepthLabel(t[i].depth)); 
+
+			SR();	MenuRightAlignLabel(ParamLabel(t[i].param), row); ImGui::SameLine(); ImGui::Text("%1.3f", DepthLabel(t[i].depth)); ER();
 		}
 		if (i == Raspberry_guidata.selectTarget) {
 		}
@@ -185,14 +185,16 @@ void TargetsList(int offsetrow, guirow_state_t &row)
 
 char EffectChipStrings[8][4][24] = {
 
-	{"Chorus - reverb","Reverb mix","Chorus rate","Chorus mix"},
-{"Flange - reverb","Reverb mix","Flange rate","Flange mix" },
-{"Tremolo - reverb","Reverb mix","Tremolo rate","Tremolo mix"},
-{"Pitch shift","Pitch +/- 4 semitones","-","-"},
-{"Pitch - echo","Pitch shift","Echo delay","Echo mix"},
-{"Test","-","-","-"},
-{"Reverb 1","Reverb time","HF filter","LF filter"},
-{"Reverb 2","Reverb time","HF filter","LF filter"}
+{    "Chorus - reverb" ,"Reverb mix","Chorus rate","Chorus mix"},
+{    "Flange - reverb","Reverb mix","Flange rate","Flange mix" },
+{    "Tremolo - reverb","Reverb mix","Tremolo rate","Tremolo mix"},
+{    "Pitch shift","Pitch +/- 4 semitones","-","-"},
+
+{    "Pitch - echo","Pitch shift","Echo delay","Echo mix"},
+{    "Test","-","-","-"},
+{    "Reverb 1","Reverb time","HF filter","LF filter"},
+{    "Reverb 2","Reverb time","HF filter","LF filter"}
+
 };
 void Render_MenuEntry_Percentage(const char* name, int param, guirow_state_t &rowstate)
 {
@@ -302,9 +304,9 @@ void RenderMenuTitle(const char *name)
 	float pt = (float)res.PageTime;
 	if (pt > 14) pt = 14;
 	pt /= 14.0f;
-	float distance[11] = { 0,10,30,40,50,70,80,90,110,120,130 };
+	float distance[13] = { 0,10,30, 40,50, 70,80,90,110,120,140,150,160 };
 	
-	for (int i = 0; i <11 ; i ++)
+	for (int i = 0; i <13 ; i ++)
 	{
 		float x = w - (distance[i] * 1);
 		float L = (ImGui::GetTextLineHeight() * pow(0.6,distance[i]/10.0f) + 20)* pt;
@@ -517,6 +519,23 @@ void Raspberry_RenderScreen()
 		}
 		RenderEndMenu();
 	}
+	else if (Raspberry_guidata.GuiState == GuiState_SavePreset)
+	{
+		guirow_state_t row;
+
+		RenderStartMenu("Save Preset?", row);
+		ImGui::Text("Please press target");
+		ImGui::Text("button to save ");
+		RenderEndMenu();
+	}
+	else if (Raspberry_guidata.GuiState == GuiState_SelectBanks)
+	{
+		guirow_state_t row;
+
+		RenderStartMenu("Select bank?", row);
+		ImGui::Text("Please select:");
+		RenderEndMenu();
+	}
 	else if (Raspberry_guidata.GuiState == GuiState_CtrlSelect)
 	{
 		/*Source_none,
@@ -531,12 +550,13 @@ void Raspberry_RenderScreen()
 			Source_vel*/
 		const char ControllerNames[__ModSource_COUNT][20] = { "NONE", "Left mod","Right mod","X-pression","Y-pression","Z-pression","Z'-pression","Note"," Velocity" };
 		guirow_state_t row;
-		if (Raspberry_guidata.dataCtrl.source < __ModSource_COUNT)
-		{
-			RenderStartMenu(ControllerNames[Raspberry_guidata.dataCtrl.source], row);
+		int Header = 0;
+		if (Raspberry_guidata.dataCtrl.source < __ModSource_COUNT) Header = Raspberry_guidata.dataCtrl.source;
+		
+			RenderStartMenu(ControllerNames[Header], row);
 			TargetsList(0, row);
 			RenderEndMenu();
-		}
+		
 	}
 	else if (RenderMenu(Raspberry_guidata.GuiState))
 	{

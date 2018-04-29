@@ -76,6 +76,9 @@ TARGET(Output_DIGINS_LEVEL, __LEDBUTTON_COUNT, knob_MIXER_NOISE_DIG, "")
 TARGET(Output_EXT_LEVEL, __LEDBUTTON_COUNT, __KNOB_COUNT, "")
 TARGET(Output_VCO4567_LEVEL, __LEDBUTTON_COUNT, knob_MIXER_VCO4_7, "")
 
+TARGET(Output_VCO4567_DRY_MIX, __LEDBUTTON_COUNT, knob_MIXER_SUMQUAD, "")
+
+
 TARGET(Output_PUN_MIX, __LEDBUTTON_COUNT, knob_MIXER_NOISE_VIOLET, "")
 TARGET(Output_VCO4_DRY_MIX, __LEDBUTTON_COUNT, knob_MIXER_VCO4, "")
 TARGET(Output_VCO5_DRY_MIX, __LEDBUTTON_COUNT, knob_MIXER_VCO5, "")
@@ -177,9 +180,9 @@ ENDMENU()
 
 MENU(EFFECTS, ledbutton_Cleanfeed_FX, "Global FX")
 CUSTOMENTRY("Type", MenuEntry_EffectType, Output_VCA_FXPOT1)
-CUSTOMENTRY("Parameter 1", MenuEntry_EffectParam1, Output_VCA_FXPOT1)
+CUSTOMENTRY("Parameter 1", MenuEntry_EffectParam1, Output_VCA_FXPOT3)
 CUSTOMENTRY("Parameter 2", MenuEntry_EffectParam2, Output_VCA_FXPOT2)
-CUSTOMENTRY("Parameter 3", MenuEntry_EffectParam3, Output_VCA_FXPOT3)
+CUSTOMENTRY("Parameter 3", MenuEntry_EffectParam3, Output_VCA_FXPOT1)
 
 CUSTOMENTRY("CLNFD", MenuEntry_Toggle, Switch_SELEFFECT3)
 CUSTOMENTRY("VCF 1", MenuEntry_Toggle, Switch_SELEFFECT1)
