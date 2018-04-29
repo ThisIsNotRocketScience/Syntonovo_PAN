@@ -281,7 +281,20 @@ enum SubParam_t
 	Sub_zprime,
 	Sub_note,
 	Sub_vel,
-	Sub_pad
+	Sub_pad_l,
+	Sub_pad_r,
+	Sub_lfo_reset_phase,
+
+	Sub_flags = 32
+};
+
+enum SubParamFlags_t
+{
+	SubParamFlags_AdsrRetrigger = 1,
+	SubParamFlags_AdRetrigger = 2,
+	SubParamFlags_LfoRetrigger = 4,
+
+	SubParamFlags_max = 0xffff
 };
 
 inline int ParamToButton(int paramid)
@@ -406,6 +419,7 @@ typedef enum: unsigned char{
 	GuiState_SelectBanks,
 	GuiState_SelectSaveSlot,
 	GuiState_SavePreset,
+	GuiState_InitPatch,
 #define MENU(id, buttonid, name) \
 	GuiState_Menu_##id,
 #include "PanUiMap.h"
@@ -494,6 +508,6 @@ extern Raspberry_GuiData_t Raspberry_guidata;
 void LoadPreset(PanPreset_t& preset);
 void SetLedButton(int id, int mode);
 
-
+void DoDataCommands(unsigned char comm, uint32_t data);
 
 #endif

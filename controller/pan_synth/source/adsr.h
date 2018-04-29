@@ -17,6 +17,6 @@ void adsr_set_a(int adsrid, uint32_t a);
 void adsr_set_d(int adsrid, uint32_t d);
 void adsr_set_s(int adsrid, uint32_t s);
 void adsr_set_r(int adsrid, uint32_t r);
-void adsr_set_gate(int adsrid, int gate);
+void adsr_set_gate(int adsrid, int gate, int reset);
 
 #endif /* ADSR_H_ */

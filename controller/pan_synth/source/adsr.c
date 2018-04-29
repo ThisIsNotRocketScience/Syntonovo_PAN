@@ -79,10 +79,13 @@ void adsr_set_r(int adsrid, uint32_t r)
 	adsr_state[adsrid].r_const = (uint32_t)((float)0xFFFFFFFF * expf(-4.0f / (float)r));
 }
 
-void adsr_set_gate(int adsrid, int gate)
+void adsr_set_gate(int adsrid, int gate, int reset)
 {
 	if (gate && !adsr_state[adsrid].gate) {
 		adsr_state[adsrid].state = 1;
+		if (reset) {
+			adsr_state[adsrid].value = 0;
+		}
 	}
 	else if (!gate) {
 		adsr_state[adsrid].state = 0;

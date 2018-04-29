@@ -1,7 +1,7 @@
 //#define SIMLINK
-#define SILENTMODE
+//#define SILENTMODE
 //#define SDDEBUG
-#define NOTEDEBUG
+//#define NOTEDEBUG
 
 #ifdef SILENTMODE
 #ifdef  SIMLINK
@@ -475,8 +475,6 @@ void setup()
   Teensy_InitSD();
 
   Serial.begin(1000000);
-
-
 }
 
 byte last1A = HIGH;
@@ -629,7 +627,7 @@ void SendEncoder(int encoder, int delta)
   SendCommand(0xe0, (encoder << 8) + delta);
 }
 
-void SendRaspberryState()
+void SendRaspberryStateFull()
 {
   unsigned char *b = (unsigned char * ) &Raspberry_guidata;
   uint sent = 0 ;
@@ -647,6 +645,31 @@ void SendRaspberryState()
   SendCommand(0xd2, 0) ;
 
 }
+
+Raspberry_GuiData_t SentData;
+
+void SendRaspberryState()
+{
+  unsigned short *a = (unsigned short * ) &SentData;
+  unsigned short *b = (unsigned short * ) &Raspberry_guidata;
+  for (int i =0 ;i<sizeof(Raspberry_GuiData_t)/2;i++)
+  {
+   short A = a[i];
+   short B = b[i];
+   if (A!=B)
+   {
+    a[i] = b[i];
+    unsigned char b1 = B&255;
+    unsigned char b2 = (B>>8)&255;
+    
+    SendCommand(0xd3, b1 + (b2 << 8) + ((i * 2) << 16)) ;
+    // send short.
+   }
+  }
+  SendCommand(0xd2, 0) ;
+
+}
+
 
 void SendPot(unsigned char idx, uint16_t value)
 {
@@ -825,8 +848,9 @@ void loop()
   static int lastsend = millis();
   if (Raspberry_guidata.dirty && millis() - lastsend > 20)
   {
+    lastsend = millis();
     Raspberry_guidata.dirty = false;
-    SendRaspberryState();
+    SendRaspberryStateFull();
   }
   CheckEncoders();
   UpdateKeyboard();

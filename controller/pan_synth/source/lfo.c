@@ -79,3 +79,8 @@ void lfo_set_speed(int lfoid, uint16_t speed)
 {
 	lfo_state[lfoid].add = (uint32_t) (((float)(1 << 24L)) * expf(-(float)(65535 - speed) * 0.0001f));
 }
+
+void lfo_reset(int lfoid, uint16_t phase)
+{
+	lfo_state[lfoid].phase = phase << 16;
+}
