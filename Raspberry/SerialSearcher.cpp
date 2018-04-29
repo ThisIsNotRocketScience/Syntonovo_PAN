@@ -171,8 +171,8 @@ void OpenIt(string port)
 	tty.c_cflag |= (CLOCAL | CREAD);   // Enable the receiver and set local mode
 	tty.c_cflag &= ~CSTOPB;            // 1 stop bit
 	tty.c_cflag &= ~CRTSCTS;           // Disable hardware flow control
-	tty.c_cc[VMIN] = 1;
-	tty.c_cc[VTIME] = 2;
+	tty.c_cc[VMIN] = 0;
+	tty.c_cc[VTIME] = 0;
 
 
 
