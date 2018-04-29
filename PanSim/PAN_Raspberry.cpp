@@ -446,7 +446,14 @@ void RenderBootScreen()
 }
 
 GuiState_t LastGuiState;
-
+void SelectAModText()
+{
+	ImVec2 p = ImGui::GetCursorPos();
+	ImGui::Text("Please select a");
+	p.y += ImGui::GetTextLineHeight();
+	ImGui::SetCursorPos(p);
+	ImGui::Text("modulation target");
+}
 void Raspberry_RenderScreen()
 {
 	if (BootTime < 10)
@@ -489,7 +496,11 @@ void Raspberry_RenderScreen()
 
 			TargetsList(2, row);
 		}
-		
+		else
+		{
+			SelectAModText();
+		}
+
 		RenderEndMenu();
 	}
 	else if (Raspberry_guidata.GuiState == GuiState_AdsrSelect)
@@ -503,7 +514,11 @@ void Raspberry_RenderScreen()
 			SR(); Render_KeyValue("R", Raspberry_guidata.dataAdsr.r, row); ER();
 			TargetsList(4, row);
 		}
-		
+		else
+		{
+			SelectAModText();
+		}
+
 		RenderEndMenu();
 	}
 	else if (Raspberry_guidata.GuiState == GuiState_AdSelect)
@@ -517,6 +532,10 @@ void Raspberry_RenderScreen()
 
 			TargetsList(2, row);
 		}
+		else
+		{
+			SelectAModText();
+		}
 		RenderEndMenu();
 	}
 	else if (Raspberry_guidata.GuiState == GuiState_SavePreset)
@@ -524,7 +543,10 @@ void Raspberry_RenderScreen()
 		guirow_state_t row;
 
 		RenderStartMenu("Save Preset?", row);
+		ImVec2 p = ImGui::GetCursorPos();
 		ImGui::Text("Please press target");
+		p.y += ImGui::GetTextLineHeight();
+		ImGui::SetCursorPos(p);
 		ImGui::Text("button to save ");
 		RenderEndMenu();
 	}
@@ -554,6 +576,12 @@ void Raspberry_RenderScreen()
 		if (Raspberry_guidata.dataCtrl.source < __ModSource_COUNT) Header = Raspberry_guidata.dataCtrl.source;
 		
 			RenderStartMenu(ControllerNames[Header], row);
+
+			switch (Raspberry_guidata.dataCtrl.source)
+			{
+			case Source_zprime:
+				break;
+			}
 			TargetsList(0, row);
 			RenderEndMenu();
 		

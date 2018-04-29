@@ -30,6 +30,8 @@ int doing_reset = 0;
 struct hp_state_t zprime_hp;
 int32_t zprime_value;
 
+int32_t pad_bend_value = 0;
+
 uint32_t porta_timer_count = 0;
 int32_t porta_time;
 int32_t porta_divider = 256;
@@ -181,6 +183,40 @@ void update_porta_time(int retrigger)
 		div >>= 1;
 		porta_time = (abs((int32_t)(synth_param[NOTE].value - synth_param[NOTE].last)) * 256) / div;
 	}
+}
+
+int32_t chase(int i, uint16_t value)
+{
+	int32_t x = (int32_t)value - i * 0x4000;
+	if (x < 0) return 0;
+	if (x > 0x3FFF) return 0xFFFF;
+	return 4 * x;
+}
+
+int32_t stash(int i, uint16_t value)
+{
+	int32_t x = 0x4000 - abs((i + 1) * 0x4000 - (int32_t)value);
+	if (x < 0) return 0;
+	if (x > 0x3FFF) return 0xFFFF;
+	return 4 * x;
+}
+
+int32_t chase_vco(int vco)
+{
+	if (!shiftctrl_flag_state(SELCHASEOSC4567)) return 0;
+
+	if (shiftctrl_flag_state(SELCHASE)) return chase(vco, synth_param[CHASE].last) - 0xffff;
+	if (shiftctrl_flag_state(SELSTASH)) return stash(vco, synth_param[CHASE].last) - 0xffff;
+	return 0;
+}
+
+int32_t chase_vcf(int vcf)
+{
+	if (!shiftctrl_flag_state(SELCHASEVCF2)) return 0;
+
+	if (shiftctrl_flag_state(SELCHASE)) return chase(vcf, synth_param[CHASE].last) - 0xffff;
+	if (shiftctrl_flag_state(SELSTASH)) return stash(vcf, synth_param[CHASE].last) - 0xffff;
+	return 0;
 }
 
 uint16_t synth_mapping_note()
@@ -420,6 +456,9 @@ void control_cb(int param, int subparam, uint16_t value)
 	case 17:
 		synth_param[param].vel = value;
 		break;
+	case 18:
+		synth_param[param].pad = value;
+		break;
 	}
 }
 
@@ -457,6 +496,9 @@ int process_param_lin(int ctrlid)
 	}
 	if (synth_param[ctrlid].zprime) {
 		value += bipolar_signed_scale(zprime_value, synth_param[ctrlid].zprime);
+	}
+	if (synth_param[ctrlid].pad) {
+		value += bipolar_signed_scale(pad_bend_value, synth_param[ctrlid].pad);
 	}
 
 	if (value < 0) value = 0;
@@ -503,6 +545,9 @@ int process_param_inv(int ctrlid)
 	if (synth_param[ctrlid].zprime) {
 		value += bipolar_signed_scale(zprime_value, synth_param[ctrlid].zprime);
 	}
+	if (synth_param[ctrlid].pad) {
+		value += bipolar_signed_scale(pad_bend_value, synth_param[ctrlid].pad);
+	}
 
 	if (value < 0) value = 65535;
 	else if (value > 65535) value = 0;
@@ -514,7 +559,7 @@ int process_param_inv(int ctrlid)
 	return result;
 }
 
-int process_param_log_add(int ctrlid, int32_t add)
+int process_param_log_add(int ctrlid, int32_t add, int32_t addchase)
 {
 	int result = doing_reset;
 
@@ -522,6 +567,11 @@ int process_param_log_add(int ctrlid, int32_t add)
 	ad_set_gate(ctrlid, synth_param[GATE].value);
 
 	int32_t value = synth_param[ctrlid].value + add;
+	if (value < 0) value = 0;
+	else if (value > 65535) value = 65535;
+	value += addchase;
+	if (value < 0) value = 0;
+	else if (value > 65535) value = 65535;
 	if (synth_param[ctrlid].lfo_depth) {
 		uint16_t lfo = (lfo_update(ctrlid) >> 2) + 0x8000;
 		value += signed_scale(lfo, synth_param[ctrlid].lfo_depth);
@@ -546,6 +596,9 @@ int process_param_log_add(int ctrlid, int32_t add)
 	if (synth_param[ctrlid].zprime) {
 		value += bipolar_signed_scale(zprime_value, synth_param[ctrlid].zprime);
 	}
+	if (synth_param[ctrlid].pad) {
+		value += bipolar_signed_scale(pad_bend_value, synth_param[ctrlid].pad);
+	}
 
 	if (value < 0) value = 65535;
 	else if (value > 65535) value = 0;
@@ -559,7 +612,7 @@ int process_param_log_add(int ctrlid, int32_t add)
 
 int process_param_log(int ctrlid)
 {
-	return process_param_log_add(ctrlid, 0);
+	return process_param_log_add(ctrlid, 0, 0);
 }
 
 void do_output_lin(int ctrlid, int port)
@@ -585,31 +638,60 @@ void do_output_log(int ctrlid, int port)
 
 void do_output_VCO4_DRY_MIX(int ctrlid, int port)
 {
-	if (process_param_log_add(ctrlid, synth_param[VCO4567_DRY_MIX].last)) {
+	if (process_param_log_add(ctrlid, (int32_t)synth_param[VCO4567_DRY_MIX].last, chase_vco(0))) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
 }
 
 void do_output_VCO5_DRY_MIX(int ctrlid, int port)
 {
-	if (process_param_log_add(ctrlid, synth_param[VCO4567_DRY_MIX].last)) {
+	if (process_param_log_add(ctrlid, synth_param[VCO4567_DRY_MIX].last, chase_vco(1))) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
 }
 
 void do_output_VCO6_DRY_MIX(int ctrlid, int port)
 {
-	if (process_param_log_add(ctrlid, synth_param[VCO4567_DRY_MIX].last)) {
+	if (process_param_log_add(ctrlid, synth_param[VCO4567_DRY_MIX].last, chase_vco(2))) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
 }
 
 void do_output_VCO7_DRY_MIX(int ctrlid, int port)
 {
-	if (process_param_log_add(ctrlid, synth_param[VCO4567_DRY_MIX].last)) {
+	if (process_param_log_add(ctrlid, synth_param[VCO4567_DRY_MIX].last, chase_vco(3))) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
 }
+
+void do_output_VCF2_L_MIX(int ctrlid, int port)
+{
+	if (process_param_log_add(ctrlid, 0, chase_vcf(0))) {
+		ports_value(port, synth_param[ctrlid].last);
+	}
+}
+
+void do_output_VCF2_M1_MIX(int ctrlid, int port)
+{
+	if (process_param_log_add(ctrlid, 0, chase_vcf(1))) {
+		ports_value(port, synth_param[ctrlid].last);
+	}
+}
+
+void do_output_VCF2_M2_MIX(int ctrlid, int port)
+{
+	if (process_param_log_add(ctrlid, 0, chase_vcf(2))) {
+		ports_value(port, synth_param[ctrlid].last);
+	}
+}
+
+void do_output_VCF2_H_MIX(int ctrlid, int port)
+{
+	if (process_param_log_add(ctrlid, 0, chase_vcf(3))) {
+		ports_value(port, synth_param[ctrlid].last);
+	}
+}
+
 
 void linpan_l(int ctrlid, int port, int linctrlid, int panctrlid)
 {
@@ -842,17 +924,17 @@ void virt_VCF2_LIN()
 
 void virt_CLEANF_LEVEL()
 {
-	process_param_log_add(CLEANF_LEVEL, (int32_t)synth_param[MASTER_LEVEL].last - 0xFFFF);
+	process_param_log_add(CLEANF_LEVEL, (int32_t)synth_param[MASTER_LEVEL].last - 0xFFFF, 0);
 }
 
 void virt_VCF1_LEVEL()
 {
-	process_param_log_add(VCF1_LEVEL, (int32_t)synth_param[MASTER_LEVEL].last - 0xFFFF);
+	process_param_log_add(VCF1_LEVEL, (int32_t)synth_param[MASTER_LEVEL].last - 0xFFFF, 0);
 }
 
 void virt_VCF2_LEVEL()
 {
-	process_param_log_add(VCF2_LEVEL, (int32_t)synth_param[MASTER_LEVEL].last - 0xFFFF);
+	process_param_log_add(VCF2_LEVEL, (int32_t)synth_param[MASTER_LEVEL].last - 0xFFFF, 0);
 }
 
 void virt_CLEANF_PAN()
@@ -1042,6 +1124,7 @@ int process_param_note(int ctrlid, int32_t notevalue, int modrange)
 	int32_t value = notevalue;
 
 	value += (int32_t)synth_param[MASTER_PITCH].last - 0x8000;
+	value += (int32_t)synth_param[MASTER_PITCH2].last - 0x8000;
 	int modvalue = 0;
 	if (synth_param[ctrlid].lfo_depth) {
 		uint16_t lfo = (lfo_update(ctrlid) >> 2) + 0x8000;
@@ -1066,6 +1149,9 @@ int process_param_note(int ctrlid, int32_t notevalue, int modrange)
 	}
 	if (synth_param[ctrlid].zprime) {
 		modvalue += bipolar_signed_scale(zprime_value, synth_param[ctrlid].zprime);
+	}
+	if (synth_param[ctrlid].pad) {
+		modvalue += bipolar_signed_scale(pad_bend_value, synth_param[ctrlid].pad);
 	}
 	value += bipolar_signed_scale(modvalue, modrange * (0x8000 / 128));
 
@@ -1154,6 +1240,16 @@ void virt_RETRIGGER()
 void virt_MASTER_PITCH()
 {
 	synth_param[MASTER_PITCH].last = (((int32_t)synth_param[MASTER_PITCH].value - 0x8000) * 12) / 128 + 0x8000;
+}
+
+void virt_MASTER_PITCH2()
+{
+	synth_param[MASTER_PITCH2].last = synth_param[MASTER_PITCH2].value;
+}
+
+void virt_CHASE()
+{
+	process_param_lin(CHASE);
 }
 
 void synth_mapping_virt()
@@ -1305,6 +1401,7 @@ void synth_run()
 		}
 
 		zprime_value = hp_update(&zprime_hp, pad_value[KEYBOARD_Z]);
+		pad_bend_value = pad_value[PAD_PBL] + pad_value[PAD_PBR];
 
 		shiftctrl_update();
 	}

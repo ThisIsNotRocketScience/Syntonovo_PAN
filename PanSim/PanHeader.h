@@ -263,7 +263,7 @@ extern void GUI_Cancel();
 
 enum SubParam_t
 {
-	Sub_value,
+	Sub_value = 0,
 	Sub_lfo_speed,
 	Sub_lfo_depth,
 	Sub_lfo_shape,
@@ -280,7 +280,8 @@ enum SubParam_t
 	Sub_z,
 	Sub_zprime,
 	Sub_note,
-	Sub_vel
+	Sub_vel,
+	Sub_pad
 };
 
 inline int ParamToButton(int paramid)

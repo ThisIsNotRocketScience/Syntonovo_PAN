@@ -1,7 +1,7 @@
 //#define SIMLINK
-//#define SILENTMODE
+#define SILENTMODE
 //#define SDDEBUG
-
+#define NOTEDEBUG
 
 #ifdef SILENTMODE
 #ifdef  SIMLINK
@@ -173,6 +173,11 @@ void WriteSyncLfo(uint8_t* paramids)
 
 void note_on(int noteid, int notevel)
 {
+  #ifdef NOTEDEBUG
+  Serial.print(noteid);
+  Serial.print(" ");
+  Serial.println(notevel);
+  #endif
   setpara_t setpara;
   setpara.paramid = 0x02fc;
   setpara.value = noteid | (notevel << 8);
