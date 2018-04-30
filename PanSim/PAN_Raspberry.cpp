@@ -345,7 +345,9 @@ void Render_MenuEntry_Toggle(const char *name, int param, guirow_state_t &rowsta
 	ImVec2 w(0, 0);
 	ImVec2 p = ImGui::GetCursorPos();
 	w.x = rowstate.right;
-	int id = ((Raspberry_guidata.switches[0] & (1 << param)) > 0) ? 1 : 0;
+	int switchid = param / 32;
+	int adjustedparam = param % 32;
+	int id = ((Raspberry_guidata.switches[switchid] & (1 << adjustedparam)) > 0) ? 1 : 0;
 	if (rowstate.active) id += 2;
 	ImGui::SetCursorPos(ImVec2(245, p1.y));
 	ImGui::Image(res.OnOff[id], ImVec2(128, 48));

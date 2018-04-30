@@ -1663,8 +1663,11 @@ void Teensy_ModChangeDepth(int target, uint32_t value)
 void SetSwitch(SwitchEnum SwitchID)
 {
 	int switchset = ((int)SwitchID) / 32;
-	gPreset.switches[switchset] &= ~(1 << (SwitchID - switchset * 32));
-	gPreset.switches[switchset] |=  (1 << (SwitchID - switchset * 32));
+
+	int adjustedswitchid = SwitchID % 32;
+
+	gPreset.switches[switchset] &= ~(1 << (adjustedswitchid));
+	gPreset.switches[switchset] |=  (1 << (adjustedswitchid));
 	Raspberry_guidata.switches[0] = gPreset.switches[0];
 	Raspberry_guidata.switches[1] = gPreset.switches[1];
 	Raspberry_guidata.dirty = 1;
@@ -1674,7 +1677,9 @@ void SetSwitch(SwitchEnum SwitchID)
 bool GetSwitch(SwitchEnum SwitchID)
 {
 	int switchset = ((int)SwitchID) / 32;
-	if ((gPreset.switches[switchset] >>  (SwitchID - switchset * 32))&1)
+	int adjustedswitchid = SwitchID % 32;
+
+	if ((gPreset.switches[switchset] >> adjustedswitchid)&1)
 	{
 		return true;
 	}
@@ -1686,14 +1691,23 @@ bool GetSwitch(SwitchEnum SwitchID)
 
 void ToggleSwitch(SwitchEnum SwitchID)
 {
-	if (GetSwitch(SwitchID)) ClearSwitch(SwitchID); else SetSwitch(SwitchID);
+	if (GetSwitch(SwitchID))
+	{
+		ClearSwitch(SwitchID);
+	}
+
+	else
+	{
+		SetSwitch(SwitchID);
+	}
 
 }
 
 void ClearSwitch(SwitchEnum SwitchID)
 {
 	int switchset = ((int)SwitchID) / 32;
-	gPreset.switches[switchset] &= ~(1 << (SwitchID - switchset*32));
+	int adjustedswitchid = SwitchID%32;
+	gPreset.switches[switchset] &= ~(1 << adjustedswitchid);
 	Raspberry_guidata.switches[0] = gPreset.switches[0];
 	Raspberry_guidata.switches[1] = gPreset.switches[1];
 	Raspberry_guidata.dirty = 1;
@@ -1708,13 +1722,33 @@ bool Teensy_ActivateMenu(int buttonid)
 	if (menu != GuiState_Root) {
 		
 		bool waseffect = false;
+		bool waschase = false;
 		switch (Raspberry_guidata.GuiState)
 		{
+		case GuiState_Menu_CHASE:
+			waschase = true;
+			break;
 		case GuiState_Menu_EFFECTS1:
 			waseffect = true;
+			break;
 		}
+		
 			switch (menu)
 			{
+			case GuiState_Menu_CHASE:
+			{
+				if (waschase)
+				{
+					if (buttonid == ledbutton_CHASE)
+					{
+						ToggleSwitch(Switch_SELCHASE);
+					}
+					if (buttonid == ledbutton_STASH)
+					{
+						ToggleSwitch(Switch_SELSTASH);
+					}
+				}
+			}break;
 			case GuiState_Menu_EFFECTS1:
 				if (waseffect)
 				{
@@ -2149,7 +2183,7 @@ void DoAssignMenu(int state, int delta)
 void DoCtrlMenu(int delta)
 {
 
-#define CTRLMENU(id, name, structname) if (Raspberry_guidata.dataCtrl.source == id) { int currentitem = 0;
+#define CTRLMENU(id, name) if (Raspberry_guidata.dataCtrl.source == id) { int currentitem = 0;
 #define CTRLENDMENU()  return ; }
 #define PARA(name,output) if (currentitem == Raspberry_guidata.LeftEncoderValue) \
 		{\

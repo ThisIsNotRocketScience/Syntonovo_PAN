@@ -215,6 +215,22 @@ CUSTOMENTRY("VCF 1", MenuEntry_Toggle, Switch_SELEFFECT1)
 CUSTOMENTRY("VCF 2", MenuEntry_Toggle, Switch_SELEFFECT2)
 ENDMENU()
 
+
+EXTRABUTTON(CHASE, ledbutton_STASH)
+MENU(CHASE, ledbutton_CHASE, "Chase")
+CUSTOMENTRY("Chase", MenuEntry_Toggle, Switch_SELCHASE)
+ENTRY("ChaseParam", MenuEntry_Value, Output_CHASE)
+CUSTOMENTRY("Chase 4567", MenuEntry_Toggle, Switch_SELCHASEOSC4567)
+CUSTOMENTRY("Chase VCF 2", MenuEntry_Toggle, Switch_SELCHASEVCF2)
+CUSTOMENTRY("Stash", MenuEntry_Toggle, Switch_SELSTASH)
+ENDMENU()
+
+EXTRABUTTON(CHASE, ledbutton_PORTAMENTO_RIGHT)
+MENU(PORTAMENTO,ledbutton_PORTAMENTO_LEFT, "Portamento")
+CUSTOMENTRY("Portamento", MenuEntry_Toggle, Switch_SELPORTAMENTO)
+ENTRY("PortaTime", MenuEntry_Value, Output_PORTAMENTO_TIME)
+ENDMENU()
+
 EXTRABUTTON(MIXER, ledbutton_Cleanfeed_VCA)
 EXTRABUTTON(MIXER, ledbutton_VCF1_M_S)
 EXTRABUTTON(MIXER, ledbutton_VCF1_VCA)
