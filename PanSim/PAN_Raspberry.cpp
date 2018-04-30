@@ -21,7 +21,13 @@
 #undef MENU
 #undef CUSTOMENTRY
 
+#ifndef __min
+#define __min(a,b) (((a)<(b))?(a):(b))
+#endif
 
+#ifndef __max
+#define __max(a,b) (((a)>(b))?(a):(b))
+#endif
 typedef struct Raspberry_GuiResources_t
 {
 	ImTextureID MainBG;
@@ -539,7 +545,7 @@ void RenderControlMenu()
 
 #define CTRLKV(name, param){ SR(); Render_KeyValue(name, Raspberry_guidata. param, row); ER();}
 #define PARA(name, output){ SR(); Render_KeyValue(name, Raspberry_guidata.outputValues[output], row); ER();}
-#define CTRLMENU(id,title,structname) if (Raspberry_guidata.dataCtrl.source  == id)\
+#define CTRLMENU(id,title) if (Raspberry_guidata.dataCtrl.source  == id)\
 {\
 	guirow_state_t row; \
 	RenderStartMenu(title, row); \
