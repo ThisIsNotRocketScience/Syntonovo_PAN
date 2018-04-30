@@ -394,6 +394,10 @@ enum ModSource_t: unsigned char {
 	Source_zprime,
 	Source_note,
 	Source_vel,
+	Source_left_sus,
+	Source_right_sus,
+	Source_left_unac,
+	Source_right_unac,
 	__ModSource_COUNT
 };
 

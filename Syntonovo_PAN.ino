@@ -157,6 +157,13 @@ void doset(struct setpara_t& para)
   Serial4.write(b, 4);
 }
 
+void WritePadZero()
+{
+  setpara_t sp;
+  sp.paramid = 0xfbfe;
+  sp.value = 0;
+  doset(sp);
+}
 
 void WriteSwitch(int id, int state)
 {

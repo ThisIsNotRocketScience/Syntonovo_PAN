@@ -7,6 +7,9 @@ extern void WriteKnob(int id, uint32_t value);
 extern void WriteWithSubKnob(int id, int subid, uint32_t value);
 extern void WriteSwitch(int id, int state);
 extern void WriteSyncLfo(uint8_t* paramids);
+extern void WritePadZero();
+
+void WriteCtrlDepth(int param, int source, uint16_t depth);
 
 PanPreset_t gPresetBank[16];
 PanPreset_t gPreset;
@@ -199,33 +202,7 @@ void WriteCtrl(PanPreset_t& preset, int i)
 		int param = preset.ctrlmod[i].target[j].param;
 		if (param == 0) continue;
 
-		switch (preset.ctrlmod[i].source) {
-		case ModSource_t::Source_left_mod:
-			//todo
-			//WriteWithSubKnob(param, Sub)
-			break;
-		case ModSource_t::Source_right_mod:
-			//todo
-			break;
-		case ModSource_t::Source_x:
-			WriteWithSubKnob(param, Sub_x, preset.ctrlmod[i].target[j].depth);
-			break;
-		case ModSource_t::Source_y:
-			WriteWithSubKnob(param, Sub_y, preset.ctrlmod[i].target[j].depth);
-			break;
-		case ModSource_t::Source_z:
-			WriteWithSubKnob(param, Sub_z, preset.ctrlmod[i].target[j].depth);
-			break;
-		case ModSource_t::Source_zprime:
-			WriteWithSubKnob(param, Sub_zprime, preset.ctrlmod[i].target[j].depth);
-			break;
-		case ModSource_t::Source_note:
-			WriteWithSubKnob(param, Sub_note, preset.ctrlmod[i].target[j].depth);
-			break;
-		case ModSource_t::Source_vel:
-			WriteWithSubKnob(param, Sub_vel, preset.ctrlmod[i].target[j].depth);
-			break;
-		}
+		WriteCtrlDepth(param, preset.ctrlmod[i].source, preset.ctrlmod[i].target[j].depth);
 	}
 }
 
@@ -502,11 +479,10 @@ void WriteCtrlDepth(int param, int source, uint16_t depth)
 	switch (source)
 	{
 	case ModSource_t::Source_left_mod:
-		//WriteWithSubKnob(param, Sub_lfo_, 0);
-		// todo
+		WriteWithSubKnob(param, Sub_modpad_l, depth);
 		break;
 	case ModSource_t::Source_right_mod:
-		// todo
+		WriteWithSubKnob(param, Sub_modpad_r, depth);
 		break;
 	case ModSource_t::Source_x:
 		WriteWithSubKnob(param, Sub_x, depth);
@@ -525,6 +501,18 @@ void WriteCtrlDepth(int param, int source, uint16_t depth)
 		break;
 	case ModSource_t::Source_vel:
 		WriteWithSubKnob(param, Sub_vel, depth);
+		break;
+	case ModSource_t::Source_left_sus:
+		WriteWithSubKnob(param, Sub_suspad_l, depth);
+		break;
+	case ModSource_t::Source_right_sus:
+		WriteWithSubKnob(param, Sub_suspad_r, depth);
+		break;
+	case ModSource_t::Source_left_unac:
+		WriteWithSubKnob(param, Sub_unacpad_l, depth);
+		break;
+	case ModSource_t::Source_right_unac:
+		WriteWithSubKnob(param, Sub_unacpad_r, depth);
 		break;
 	}
 
@@ -631,6 +619,10 @@ ModSource_t LedButtonToSource(int ledbuttonid)
 	case ledbutton_ZPRIME: return ModSource_t::Source_zprime;
 	case ledbutton_KBCV: return ModSource_t::Source_note;
 	case ledbutton_VELOCITY: return ModSource_t::Source_vel;
+	case ledbutton_LEFT_SUS: return ModSource_t::Source_left_sus;
+	case ledbutton_RIGHT_SUS: return ModSource_t::Source_right_sus;
+	case ledbutton_LEFT_UNAC: return ModSource_t::Source_left_unac;
+	case ledbutton_RIGHT_UNAC: return ModSource_t::Source_right_unac;
 	}
 
 	return ModSource_t::Source_none;
@@ -648,6 +640,10 @@ int SourceToLedButton(ModSource_t source)
 	case ModSource_t::Source_zprime: return ledbutton_ZPRIME;
 	case ModSource_t::Source_note: return ledbutton_KBCV;
 	case ModSource_t::Source_vel: return ledbutton_VELOCITY;
+	case ModSource_t::Source_left_sus: return ledbutton_LEFT_SUS;
+	case ModSource_t::Source_right_sus: return ledbutton_RIGHT_SUS;
+	case ModSource_t::Source_left_unac: return ledbutton_LEFT_UNAC;
+	case ModSource_t::Source_right_unac: return ledbutton_RIGHT_UNAC;
 	}
 
 	return -1;
@@ -1036,7 +1032,11 @@ bool Teensy_IsModEdit()
 
 void CancelMod()
 {
+	Teensy_guidata.lastAddedLedButton = -1;
 	if (Teensy_guidata.GuiState == GuiState_LfoSelect && Teensy_guidata.ModSelect >= 0) {
+		for (int i = 0; i < 16; i++) {
+			PresetChangeLfoRemoveParam(gPreset, Teensy_guidata.ModSelect, gPreset.lfomod[Teensy_guidata.ModSelect].target[i].param);
+		}
 		memcpy(&gPreset.lfomod[Teensy_guidata.ModSelect], &Teensy_guidata.cancel, sizeof(gPreset.lfomod[0]));
 		WriteLfo(gPreset, Teensy_guidata.ModSelect);
 
@@ -1052,6 +1052,9 @@ void CancelMod()
 		}
 	}
 	else if (Teensy_guidata.GuiState == GuiState_AdsrSelect && Teensy_guidata.ModSelect >= 0) {
+		for (int i = 0; i < 16; i++) {
+			PresetChangeAdsrRemoveParam(gPreset, Teensy_guidata.ModSelect, gPreset.adsrmod[Teensy_guidata.ModSelect].target[i].param);
+		}
 		memcpy(&gPreset.adsrmod[Teensy_guidata.ModSelect], &Teensy_guidata.cancel, sizeof(gPreset.adsrmod[0]));
 		WriteAdsr(gPreset, Teensy_guidata.ModSelect);
 
@@ -1067,6 +1070,9 @@ void CancelMod()
 		}
 	}
 	else if (Teensy_guidata.GuiState == GuiState_AdSelect && Teensy_guidata.ModSelect >= 0) {
+		for (int i = 0; i < 16; i++) {
+			PresetChangeAdRemoveParam(gPreset, Teensy_guidata.ModSelect, gPreset.admod[Teensy_guidata.ModSelect].target[i].param);
+		}
 		memcpy(&gPreset.admod[Teensy_guidata.ModSelect], &Teensy_guidata.cancel, sizeof(gPreset.admod[0]));
 		WriteAd(gPreset, Teensy_guidata.ModSelect);
 
@@ -1082,6 +1088,9 @@ void CancelMod()
 		}
 	}
 	else if (Teensy_guidata.GuiState == GuiState_CtrlSelect && Teensy_guidata.ModSelect >= 0) {
+		for (int i = 0; i < 16; i++) {
+			PresetChangeCtrlRemoveParam(gPreset, Teensy_guidata.ModSelect, gPreset.ctrlmod[Teensy_guidata.ModSelect].target[i].param);
+		}
 		memcpy(&gPreset.ctrlmod[Teensy_guidata.ModSelect], &Teensy_guidata.cancel, sizeof(gPreset.ctrlmod[0]));
 		WriteCtrl(gPreset, Teensy_guidata.ModSelect);
 
@@ -1997,12 +2006,18 @@ modes:
 	case ledbutton_SOURCE_AD: Teensy_ToState(GuiState_AdSelect, Teensy_FirstEmptyAdMod()); break;
 	case ledbutton_LEFT_MOD: Teensy_ToState(GuiState_CtrlSelect, ledbutton_LEFT_MOD); break;
 	case ledbutton_RIGHT_MOD: Teensy_ToState(GuiState_CtrlSelect, ledbutton_RIGHT_MOD); break;
+	case ledbutton_LEFT_SUS: Teensy_ToState(GuiState_CtrlSelect, ledbutton_LEFT_SUS); break;
+	case ledbutton_RIGHT_SUS: Teensy_ToState(GuiState_CtrlSelect, ledbutton_RIGHT_SUS); break;
+	case ledbutton_LEFT_UNAC: Teensy_ToState(GuiState_CtrlSelect, ledbutton_LEFT_UNAC); break;
+	case ledbutton_RIGHT_UNAC: Teensy_ToState(GuiState_CtrlSelect, ledbutton_RIGHT_UNAC); break;
 	case ledbutton_X: Teensy_ToState(GuiState_CtrlSelect, ledbutton_X); break;
 	case ledbutton_Y: Teensy_ToState(GuiState_CtrlSelect, ledbutton_Y); break;
 	case ledbutton_Z: Teensy_ToState(GuiState_CtrlSelect, ledbutton_Z); break;
 	case ledbutton_ZPRIME: Teensy_ToState(GuiState_CtrlSelect, ledbutton_ZPRIME); break;
 	case ledbutton_KBCV: Teensy_ToState(GuiState_CtrlSelect, ledbutton_KBCV); break;
 	case ledbutton_VELOCITY: Teensy_ToState(GuiState_CtrlSelect, ledbutton_VELOCITY); break;
+
+	case ledbutton_ZERO: WritePadZero(); break;
 
 	default:
 

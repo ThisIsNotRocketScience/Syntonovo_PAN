@@ -76,9 +76,9 @@ void codecsetup_init()
 
 void portssetup_init()
 {
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < 12; i++) {
     	ports_set_read(0 * 12 + i, max11311_read, 0, i);
-    	ports_set_write(0 * 12 + 6 + i, max11311_write, 0, 6 + i);
+    	//ports_set_write(0 * 12 + 6 + i, max11311_write, 0, 6 + i);
     }
 
     for (int i = 0; i < 12; i++) {

@@ -61,6 +61,8 @@ int32_t porta_time;
 int32_t porta_divider = 256;
 int32_t porta_timer_shift = 14;
 
+void pad_zero();
+
 const int KEYBOARD_X = 0;
 const int KEYBOARD_Y = 1;
 const int KEYBOARD_Z = 2;
@@ -410,6 +412,9 @@ void control_cb(int param, int subparam, uint16_t value)
 			update_note();
 		}
 
+		if (subparam == 0xfb) {
+			pad_zero();
+		}
 		return;
 	}
 
@@ -658,8 +663,8 @@ int process_param_log_add(int ctrlid, int32_t add, int32_t addchase)
 	if (value < 0) value = 0;
 	else if (value > 65535) value = 65535;
 	if (synth_param[ctrlid].lfo_depth) {
-		uint16_t lfo = (lfo_update(ctrlid) >> 2) + 0x8000;
-		value += signed_scale(lfo, synth_param[ctrlid].lfo_depth);
+		int32_t lfo = (int32_t)lfo_update(ctrlid) - 0x8000;
+		value += bipolar_signed_scale(lfo, synth_param[ctrlid].lfo_depth);
 	}
 	if (synth_param[ctrlid].adsr_depth) {
 		uint16_t adsr = adsr_update(ctrlid, una_corda_release);
@@ -1227,8 +1232,8 @@ int process_param_note(int ctrlid, int32_t notevalue, int modrange)
 	value += (int32_t)synth_param[MASTER_PITCH2].last - 0x8000;
 	int modvalue = 0;
 	if (synth_param[ctrlid].lfo_depth) {
-		uint16_t lfo = (lfo_update(ctrlid) >> 2) + 0x8000;
-		modvalue += signed_scale(lfo, synth_param[ctrlid].lfo_depth);
+		int32_t lfo = (int32_t)lfo_update(ctrlid) - 0x8000;
+		modvalue += bipolar_signed_scale(lfo, synth_param[ctrlid].lfo_depth);
 	}
 	if (synth_param[ctrlid].adsr_depth) {
 		uint16_t adsr = adsr_update(ctrlid, una_corda_release);
@@ -1418,8 +1423,8 @@ void pad_zero()
 {
 	for (int i = 0; i < 3; i++) {
 		ports_input(i, &pad_calibration[i]);
-		ports_input(i + 6, &pad_calibration[i + 6]);
-		ports_input(i + 9, &pad_calibration[i + 9]);
+		ports_input(i + 6, &pad_calibration[i + 3]);
+		ports_input(i + 9, &pad_calibration[i + 6]);
 	}
 }
 
@@ -1462,7 +1467,7 @@ void synth_init()
     pad_init();
 }
 
-const int negate[9] = { 1, 1, 0,  0, 0, 0,  0, 0, 0 };
+const int negate[9] = { 1, 1, 0,  1, 0, 0,  1, 0, 0 };
 
 int32_t pad_threshold(int32_t value, int i)
 {

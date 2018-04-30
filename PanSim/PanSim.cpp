@@ -211,6 +211,18 @@ void WriteWithSubKnob(int id, int subid, uint32_t value)
 	DSPSerial.Write(b, 4);
 }
 
+void WritePadZero()
+{
+	if (DSPSerial.IsOpen() == false) return;
+	char b[4];
+	b[0] = 0xfe;
+	b[1] = 0xfb;
+	b[2] = 0;
+	b[3] = 0;
+
+	DSPSerial.Write(b, 4);
+}
+
 
 void WriteSyncLfo(uint8_t* paramids)
 {
