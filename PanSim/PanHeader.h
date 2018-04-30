@@ -281,9 +281,13 @@ enum SubParam_t
 	Sub_zprime,
 	Sub_note,
 	Sub_vel,
-	Sub_pad_l,
-	Sub_pad_r,
 	Sub_lfo_reset_phase,
+	Sub_modpad_l,
+	Sub_modpad_r,
+	Sub_suspad_l,
+	Sub_suspad_r,
+	Sub_unacpad_l,
+	Sub_unacpad_r,
 
 	Sub_flags = 32
 };
@@ -392,6 +396,7 @@ enum ModSource_t: unsigned char {
 	Source_vel,
 	__ModSource_COUNT
 };
+
 typedef struct {
 	ModTarget_t target[16];
 	ModSource_t source;
@@ -456,10 +461,11 @@ typedef struct Raspberry_GuiData_t
 
 inline GuiState_t ButtonToMenu(int buttonid)
 {
-#define MENU(id, button, name) \
-	if (buttonid == button) return GuiState_Menu_##id;
+#define EXTRABUTTON(id, button) if (buttonid == button) return GuiState_Menu_##id;
+#define MENU(id, button, name) if (buttonid == button) return GuiState_Menu_##id;
 #include "PanUiMap.h"
 #undef MENU
+#undef EXTRABUTTON
 	return GuiState_Root;
 }
 

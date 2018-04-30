@@ -3,6 +3,11 @@
 	#define TARGET(param,buttonid,knobid,name)
 #endif
 
+#ifndef EXTRABUTTON
+#define REDEFINEEXTRABUTTON
+#define EXTRABUTTON(id, buttonid)
+#endif
+
 #ifndef MENU
 #define REDEFINEDMENU
 #define MENU(id,buttonid,name)
@@ -160,12 +165,30 @@ CUSTOMENTRY("Saw", MenuEntry_Toggle, Switch_SEL7SAW)
 ENTRY("VCFMix", MenuEntry_FilterMix, Output_VCO4567_VCFMIX)
 ENDMENU()
 
+EXTRABUTTON(VCF1, ledbutton_VCF1_ResonanceBut)
+EXTRABUTTON(VCF1, ledbutton_VCF1_Routing)
+EXTRABUTTON(VCF1, ledbutton_VCF1_Spectrum_ModBut)
 MENU(VCF1, ledbutton_VCF1_FrequencyBut, "VCF1")
 ENTRY("Freq", MenuEntry_Value, Output_VCF1_CV)
 ENTRY("Resonance", MenuEntry_Value, Output_VCF1_RES)
+CUSTOMENTRY("VCF parallel", MenuEntry_Toggle, Switch_SELVCF2POST)
 ENDMENU()
 
+EXTRABUTTON(VCF2, ledbutton_Mid1Button)
+EXTRABUTTON(VCF2, ledbutton_Mid2Button)
+EXTRABUTTON(VCF2, ledbutton_HighButton)
+EXTRABUTTON(VCF2, ledbutton_VCF2_F_B)
+EXTRABUTTON(VCF2, ledbutton_VCF2_SPM)
+EXTRABUTTON(VCF2, ledbutton_PB1but)
+EXTRABUTTON(VCF2, ledbutton_PB2but)
+EXTRABUTTON(VCF2, ledbutton_PB3but)
+EXTRABUTTON(VCF2, ledbutton_PB4but)
+EXTRABUTTON(VCF2, ledbutton_VCF2_RES)
+
 MENU(VCF2, ledbutton_LowButton, "VCF2")
+ENTRY("Feedback", MenuEntry_Value, Output_VCF2_FB)
+ENTRY("Resonance", MenuEntry_Value, Output_VCF2_RES)
+ENTRY("Spectrum Mod", MenuEntry_Value, Output_VCF2_CROSSMOD)
 ENTRY("Freq L", MenuEntry_Value, Output_VCF2_L_CV)
 ENTRY("Mix L", MenuEntry_Value, Output_VCF2_L_MIX)
 ENTRY("Freq M1", MenuEntry_Value, Output_VCF2_M1_CV)
@@ -178,7 +201,10 @@ CUSTOMENTRY("L0", MenuEntry_Toggle, Switch_SELVCF2L0)
 CUSTOMENTRY("L1", MenuEntry_Toggle, Switch_SELVCF2L1)
 ENDMENU()
 
-MENU(EFFECTS, ledbutton_Cleanfeed_FX, "Global FX")
+
+EXTRABUTTON(EFFECTS1, ledbutton_VCF1_FX)
+EXTRABUTTON(EFFECTS1, ledbutton_VCF2_FX)
+MENU(EFFECTS1, ledbutton_Cleanfeed_FX, "Global FX")
 CUSTOMENTRY("Type", MenuEntry_EffectType, Output_VCA_FXPOT1)
 CUSTOMENTRY("Parameter 1", MenuEntry_EffectParam1, Output_VCA_FXPOT3)
 CUSTOMENTRY("Parameter 2", MenuEntry_EffectParam2, Output_VCA_FXPOT2)
@@ -188,6 +214,37 @@ CUSTOMENTRY("CLNFD", MenuEntry_Toggle, Switch_SELEFFECT3)
 CUSTOMENTRY("VCF 1", MenuEntry_Toggle, Switch_SELEFFECT1)
 CUSTOMENTRY("VCF 2", MenuEntry_Toggle, Switch_SELEFFECT2)
 ENDMENU()
+
+
+EXTRABUTTON(CHASE, ledbutton_STASH)
+MENU(CHASE, ledbutton_CHASE, "Chase")
+CUSTOMENTRY("Chase", MenuEntry_Toggle, Switch_SELCHASE)
+ENTRY("ChaseParam", MenuEntry_Value, Output_CHASE)
+CUSTOMENTRY("Chase 4567", MenuEntry_Toggle, Switch_SELCHASEOSC4567)
+CUSTOMENTRY("Chase VCF 2", MenuEntry_Toggle, Switch_SELCHASEVCF2)
+CUSTOMENTRY("Stash", MenuEntry_Toggle, Switch_SELSTASH)
+ENDMENU()
+
+EXTRABUTTON(CHASE, ledbutton_PORTAMENTO_RIGHT)
+MENU(PORTAMENTO,ledbutton_PORTAMENTO_LEFT, "Portamento")
+CUSTOMENTRY("Portamento", MenuEntry_Toggle, Switch_SELPORTAMENTO)
+ENTRY("PortaTime", MenuEntry_Value, Output_PORTAMENTO_TIME)
+ENDMENU()
+
+EXTRABUTTON(MIXER, ledbutton_Cleanfeed_VCA)
+EXTRABUTTON(MIXER, ledbutton_VCF1_M_S)
+EXTRABUTTON(MIXER, ledbutton_VCF1_VCA)
+EXTRABUTTON(MIXER, ledbutton_VCF2_M_S)
+EXTRABUTTON(MIXER, ledbutton_VCF2_VCA)
+MENU(MIXER, ledbutton_Cleanfeed_M_S, "Mixer")
+ENTRY("CLNFD pan", MenuEntry_MidValue, Output_CLEANF_PAN)
+ENTRY("CLNFD lvl", MenuEntry_RemapValue, Output_CLEANF_LIN)
+ENTRY("VCF 1 pan", MenuEntry_MidValue, Output_VCF1_PAN)
+ENTRY("VCF 1 lvl", MenuEntry_RemapValue, Output_VCF1_LIN)
+ENTRY("VCF 2 pan", MenuEntry_MidValue, Output_VCF2_PAN)
+ENTRY("VCF 2 lvl", MenuEntry_RemapValue, Output_VCF2_LIN)
+ENDMENU()
+
 
 #ifdef REDEFINEDTARGET
 #undef TARGET
@@ -214,3 +271,7 @@ ENDMENU()
 #undef REDEFINEDENDMENU
 #endif
 
+#ifdef REDEFINEEXTRABUTTON
+#undef EXTRABUTTON
+#undef REDEFINEEXTRABUTTON
+#endif

@@ -164,6 +164,7 @@ void WriteLfo(PanPreset_t& preset, int i)
 		WriteWithSubKnob(param, Sub_lfo_depth, preset.lfomod[i].target[j].depth);
 		WriteWithSubKnob(param, Sub_lfo_speed, preset.lfomod[i].speed);
 		WriteWithSubKnob(param, Sub_lfo_shape, preset.lfomod[i].shape);
+//		WriteWithSubKnob(param, Sub_flags, preset.lfomod[i].shape);
 	}
 	WriteSyncLfo(synclfo);
 }
@@ -240,7 +241,8 @@ void LoadPreset(PanPreset_t& preset)
 	WriteWithSubKnob(id, Sub_z, 0); \
 	WriteWithSubKnob(id, Sub_zprime, 0); \
 	WriteWithSubKnob(id, Sub_note, 0); \
-	WriteWithSubKnob(id, Sub_vel, 0);
+	WriteWithSubKnob(id, Sub_vel, 0); \
+	WriteWithSubKnob(id, Sub_flags, 0);
 #define OUTPUT_VIRT(name,codecport,codecpin, type,id, style,defaultvalue) \
 	OUTPUT(name,codecport,codecpin,type,id,style,defaultvalue);
 #define SWITCH(name,id) \
@@ -653,6 +655,7 @@ int SourceToLedButton(ModSource_t source)
 
 void UpdateMenuButtons()
 {
+#define EXTRABUTTON(id, button) if (Teensy_guidata.GuiState == GuiState_Menu_##id) SetLedButton(button, LED_ON);
 #define MENU(id, button, name) \
 	if (Teensy_guidata.GuiState == GuiState_Menu_##id) { \
 		SetLedButton(button, LED_ON);SetLedButton(ledbutton_CANCEL_LEFT, LED_ON);SetLedButton(ledbutton_CANCEL_RIGHT, LED_ON);
@@ -662,6 +665,7 @@ void UpdateMenuButtons()
 #include "PanUiMap.h"
 #undef MENU
 #undef ENDMENU
+#undef EXTRABUTTON
 }
 
 void SetLedButton(int id, int mode)
@@ -710,6 +714,12 @@ void UpdateTargets()
 
 
 	switch (Teensy_guidata.GuiState) {
+	case GuiState_Menu_EFFECTS1:
+	
+	SetLedButton(ledbutton_Cleanfeed_FX, LED_ON);
+	SetLedButton(ledbutton_VCF1_FX, LED_ON);
+	SetLedButton(ledbutton_VCF2_FX, LED_ON);
+	break;
 	case GuiState_LfoSelect:
 		SetLedButton(ledbutton_CANCEL_RIGHT, LED_ON);
 		SetLedButton(ledbutton_CANCEL_LEFT, LED_ON);
@@ -1653,8 +1663,11 @@ void Teensy_ModChangeDepth(int target, uint32_t value)
 void SetSwitch(SwitchEnum SwitchID)
 {
 	int switchset = ((int)SwitchID) / 32;
-	gPreset.switches[switchset] &= ~(1 << (SwitchID - switchset * 32));
-	gPreset.switches[switchset] |=  (1 << (SwitchID - switchset * 32));
+
+	int adjustedswitchid = SwitchID % 32;
+
+	gPreset.switches[switchset] &= ~(1 << (adjustedswitchid));
+	gPreset.switches[switchset] |=  (1 << (adjustedswitchid));
 	Raspberry_guidata.switches[0] = gPreset.switches[0];
 	Raspberry_guidata.switches[1] = gPreset.switches[1];
 	Raspberry_guidata.dirty = 1;
@@ -1664,7 +1677,9 @@ void SetSwitch(SwitchEnum SwitchID)
 bool GetSwitch(SwitchEnum SwitchID)
 {
 	int switchset = ((int)SwitchID) / 32;
-	if ((gPreset.switches[switchset] >>  (SwitchID - switchset * 32))&1)
+	int adjustedswitchid = SwitchID % 32;
+
+	if ((gPreset.switches[switchset] >> adjustedswitchid)&1)
 	{
 		return true;
 	}
@@ -1676,14 +1691,23 @@ bool GetSwitch(SwitchEnum SwitchID)
 
 void ToggleSwitch(SwitchEnum SwitchID)
 {
-	if (GetSwitch(SwitchID)) ClearSwitch(SwitchID); else SetSwitch(SwitchID);
+	if (GetSwitch(SwitchID))
+	{
+		ClearSwitch(SwitchID);
+	}
+
+	else
+	{
+		SetSwitch(SwitchID);
+	}
 
 }
 
 void ClearSwitch(SwitchEnum SwitchID)
 {
 	int switchset = ((int)SwitchID) / 32;
-	gPreset.switches[switchset] &= ~(1 << (SwitchID - switchset*32));
+	int adjustedswitchid = SwitchID%32;
+	gPreset.switches[switchset] &= ~(1 << adjustedswitchid);
 	Raspberry_guidata.switches[0] = gPreset.switches[0];
 	Raspberry_guidata.switches[1] = gPreset.switches[1];
 	Raspberry_guidata.dirty = 1;
@@ -1697,25 +1721,52 @@ bool Teensy_ActivateMenu(int buttonid)
 
 	if (menu != GuiState_Root) {
 		
-		if (menu == Raspberry_guidata.GuiState)
+		bool waseffect = false;
+		bool waschase = false;
+		switch (Raspberry_guidata.GuiState)
 		{
+		case GuiState_Menu_CHASE:
+			waschase = true;
+			break;
+		case GuiState_Menu_EFFECTS1:
+			waseffect = true;
+			break;
+		}
+		
 			switch (menu)
 			{
-			case GuiState_Menu_EFFECTS:
-				if (buttonid == ledbutton_Cleanfeed_FX)
+			case GuiState_Menu_CHASE:
+			{
+				if (waschase)
 				{
-					ToggleSwitch(Switch_SELEFFECT3);
+					if (buttonid == ledbutton_CHASE)
+					{
+						ToggleSwitch(Switch_SELCHASE);
+					}
+					if (buttonid == ledbutton_STASH)
+					{
+						ToggleSwitch(Switch_SELSTASH);
+					}
 				}
-				if (buttonid == ledbutton_VCF1_FX)
+			}break;
+			case GuiState_Menu_EFFECTS1:
+				if (waseffect)
 				{
-					ToggleSwitch(Switch_SELEFFECT1);
-				}
-				if (buttonid == ledbutton_VCF2_FX)
-				{
-					ToggleSwitch(Switch_SELEFFECT2);
+					if (buttonid == ledbutton_Cleanfeed_FX)
+					{
+						ToggleSwitch(Switch_SELEFFECT3);
+					}
+					if (buttonid == ledbutton_VCF1_FX)
+					{
+						ToggleSwitch(Switch_SELEFFECT1);
+					}
+					if (buttonid == ledbutton_VCF2_FX)
+					{
+						ToggleSwitch(Switch_SELEFFECT2);
+					}
 				}
 			}
-		}
+		
 		Teensy_ToState(menu, 0);
 
 
@@ -2010,6 +2061,7 @@ void Teensy_EncoderPress(int id)
 #undef MENU
 #undef CUSTOMENTRY
 
+
 bool RightDelta_MenuEntry_Value(const char *name, int param, int delta)
 {
 	int OrigVal = gPreset.paramvalue[param];
@@ -2021,6 +2073,17 @@ bool RightDelta_MenuEntry_Value(const char *name, int param, int delta)
 	PresetChangeValue(gPreset, param, val);
 
 	return true;
+}
+
+bool RightDelta_MenuEntry_RemapValue(const char *name, int param, int delta)
+{
+	return RightDelta_MenuEntry_Value(name, PresetRemapKnob(param), delta);
+}
+
+
+bool RightDelta_MenuEntry_MidValue(const char *name, int param, int delta) 
+{
+	return RightDelta_MenuEntry_Value(name, param, delta);
 }
 
 bool RightDelta_MenuEntry_Percentage(const char *name, int param, int delta) { return RightDelta_MenuEntry_Value(name, param, delta); };
@@ -2065,21 +2128,126 @@ bool RightDelta_MenuEntry_Toggle(const char *name, SwitchEnum param, int delta)
 	return true;
 }
 
+int TargetCount()
+{
+	if (Raspberry_guidata.ModSelect == -1) return 0;
+	int count = 0;
+	switch (Raspberry_guidata.GuiState)
+	{
+	case GuiState_AdSelect: 
+		for (int i = 0; i < 16; i++) { if (gPreset.admod[Raspberry_guidata.ModSelect].target[i].param != 0) { count++; } } break;
+	case GuiState_AdsrSelect:
+		for (int i = 0; i < 16; i++) { if (gPreset.adsrmod[Raspberry_guidata.ModSelect].target[i].param != 0) { count++; } } break;
+	case GuiState_CtrlSelect:
+		for (int i = 0; i < 16; i++) { if (gPreset.ctrlmod[Raspberry_guidata.ModSelect].target[i].param != 0) { count++; } } break;
+	case GuiState_LfoSelect:
+		for (int i = 0; i < 16; i++) { if (gPreset.lfomod[Raspberry_guidata.ModSelect].target[i].param != 0) { count++; } } break;
+	}
+	return count;
+
+}
+
+void LimitRange(int max)
+{
+	Raspberry_guidata.LeftEncoderValue = (Raspberry_guidata.LeftEncoderValue + max) % max;
+}
+
+int CtrlParamCount(ModSource_t M)
+{
+#define CTRLMENU(id, name) if (id == M) { return  0
+#define PARA(id,id2)   +1;
+#define CTRLENDMENU() ;};
+
+#include "ModMenus.h"
+
+#undef CTRLMENU
+#undef PARA
+#undef CTRLENDMENU
+
+	
+	; return 0;
+};
+
+void DoAssignMenu(int state, int delta)
+{
+#define MENU(id, name, structname) if (Raspberry_guidata.GuiState == state) { int currentitem = 0;
+#define ENDMENU()  return ; }
+
+#include "ModMenus.h"
+#undef MENU
+#undef ENDMENU
+
+	//DoAssignMenu(Raspberry_guidata.GuiState);
+}
+
+void DoCtrlMenu(int delta)
+{
+
+#define CTRLMENU(id, name) if (Raspberry_guidata.dataCtrl.source == id) { int currentitem = 0;
+#define CTRLENDMENU()  return ; }
+#define PARA(name,output) if (currentitem == Raspberry_guidata.LeftEncoderValue) \
+		{\
+			RightDelta_MenuEntry_Value(name, output, delta);\
+		} currentitem++;
+#include "ModMenus.h"
+#undef CTRLMENU
+#undef CTRLENDMENU
+#undef PARA
+}
+
 void Teensy_EncoderRotate(int id, int delta)
 {
 	if (id == 0)
 	{
-		Raspberry_guidata.LeftEncoderValue -= delta;
+		Raspberry_guidata.LeftEncoderValue += delta;
+		
+		switch (Raspberry_guidata.GuiState)
+		{
+		case GuiState_LfoSelect: LimitRange(2 + TargetCount()); break;
+		case GuiState_AdsrSelect: LimitRange(4 + TargetCount()); break;
+		case GuiState_CtrlSelect: LimitRange(CtrlParamCount(Raspberry_guidata.dataCtrl.source) + TargetCount()); break;
+		case GuiState_AdSelect: LimitRange(2 + TargetCount()); break;
+		default:
+		{
 #define MENU(id, button, name) if (Raspberry_guidata.GuiState == GuiState_Menu_##id) {int max = TeensyMenuItemCount_##id; if (max <1) return;Raspberry_guidata.LeftEncoderValue = (Raspberry_guidata.LeftEncoderValue + max)%max;
 #define ENDMENU() Raspberry_guidata.dirty = true;return; };
+#define KV(name,param) \
+	if (currentitem == Raspberry_guidata.LeftEncoderValue) \
+		{\
+					Raspberry_guidata.dirty = true;\
+			return;\
+		};\
+		currentitem++;
 
 #include "PanUiMap.h"
 #undef MENU
 #undef ENDMENU
-
+#undef KV		
+		}	
+		break;
+		}
 	}
 	else
 	{
+		if (Raspberry_guidata.GuiState == GuiState_LfoSelect)
+		{
+			DoAssignMenu(Raspberry_guidata.GuiState,  delta);
+		}
+		else if (Raspberry_guidata.GuiState == GuiState_AdsrSelect)
+		{
+			DoAssignMenu(Raspberry_guidata.GuiState,  delta);
+		}
+		else if (Raspberry_guidata.GuiState == GuiState_CtrlSelect)
+		{
+			DoCtrlMenu(delta);
+		}
+		else if (Raspberry_guidata.GuiState == GuiState_AdSelect)
+		{
+			DoAssignMenu(Raspberry_guidata.GuiState,  delta);
+		}
+		else
+		{
+
 #define MENU(id, button, name) if (Raspberry_guidata.GuiState == GuiState_Menu_##id) { int currentitem = 0;
 #define ENDMENU()  return ; }
 
@@ -2101,7 +2269,7 @@ void Teensy_EncoderRotate(int id, int delta)
 #undef ENTRY
 #undef CUSTOMENTRY
 
-
+		}
 
 	}
 

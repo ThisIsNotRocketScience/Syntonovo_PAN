@@ -89,6 +89,9 @@
     <ClInclude Include="PanUiMap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ModMenus.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Font Include="ProggyTiny.ttf" />

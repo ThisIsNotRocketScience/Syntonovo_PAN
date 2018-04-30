@@ -35,6 +35,7 @@ typedef struct Raspberry_GuiResources_t
 	ImU32 Highlight;
 	ImU32 Normal;
 	ImU32 BGColor;
+	ImU32 FillColor;
 	int PageTime;
 	int encoderbarmargin;
 	int encoderheight;
@@ -59,6 +60,17 @@ typedef struct guirow_state_t
 	int currentitem;
 	bool active;
 } guirow_state_t;
+
+
+enum
+{
+	BOX_REGULAR,
+	BOX_MID,
+	BOX_INV
+};
+
+void RenderBox(int val, guirow_state_t &rowstate, int mode = BOX_REGULAR);
+
 
 void PushRowStyle(guirow_state_t &rowstate)
 {
@@ -144,13 +156,13 @@ void MenuRightAlignLabel(const char *name, guirow_state_t &rowstate)
 	ImGui::SetCursorPos(ImVec2(240 - sz.x - 10, cp.y));
 	ImGui::Text(name);
 	rowstate.left = left;
-	rowstate.right = left + sz.x + 10;
+	rowstate.right = left + sz.x + 30;
 }
 
 
-void TargetsList(int offsetrow, guirow_state_t &row)
+void TargetsList(guirow_state_t &row)
 {
-	
+
 	ModTarget_t *t = 0;
 	switch (Raspberry_guidata.GuiState)
 	{
@@ -159,27 +171,19 @@ void TargetsList(int offsetrow, guirow_state_t &row)
 	case GuiState_CtrlSelect: t = Raspberry_guidata.dataCtrl.target; break;
 	case GuiState_LfoSelect: t = Raspberry_guidata.dataLfo.target; break;
 	}
-	
+
 	if (!t) return;
 
-	
-	row.active = false;
 
 	for (int i = 0; i < 16; i++) {
 
-		if (i == Raspberry_guidata.selectTarget) {
-			row.active = true;
-		}
-		else
-		{
-			row.active = false;
-		}
-		if (t[i].param != 0) {
 
+		if (t[i].param != 0)
+		{
 			SR();	MenuRightAlignLabel(ParamLabel(t[i].param), row); ImGui::SameLine(); ImGui::Text("%1.3f", DepthLabel(t[i].depth)); ER();
 		}
-		if (i == Raspberry_guidata.selectTarget) {
-		}
+
+		if (i == Raspberry_guidata.selectTarget) {}
 	}
 }
 
@@ -189,18 +193,17 @@ char EffectChipStrings[8][4][24] = {
 {    "Flange - reverb","Reverb mix","Flange rate","Flange mix" },
 {    "Tremolo - reverb","Reverb mix","Tremolo rate","Tremolo mix"},
 {    "Pitch shift","Pitch +/- 4 semitones","-","-"},
-
 {    "Pitch - echo","Pitch shift","Echo delay","Echo mix"},
 {    "Test","-","-","-"},
 {    "Reverb 1","Reverb time","HF filter","LF filter"},
 {    "Reverb 2","Reverb time","HF filter","LF filter"}
-
 };
+
 void Render_MenuEntry_Percentage(const char* name, int param, guirow_state_t &rowstate)
 {
-	 MenuRightAlignLabel(name,rowstate); ImGui::SameLine();
-
-	ImGui::Text("%1.f %%", (float)((int)Raspberry_guidata.outputValues[param]) * (100.0f / (float)0xFFFF));
+	MenuRightAlignLabel(name, rowstate); ImGui::SameLine();
+	RenderBox(Raspberry_guidata.outputValues[param], rowstate);
+	ImGui::Text("%1.1f%%", (float)((int)Raspberry_guidata.outputValues[param]) * (100.0f / (float)0xFFFF));
 }
 
 void Render_MenuEntry_EffectType(const char* name, int param, guirow_state_t &rowstate)
@@ -226,25 +229,97 @@ void Render_MenuEntry_EffectParam2(const char* name, int param, guirow_state_t &
 void Render_MenuEntry_EffectParam3(const char* name, int param, guirow_state_t &rowstate)
 {
 	int currenteffect = DecodeCurrentEffect(Raspberry_guidata.switches[0]);;
+
 	Render_MenuEntry_Percentage(EffectChipStrings[currenteffect][3], param, rowstate);
 }
 
 void Render_KeyValue(const char* name, int value, guirow_state_t &rowstate)
 {
 	MenuRightAlignLabel(name, rowstate); ImGui::SameLine();
-	ImGui::Text("%1.3f", (float)((int)value) * (1.0f / (float)0xFFFF));
+	RenderBox(value, rowstate);
+	ImGui::Text("%1.1f%%", (float)((int)value) * (100.0f / (float)0xFFFF));
 }
 
+int RPPresetRemapKnob(int param)
+{
+	// some hacks
+
+	// Level knobs are used for linear modulations but actual level output params are different
+	if (param == Output_CLEANF_LIN) return Output_CLEANF_LEVEL;
+	if (param == Output_VCF1_LIN) return Output_VCF1_LEVEL;
+	if (param == Output_VCF2_LIN) return Output_VCF2_LEVEL;
+
+	return param;
+}
+
+void Render_MenuEntry_RemapValue(const char* name, int param, guirow_state_t &rowstate)
+{
+	param = RPPresetRemapKnob(param);
+	MenuRightAlignLabel(name, rowstate); ImGui::SameLine();
+	RenderBox(Raspberry_guidata.outputValues[param], rowstate);
+	ImGui::Text("%1.1f%%", (float)((int)Raspberry_guidata.outputValues[param]) * (100.0f / (float)0xFFFF));
+}
 
 void Render_MenuEntry_Value(const char* name, int param, guirow_state_t &rowstate)
 {
-	 MenuRightAlignLabel(name, rowstate); ImGui::SameLine();
-	ImGui::Text("%1.3f", (float)((int)Raspberry_guidata.outputValues[param]) * (1.0f / (float)0xFFFF));
+	MenuRightAlignLabel(name, rowstate); ImGui::SameLine();
+	RenderBox(Raspberry_guidata.outputValues[param], rowstate);
+	ImGui::Text("%1.1f%%", (float)((int)Raspberry_guidata.outputValues[param]) * (100.0f / (float)0xFFFF));
+}
+void Render_MenuEntry_MidValue(const char* name, int param, guirow_state_t &rowstate)
+{
+	MenuRightAlignLabel(name, rowstate); ImGui::SameLine();
+	RenderBox(Raspberry_guidata.outputValues[param], rowstate, BOX_MID);
+	ImGui::Text("%1.1f%%", (float)((int)Raspberry_guidata.outputValues[param]) * (200.0f / (float)0xFFFF) - 100);
+}
+
+void RenderBox(int val, guirow_state_t &rowstate, int mode)
+{
+	ImVec2 p = ImGui::GetCursorScreenPos();
+	p.x += 10;
+	ImVec2 tl = p;
+	ImVec2 br = tl;
+	br.x += 220;
+	br.y += ImGui::GetTextLineHeight() - 2;
+	switch (mode)
+	{
+	case BOX_REGULAR:
+	{
+		ImVec2 br2 = br;
+		br2.x = tl.x + (val * 220) / 0xffff;
+		ImGui::GetWindowDrawList()->AddRectFilled(tl, br2, res.FillColor);
+	}
+	break;
+	case BOX_INV:
+	{
+		ImVec2 br2 = br;
+		ImVec2 tl2 = tl;
+		tl2.x = tl.x + (val * 220) / 0xffff;
+		br2.x = tl.x + 220;
+		ImGui::GetWindowDrawList()->AddRectFilled(tl, br2, res.FillColor);
+	}
+	break;
+	case BOX_MID:
+	{
+		ImVec2 br2 = br;
+		float x1 = tl.x + 110;
+		float x2 = tl.x + (val * 220) / 0xffff;
+		ImVec2 tl2 = tl;
+		tl2.x = __min(x1, x2);
+		br2.x = __max(x1, x2);
+		ImGui::GetWindowDrawList()->AddRectFilled(tl2, br2, res.FillColor);
+	}
+	break;
+	}
+	ImGui::GetWindowDrawList()->AddRect(tl, br, rowstate.active ? res.Highlight : res.Normal, 0, 0, 2);
+	p.x += 12;
+	ImGui::SetCursorScreenPos(p);
 }
 
 void Render_MenuEntry_Pitch(const char* name, int param, guirow_state_t &rowstate)
 {
 	MenuRightAlignLabel(name, rowstate); ImGui::SameLine();
+	RenderBox(Raspberry_guidata.outputValues[param], rowstate, BOX_MID);
 	ImGui::Text("%1.3f", (float)((int)Raspberry_guidata.outputValues[param] - 0x8000) * (1.0f / (float)0x100));
 }
 
@@ -256,7 +331,7 @@ void Render_MenuEntry_Waveform1(const char* name, int param, guirow_state_t &row
 	ImVec4 unselected = ImVec4(0.0, 0.0, 0.0, 1.0);
 
 	ImVec4 sawcol = saw ? selected : unselected;
-	
+
 	MenuRightAlignLabel("Saw mix", rowstate);
 	ImGui::SameLine();
 	ImGui::Text("%s", saw ? "On" : "Off");
@@ -270,7 +345,9 @@ void Render_MenuEntry_Toggle(const char *name, int param, guirow_state_t &rowsta
 	ImVec2 w(0, 0);
 	ImVec2 p = ImGui::GetCursorPos();
 	w.x = rowstate.right;
-	int id = ((Raspberry_guidata.switches[0] & (1<<param) )> 0) ? 1 : 0;
+	int switchid = param / 32;
+	int adjustedparam = param % 32;
+	int id = ((Raspberry_guidata.switches[switchid] & (1 << adjustedparam)) > 0) ? 1 : 0;
 	if (rowstate.active) id += 2;
 	ImGui::SetCursorPos(ImVec2(245, p1.y));
 	ImGui::Image(res.OnOff[id], ImVec2(128, 48));
@@ -305,17 +382,17 @@ void RenderMenuTitle(const char *name)
 	if (pt > 14) pt = 14;
 	pt /= 14.0f;
 	float distance[13] = { 0,10,30, 40,50, 70,80,90,110,120,140,150,160 };
-	
-	for (int i = 0; i <13 ; i ++)
+
+	for (int i = 0; i < 13; i++)
 	{
 		float x = w - (distance[i] * 1);
-		float L = (ImGui::GetTextLineHeight() * pow(0.6,distance[i]/10.0f) + 20)* pt;
-		ImGui::GetWindowDrawList()->AddLine(ImVec2(curspos.x + x, curspos.y-2), ImVec2(curspos.x + x, curspos.y+L), IM_COL32(255, 255, 255, 255),5);
-		ImGui::GetWindowDrawList()->AddLine(ImVec2(curspos.x + 480-x, curspos.y-2), ImVec2(curspos.x + 480-x, curspos.y+L), IM_COL32(255, 255, 255, 255), 5);
+		float L = (ImGui::GetTextLineHeight() * pow(0.6, distance[i] / 10.0f) + 20)* pt;
+		ImGui::GetWindowDrawList()->AddLine(ImVec2(curspos.x + x, curspos.y - 2), ImVec2(curspos.x + x, curspos.y + L), IM_COL32(255, 255, 255, 255), 5);
+		ImGui::GetWindowDrawList()->AddLine(ImVec2(curspos.x + 480 - x, curspos.y - 2), ImVec2(curspos.x + 480 - x, curspos.y + L), IM_COL32(255, 255, 255, 255), 5);
 	}
 }
 void RenderStartMenu(const char *name, guirow_state_t &row)
-{	
+{
 	RenderMenuTitle(name);
 	ImGui::SetCursorPos(ImVec2(50, 80));
 	row.active = Raspberry_guidata.LeftEncoderValue == 0;
@@ -335,21 +412,22 @@ void RenderEndMenu()
 
 
 
-void RenderCursor( guirow_state_t &rowstate)
+void RenderCursor(guirow_state_t &rowstate)
 {
 	if (!rowstate.active) return;
 
 	ImVec2 A = ImGui::GetWindowPos();
 	ImVec2 B = ImGui::GetCursorPos();
 	ImVec2 cbase = ImGui::GetCursorScreenPos();
-	float xx = A.x ;
-	float yy = rowstate.top +A.y;
-	yy += ImGui::GetTextLineHeight() -10;
-	ImGui::SetCursorScreenPos(ImVec2(xx + rowstate.left - 42, yy - 32));
+	float xx = A.x;
+	float yy = rowstate.top + A.y;
+	yy += ImGui::GetTextLineHeight() - 10;
+	int LeftOffs = 10;
+	ImGui::SetCursorScreenPos(ImVec2(xx + rowstate.left - 42 - LeftOffs, yy - 32));
 	ImGui::Image(res.LeftIndicator, ImVec2(32, 32));
-	ImGui::GetWindowDrawList()->AddLine(ImVec2(xx + res.encoderbarmargin, yy ), ImVec2(xx+rowstate.left-10, yy), res.Highlight, 4);
-	ImGui::GetWindowDrawList()->AddLine(ImVec2(xx + res.encoderbarmargin,yy), ImVec2(xx+ res.encoderbarmargin,res.encoderheight), res.Highlight, 4);
-	ImGui::GetWindowDrawList()->AddLine(ImVec2(xx-10, res.encoderheight), ImVec2(xx + res.encoderbarmargin, res.encoderheight), res.Highlight, 4);
+	ImGui::GetWindowDrawList()->AddLine(ImVec2(xx + res.encoderbarmargin, yy), ImVec2(xx + rowstate.left - 10 - LeftOffs, yy), res.Highlight, 4);
+	ImGui::GetWindowDrawList()->AddLine(ImVec2(xx + res.encoderbarmargin, yy), ImVec2(xx + res.encoderbarmargin, res.encoderheight), res.Highlight, 4);
+	ImGui::GetWindowDrawList()->AddLine(ImVec2(xx - 10, res.encoderheight), ImVec2(xx + res.encoderbarmargin, res.encoderheight), res.Highlight, 4);
 	ImGui::SetCursorPos(B);
 }
 bool RenderDefaultItems(GuiState_t state)
@@ -371,23 +449,24 @@ bool RenderDefaultItems(GuiState_t state)
 
 bool RenderMenu(GuiState_t state)
 {
-	
+
 
 	return RenderDefaultItems(state);
-	
+
 }
 
 void Raspberry_Init()
 {
 	memset(&Raspberry_guidata, 0, sizeof(Raspberry_GuiData_t));
-	
+
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
 	res.encoderbarmargin = 10;
 	res.encoderheight = 600;
 	res.PageTime = 0;
-	res.Highlight = IM_COL32(235, 200, 28,255);
-	res.Normal  = IM_COL32(255, 255, 255, 255);
+	res.Highlight = IM_COL32(235, 200, 28, 255);
+	res.Normal = IM_COL32(255, 255, 255, 255);
 	res.BGColor = IM_COL32(0, 58, 66, 255);
+	res.FillColor = IM_COL32(0, 137, 127, 255);
 	res.OnOff[0] = Raspberry_LoadTexture("UI_ONOFF_OFF.png");
 	res.OnOff[1] = Raspberry_LoadTexture("UI_ONOFF_ON.png");
 	res.OnOff[2] = Raspberry_LoadTexture("UI_ONOFF_OFF_HI.png");
@@ -398,7 +477,7 @@ void Raspberry_Init()
 	res.RightIndicator = Raspberry_LoadTexture("UI_RIGHT.png");
 	res.SmallFont = io.Fonts->AddFontFromFileTTF("Fontfabric - Panton.otf", 40.0f);
 	res.BigFont = io.Fonts->AddFontFromFileTTF("Fontfabric - Panton ExtraBold.otf", 54.0f);
-	
+
 	for (int i = 0; i < __GuiState_COUNT; i++)
 	{
 		res.BgImages[i] = res.MainBG;
@@ -454,6 +533,50 @@ void SelectAModText()
 	ImGui::SetCursorPos(p);
 	ImGui::Text("modulation target");
 }
+
+void RenderControlMenu()
+{
+
+#define CTRLKV(name, param){ SR(); Render_KeyValue(name, Raspberry_guidata. param, row); ER();}
+#define PARA(name, output){ SR(); Render_KeyValue(name, Raspberry_guidata.outputValues[output], row); ER();}
+#define CTRLMENU(id,title,structname) if (Raspberry_guidata.dataCtrl.source  == id)\
+{\
+	guirow_state_t row; \
+	RenderStartMenu(title, row); \
+
+
+#define CTRLENDMENU()  TargetsList(row);  RenderEndMenu(); }
+
+#include "ModMenus.h"
+
+#undef CTRLMENU
+#undef CTRLKV
+#undef	PARA
+#undef CTRLENDMENU
+
+}
+
+void RenderAssignMenu()
+{
+
+
+#define KV(name, param){ SR(); Render_KeyValue(name, Raspberry_guidata. param, row); ER();}
+
+#define MENU(id,title,structname) if (Raspberry_guidata.GuiState  == id)\
+{\
+	guirow_state_t row; \
+	RenderStartMenu(title, row); \
+	if (Raspberry_guidata.ModSelect != -1) {
+
+#define ENDMENU()  TargetsList(row);}  else {SelectAModText();}RenderEndMenu(); }
+
+#include "ModMenus.h"
+
+#undef MENU
+#undef KV
+#undef ENDMENU
+
+}
 void Raspberry_RenderScreen()
 {
 	if (BootTime < 10)
@@ -469,7 +592,7 @@ void Raspberry_RenderScreen()
 	else
 	{
 		LastGuiState = Raspberry_guidata.GuiState;
-		res.PageTime=0;
+		res.PageTime = 0;
 	}
 
 	Raspberry_PushStyle();
@@ -487,56 +610,15 @@ void Raspberry_RenderScreen()
 
 	if (Raspberry_guidata.GuiState == GuiState_LfoSelect)
 	{
-		guirow_state_t row;
-		RenderStartMenu("LFO assign",row);
-		if (Raspberry_guidata.ModSelect != -1) {
-
-			SR(); ImGui::LabelText("Speed", "%d", Raspberry_guidata.dataLfo.speed); ER();
-			SR(); ImGui::LabelText("Shape", "%d", Raspberry_guidata.dataLfo.shape); ER();
-
-			TargetsList(2, row);
-		}
-		else
-		{
-			SelectAModText();
-		}
-
-		RenderEndMenu();
+		RenderAssignMenu();
 	}
 	else if (Raspberry_guidata.GuiState == GuiState_AdsrSelect)
 	{
-		guirow_state_t row;
-		RenderStartMenu("ADSR assign", row);
-		if (Raspberry_guidata.ModSelect != -1) {
-			SR(); Render_KeyValue("A", Raspberry_guidata.dataAdsr.a, row); ER();
-			SR(); Render_KeyValue("D", Raspberry_guidata.dataAdsr.d, row); ER();
-			SR(); Render_KeyValue("S", Raspberry_guidata.dataAdsr.s, row); ER();
-			SR(); Render_KeyValue("R", Raspberry_guidata.dataAdsr.r, row); ER();
-			TargetsList(4, row);
-		}
-		else
-		{
-			SelectAModText();
-		}
-
-		RenderEndMenu();
+		RenderAssignMenu();
 	}
 	else if (Raspberry_guidata.GuiState == GuiState_AdSelect)
 	{
-		guirow_state_t row;
-
-		RenderStartMenu("AD assign",row);
-		if (Raspberry_guidata.ModSelect != -1) {
-			SR(); Render_KeyValue("A", Raspberry_guidata.dataAd.a, row); ER();
-			SR(); Render_KeyValue("D", Raspberry_guidata.dataAd.d, row); ER();
-
-			TargetsList(2, row);
-		}
-		else
-		{
-			SelectAModText();
-		}
-		RenderEndMenu();
+		RenderAssignMenu();
 	}
 	else if (Raspberry_guidata.GuiState == GuiState_SavePreset)
 	{
@@ -575,21 +657,10 @@ void Raspberry_RenderScreen()
 			Source_zprime,
 			Source_note,
 			Source_vel*/
-		const char ControllerNames[__ModSource_COUNT][20] = { "NONE", "Left mod","Right mod","X-pression","Y-pression","Z-pression","Z'-pression","Note"," Velocity" };
-		guirow_state_t row;
-		int Header = 0;
-		if (Raspberry_guidata.dataCtrl.source < __ModSource_COUNT) Header = Raspberry_guidata.dataCtrl.source;
-		
-			RenderStartMenu(ControllerNames[Header], row);
 
-			switch (Raspberry_guidata.dataCtrl.source)
-			{
-			case Source_zprime:
-				break;
-			}
-			TargetsList(0, row);
-			RenderEndMenu();
-		
+		RenderControlMenu();
+
+
 	}
 	else if (RenderMenu(Raspberry_guidata.GuiState))
 	{
@@ -612,7 +683,7 @@ void Raspberry_WindowFrame()
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0);
 	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
 
-	ImGui::Begin("screen", 0,   ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar|  ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoTitleBar);
+	ImGui::Begin("screen", 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoTitleBar);
 
 	ImGui::SetWindowSize(ImVec2(480, 800));
 
@@ -692,15 +763,13 @@ void DoDataCommands(unsigned char comm, uint32_t data)
 	case 0xd3:
 	{
 		RaspberryPointer = (unsigned char *)&incoming;
-
 		unsigned char b1 = data & 255;
 		unsigned char b2 = (data >> 8) & 255;
 		unsigned short offs = (data >> 16) & 255;
 		RaspberryPointer[offs] = b1;
-		RaspberryPointer[offs+1] = b2;
-
+		RaspberryPointer[offs + 1] = b2;
 	}
-		break;
+	break;
 	}
 	//#endif
 

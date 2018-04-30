@@ -94,7 +94,7 @@ void adsr_set_gate(int adsrid, int gate, int reset)
 	adsr_state[adsrid].gate = !!gate;
 }
 
-uint16_t adsr_update(int adsrid)
+uint16_t adsr_update(int adsrid, int release_dampen)
 {
 	uint32_t timer_count = timer_value_nonisr();
 	uint32_t timer_delta = timer_count - adsr_state[adsrid].time;
@@ -129,10 +129,14 @@ uint16_t adsr_update(int adsrid)
 		}
 		break;
 	default: // release
+	{
+		uint32_t r_const = adsr->r_const - release_dampen;
+		if (r_const > adsr->r_const) r_const = 0;
 		while (timer_delta--) {
-			adsr->value = umull32_hi(adsr->value, adsr->r_const);
+			adsr->value = umull32_hi(adsr->value, r_const);
 		}
 		break;
+	}
 	}
 
 	return adsr->value >> 15;

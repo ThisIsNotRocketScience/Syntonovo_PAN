@@ -11,7 +11,7 @@
 #include <stdint.h>
 
 void adsr_init();
-uint16_t adsr_update(int lfoid);
+uint16_t adsr_update(int lfoid, int release_dampen);
 
 void adsr_set_a(int adsrid, uint32_t a);
 void adsr_set_d(int adsrid, uint32_t d);
