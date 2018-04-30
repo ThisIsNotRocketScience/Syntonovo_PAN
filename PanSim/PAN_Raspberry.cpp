@@ -246,6 +246,21 @@ void Render_KeyValue(const char* name, int value, guirow_state_t &rowstate)
 	ImGui::Text("%1.1f%%", (float)((int)value) * (100.0f / (float)0xFFFF));
 }
 
+void Render_KeySwitch(const char *name, int value, guirow_state_t &rowstate)
+{
+	ImVec2 p1 = ImGui::GetCursorPos();
+	MenuRightAlignLabel(name, rowstate);
+
+	ImVec2 w(0, 0);
+	ImVec2 p = ImGui::GetCursorPos();
+	w.x = rowstate.right;
+	int id = value;
+	if (rowstate.active) id += 2;
+	ImGui::SetCursorPos(ImVec2(245, p1.y));
+	ImGui::Image(res.OnOff[id], ImVec2(128, 48));
+}
+
+
 int RPPresetRemapKnob(int param)
 {
 	// some hacks
@@ -544,6 +559,7 @@ void RenderControlMenu()
 {
 
 #define CTRLKV(name, param){ SR(); Render_KeyValue(name, Raspberry_guidata. param, row); ER();}
+#define SWITCH2(name, sw){ SR(); Render_KeySwitch(name, (Raspberry_guidata.switches[sw/32] >> (sw%32)) &1, row); ER();}
 #define PARA(name, output){ SR(); Render_KeyValue(name, Raspberry_guidata.outputValues[output], row); ER();}
 #define CTRLMENU(id,title) if (Raspberry_guidata.dataCtrl.source  == id)\
 {\
@@ -559,6 +575,7 @@ void RenderControlMenu()
 #undef CTRLKV
 #undef	PARA
 #undef CTRLENDMENU
+#undef SWITCH2
 
 }
 

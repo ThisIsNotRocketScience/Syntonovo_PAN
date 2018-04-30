@@ -121,6 +121,13 @@ void InitPreset(PanPreset_t& preset)
 	preset.paramvalue[Output_Y_SCALE] = 0x2000;
 	preset.paramvalue[Output_Z_SCALE] = 0x6000;
 
+	preset.paramvalue[Output_MODL_SCALE] = 0x2000;
+	preset.paramvalue[Output_SUSL_SCALE] = 0x2000;
+	preset.paramvalue[Output_UNACL_SCALE] = 0x2000;
+	preset.paramvalue[Output_MODR_SCALE] = 0x2000;
+	preset.paramvalue[Output_SUSR_SCALE] = 0x2000;
+	preset.paramvalue[Output_UNACR_SCALE] = 0x2000;
+
 	preset.paramvalue[Output_ZPRIME_SPEED] = 0xa000;
 
 	preset.paramvalue[Output_MASTER_PITCH] = 0x8000;
@@ -2114,6 +2121,18 @@ bool RightDelta_MenuEntry_Value(const char *name, int param, int delta)
 	return true;
 }
 
+bool RightDelta_MenuEntry_Switch(const char *name, int sw, int delta)
+{
+	if (delta > 0) {
+		SetSwitch((SwitchEnum)sw);
+	}
+	else {
+		ClearSwitch((SwitchEnum)sw);
+	}
+
+	return true;
+}
+
 bool RightDelta_MenuEntry_RemapValue(const char *name, int param, int delta)
 {
 	return RightDelta_MenuEntry_Value(name, PresetRemapKnob(param), delta);
@@ -2195,12 +2214,14 @@ int CtrlParamCount(ModSource_t M)
 {
 #define CTRLMENU(id, name) if (id == M) { return  0
 #define PARA(id,id2)   +1;
+#define SWITCH2(id,id2)   +1;
 #define CTRLENDMENU() ;};
 
 #include "ModMenus.h"
 
 #undef CTRLMENU
 #undef PARA
+#undef SWITCH2
 #undef CTRLENDMENU
 
 	
@@ -2228,10 +2249,15 @@ void DoCtrlMenu(int delta)
 		{\
 			RightDelta_MenuEntry_Value(name, output, delta);\
 		} currentitem++;
+#define SWITCH2(name,sw) if (currentitem == Raspberry_guidata.LeftEncoderValue) \
+		{\
+			RightDelta_MenuEntry_Switch(name, sw, delta);\
+		} currentitem++;
 #include "ModMenus.h"
 #undef CTRLMENU
 #undef CTRLENDMENU
 #undef PARA
+#undef SWITCH2
 }
 
 void Teensy_EncoderRotate(int id, int delta)

@@ -1219,6 +1219,30 @@ void virt_Z_SCALE()
 {
 }
 
+void virt_MODL_SCALE()
+{
+}
+
+void virt_SUSL_SCALE()
+{
+}
+
+void virt_UNACL_SCALE()
+{
+}
+
+void virt_MODR_SCALE()
+{
+}
+
+void virt_SUSR_SCALE()
+{
+}
+
+void virt_UNACR_SCALE()
+{
+}
+
 int process_param_note(int ctrlid, int32_t notevalue, int modrange)
 {
 	int result = doing_reset;
@@ -1488,6 +1512,24 @@ int32_t pad_threshold(int32_t value, int i)
 	case 2:
 		dz = synth_param[Z_DEADZONE].value >> 3;
 		scale = synth_param[Z_SCALE].value >> 3;
+		break;
+	case 3:
+		scale = synth_param[MODL_SCALE].value >> 4;
+		break;
+	case 4:
+		scale = synth_param[SUSL_SCALE].value >> 4;
+		break;
+	case 5:
+		scale = synth_param[UNACL_SCALE].value >> 4;
+		break;
+	case 6:
+		scale = synth_param[MODR_SCALE].value >> 4;
+		break;
+	case 7:
+		scale = synth_param[SUSR_SCALE].value >> 4;
+		break;
+	case 8:
+		scale = synth_param[UNACR_SCALE].value >> 4;
 		break;
 	}
 	if (value < -dz) value += dz;

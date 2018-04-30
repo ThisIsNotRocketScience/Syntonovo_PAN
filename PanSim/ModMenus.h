@@ -18,6 +18,11 @@
 #define PARAREDEFINED
 #endif
 
+#ifndef SWITCH2
+#define SWITCH2(name, variable)
+#define SWITCH2REDEFINED
+#endif
+
 #ifndef TOGGLE
 #define TOGGLE(name, variable)
 #define TOGGLEREDEFINED
@@ -54,9 +59,31 @@ ENDMENU()
 MENU(GuiState_CtrlSelect, "Control Assign", dataCtrl)
 
 CTRLMENU(Source_left_mod,"Left Mod")
+PARA("Scale", Output_MODL_SCALE)
 CTRLENDMENU()
 
 CTRLMENU(Source_right_mod, "Right Mod")
+PARA("Scale", Output_MODR_SCALE)
+CTRLENDMENU()
+
+CTRLMENU(Source_left_sus, "Left Sus")
+PARA("Scale", Output_SUSL_SCALE)
+SWITCH2("Sustain", Switch_SELSUSTAINL)
+CTRLENDMENU()
+
+CTRLMENU(Source_right_sus, "Right Sus")
+PARA("Scale", Output_SUSR_SCALE)
+SWITCH2("Sustain", Switch_SELSUSTAINR)
+CTRLENDMENU()
+
+CTRLMENU(Source_left_unac, "Left UnaC")
+PARA("Scale", Output_UNACL_SCALE)
+SWITCH2("Sustain", Switch_SELUNACL)
+CTRLENDMENU()
+
+CTRLMENU(Source_right_unac, "Right UnaC")
+PARA("Scale", Output_UNACR_SCALE)
+SWITCH2("Sustain", Switch_SELUNACR)
 CTRLENDMENU()
 
 CTRLMENU(Source_x,"X-pression")
@@ -102,6 +129,11 @@ ENDMENU()
 #ifdef PARAREDEFINED
 #undef PARAREDEFINED
 #undef PARA
+#endif
+
+#ifdef SWITCH2REDEFINED
+#undef SWITCH2REDEFINED
+#undef SWITCH2
 #endif
 
 #ifdef ENDMENUREDEFINED
