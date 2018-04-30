@@ -36,11 +36,6 @@ struct denoise_state_t
 };
 
 denoise_state_t Denoise[BUTTONCOUNT];
-denoise_state_t ENC1A;
-denoise_state_t ENC1B;
-denoise_state_t ENC2A;
-denoise_state_t ENC2B;
-
 
 #define LONGPRESSCYCLES 1000
 
@@ -502,9 +497,9 @@ void CheckEncoders()
 {
   byte newA = digitalRead(ENC1A);
   byte newB = digitalRead(ENC1B);
-  if (newA != last1A) {
-    if (newA == LOW) {
-      if (last1B == HIGH) Enc(0, -1); else Enc(0, 1);
+  if (newB != last1B) {
+    if (newB == LOW) {
+      if (last1A == HIGH) Enc(0, -1); else Enc(0, 1);
     }
     else
     {
@@ -519,11 +514,10 @@ void CheckEncoders()
   newA = digitalRead(ENC2A);
   newB = digitalRead(ENC2B);
 
+  if (newB != last2B) {
 
-  if (newA != last2A) {
-
-    if (newA == LOW) {
-      if (last2B == HIGH) Enc(1, -1); else Enc(1, 1);
+    if (newB == LOW) {
+      if (last2A == HIGH) Enc(1, -1); else Enc(1, 1);
     }
     else
     {

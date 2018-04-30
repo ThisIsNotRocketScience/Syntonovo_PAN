@@ -14,6 +14,9 @@ void WriteCtrlDepth(int param, int source, uint16_t depth);
 PanPreset_t gPresetBank[16];
 PanPreset_t gPreset;
 
+bool Teensy_KnobLastValue[__KNOB_COUNT] = { 0 };
+bool Teensy_KnobTouched[__KNOB_COUNT] = { 0 };
+
 #define MENU(id,button,name) static int const MenuItemCount_##id = 0
 #define ENTRY(name, type, param) + 1
 #define CUSTOMENTRY(name, type, param) + 1
@@ -243,6 +246,10 @@ void LoadPreset(PanPreset_t& preset)
 
 	for (int i = 0; i < 16; i++) {
 		WriteCtrl(preset, i);
+	}
+
+	for (int i = 0; i < __KNOB_COUNT; i++) {
+		Teensy_KnobTouched[i] = 0;
 	}
 
 	Raspberry_SetSwitches(preset.switches);
@@ -1813,8 +1820,25 @@ int PresetRemapKnob(int param)
 	return param;
 }
 
+#ifndef abs
+int32_t abs(int32_t x)
+{
+	if (x < 0) return -x;
+	return x;
+}
+#endif
+
 void Teensy_KnobChanged(KnobEnum ID, uint32_t value)
 {
+	if (!Teensy_KnobTouched[ID]) {
+		if (abs((int32_t)value - (int32_t)Teensy_KnobLastValue[ID]) < 16384) {
+			return;
+		}
+	}
+	
+	Teensy_KnobLastValue[ID] = value;
+	Teensy_KnobTouched[ID] = 1;
+
 	int target = Teensy_KnobInModulation(ID);
 	if (target != -1) {
 		Teensy_ModChangeDepth(target, value);

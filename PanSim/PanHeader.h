@@ -419,6 +419,9 @@ typedef struct {
 	char Name[PRESET_NAME_LENGTH];
 } PACK PanPreset_t;
 
+extern bool Teensy_KnobLastValue[__KNOB_COUNT];
+extern bool Teensy_KnobTouched[__KNOB_COUNT];
+
 typedef enum: unsigned char{
 	GuiState_Root,
 	GuiState_LfoSelect,
