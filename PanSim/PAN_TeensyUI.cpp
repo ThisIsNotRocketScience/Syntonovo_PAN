@@ -2123,7 +2123,7 @@ bool RightDelta_MenuEntry_Value(const char *name, int param, int delta)
 
 bool RightDelta_MenuEntry_Switch(const char *name, int sw, int delta)
 {
-	if (delta > 0) {
+	if (delta < 0) {
 		SetSwitch((SwitchEnum)sw);
 	}
 	else {
@@ -2213,8 +2213,8 @@ void LimitRange(int max)
 int CtrlParamCount(ModSource_t M)
 {
 #define CTRLMENU(id, name) if (id == M) { return  0
-#define PARA(id,id2)   +1;
-#define SWITCH2(id,id2)   +1;
+#define PARA(id,id2)   +1
+#define SWITCH2(id,id2)   +1
 #define CTRLENDMENU() ;};
 
 #include "ModMenus.h"
