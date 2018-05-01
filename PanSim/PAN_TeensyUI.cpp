@@ -269,6 +269,21 @@ void PresetChangeValue(PanPreset_t& preset, int param, uint16_t value)
 	WriteKnob(param, value);
 }
 
+uint16_t PresetGetAdsrParam(PanPreset_t& preset, int mod, SubParam_t subparam)
+{
+	switch (subparam) {
+	case Sub_adsr_a:
+		return preset.adsrmod[mod].a;
+	case Sub_adsr_d:
+		return preset.adsrmod[mod].d;
+	case Sub_adsr_s:
+		return preset.adsrmod[mod].s;
+	case Sub_adsr_r:
+		return preset.adsrmod[mod].r;
+	}
+	return 0;
+}
+
 void PresetChangeAdsrParam(PanPreset_t& preset, int mod, SubParam_t subparam, uint16_t value)
 {
 	switch (subparam) {
@@ -355,6 +370,17 @@ int PresetChangeAdsrRemoveParam(PanPreset_t& preset, int mod, int param)
 	return -1;
 }
 
+uint16_t PresetGetAdParam(PanPreset_t& preset, int mod, SubParam_t subparam)
+{
+	switch (subparam) {
+	case Sub_ad_a:
+		return preset.admod[mod].a;
+	case Sub_ad_d:
+		return preset.admod[mod].d;
+	}
+	return 0;
+}
+
 void PresetChangeAdParam(PanPreset_t& preset, int mod, SubParam_t subparam, uint16_t value)
 {
 	switch (subparam) {
@@ -419,6 +445,17 @@ int PresetChangeAdRemoveParam(PanPreset_t& preset, int mod, int param)
 	}
 
 	return -1;
+}
+
+uint16_t PresetGetLfoParam(PanPreset_t& preset, int mod, SubParam_t subparam)
+{
+	switch (subparam) {
+	case Sub_lfo_speed:
+		return preset.lfomod[mod].speed;
+	case Sub_lfo_shape:
+		return preset.lfomod[mod].shape;
+	}
+	return 0;
 }
 
 void PresetChangeLfoParam(PanPreset_t& preset, int mod, SubParam_t subparam, uint16_t value)
@@ -1495,7 +1532,7 @@ void Teensy_SelectTarget(int ledbutton)
 				return;
 			}
 			Teensy_UnmapPrevious(param);
-			target = PresetChangeLfoAddParam(gPreset, Teensy_guidata.ModSelect, param, 0);
+			target = PresetChangeLfoAddParam(gPreset, Teensy_guidata.ModSelect, param, 0x4000);
 			if (target != -1) {
 				SyncLfo(gPreset, Teensy_guidata.ModSelect);
 				Raspberry_EditLfo(gPreset.lfomod[Teensy_guidata.ModSelect]);
@@ -1517,7 +1554,7 @@ void Teensy_SelectTarget(int ledbutton)
 				return;
 			}
 			Teensy_UnmapPrevious(param);
-			target = PresetChangeAdsrAddParam(gPreset, Teensy_guidata.ModSelect, param, 0);
+			target = PresetChangeAdsrAddParam(gPreset, Teensy_guidata.ModSelect, param, 0x4000);
 			if (target != -1) {
 				Raspberry_EditAdsr(gPreset.adsrmod[Teensy_guidata.ModSelect]);
 				//Raspberry_UpdateTarget(target, param, 0);
@@ -1538,7 +1575,7 @@ void Teensy_SelectTarget(int ledbutton)
 				return;
 			}
 			Teensy_UnmapPrevious(param);
-			target = PresetChangeAdAddParam(gPreset, Teensy_guidata.ModSelect, param, 0);
+			target = PresetChangeAdAddParam(gPreset, Teensy_guidata.ModSelect, param, 0x4000);
 			if (target != -1) {
 				Raspberry_EditAd(gPreset.admod[Teensy_guidata.ModSelect]);
 				//Raspberry_UpdateTarget(target, param, 0);
@@ -1559,7 +1596,7 @@ void Teensy_SelectTarget(int ledbutton)
 				return;
 			}
 			Teensy_UnmapPrevious(param);
-			target = PresetChangeCtrlAddParam(gPreset, Teensy_guidata.ModSelect, param, 0);
+			target = PresetChangeCtrlAddParam(gPreset, Teensy_guidata.ModSelect, param, 0x4000);
 			if (target != -1) {
 				Raspberry_EditCtrl(gPreset.ctrlmod[Teensy_guidata.ModSelect]);
 				//Raspberry_UpdateTarget(target, param, 0);
@@ -2137,6 +2174,37 @@ void Teensy_EncoderPress(int id)
 #undef MENU
 #undef CUSTOMENTRY
 
+bool RightDelta_AssignParam_Value(const char *name, SubParam_t subparam, int delta)
+{
+	if (Teensy_guidata.GuiState == GuiState_AdsrSelect && Teensy_guidata.ModSelect != -1) {
+		int32_t value = PresetGetAdsrParam(gPreset, Teensy_guidata.ModSelect, subparam);
+		value += delta * 1000;
+		if (value < 0) value = 0;
+		else if (value > 0xffff) value = 0xffff;
+		PresetChangeAdsrParam(gPreset, Teensy_guidata.ModSelect, subparam, value);
+		Raspberry_SetAdsrParam(subparam, value);
+	}
+
+	if (Teensy_guidata.GuiState == GuiState_AdSelect && Teensy_guidata.ModSelect != -1) {
+		int32_t value = PresetGetAdParam(gPreset, Teensy_guidata.ModSelect, subparam);
+		value += delta * 1000;
+		if (value < 0) value = 0;
+		else if (value > 0xffff) value = 0xffff;
+		PresetChangeAdParam(gPreset, Teensy_guidata.ModSelect, subparam, value);
+		Raspberry_SetAdParam(subparam, value);
+	}
+
+	if (Teensy_guidata.GuiState == GuiState_LfoSelect && Teensy_guidata.ModSelect != -1) {
+		int32_t value = PresetGetLfoParam(gPreset, Teensy_guidata.ModSelect, subparam);
+		value += delta * 1000;
+		if (value < 0) value = 0;
+		else if (value > 0xffff) value = 0xffff;
+		PresetChangeLfoParam(gPreset, Teensy_guidata.ModSelect, subparam, value);
+		Raspberry_SetLfoParam(subparam, value);
+	}
+
+	return true;
+}
 
 bool RightDelta_MenuEntry_Depth(int index, int delta)
 {
@@ -2323,11 +2391,24 @@ int CtrlParamCount(ModSource_t M)
 void DoAssignMenu(int state, int delta)
 {
 #define MENU(id, name, structname) if (Raspberry_guidata.GuiState == state) { int currentitem = 0;
-#define ENDMENU()  return ; }
-
+#define ENDMENU() \
+		RightDelta_MenuEntry_Depth(Raspberry_guidata.LeftEncoderValue - currentitem, delta); \
+		return; }
+#define KV(name,subparam,field) if (currentitem == Raspberry_guidata.LeftEncoderValue) \
+		{\
+			RightDelta_AssignParam_Value(name, subparam, delta);\
+			return;\
+		} currentitem++;
+#define SWITCH2(name,sw) if (currentitem == Raspberry_guidata.LeftEncoderValue) \
+		{\
+			/*RightDelta_MenuEntry_Switch(name, sw, delta);*/\
+			return;\
+		} currentitem++;
 #include "ModMenus.h"
 #undef MENU
 #undef ENDMENU
+#undef KV
+#undef SWITCH2
 
 	//DoAssignMenu(Raspberry_guidata.GuiState);
 }

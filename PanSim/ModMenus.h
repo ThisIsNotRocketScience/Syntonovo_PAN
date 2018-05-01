@@ -9,7 +9,7 @@
 #endif
 
 #ifndef KV
-#define KV(name, variable)
+#define KV(name, subparam, variable)
 #define KVREDEFINED
 #endif
 
@@ -39,21 +39,21 @@
 #endif
 
 MENU(GuiState_LfoSelect, "LFO Assign", dataLfo)
-KV("Speed", dataLfo.speed)
-KV("Shape", dataLfo.shape)
+KV("Speed", Sub_lfo_speed, dataLfo.speed)
+KV("Shape", Sub_lfo_shape, dataLfo.shape)
 ENDMENU()
 
 MENU(GuiState_AdsrSelect, "ADSR Assign", ctrlAdsr)
-KV("Attack", dataAdsr.a)
-KV("Decay", dataAdsr.d)
-KV("Sustain", dataAdsr.s)
-KV("Release", dataAdsr.r)
-TOGGLE("Retrigger", dataAdsr.r)
+KV("Attack", Sub_adsr_a, dataAdsr.a)
+KV("Decay", Sub_adsr_d, dataAdsr.d)
+KV("Sustain", Sub_adsr_s, dataAdsr.s)
+KV("Release", Sub_adsr_r, dataAdsr.r)
+//SWITCH2("Retrigger", dataAdsr.r)
 ENDMENU()
 
 MENU(GuiState_AdSelect, "AD Assign", dataAd)
-KV("Attack", dataAd.a)
-KV("Decay", dataAd.d)
+KV("Attack", Sub_ad_a, dataAd.a)
+KV("Decay", Sub_ad_d, dataAd.d)
 ENDMENU()
 
 MENU(GuiState_CtrlSelect, "Control Assign", dataCtrl)

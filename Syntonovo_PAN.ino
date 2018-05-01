@@ -499,7 +499,7 @@ void CheckEncoders()
   byte newB = digitalRead(ENC1B);
   if (newB != last1B) {
     if (newB == LOW) {
-      if (last1A == HIGH) Enc(0, -1); else Enc(0, 1);
+      if (last1A == HIGH) Enc(0, 1); else Enc(0, -1);
     }
     else
     {

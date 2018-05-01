@@ -588,7 +588,7 @@ void RenderAssignMenu()
 {
 
 
-#define KV(name, param){ SR(); Render_KeyValue(name, Raspberry_guidata. param, row); ER();}
+#define KV(name, param, field){ SR(); Render_KeyValue(name, Raspberry_guidata. field, row); ER();}
 
 #define MENU(id,title,structname) if (Raspberry_guidata.GuiState  == id)\
 {\
