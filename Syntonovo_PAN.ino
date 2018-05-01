@@ -517,7 +517,7 @@ void CheckEncoders()
   if (newB != last2B) {
 
     if (newB == LOW) {
-      if (last2A == HIGH) Enc(1, -1); else Enc(1, 1);
+      if (last2A == HIGH) Enc(1, 1); else Enc(1, -1);
     }
     else
     {

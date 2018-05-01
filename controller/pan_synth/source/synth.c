@@ -1570,8 +1570,13 @@ void synth_run()
 			sustain_gate = 1;
 		else if (shiftctrl_flag_state(SELSUSTAINR) && pad_value[PAD_SUSR] > 500 && synth_param[GATE].value == 0xFFFF)
 			sustain_gate = 1;
-		else
+		else {
 			sustain_gate = 0;
+
+			if (notestack_empty() && synth_param[GATE].value == 0xFFFF) {
+				update_note();
+			}
+		}
 
 		una_corda_release = 0;
 		if (shiftctrl_flag_state(SELUNACL) && pad_value[PAD_UNACL] > 500)

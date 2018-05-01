@@ -2208,6 +2208,7 @@ int TargetCount()
 void LimitRange(int max)
 {
 	Raspberry_guidata.LeftEncoderValue = (Raspberry_guidata.LeftEncoderValue + max) % max;
+	Raspberry_guidata.dirty = true;
 }
 
 int CtrlParamCount(ModSource_t M)
@@ -2277,6 +2278,13 @@ void Teensy_EncoderRotate(int id, int delta)
 #define MENU(id, button, name) if (Raspberry_guidata.GuiState == GuiState_Menu_##id) {int max = TeensyMenuItemCount_##id; if (max <1) return;Raspberry_guidata.LeftEncoderValue = (Raspberry_guidata.LeftEncoderValue + max)%max;
 #define ENDMENU() Raspberry_guidata.dirty = true;return; };
 #define KV(name,param) \
+	if (currentitem == Raspberry_guidata.LeftEncoderValue) \
+		{\
+					Raspberry_guidata.dirty = true;\
+			return;\
+		};\
+		currentitem++;
+#define SWITCH(name,sw) \
 	if (currentitem == Raspberry_guidata.LeftEncoderValue) \
 		{\
 					Raspberry_guidata.dirty = true;\

@@ -78,12 +78,12 @@ CTRLENDMENU()
 
 CTRLMENU(Source_left_unac, "Left UnaC")
 PARA("Scale", Output_UNACL_SCALE)
-SWITCH2("Sustain", Switch_SELUNACL)
+SWITCH2("Una Corda", Switch_SELUNACL)
 CTRLENDMENU()
 
 CTRLMENU(Source_right_unac, "Right UnaC")
 PARA("Scale", Output_UNACR_SCALE)
-SWITCH2("Sustain", Switch_SELUNACR)
+SWITCH2("Una Corda", Switch_SELUNACR)
 CTRLENDMENU()
 
 CTRLMENU(Source_x,"X-pression")
