@@ -50,14 +50,14 @@ void ad_init()
 
 void ad_set_a(int adid, uint32_t a)
 {
-	ad_state[adid].a = a;
-	ad_state[adid].a_const = (uint32_t)((float)0xFFFFFFFF * (1.0f - expf(-10.0f / (float)a)));
+	ad_state[adid].a = a * 300;
+	ad_state[adid].a_const = (uint32_t)((float)0xFFFFFFFF * (1.0f - expf(-100.0f / (float)a)));
 }
 
 void ad_set_d(int adid, uint32_t d)
 {
-	ad_state[adid].d = d;
-	ad_state[adid].d_const = (uint32_t)((float)0xFFFFFFFF * expf(-10.0f / (float)d));
+	ad_state[adid].d = d * 300;
+	ad_state[adid].d_const = (uint32_t)((float)0xFFFFFFFF * expf(-100.0f / (float)d));
 }
 
 void ad_set_gate(int adid, int gate, int reset)
@@ -97,7 +97,7 @@ uint16_t ad_update(int adid, int release_dampen)
 			uint32_t v = umlal32_hi(ad->value, (0xFFFFFFFF - ad->value), ad->a_const);
 			if (v > 0x7FFFFFFF) {
 				v = 0x7FFFFFFF;
-				ad->state = 2;
+				ad->state = 0; // 2 to wait for release
 				ad->value = v;
 				break;
 			}

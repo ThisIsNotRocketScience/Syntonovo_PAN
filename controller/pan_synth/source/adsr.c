@@ -58,14 +58,14 @@ void adsr_init()
 
 void adsr_set_a(int adsrid, uint32_t a)
 {
-	adsr_state[adsrid].a = a;
-	adsr_state[adsrid].a_const = (uint32_t)((float)0xFFFFFFFF * (1.0f - expf(-10.0f / (float)a)));
+	adsr_state[adsrid].a = a * 2;
+	adsr_state[adsrid].a_const = (uint32_t)((float)0xFFFFFFFF * (1.0f - expf(-40.0f / (float)a)));
 }
 
 void adsr_set_d(int adsrid, uint32_t d)
 {
 	adsr_state[adsrid].d = d;
-	adsr_state[adsrid].d_const = (uint32_t)((float)0x7FFFFFFF * (1.0f - expf(-10.0f / (float)d)));
+	adsr_state[adsrid].d_const = (uint32_t)((float)0x7FFFFFFF * (1.0f - expf(-40.0f / (float)d)));
 }
 
 void adsr_set_s(int adsrid, uint32_t s)
