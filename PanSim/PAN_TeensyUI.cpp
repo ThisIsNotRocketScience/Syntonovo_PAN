@@ -17,6 +17,11 @@ PanPreset_t gPreset;
 bool Teensy_KnobLastValue[__KNOB_COUNT] = { 0 };
 bool Teensy_KnobTouched[__KNOB_COUNT] = { 0 };
 
+int TargetCount();
+void LimitRange(int max);
+void LimitRangeMax(int max);
+int CtrlParamCount(ModSource_t M);
+
 #define MENU(id,button,name) static int const MenuItemCount_##id = 0
 #define ENTRY(name, type, param) + 1
 #define CUSTOMENTRY(name, type, param) + 1
@@ -261,6 +266,58 @@ void LoadPreset(PanPreset_t& preset)
 
 	Raspberry_SetSwitches(preset.switches);
 	Raspberry_SetName(preset.Name);
+}
+
+int FindNthLfo(PanPreset_t& preset, int mod, int row)
+{
+	int idx = 0;
+	for (int i = 0; i < 16; i++) {
+		if (preset.lfomod[mod].target[i].param != 0) {
+			if (idx == row) return i;
+			idx++;
+		}
+	}
+
+	return 15;
+}
+
+int FindNthAdsr(PanPreset_t& preset, int mod, int row)
+{
+	int idx = 0;
+	for (int i = 0; i < 16; i++) {
+		if (preset.adsrmod[mod].target[i].param != 0) {
+			if (idx == row) return i;
+			idx++;
+		}
+	}
+
+	return 15;
+}
+
+int FindNthAd(PanPreset_t& preset, int mod, int row)
+{
+	int idx = 0;
+	for (int i = 0; i < 16; i++) {
+		if (preset.admod[mod].target[i].param != 0) {
+			if (idx == row) return i;
+			idx++;
+		}
+	}
+
+	return 15;
+}
+
+int FindNthCtrl(PanPreset_t& preset, int mod, int row)
+{
+	int idx = 0;
+	for (int i = 0; i < 16; i++) {
+		if (preset.ctrlmod[mod].target[i].param != 0) {
+			if (idx == row) return i;
+			idx++;
+		}
+	}
+
+	return 15;
 }
 
 void PresetChangeValue(PanPreset_t& preset, int param, uint16_t value)
@@ -781,42 +838,54 @@ void UpdateTargets()
 	SetLedButton(ledbutton_VCF2_FX, LED_ON);
 	break;
 	case GuiState_LfoSelect:
+	{
+		int row = Raspberry_guidata.LeftEncoderValue - 2;
 		SetLedButton(ledbutton_CANCEL_RIGHT, LED_ON);
-		SetLedButton(ledbutton_CANCEL_LEFT, LED_ON);
+		SetLedButton(ledbutton_CANCEL_LEFT, row >= 0 ? LED_ON : LED_OFF);
 		SetLedButton(ledbutton_FINAL, LED_ON);
 		SetLedButton(ledbutton_LFO, LED_ON);
-		if (Teensy_guidata.ModSelect != -1) {			
+		if (Teensy_guidata.ModSelect != -1) {
 			SetLedButton(ledbutton_SOURCE_LFO, LED_ON);
 		}
 		break;
+	}
 	case GuiState_AdsrSelect:
+	{
+		int row = Raspberry_guidata.LeftEncoderValue - 4;
 		SetLedButton(ledbutton_CANCEL_RIGHT, LED_ON);
-		SetLedButton(ledbutton_CANCEL_LEFT, LED_ON);
+		SetLedButton(ledbutton_CANCEL_LEFT, row >= 0 ? LED_ON : LED_OFF);
 		SetLedButton(ledbutton_FINAL, LED_ON);
 		SetLedButton(ledbutton_ADSR, LED_ON);
 		if (Teensy_guidata.ModSelect != -1) {
 			SetLedButton(ledbutton_SOURCE_ADSR, LED_ON);
-			
+
 		}
 		break;
+	}
 	case GuiState_AdSelect:
+	{
+		int row = Raspberry_guidata.LeftEncoderValue - 2;
 		SetLedButton(ledbutton_CANCEL_RIGHT, LED_ON);
-		SetLedButton(ledbutton_CANCEL_LEFT, LED_ON);
+		SetLedButton(ledbutton_CANCEL_LEFT, row >= 0 ? LED_ON : LED_OFF);
 		SetLedButton(ledbutton_FINAL, LED_ON);
 		SetLedButton(ledbutton_AD, LED_ON);
 		if (Teensy_guidata.ModSelect != -1) {
 			SetLedButton(ledbutton_SOURCE_AD, LED_ON);
-			
+
 		}
 		break;
+	}
 	case GuiState_CtrlSelect:
+	{
+		int row = Raspberry_guidata.LeftEncoderValue - CtrlParamCount(Raspberry_guidata.dataCtrl.source);
 		SetLedButton(ledbutton_CANCEL_RIGHT, LED_ON);
-		SetLedButton(ledbutton_CANCEL_LEFT, LED_ON);
+		SetLedButton(ledbutton_CANCEL_LEFT, row >= 0 ? LED_ON:LED_OFF);
 		SetLedButton(ledbutton_FINAL, LED_ON);
 
 		SetLedButton(SourceToLedButton(gPreset.ctrlmod[Teensy_guidata.ModSelect].source), LED_ON);
-		
+
 		break;
+	}
 	case GuiState_InitPatch:
 		SetLedButton(ledbutton_CANCEL_RIGHT, LED_ON);
 		SetLedButton(ledbutton_FINAL, LED_ON);
@@ -1619,6 +1688,64 @@ void Teensy_Cancel(int side)
 	}
 	else
 	{
+		if (side == 0) {
+			if (Raspberry_guidata.ModSelect != -1) {
+				switch (Raspberry_guidata.GuiState)
+				{
+				case GuiState_LfoSelect:
+				{
+					int row = Raspberry_guidata.LeftEncoderValue - 2;
+					if (row >= 0) {
+						int targetindex = FindNthLfo(gPreset, Raspberry_guidata.ModSelect, row);
+						PresetChangeLfoRemoveParam(gPreset, Raspberry_guidata.ModSelect, Raspberry_guidata.dataLfo.target[targetindex].param);
+						Raspberry_EditLfo(gPreset.lfomod[Raspberry_guidata.ModSelect]);
+						LimitRangeMax(2 + TargetCount());
+						UpdateTargets();
+					}
+					break;
+				}
+				case GuiState_AdsrSelect:
+				{
+					int row = Raspberry_guidata.LeftEncoderValue - 4;
+					if (row >= 0) {
+						int targetindex = FindNthAdsr(gPreset, Raspberry_guidata.ModSelect, row);
+						PresetChangeAdsrRemoveParam(gPreset, Raspberry_guidata.ModSelect, Raspberry_guidata.dataAdsr.target[targetindex].param);
+						Raspberry_EditAdsr(gPreset.adsrmod[Raspberry_guidata.ModSelect]);
+						LimitRangeMax(4 + TargetCount());
+						UpdateTargets();
+					}
+					break;
+				}
+				case GuiState_AdSelect:
+				{
+					int row = Raspberry_guidata.LeftEncoderValue - 2;
+					if (row >= 0) {
+						int targetindex = FindNthAd(gPreset, Raspberry_guidata.ModSelect, row);
+						PresetChangeAdRemoveParam(gPreset, Raspberry_guidata.ModSelect, Raspberry_guidata.dataAd.target[targetindex].param);
+						Raspberry_EditAd(gPreset.admod[Raspberry_guidata.ModSelect]);
+						LimitRangeMax(2 + TargetCount());
+						UpdateTargets();
+					}
+					break;
+				}
+				case GuiState_CtrlSelect:
+				{
+					int row = Raspberry_guidata.LeftEncoderValue - CtrlParamCount(Raspberry_guidata.dataCtrl.source);
+					if (row >= 0) {
+						int targetindex = FindNthCtrl(gPreset, Raspberry_guidata.ModSelect, row);
+						PresetChangeCtrlRemoveParam(gPreset, Raspberry_guidata.ModSelect, Raspberry_guidata.dataCtrl.target[targetindex].param);
+						Raspberry_EditCtrl(gPreset.ctrlmod[Raspberry_guidata.ModSelect]);
+						LimitRangeMax(CtrlParamCount(Raspberry_guidata.dataCtrl.source) + TargetCount());
+						UpdateTargets();
+					}
+					break;
+				}
+				}
+				
+				return;
+			}
+		}
+
 		Teensy_ToState(GuiState_Root, 0);
 	}
 	
@@ -2370,6 +2497,12 @@ void LimitRange(int max)
 	Raspberry_guidata.dirty = true;
 }
 
+void LimitRangeMax(int max)
+{
+	if (Raspberry_guidata.LeftEncoderValue >= max) Raspberry_guidata.LeftEncoderValue = max - 1;
+	Raspberry_guidata.dirty = true;
+}
+
 int CtrlParamCount(ModSource_t M)
 {
 #define CTRLMENU(id, name) if (id == M) { return  0
@@ -2445,10 +2578,10 @@ void Teensy_EncoderRotate(int id, int delta)
 		
 		switch (Raspberry_guidata.GuiState)
 		{
-		case GuiState_LfoSelect: LimitRange(2 + TargetCount()); break;
-		case GuiState_AdsrSelect: LimitRange(4 + TargetCount()); break;
-		case GuiState_CtrlSelect: LimitRange(CtrlParamCount(Raspberry_guidata.dataCtrl.source) + TargetCount()); break;
-		case GuiState_AdSelect: LimitRange(2 + TargetCount()); break;
+		case GuiState_LfoSelect: LimitRange(2 + TargetCount()); UpdateTargets(); break;
+		case GuiState_AdsrSelect: LimitRange(4 + TargetCount()); UpdateTargets(); break;
+		case GuiState_CtrlSelect: LimitRange(CtrlParamCount(Raspberry_guidata.dataCtrl.source) + TargetCount()); UpdateTargets(); break;
+		case GuiState_AdSelect: LimitRange(2 + TargetCount()); UpdateTargets(); break;
 		default:
 		{
 #define MENU(id, button, name) if (Raspberry_guidata.GuiState == GuiState_Menu_##id) {int max = TeensyMenuItemCount_##id; if (max <1) return;Raspberry_guidata.LeftEncoderValue = (Raspberry_guidata.LeftEncoderValue + max)%max;
