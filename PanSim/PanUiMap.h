@@ -105,6 +105,9 @@ TARGET(Output_VCF2_PAN, ledbutton_VCF2_M_S, knob_PAN_VCF2, "VCF2 Pan")
 TARGET(Output_MASTER_PITCH, __LEDBUTTON_COUNT, knob_MASTER_TUNE, "")
 TARGET(Output_MASTER_LEVEL, __LEDBUTTON_COUNT, knob_TOTAL_OUT, "Master level")
 
+TARGET(Output_STASH, ledbutton_STASH, __KNOB_COUNT, "Stash")
+TARGET(Output_CHASE, ledbutton_CHASE, __KNOB_COUNT, "Chase")
+
 MENU(VCO1, ledbutton_VCO1, "VCO1")
 ENTRY("Pitch", MenuEntry_Pitch, Output_VCO1_PITCH)
 CUSTOMENTRY("Triangle", MenuEntry_Toggle, Switch_SEL1TRI)
@@ -216,13 +219,16 @@ CUSTOMENTRY("VCF 2", MenuEntry_Toggle, Switch_SELEFFECT2)
 ENDMENU()
 
 
-EXTRABUTTON(CHASE, ledbutton_STASH)
 MENU(CHASE, ledbutton_CHASE, "Chase")
-CUSTOMENTRY("Chase", MenuEntry_Toggle, Switch_SELCHASE)
-ENTRY("ChaseParam", MenuEntry_Value, Output_CHASE)
-CUSTOMENTRY("Chase 4567", MenuEntry_Toggle, Switch_SELCHASEOSC4567)
-CUSTOMENTRY("Chase VCF 2", MenuEntry_Toggle, Switch_SELCHASEVCF2)
-CUSTOMENTRY("Stash", MenuEntry_Toggle, Switch_SELSTASH)
+ENTRY("Chase", MenuEntry_Value, Output_CHASE)
+CUSTOMENTRY("Chase 4567", MenuEntry_ToggleStashChase, Switch_SELCHASEOSC4567)
+CUSTOMENTRY("Chase VCF2", MenuEntry_ToggleStashChase, Switch_SELCHASEVCF2)
+ENDMENU()
+
+MENU(STASH, ledbutton_STASH, "Stash")
+ENTRY("Stash", MenuEntry_Value, Output_STASH)
+CUSTOMENTRY("Stash 4567", MenuEntry_ToggleStashChase, Switch_SELSTASHOSC4567)
+CUSTOMENTRY("Stash VCF2", MenuEntry_ToggleStashChase, Switch_SELSTASHVCF2)
 ENDMENU()
 
 EXTRABUTTON(CHASE, ledbutton_PORTAMENTO_RIGHT)

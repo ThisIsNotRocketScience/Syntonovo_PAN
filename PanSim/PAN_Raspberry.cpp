@@ -374,6 +374,11 @@ void Render_MenuEntry_Toggle(const char *name, int param, guirow_state_t &rowsta
 	ImGui::Image(res.OnOff[id], ImVec2(128, 48));
 }
 
+void Render_MenuEntry_ToggleStashChase(const char *name, int param, guirow_state_t &rowstate)
+{
+	Render_MenuEntry_Toggle(name, param, rowstate);
+}
+
 void Render_MenuEntry_FilterMix(const char* name, int param, guirow_state_t &rowstate)
 {
 	int mix1 = (0x10000) - (int)Raspberry_guidata.outputValues[param];

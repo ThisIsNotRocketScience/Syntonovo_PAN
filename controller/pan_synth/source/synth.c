@@ -213,7 +213,7 @@ void update_porta_time(int retrigger)
 
 int32_t chase(int i, uint16_t value)
 {
-	int32_t x = (int32_t)value - i * 0x4000;
+	int32_t x = 0x4000 - abs((i + 1) * 0x4000 - (int32_t)value);
 	if (x < 0) return 0;
 	if (x > 0x3FFF) return 0xFFFF;
 	return 4 * x;
@@ -221,7 +221,7 @@ int32_t chase(int i, uint16_t value)
 
 int32_t stash(int i, uint16_t value)
 {
-	int32_t x = 0x4000 - abs((i + 1) * 0x4000 - (int32_t)value);
+	int32_t x = (int32_t)value - i * 0x4000;
 	if (x < 0) return 0;
 	if (x > 0x3FFF) return 0xFFFF;
 	return 4 * x;
@@ -229,20 +229,20 @@ int32_t stash(int i, uint16_t value)
 
 int32_t chase_vco(int vco)
 {
-	if (!shiftctrl_flag_state(SELCHASEOSC4567)) return 0;
+	int32_t value = 0;
 
-	if (shiftctrl_flag_state(SELCHASE)) return chase(vco, synth_param[CHASE].last) - 0xffff;
-	if (shiftctrl_flag_state(SELSTASH)) return stash(vco, synth_param[CHASE].last) - 0xffff;
-	return 0;
+	if (shiftctrl_flag_state(SELCHASEOSC4567)) value += chase(vco, synth_param[CHASE].last) - 0xffff;
+	if (shiftctrl_flag_state(SELSTASHOSC4567)) value += stash(vco, synth_param[STASH].last) - 0xffff;
+	return value;
 }
 
 int32_t chase_vcf(int vcf)
 {
-	if (!shiftctrl_flag_state(SELCHASEVCF2)) return 0;
+	int32_t value = 0;
 
-	if (shiftctrl_flag_state(SELCHASE)) return chase(vcf, synth_param[CHASE].last) - 0xffff;
-	if (shiftctrl_flag_state(SELSTASH)) return stash(vcf, synth_param[CHASE].last) - 0xffff;
-	return 0;
+	if (shiftctrl_flag_state(SELCHASEVCF2)) value += chase(vcf, synth_param[CHASE].last) - 0xffff;
+	if (shiftctrl_flag_state(SELSTASHVCF2)) value += stash(vcf, synth_param[STASH].last) - 0xffff;
+	return value;
 }
 
 uint16_t synth_mapping_note()
@@ -1394,6 +1394,11 @@ void virt_MASTER_PITCH2()
 void virt_CHASE()
 {
 	process_param_lin(CHASE);
+}
+
+void virt_STASH()
+{
+	process_param_lin(STASH);
 }
 
 void synth_mapping_virt()

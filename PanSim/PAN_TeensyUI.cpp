@@ -1784,7 +1784,7 @@ bool Teensy_ActivateMenu(int buttonid)
 		
 			switch (menu)
 			{
-			case GuiState_Menu_CHASE:
+			/*case GuiState_Menu_CHASE:
 			{
 				if (waschase)
 				{
@@ -1797,7 +1797,7 @@ bool Teensy_ActivateMenu(int buttonid)
 						ToggleSwitch(Switch_SELSTASH);
 					}
 				}
-			}break;
+			}break;*/
 			case GuiState_Menu_EFFECTS1:
 				if (waseffect)
 				{
@@ -2138,6 +2138,42 @@ void Teensy_EncoderPress(int id)
 #undef CUSTOMENTRY
 
 
+bool RightDelta_MenuEntry_Depth(int index, int delta)
+{
+	int param = 0;
+	uint16_t depth = 0;
+
+	switch (Raspberry_guidata.GuiState)
+	{
+	case GuiState_AdSelect:
+		param = gPreset.admod[Raspberry_guidata.ModSelect].target[index].param;
+		depth = gPreset.admod[Raspberry_guidata.ModSelect].target[index].depth;
+		break;
+	case GuiState_AdsrSelect:
+		param = gPreset.adsrmod[Raspberry_guidata.ModSelect].target[index].param;
+		depth = gPreset.adsrmod[Raspberry_guidata.ModSelect].target[index].depth;
+		break;
+	case GuiState_CtrlSelect:
+		param = gPreset.ctrlmod[Raspberry_guidata.ModSelect].target[index].param;
+		depth = gPreset.ctrlmod[Raspberry_guidata.ModSelect].target[index].depth;
+		break;
+	case GuiState_LfoSelect:
+		param = gPreset.lfomod[Raspberry_guidata.ModSelect].target[index].param;
+		depth = gPreset.lfomod[Raspberry_guidata.ModSelect].target[index].depth;
+		break;
+	}
+
+	if (param == 0) return false;
+
+	depth += 0x8000;
+	int32_t newdepth = (int32_t)depth + delta * 1000;
+	if (newdepth < 0) newdepth = 0;
+	if (newdepth > 0xffff) newdepth = 0xffff;
+
+	Teensy_ModChangeDepth(index, newdepth);
+	return true;
+}
+
 bool RightDelta_MenuEntry_Value(const char *name, int param, int delta)
 {
 	int OrigVal = gPreset.paramvalue[param];
@@ -2216,6 +2252,31 @@ bool RightDelta_MenuEntry_Toggle(const char *name, SwitchEnum param, int delta)
 	return true;
 }
 
+bool RightDelta_MenuEntry_ToggleStashChase(const char *name, SwitchEnum param, int delta)
+{
+	if (delta < 0)
+	{
+		Teensy_Switch(param, 1);
+		if (param == Switch_SELSTASHOSC4567) {
+			Teensy_Switch(Switch_SELCHASEOSC4567, 0);
+		}
+		if (param == Switch_SELCHASEOSC4567) {
+			Teensy_Switch(Switch_SELSTASHOSC4567, 0);
+		}
+		if (param == Switch_SELSTASHVCF2) {
+			Teensy_Switch(Switch_SELCHASEVCF2, 0);
+		}
+		if (param == Switch_SELCHASEVCF2) {
+			Teensy_Switch(Switch_SELSTASHVCF2, 0);
+		}
+	}
+	else
+	{
+		Teensy_Switch(param, 0);
+	}
+	return true;
+}
+
 int TargetCount()
 {
 	if (Raspberry_guidata.ModSelect == -1) return 0;
@@ -2275,14 +2336,18 @@ void DoCtrlMenu(int delta)
 {
 
 #define CTRLMENU(id, name) if (Raspberry_guidata.dataCtrl.source == id) { int currentitem = 0;
-#define CTRLENDMENU()  return ; }
+#define CTRLENDMENU()   \
+		RightDelta_MenuEntry_Depth(Raspberry_guidata.LeftEncoderValue - currentitem, delta); \
+		return; }
 #define PARA(name,output) if (currentitem == Raspberry_guidata.LeftEncoderValue) \
 		{\
 			RightDelta_MenuEntry_Value(name, output, delta);\
+			return;\
 		} currentitem++;
 #define SWITCH2(name,sw) if (currentitem == Raspberry_guidata.LeftEncoderValue) \
 		{\
 			RightDelta_MenuEntry_Switch(name, sw, delta);\
+			return;\
 		} currentitem++;
 #include "ModMenus.h"
 #undef CTRLMENU
