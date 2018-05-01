@@ -722,6 +722,19 @@ void UpdateTargets()
 	SetLedButton(ledbutton_RIGHT_7, ActivePresetButton == 14 ? LED_ON : LED_OFF);
 	SetLedButton(ledbutton_RIGHT_8, ActivePresetButton == 15 ? LED_ON : LED_OFF);
 
+	int octaves = 0;
+	int octaveup = 0;
+	int octavedown = 0;
+	if (gPreset.paramvalue[Output_MASTER_PITCH2] > 0x8000) {
+		octaveup = 1;
+	}
+	else if (gPreset.paramvalue[Output_MASTER_PITCH2] < 0x8000) {
+		octavedown = 1;
+	}
+	SetLedButton(ledbutton_OCTDOWN_LEFT, octavedown ? LED_ON : LED_OFF);
+	SetLedButton(ledbutton_OCTDOWN_RIGHT, octavedown ? LED_ON : LED_OFF);
+	SetLedButton(ledbutton_OCTUP_LEFT, octaveup ? LED_ON : LED_OFF);
+	SetLedButton(ledbutton_OCTUP_RIGHT, octaveup ? LED_ON : LED_OFF);
 
 	switch (Teensy_guidata.GuiState) {
 	case GuiState_Menu_EFFECTS1:
@@ -1136,6 +1149,19 @@ void SelectMod()
 	else if (Teensy_guidata.GuiState == GuiState_CtrlSelect && Teensy_guidata.ModSelect >= 0) {
 		memcpy(&Teensy_guidata.cancel, &gPreset.ctrlmod[Teensy_guidata.ModSelect], sizeof(gPreset.ctrlmod[0]));
 	}
+}
+
+void Teensy_Pitch2(int delta)
+{
+	int param = Output_MASTER_PITCH2;
+	int32_t val = gPreset.paramvalue[param] + delta;
+
+	if (val < 0) return;
+	if (val > 0xffff) return;
+
+	Raspberry_OutputChangeValue(param, val);
+	PresetChangeValue(gPreset, param, val);
+	UpdateTargets();
 }
 
 void Teensy_ToState(GuiState_t state, int modselect = -1)
@@ -2047,6 +2073,10 @@ modes:
 	case ledbutton_ZPRIME: Teensy_ToState(GuiState_CtrlSelect, ledbutton_ZPRIME); break;
 	case ledbutton_KBCV: Teensy_ToState(GuiState_CtrlSelect, ledbutton_KBCV); break;
 	case ledbutton_VELOCITY: Teensy_ToState(GuiState_CtrlSelect, ledbutton_VELOCITY); break;
+	case ledbutton_OCTDOWN_LEFT: Teensy_Pitch2(-12 * 0x100); break;
+	case ledbutton_OCTDOWN_RIGHT: Teensy_Pitch2(-12 * 0x100); break;
+	case ledbutton_OCTUP_LEFT: Teensy_Pitch2(12 * 0x100); break;
+	case ledbutton_OCTUP_RIGHT: Teensy_Pitch2(12 * 0x100); break;
 
 	case ledbutton_ZERO: WritePadZero(); break;
 
