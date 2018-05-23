@@ -2521,9 +2521,9 @@ int CtrlParamCount(ModSource_t M)
 	; return 0;
 };
 
-void DoAssignMenu(int state, int delta)
+void DoAssignMenu(int delta)
 {
-#define MENU(id, name, structname) if (Raspberry_guidata.GuiState == state) { int currentitem = 0;
+#define MENU(id, name, structname) if (Raspberry_guidata.GuiState == id) { int currentitem = 0;
 #define ENDMENU() \
 		RightDelta_MenuEntry_Depth(Raspberry_guidata.LeftEncoderValue - currentitem, delta); \
 		return; }
@@ -2613,11 +2613,11 @@ void Teensy_EncoderRotate(int id, int delta)
 	{
 		if (Raspberry_guidata.GuiState == GuiState_LfoSelect)
 		{
-			DoAssignMenu(Raspberry_guidata.GuiState,  delta);
+			DoAssignMenu(delta);
 		}
 		else if (Raspberry_guidata.GuiState == GuiState_AdsrSelect)
 		{
-			DoAssignMenu(Raspberry_guidata.GuiState,  delta);
+			DoAssignMenu(delta);
 		}
 		else if (Raspberry_guidata.GuiState == GuiState_CtrlSelect)
 		{
@@ -2625,7 +2625,7 @@ void Teensy_EncoderRotate(int id, int delta)
 		}
 		else if (Raspberry_guidata.GuiState == GuiState_AdSelect)
 		{
-			DoAssignMenu(Raspberry_guidata.GuiState,  delta);
+			DoAssignMenu(delta);
 		}
 		else
 		{

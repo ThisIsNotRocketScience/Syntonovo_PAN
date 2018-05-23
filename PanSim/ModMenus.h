@@ -43,7 +43,7 @@ KV("Speed", Sub_lfo_speed, dataLfo.speed)
 KV("Shape", Sub_lfo_shape, dataLfo.shape)
 ENDMENU()
 
-MENU(GuiState_AdsrSelect, "ADSR Assign", ctrlAdsr)
+MENU(GuiState_AdsrSelect, "ADSR Assign", dataAdsr)
 KV("Attack", Sub_adsr_a, dataAdsr.a)
 KV("Decay", Sub_adsr_d, dataAdsr.d)
 KV("Sustain", Sub_adsr_s, dataAdsr.s)
