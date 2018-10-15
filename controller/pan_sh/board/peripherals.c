@@ -376,10 +376,10 @@ instance:
     - spi_master_config:
       - enableLoopback: 'false'
       - enableMaster: 'true'
-      - polarity: 'kSPI_ClockPolarityActiveHigh'
+      - polarity: 'kSPI_ClockPolarityActiveLow'
       - phase: 'kSPI_ClockPhaseFirstEdge'
       - direction: 'kSPI_LsbFirst'
-      - baudRate_Bps: '2000000'
+      - baudRate_Bps: '20000000'
       - dataWidth: 'kSPI_Data8Bits'
       - sselNum: 'kSPI_Ssel0'
       - sselPol: 'kSPI_SpolActiveAllLow'
@@ -395,10 +395,10 @@ instance:
 const spi_master_config_t SPI_0_config = {
   .enableLoopback = false,
   .enableMaster = true,
-  .polarity = kSPI_ClockPolarityActiveHigh,
+  .polarity = kSPI_ClockPolarityActiveLow,
   .phase = kSPI_ClockPhaseFirstEdge,
   .direction = kSPI_LsbFirst,
-  .baudRate_Bps = 2000000,
+  .baudRate_Bps = 20000000,
   .dataWidth = kSPI_Data8Bits,
   .sselNum = kSPI_Ssel0,
   .sselPol = kSPI_SpolActiveAllLow,

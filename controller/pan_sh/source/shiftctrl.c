@@ -27,11 +27,11 @@ void shiftctrl_set(int flag)
 {
 	if (flag < 32) {
 		shiftctrl_flags |= (1 << flag);
-		shiftctrl_update_needed = 1;
 	}
 	else {
 		shiftctrl_extra_flags |= (1 << (flag - 32));
 	}
+	shiftctrl_update_needed = 1;
 	//shiftctrl_update();
 }
 
@@ -39,11 +39,11 @@ void shiftctrl_clear(int flag)
 {
 	if (flag < 32) {
 		shiftctrl_flags &= ~(1 << flag);
-		shiftctrl_update_needed = 1;
 	}
 	else {
 		shiftctrl_extra_flags &= ~(1 << (flag - 32));
 	}
+	shiftctrl_update_needed = 1;
 	//shiftctrl_update();
 }
 

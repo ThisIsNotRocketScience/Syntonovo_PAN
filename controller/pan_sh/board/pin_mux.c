@@ -36,6 +36,7 @@ pin_labels:
 
 #include "fsl_common.h"
 #include "fsl_gpio.h"
+#include "fsl_inputmux.h"
 #include "pin_mux.h"
 
 /* FUNCTION ************************************************************************************************************
@@ -94,6 +95,7 @@ BOARD_InitPins:
   - {pin_num: '89', peripheral: FLEXCOMM4, signal: RXD_SDA_MOSI, pin_signal: PIO0_5/CAN0_TD/FC4_RXD_SDA_MOSI/CTIMER3_MAT0/SCT0_GPI5/EMC_D(3)/ENET_MDIO}
   - {pin_num: '91', peripheral: FLEXCOMM4, signal: RTS_SCL_SSEL1, pin_signal: PIO0_19/FC4_RTS_SCL_SSEL1/UTICK_CAP0/CTIMER0_MAT2/SCT0_OUT2/EMC_A(1)/FC7_TXD_SCL_MISO_WS}
   - {pin_num: '94', peripheral: GPIO, signal: 'PIO1, 11', pin_signal: PIO1_11/ENET_TX_EN/FC1_TXD_SCL_MISO/CTIMER1_CAP1/USB0_VBUS/EMC_CLK(0), direction: OUTPUT, gpio_init_state: 'false'}
+  - {pin_num: '28', peripheral: PINT, signal: 'PINT, 0', pin_signal: PIO0_31/FC0_CTS_SDA_SSEL0/SD_D(2)/CTIMER0_MAT1/SCT0_OUT3/TRACEDATA(0)/ADC0_5, identifier: ''}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
  */
 /* clang-format on */
@@ -107,6 +109,8 @@ BOARD_InitPins:
 /* Function assigned for the Cortex-M4F */
 void BOARD_InitPins(void)
 {
+    /* Enables the clock for the input muxes. 0 = Disable; 1 = Enable.: 0x01u */
+    CLOCK_EnableClock(kCLOCK_InputMux);
     /* Enables the clock for the IOCON block. 0 = Disable; 1 = Enable.: 0x01u */
     CLOCK_EnableClock(kCLOCK_Iocon);
     /* Enables the clock for the GPIO0 module */
@@ -232,6 +236,8 @@ void BOARD_InitPins(void)
     };
     /* Initialize GPIO functionality on pin PIO1_31 (pin 92)  */
     GPIO_PinInit(BOARD_INITPINS_SELD_GPIO, BOARD_INITPINS_SELD_PORT, BOARD_INITPINS_SELD_PIN, &SELD_config);
+    /* PIO0_31 is selected for PINT input 0 */
+    INPUTMUX_AttachSignal(INPUTMUX, 0U, kINPUTMUX_GpioPort0Pin31ToPintsel);
 
     IOCON->PIO[0][0] = ((IOCON->PIO[0][0] &
                          /* Mask bits to zero which are setting */

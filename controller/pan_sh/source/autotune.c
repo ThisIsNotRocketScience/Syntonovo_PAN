@@ -17,6 +17,7 @@
 #include "ports.h"
 #include "synth_internal_ctrlmap.h"
 #include "shiftctrl.h"
+#include "synth_param.h"
 
 #define AVERAGECOUNT 32
 
@@ -125,31 +126,30 @@ void Voutraw(int channel, uint16_t ictrl)
 	//uint32_t intdacvalue = (uint32_t)dacvalue;
 	//dac8564_write(channel, intdacvalue /*& ~15*/);
 
-#if 0
 	switch (channel) {
 	case 0:
-		ports_value(BASE_P4_1 + 0, ictrl);
+		ports_value(synth_param[VCO1_FREQ].port, ictrl);
 		break;
 	case 1:
-		ports_value(BASE_P4_1 + 1, ictrl);
+		ports_value(synth_param[VCO2_FREQ].port, ictrl);
 		break;
 	case 2:
-		ports_value(BASE_P4_1 + 2, ictrl);
+		ports_value(synth_param[VCO3_FREQ].port, ictrl);
 		break;
 	case 3:
-		ports_value(BASE_P4_1 + 3, ictrl);
+		ports_value(synth_param[VCO4_FREQ].port, ictrl);
 		break;
 	case 4:
-		ports_value(BASE_P4_0 + 0, ictrl);
+		ports_value(synth_param[VCO5_FREQ].port, ictrl);
 		break;
 	case 5:
-		ports_value(BASE_P4_0 + 1, ictrl);
+		ports_value(synth_param[VCO6_FREQ].port, ictrl);
 		break;
 	case 6:
-		ports_value(BASE_P4_0 + 2, ictrl);
+		ports_value(synth_param[VCO7_FREQ].port, ictrl);
 		break;
 	}
-#endif
+	ports_flush();
 }
 
 #define BINCOUNT (10)
@@ -252,7 +252,7 @@ void autotune_init()
 	if (FSL_FEATURE_EEPROM_SIZE < sizeof(struct flashcontent_t)) { for (;;) ; }
 
 	CLOCK_EnableClock(kCLOCK_InputMux);
-	INPUTMUX_AttachSignal(INPUTMUX, 0, kINPUTMUX_GpioPort1Pin4ToPintsel);
+	INPUTMUX_AttachSignal(INPUTMUX, 0, kINPUTMUX_GpioPort0Pin31ToPintsel);
 
 	CLOCK_EnableClock(kCLOCK_Pint);
 	RESET_PeripheralReset(kPINT_RST_SHIFT_RSTn);
@@ -265,14 +265,12 @@ void autotune_init()
 	EEPROM_GetDefaultConfig(&config);
 	EEPROM_Init(EEPROM, &config, BOARD_BOOTCLOCKRUN_CORE_CLOCK);
 
-	//autotune_start();
-
 	loadcal();
+	//autotune_start();
 }
 
 void autotune_set_routing(int osc)
 {
-#if 0
     shiftctrl_clear(SEL1SQR);
     shiftctrl_clear(SEL1SAW);
     shiftctrl_clear(SEL1TRI);
@@ -285,11 +283,27 @@ void autotune_set_routing(int osc)
     shiftctrl_clear(SEL3SAW);
     shiftctrl_clear(SEL3TRI);
     shiftctrl_clear(SEL3SUB);
-    shiftctrl_clear(SEL4SAW);
-    shiftctrl_clear(SEL5SAW);
-    shiftctrl_clear(SEL6SAW);
-    shiftctrl_clear(SEL7SAW);
-#endif
+    shiftctrl_clear(SEL4SQR);
+    shiftctrl_clear(SEL5SQR);
+    shiftctrl_clear(SEL6SQR);
+    shiftctrl_clear(SEL7SQR);
+
+    shiftctrl_clear(SELVCF21A);
+    shiftctrl_clear(SELVCF21B);
+    shiftctrl_clear(SELVCF22A);
+    shiftctrl_clear(SELVCF22B);
+    shiftctrl_clear(SELVCF23A);
+    shiftctrl_clear(SELVCF23B);
+    shiftctrl_clear(SELVCF24A);
+    shiftctrl_clear(SELVCF24B);
+
+    shiftctrl_clear(SELVCOSYNC1);
+    shiftctrl_clear(SELVCOSYNC2);
+    shiftctrl_clear(SELVCOSYNC3);
+
+    shiftctrl_set(SELMUTEDNSAW);
+    shiftctrl_set(SELMUTEVCOTUNE);
+    shiftctrl_update();
 
     // disable all outputs
 	ports_value(PORT_VCF1_L_LIN, 0);
@@ -305,11 +319,27 @@ void autotune_set_routing(int osc)
 	ports_value(PORT_VCF2_R_LOG, 0xffff);
 	ports_value(PORT_CLEANF_R_LOG, 0xffff);
 
+	ports_value(PORT_VCF1_RES, 0xffff);
+	ports_value(PORT_VCF2_L_CV, 0xffff);
+	ports_value(PORT_VCF2_M1_CV, 0xffff);
+	ports_value(PORT_VCF2_M2_CV, 0xffff);
+	ports_value(PORT_VCF2_H_CV, 0xffff);
+	ports_value(PORT_VCF2_L_RES, 0xffff);
+	ports_value(PORT_VCF2_M1_RES, 0xffff);
+	ports_value(PORT_VCF2_M2_RES, 0xffff);
+	ports_value(PORT_VCF2_H_RES, 0xffff);
+
 	ports_value(PORT_VCO1_PW, 0x8000);
 	ports_value(PORT_VCO2_PW, 0x8000);
 	ports_value(PORT_VCO3_PW, 0x8000);
+	ports_value(PORT_VCO4_PW, 0xA000);
+	ports_value(PORT_VCO5_PW, 0xA000);
+	ports_value(PORT_VCO6_PW, 0xA000);
+	ports_value(PORT_VCO7_PW, 0xA000);
 	ports_value(PORT_VCO123_FM1, 0);
 	ports_value(PORT_VCO123_FM2, 0);
+
+	ports_flush();
 
     switch (osc) {
 	case 0:
@@ -334,6 +364,7 @@ void autotune_set_routing(int osc)
 	    shiftctrl_set(SEL7SQR);
 	    break;
 	}
+    shiftctrl_update();
 }
 
 extern volatile int sctimer_counter;
@@ -382,7 +413,9 @@ float readhz(int averagecount)
 
 	resetcmp(averagecount);
 
-	while (avgindex < 2 /*&& (timer_value() - starttime) < 12000000*/);
+	while (avgindex < 2 /*&& (timer_value() - starttime) < 12000000*/) {
+		ports_refresh();
+	}
 	__disable_irq();
 	uint32_t avg = elapsedavg[1];
 
@@ -479,7 +512,8 @@ int autotune(int osc)
 	sctimer_counter = 0;
 	__enable_irq();
 
-	autotune_set_routing(osc);
+	//while(1)
+		autotune_set_routing(osc);
 
 	Voutraw(osc, 0);
 	WAIT1_Waitms(1);

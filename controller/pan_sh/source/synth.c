@@ -406,8 +406,20 @@ void ports_refresh(void)
 	}
 }
 
+void ports_flush()
+{
+	if ((ports_last_updated & 1) == 0)
+	{
+		ports_value(ports_last_updated + 1, ports_last_value[ports_last_updated + 1]);
+		ports_wait_write();
+	}
+}
+
 void ports_value(int portid, uint16_t value)
 {
+	/*if (portid > 0x10) value = portid&2 ? 0x300 : 0xffff;
+	else
+	value = 0x9000;*/
 	//if (portfunc_write_func[portid]) {
 	//	portfunc_write_func[portid] (portfunc_write_ic[portid], portfunc_write_ch[portid], value);
 	//}
@@ -1202,6 +1214,34 @@ void do_output_VCF2_R_LOG(int ctrlid, int port)
 	}
 }
 
+void do_output_VCO1_FREQ(int ctrlid, int port)
+{
+}
+
+void do_output_VCO2_FREQ(int ctrlid, int port)
+{
+}
+
+void do_output_VCO3_FREQ(int ctrlid, int port)
+{
+}
+
+void do_output_VCO4_FREQ(int ctrlid, int port)
+{
+}
+
+void do_output_VCO5_FREQ(int ctrlid, int port)
+{
+}
+
+void do_output_VCO6_FREQ(int ctrlid, int port)
+{
+}
+
+void do_output_VCO7_FREQ(int ctrlid, int port)
+{
+}
+
 void virt_CLEANF_LIN()
 {
 	process_param_lin(CLEANF_LIN);
@@ -1594,49 +1634,48 @@ void virt_STASH()
 void synth_mapping_virt()
 {
 	static uint16_t last[8] = { 0xfffe, 0xfffe, 0xfffe, 0xfffe, 0xfffe, 0xfffe, 0xfffe, 0xfffe };
-#if 0
+
 	uint16_t val = autotune_note_to_dac(0, synth_param[VCO1_PITCH].last);
 	if (val != last[0] || doing_reset) {
-		ports_value(BASE_P4_1 + 0, val);
+		ports_value(synth_param[VCO1_FREQ].port, val);
 		last[0] = val;
 	}
 
 	val = autotune_note_to_dac(1, synth_param[VCO2_PITCH].last);
 	if (val != last[1] || doing_reset) {
-		ports_value(BASE_P4_1 + 1, val);
+		ports_value(synth_param[VCO2_FREQ].port, val);
 		last[1] = val;
 	}
 
 	val = autotune_note_to_dac(2, synth_param[VCO3_PITCH].last);
 	if (val != last[2] || doing_reset) {
-		ports_value(BASE_P4_1 + 2, val);
+		ports_value(synth_param[VCO3_FREQ].port, val);
 		last[2] = val;
 	}
 
 	val = autotune_note_to_dac(3, synth_param[VCO4_PITCH].last);
 	if (val != last[3] || doing_reset) {
-		ports_value(BASE_P4_1 + 3, val);
+		ports_value(synth_param[VCO4_FREQ].port, val);
 		last[3] = val;
 	}
 
 	val = autotune_note_to_dac(4, synth_param[VCO5_PITCH].last);
 	if (val != last[4] || doing_reset) {
-		ports_value(BASE_P4_0 + 0, val);
+		ports_value(synth_param[VCO5_FREQ].port, val);
 		last[4] = val;
 	}
 
 	val = autotune_note_to_dac(5, synth_param[VCO6_PITCH].last);
 	if (val != last[5] || doing_reset) {
-		ports_value(BASE_P4_0 + 1, val);
+		ports_value(synth_param[VCO6_FREQ].port, val);
 		last[5] = val;
 	}
 
 	val = autotune_note_to_dac(6, synth_param[VCO7_PITCH].last);
 	if (val != last[6] || doing_reset) {
-		ports_value(BASE_P4_0 + 2, val);
+		ports_value(synth_param[VCO7_FREQ].port, val);
 		last[6] = val;
 	}
-#endif
 }
 
 void pad_zero()
@@ -1678,9 +1717,9 @@ void synth_init()
     //shiftctrl_set(SELVCF2L1);
     //shiftctrl_set(SELEFFECT1);
 
-	synth_param[VCF2_H_CV].lfo_depth = 0x8000;
-	synth_param[VCF2_H_CV].lfo_speed = 0xffff;
-	lfo_set_speed(VCF2_H_CV, synth_param[VCF2_H_CV].lfo_speed);
+	//synth_param[VCF2_H_CV].lfo_depth = 0x8000;
+	//synth_param[VCF2_H_CV].lfo_speed = 0xffff;
+	//lfo_set_speed(VCF2_H_CV, synth_param[VCF2_H_CV].lfo_speed);
 
     //SCTIMER_SetCallback(SCTIMER_1_PERIPHERAL, SCTimer_Func, 0);
     SCTIMER_EnableInterrupts(SCTIMER_1_PERIPHERAL, 3);
@@ -1689,7 +1728,7 @@ void synth_init()
     // must be lower than autotune priority or overflow checking will break!
     NVIC_SetPriority(SCTIMER_1_IRQN, 1);
 
-    //autotune_init();
+    autotune_init();
     //pad_init();
 }
 
