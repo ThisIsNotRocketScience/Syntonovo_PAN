@@ -53,6 +53,9 @@
 
 void codecsetup_init()
 {
+    for (int i = 0; i < 12; i++) {
+    	max11311_set_port(0, i, MODE_ADC_M5_P5V);
+    }
 #if 0
     for (int i = 0; i < 3; i++) {
     	max11311_set_port(0, i, MODE_ADC_M5_P5V);
@@ -80,6 +83,10 @@ void codecsetup_init()
 void portssetup_init()
 {
 #if 0
+    for (int i = 0; i < 12; i++) {
+    	ports_set_read(0 * 12 + i, max11311_read, 0, i);
+    	//ports_set_write(0 * 12 + 6 + i, max11311_write, 0, 6 + i);
+    }
     for (int i = 0; i < 12; i++) {
     	ports_set_read(0 * 12 + i, max11311_read, 0, i);
     	//ports_set_write(0 * 12 + 6 + i, max11311_write, 0, 6 + i);
@@ -116,7 +123,7 @@ int main(void) {
     codecsetup_init();
     shiftctrl_init();
     spi_sched_init();
-    //max11311_init();
+    max11311_init();
     //max11300_init();
     //max5134_init();
     portssetup_init();

@@ -12,6 +12,7 @@ void ports_value(int portid, uint16_t value);
 
 #include "peripherals.h"
 #include "pin_mux.h"
+#include "max11311.h"
 #include "ltc2712.h"
 #include "synth.h"
 #include "synth_internal.h"
@@ -25,6 +26,49 @@ void ports_value(int portid, uint16_t value);
 #include "control.h"
 #include "autotune.h"
 #include "notestack.h"
+
+void pad_zero();
+
+const int KEYBOARD_X = 0;
+const int KEYBOARD_Y = 1;
+const int KEYBOARD_Z = 2;
+const int PAD_MODL = 6;
+const int PAD_SUSL = 7;
+const int PAD_UNACL = 8;
+const int PAD_MODR = 9;
+const int PAD_SUSR = 10;
+const int PAD_UNACR = 11;
+uint16_t pad_adc_value[12];
+uint16_t pad_calibration[12] = {0};
+int32_t pad_value[12];
+
+static volatile int inputcycle_last_port = 12;
+
+static void inputcycle_cb(uint32_t data, void* user)
+{
+	int port = (int)user;
+
+	if (port >= 0 && port < 12) {
+		pad_adc_value[port] = (data & 0xFFF) << 4;
+
+		inputcycle_last_port = port;
+
+		if (port < 11) {
+			max11311_read_nb(0, port + 1, inputcycle_cb, (void*)(port + 1));
+		}
+	}
+}
+
+static void inputcycle_start()
+{
+	inputcycle_last_port = 0;
+	max11311_read_nb(0, 0, inputcycle_cb, (void*)11);
+}
+
+static void inputcycle_flush()
+{
+	while (inputcycle_last_port < 11) ;
+}
 
 static volatile int reset = 0;
 int doing_reset = 0;
@@ -62,21 +106,6 @@ uint32_t porta_timer_count = 0;
 int32_t porta_time;
 int32_t porta_divider = 256;
 int32_t porta_timer_shift = 14;
-
-void pad_zero();
-
-const int KEYBOARD_X = 0;
-const int KEYBOARD_Y = 1;
-const int KEYBOARD_Z = 2;
-const int PAD_MODL = 3;
-const int PAD_SUSL = 4;
-const int PAD_UNACL = 5;
-const int PAD_MODR = 6;
-const int PAD_SUSR = 7;
-const int PAD_UNACR = 8;
-uint16_t pad_adc_value[9];
-uint16_t pad_calibration[9] = {0};
-int32_t pad_value[9];
 
 uint16_t pan_law_table[2049];
 
@@ -460,7 +489,6 @@ void ports_value(int portid, uint16_t value)
 	ports_last_value[portid] = value;
 }
 
-#if 0
 typedef void (*portfunc_read_t)(int ic, int ch, uint16_t* result);
 
 portfunc_read_t portfunc_read_func[16] = {0};
@@ -480,7 +508,6 @@ void ports_input(int portid, uint16_t* value)
 		portfunc_read_func[portid] (portfunc_read_ic[portid], portfunc_read_ch[portid], value);
 	}
 }
-#endif
 
 static void update_note()
 {
@@ -1680,13 +1707,12 @@ void synth_mapping_virt()
 
 void pad_zero()
 {
-#if 0
-	for (int i = 0; i < 3; i++) {
-		ports_input(i, &pad_calibration[i]);
-		ports_input(i + 6, &pad_calibration[i + 3]);
-		ports_input(i + 9, &pad_calibration[i + 6]);
+	inputcycle_start();
+	inputcycle_flush();
+
+	for (int i = 0; i < 12; i++) {
+		pad_calibration[i] = pad_adc_value[i];
 	}
-#endif
 }
 
 void pad_init()
@@ -1729,10 +1755,10 @@ void synth_init()
     NVIC_SetPriority(SCTIMER_1_IRQN, 1);
 
     autotune_init();
-    //pad_init();
+    pad_init();
 }
 
-const int negate[9] = { 1, 1, 0,  1, 0, 0,  1, 0, 0 };
+const int negate[12] = { 1, 1, 0,  0, 0, 0,  1, 0, 0,  1, 0, 0 };
 
 int32_t pad_threshold(int32_t value, int i)
 {
@@ -1782,49 +1808,51 @@ int32_t pad_threshold(int32_t value, int i)
 	else if (value > 32767) value = 32767;
 	return value;
 }
+static void process_inputs()
+{
+	for (int i = 0; i < 12; i++) {
+		pad_value[i] = pad_threshold(((int32_t)pad_adc_value[i] - (int32_t)pad_calibration[i]), i);
+	}
+
+	pad_value[KEYBOARD_Z] = peak_handle(&peak_state_z, pad_value[KEYBOARD_Z]);
+
+	int32_t zprime_tmp = lp_update(&zprime_lp, pad_value[KEYBOARD_Z]);
+	zprime_value = hp_update(&zprime_hp, zprime_tmp);
+
+	if (shiftctrl_flag_state(SELSUSTAINL) && pad_value[PAD_SUSL] > 500 && synth_param[GATE].value == 0xFFFF)
+		sustain_gate = 1;
+	else if (shiftctrl_flag_state(SELSUSTAINR) && pad_value[PAD_SUSR] > 500 && synth_param[GATE].value == 0xFFFF)
+		sustain_gate = 1;
+	else {
+		sustain_gate = 0;
+
+		if (notestack_empty() && synth_param[GATE].value == 0xFFFF) {
+			update_note();
+		}
+	}
+
+	una_corda_release = 0;
+	if (shiftctrl_flag_state(SELUNACL) && pad_value[PAD_UNACL] > 500) {
+		una_corda_release += (pad_value[PAD_UNACL] - 500) << 8;
+	}
+	if (shiftctrl_flag_state(SELUNACR) && pad_value[PAD_UNACR] > 500) {
+		una_corda_release += (pad_value[PAD_UNACR] - 500) << 8;
+	}
+}
 
 void synth_run()
 {
 	for (;;) {
 		doing_reset = reset;
 
+		inputcycle_start();
+
 	    synth_mapping_run();
 	    synth_mapping_virt();
 
-#if 0
-		for (int i = 0; i < 3; i++) {
-			ports_input(i, &pad_adc_value[i]);
-			ports_input(i + 6, &pad_adc_value[i + 3]);
-			ports_input(i + 9, &pad_adc_value[i + 6]);
-		}
+	    inputcycle_flush();
 
-		for (int i = 0; i < 9; i++) {
-			pad_value[i] = pad_threshold(((int32_t)pad_adc_value[i] - (int32_t)pad_calibration[i]), i);
-		}
-
-		pad_value[KEYBOARD_Z] = peak_handle(&peak_state_z, pad_value[KEYBOARD_Z]);
-
-		int32_t zprime_tmp = lp_update(&zprime_lp, pad_value[KEYBOARD_Z]);
-		zprime_value = hp_update(&zprime_hp, zprime_tmp);
-
-		if (shiftctrl_flag_state(SELSUSTAINL) && pad_value[PAD_SUSL] > 500 && synth_param[GATE].value == 0xFFFF)
-			sustain_gate = 1;
-		else if (shiftctrl_flag_state(SELSUSTAINR) && pad_value[PAD_SUSR] > 500 && synth_param[GATE].value == 0xFFFF)
-			sustain_gate = 1;
-		else {
-			sustain_gate = 0;
-
-			if (notestack_empty() && synth_param[GATE].value == 0xFFFF) {
-				update_note();
-			}
-		}
-
-		una_corda_release = 0;
-		if (shiftctrl_flag_state(SELUNACL) && pad_value[PAD_UNACL] > 500)
-			una_corda_release += (pad_value[PAD_UNACL] - 500) << 8;
-		if (shiftctrl_flag_state(SELUNACR) && pad_value[PAD_UNACR] > 500)
-			una_corda_release += (pad_value[PAD_UNACR] - 500) << 8;
-#endif
+	    process_inputs();
 
 		ports_refresh();
 		shiftctrl_update();

@@ -156,6 +156,20 @@ void max11311_read(int ic, int ch, uint16_t* result)
 	spi_sched_write(spi_bus_id[ic], spi_ssel[ic], out, 3, read_callback, result);
 }
 
+void max11311_read_nb(int ic, int ch, read_callback_t cb, void* user)
+{
+	//uint16_t value;
+	//max11311_read_reg(spi_bus[ic], spi_ssel[ic], adcdat_reg[ch], &value);
+
+	unsigned char out[3];
+	out[0] = (adcdat_reg[ch] << 1) | 1;
+	//out[0] = (0x02 << 1) | 1;
+	out[1] = 0;
+	out[2] = 0;
+
+	spi_sched_write(spi_bus_id[ic], spi_ssel[ic], out, 3, cb, user);
+}
+
 static void dummy_callback(uint32_t data, void* user)
 {
 
