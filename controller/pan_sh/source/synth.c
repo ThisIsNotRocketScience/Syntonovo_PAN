@@ -62,7 +62,7 @@ static void inputcycle_cb(uint32_t data, void* user)
 static void inputcycle_start()
 {
 	inputcycle_last_port = 0;
-	max11311_read_nb(0, 0, inputcycle_cb, (void*)11);
+	max11311_read_nb(0, 0, inputcycle_cb, (void*)0);
 }
 
 static void inputcycle_flush()
@@ -959,72 +959,72 @@ void do_output_VCF2_H_MIX(int ctrlid, int port)
 
 void do_output_VCO1_SUB1(int ctrlid, int port)
 {
-	//if (process_param_lin(ctrlid)) {
-	//	ports_value(port, synth_param[ctrlid].last);
-	//}
+	if (process_param_lin(ctrlid)) {
+		ports_value(port, synth_param[ctrlid].last);
+	}
 }
 
 void do_output_VCO1_SUB2(int ctrlid, int port)
 {
-	//if (process_param_lin(ctrlid)) {
-	//	ports_value(port, synth_param[ctrlid].last);
-	//}
+	if (process_param_lin(ctrlid)) {
+		ports_value(port, synth_param[ctrlid].last);
+	}
 }
 
 void do_output_VCF1_FX_12(int ctrlid, int port)
 {
-	//if (process_param_lin(ctrlid)) {
-	//	ports_value(port, synth_param[ctrlid].last);
-	//}
+	if (process_param_lin(ctrlid)) {
+		ports_value(port, synth_param[ctrlid].last);
+	}
 }
 
 void do_output_VCF1_FX_24(int ctrlid, int port)
 {
-	//if (process_param_lin(ctrlid)) {
-	//	ports_value(port, synth_param[ctrlid].last);
-	//}
+	if (process_param_lin(ctrlid)) {
+		ports_value(port, synth_param[ctrlid].last);
+	}
 }
 
 void do_output_VCF2_FX_L(int ctrlid, int port)
 {
-	//if (process_param_lin(ctrlid)) {
-	//	ports_value(port, synth_param[ctrlid].last);
-	//}
+	if (process_param_lin(ctrlid)) {
+		ports_value(port, synth_param[ctrlid].last);
+	}
 }
 
 void do_output_VCF2_FX_R(int ctrlid, int port)
 {
-	//if (process_param_lin(ctrlid)) {
-	//	ports_value(port, synth_param[ctrlid].last);
-	//}
+	if (process_param_lin(ctrlid)) {
+		ports_value(port, synth_param[ctrlid].last);
+	}
 }
 
 void do_output_CLEANF_FX_L(int ctrlid, int port)
 {
-	//if (process_param_lin(ctrlid)) {
-	//	ports_value(port, synth_param[ctrlid].last);
-	//}
+	if (process_param_lin(ctrlid)) {
+		ports_value(port, synth_param[ctrlid].last);
+	}
 }
 
 void do_output_CLEANF_FX_R(int ctrlid, int port)
 {
-	//if (process_param_lin(ctrlid)) {
-	//	ports_value(port, synth_param[ctrlid].last);
-	//}
+	if (process_param_lin(ctrlid)) {
+		ports_value(port, synth_param[ctrlid].last);
+	}
 }
 
 void do_output_FX_L_RETURN(int ctrlid, int port)
 {
-	//if (process_param_lin(ctrlid)) {
-	//	ports_value(port, synth_param[ctrlid].last);
-	//}
+	if (process_param_lin(ctrlid)) {
+		ports_value(port, synth_param[ctrlid].last);
+	}
 }
 
 void do_output_FX_R_RETURN(int ctrlid, int port)
 {
-	//if (process_param_lin(ctrlid)) {
-	//	ports_value(port, synth_param[ctrlid].last);
-	//}
+	if (process_param_lin(ctrlid)) {
+		ports_value(port, synth_param[ctrlid].last);
+	}
 }
 
 void linpan_l(int ctrlid, int port, int linctrlid, int panctrlid)
@@ -1808,6 +1808,7 @@ int32_t pad_threshold(int32_t value, int i)
 	else if (value > 32767) value = 32767;
 	return value;
 }
+
 static void process_inputs()
 {
 	for (int i = 0; i < 12; i++) {

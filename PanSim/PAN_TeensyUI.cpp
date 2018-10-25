@@ -138,15 +138,15 @@ void InitPreset(PanPreset_t& preset)
 	preset.paramvalue[Output_MASTER_PITCH] = 0x8000;
 	preset.paramvalue[Output_MASTER_PITCH2] = 0x8000;
 
-	preset.switches[0] |= (1 << Switch_SELEF4);
+//	preset.switches[0] |= (1 << Switch_SELEF4);
 
 
 	preset.switches[0] |= (1 << Switch_SEL1SAW);
 
-	preset.switches[0] |= (1 << Switch_SEL4SAW);
-	preset.switches[0] |= (1 << Switch_SEL5SAW);
-	preset.switches[0] |= (1 << Switch_SEL6SAW);
-	preset.switches[0] |= (1 << Switch_SEL7SAW);
+	preset.switches[0] |= (1 << Switch_SEL4SQR);
+	preset.switches[0] |= (1 << Switch_SEL5SQR);
+	preset.switches[0] |= (1 << Switch_SEL6SQR);
+	preset.switches[0] |= (1 << Switch_SEL7SQR);
 
 	preset.switches[0] |= (1 << Switch_SEL2SAW);
 
@@ -154,11 +154,11 @@ void InitPreset(PanPreset_t& preset)
 	preset.switches[0] |= (1 << Switch_SEL3SQR);
 	preset.switches[0] |= (1 << Switch_SEL1SQR);
 
-	preset.switches[0] |= (1 << Switch_SELVCF2L0);
-	preset.switches[0] |= (1 << Switch_SELVCF2L1);
+	//preset.switches[0] |= (1 << Switch_SELVCF2L0);
+	//preset.switches[0] |= (1 << Switch_SELVCF2L1);
 
-	preset.switches[0] |= (1 << Switch_SELMOST2);
-	preset.switches[0] |= (1 << Switch_SELMOST3);
+	//preset.switches[0] |= (1 << Switch_SELMOST2);
+	//preset.switches[0] |= (1 << Switch_SELMOST3);
 }
 
 void SyncLfo(PanPreset_t& preset, int i)
@@ -796,7 +796,7 @@ void UpdateTargets()
 	{
 		SetLedButton(i, LED_OFF);	
 	}
-	SetLedButton(ledbutton_VCF1_Routing, GetSwitch(Switch_SELVCF2POST)?LED_ON:LED_OFF);
+	//SetLedButton(ledbutton_VCF1_Routing, GetSwitch(Switch_SELVCF2POST)?LED_ON:LED_OFF);
 	int ActivePresetButton = Raspberry_guidata.activebank * 8 + Raspberry_guidata.activeslot;
 
 	SetLedButton(ledbutton_LEFT_1, ActivePresetButton == 0 ? LED_ON : LED_OFF);
@@ -1967,15 +1967,15 @@ bool Teensy_ActivateMenu(int buttonid)
 				{
 					if (buttonid == ledbutton_Cleanfeed_FX)
 					{
-						ToggleSwitch(Switch_SELEFFECT3);
+						//ToggleSwitch(Switch_SELEFFECT3);
 					}
 					if (buttonid == ledbutton_VCF1_FX)
 					{
-						ToggleSwitch(Switch_SELEFFECT1);
+						//ToggleSwitch(Switch_SELEFFECT1);
 					}
 					if (buttonid == ledbutton_VCF2_FX)
 					{
-						ToggleSwitch(Switch_SELEFFECT2);
+						//ToggleSwitch(Switch_SELEFFECT2);
 					}
 				}
 			}
@@ -2204,7 +2204,7 @@ modes:
 	case ledbutton_RIGHT_6: Teensy_NumberHandler(13); break;
 	case ledbutton_RIGHT_7: Teensy_NumberHandler(14); break;
 	case ledbutton_RIGHT_8: Teensy_NumberHandler(15); break;
-	case ledbutton_VCF1_Routing: ToggleSwitch(Switch_SELVCF2POST); UpdateTargets(); break;
+	//case ledbutton_VCF1_Routing: ToggleSwitch(Switch_SELVCF2POST); UpdateTargets(); break;
 	case ledbutton_LEFT_MORE:
 	case ledbutton_RIGHT_MORE:
 		if (Raspberry_guidata.GuiState == GuiState_SelectBanks)
@@ -2425,7 +2425,7 @@ bool RightDelta_MenuEntry_EffectType(const char *name, int param, int delta)
 	Teensy_Switch(Switch_SELEF1, a);
 	Teensy_Switch(Switch_SELEF2, b);
 	Teensy_Switch(Switch_SELEF3, c);
-	Teensy_Switch(Switch_SELEF4, d);
+	//Teensy_Switch(Switch_SELEF4, d);
 
 	return true;
 };

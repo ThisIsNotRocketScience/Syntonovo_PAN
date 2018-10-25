@@ -408,7 +408,7 @@
                         <data type="Frequency" unit="Hz">0</data>
                      </feature>
                   </dependency>
-                  <dependency resourceType="ClockOutput" resourceId="FXCOM1_clock" description="FXCOM1 clock is inactive." problem_level="1" source="Peripherals:BOARD_InitPeripherals">
+                  <dependency resourceType="ClockOutput" resourceId="FXCOM1_clock" description="FXCOM1 clock is inactive." problem_level="2" source="Peripherals:BOARD_InitPeripherals">
                      <feature name="frequency" evaluation="greaterThan">
                         <data type="Frequency" unit="Hz">0</data>
                      </feature>
@@ -652,8 +652,8 @@
                      <config_set name="usartConfig_t">
                         <struct name="usartConfig">
                            <setting name="clockSource" value="FXCOMFunctionClock"/>
-                           <setting name="clockSourceFreq" value="GetFreq"/>
-                           <setting name="baudRate_Bps" value="4000000"/>
+                           <setting name="clockSourceFreq" value="BOARD_BootClockRUN"/>
+                           <setting name="baudRate_Bps" value="1400000"/>
                            <setting name="parityMode" value="kUSART_ParityDisabled"/>
                            <setting name="stopBitCount" value="kUSART_OneStopBit"/>
                            <setting name="bitCountPerChar" value="kUSART_8BitsPerChar"/>

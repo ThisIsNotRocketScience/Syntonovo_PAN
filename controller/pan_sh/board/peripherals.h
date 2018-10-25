@@ -65,7 +65,7 @@ extern "C" {
 /* Definition of peripheral ID */
 #define USART_1_PERIPHERAL ((USART_Type *)FLEXCOMM1)
 /* Definition of the clock source frequency */
-#define USART_1_CLOCK_SOURCE CLOCK_GetFreq(kCLOCK_Flexcomm1)
+#define USART_1_CLOCK_SOURCE 96000000UL
 /* USART_1 interrupt vector ID (number). */
 #define USART_1_FLEXCOMM_IRQN FLEXCOMM1_IRQn
 /* USART_1 interrupt handler identifier. */

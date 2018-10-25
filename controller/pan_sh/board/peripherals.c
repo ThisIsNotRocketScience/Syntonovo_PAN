@@ -243,8 +243,8 @@ instance:
   - usartConfig_t:
     - usartConfig:
       - clockSource: 'FXCOMFunctionClock'
-      - clockSourceFreq: 'GetFreq'
-      - baudRate_Bps: '4000000'
+      - clockSourceFreq: 'BOARD_BootClockRUN'
+      - baudRate_Bps: '1400000'
       - parityMode: 'kUSART_ParityDisabled'
       - stopBitCount: 'kUSART_OneStopBit'
       - bitCountPerChar: 'kUSART_8BitsPerChar'
@@ -256,7 +256,7 @@ instance:
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
 /* clang-format on */
 const usart_config_t USART_1_config = {
-  .baudRate_Bps = 4000000,
+  .baudRate_Bps = 1400000,
   .parityMode = kUSART_ParityDisabled,
   .stopBitCount = kUSART_OneStopBit,
   .bitCountPerChar = kUSART_8BitsPerChar,
