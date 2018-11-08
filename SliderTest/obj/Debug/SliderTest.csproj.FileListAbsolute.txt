@@ -1,0 +1,10 @@
+C:\Projects\Synton\PAN\Syntonovo_PAN\SliderTest\bin\Debug\SliderTest.exe.config
+C:\Projects\Synton\PAN\Syntonovo_PAN\SliderTest\bin\Debug\SliderTest.exe
+C:\Projects\Synton\PAN\Syntonovo_PAN\SliderTest\bin\Debug\SliderTest.pdb
+C:\Projects\Synton\PAN\Syntonovo_PAN\SliderTest\obj\Debug\SliderTest.csprojResolveAssemblyReference.cache
+C:\Projects\Synton\PAN\Syntonovo_PAN\SliderTest\obj\Debug\SliderTest.Form1.resources
+C:\Projects\Synton\PAN\Syntonovo_PAN\SliderTest\obj\Debug\SliderTest.Properties.Resources.resources
+C:\Projects\Synton\PAN\Syntonovo_PAN\SliderTest\obj\Debug\SliderTest.csproj.GenerateResource.cache
+C:\Projects\Synton\PAN\Syntonovo_PAN\SliderTest\obj\Debug\SliderTest.csproj.CoreCompileInputs.cache
+C:\Projects\Synton\PAN\Syntonovo_PAN\SliderTest\obj\Debug\SliderTest.exe
+C:\Projects\Synton\PAN\Syntonovo_PAN\SliderTest\obj\Debug\SliderTest.pdb
