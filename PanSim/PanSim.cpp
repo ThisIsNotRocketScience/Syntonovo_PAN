@@ -246,7 +246,7 @@ void set(setpara_t& para)
 	b[2] = (para.value >> 8) & 0xFF;
 	b[3] = (para.value >> 0) & 0xFF;
 
-	DSPSerial.Write(b, 4);
+ 	DSPSerial.Write(b, 4);
 }
 
 
@@ -261,6 +261,16 @@ void WriteSwitch(int id, int state)
 
 void note_on(int noteid, int notevel)
 {
+	if (DSPSerial.IsOpen())
+	{
+		
+			setpara_t setpara;
+			setpara.paramid = 0x02fc;
+			setpara.value = noteid | (notevel << 8);
+			set(setpara);
+	
+
+	}
 	setpara_t setpara;
 	setpara.paramid = 0x02fc;
 	setpara.value = noteid | (notevel << 8);
@@ -273,6 +283,14 @@ void note_on(int noteid, int notevel)
 
 void note_off(int noteid, int notevel)
 {
+	if (DSPSerial.IsOpen())
+	{
+		setpara_t setpara;
+		setpara.paramid = 0x01fc;
+		setpara.value = noteid | (notevel << 8);
+		set(setpara);
+
+	}
 	setpara_t setpara;
 	setpara.paramid = 0x01fc;
 	setpara.value = noteid | (notevel << 8);
