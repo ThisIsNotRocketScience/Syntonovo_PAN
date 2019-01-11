@@ -62,10 +62,12 @@ param_t synth_param[SYNTH_PARAM_COUNT] =
 
 #define MAPPING_CTRL(ID, NAME, PORTID) \
 	const int NAME = ID; \
-	const int PORT_##NAME = PORTID;
+	const int PORT_##NAME = PORTID; \
+	const int PARAM_##ID = PORTID;
 #define MAPPING_INT(ID, NAME, PORTID) \
 	const int NAME = ID; \
-	const int PORT_##NAME = PORTID;
+	const int PORT_##NAME = PORTID; \
+	const int PARAM_##ID = PORTID;
 
 #define SWITCH(NAME, ID) \
 	const int NAME = ID;

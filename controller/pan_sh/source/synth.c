@@ -1155,6 +1155,16 @@ void do_output_EXT_MIX2(int ctrlid, int port)
 	mixtwo_2(ctrlid, port, EXT_LEVEL, EXT_VCFMIX);
 }
 
+void do_output_DNSSAW_MIX1(int ctrlid, int port)
+{
+	mixtwo_1(ctrlid, port, DNSSAW_LEVEL, DNSSAW_VCFMIX);
+}
+
+void do_output_DNSSAW_MIX2(int ctrlid, int port)
+{
+	mixtwo_2(ctrlid, port, DNSSAW_LEVEL, DNSSAW_VCFMIX);
+}
+
 void do_output_CLEANF_L_LIN(int ctrlid, int port)
 {
 	linpan_l(ctrlid, port, CLEANF_LIN, CLEANF_PAN);
@@ -1397,6 +1407,16 @@ void virt_DIGINS_LEVEL()
 void virt_EXT_LEVEL()
 {
 	process_param_lin(EXT_LEVEL);
+}
+
+void virt_DNSSAW_VCFMIX()
+{
+	process_param_lin(DNSSAW_VCFMIX);
+}
+
+void virt_DNSSAW_LEVEL()
+{
+	process_param_lin(DNSSAW_LEVEL);
 }
 
 void virt_NOTE()

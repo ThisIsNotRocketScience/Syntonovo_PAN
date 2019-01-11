@@ -336,8 +336,8 @@ void autotune_set_routing(int osc)
 	ports_value(PORT_VCO5_PW, 0xA000);
 	ports_value(PORT_VCO6_PW, 0xA000);
 	ports_value(PORT_VCO7_PW, 0xA000);
-	ports_value(PORT_VCO123_FM1, 0);
 	ports_value(PORT_VCO123_FM2, 0);
+	ports_value(PORT_VCO123_FM3, 0);
 
 	ports_flush();
 
