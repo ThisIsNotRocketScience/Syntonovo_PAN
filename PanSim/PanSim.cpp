@@ -734,7 +734,7 @@ void SendRaspberryState()
 	SendLocalCommand(0xd2, 0);
 
 }
-
+extern PanPreset_t gPreset;
 
 int main(int argc, char** argv)
 {
@@ -835,6 +835,7 @@ int main(int argc, char** argv)
 
 	static bool parameters = false;
 	static bool mainscreen = true;
+	static bool keyboard = true;
 	GetSerialPorts(dspport, uiport);
 
 	if (UISerial.IsOpen() == false)
@@ -846,6 +847,13 @@ int main(int argc, char** argv)
 	Raspberry_Init();
 	Raspberry_Reset();
 	
+	for (int i = 0; i < __KNOB_COUNT; i++)
+	{
+		int ParamID = KnobToParam(Knobs[i].id);
+		Knobs[i].value = gPreset.paramvalue[ParamID]/65535.0f;
+		Raspberry_OutputChangeValue(ParamID, gPreset.paramvalue[ParamID]);
+	};
+
 	setpara_t para;
 	para.paramid = 0xfcfe;
 	para.value = 3;
@@ -896,9 +904,32 @@ int main(int argc, char** argv)
 			{
 				ImGui::MenuItem("Pan UI Controls", NULL, &parameters);
 				ImGui::MenuItem("Pan Main Screen", NULL, &mainscreen);
+				ImGui::MenuItem("Keyboard", NULL, &keyboard);
 				ImGui::EndMenu();
 			}
 			ImGui::EndMainMenuBar();
+		}
+		if (keyboard)
+		{
+			ImGui::PushFont(pFontBold);
+			{
+				ImGui::Begin("Keyboard", &keyboard, ImGuiWindowFlags_AlwaysAutoResize);
+				ImGui::PushFont(pFont);
+				for (int i = 0; i < 36; i++)
+				{
+					char txt[10];
+					sprintf(txt, "%d", i);
+					if (ImGui::Button(txt))
+					{
+						on_short_message(0x90, i + 0x40, 127, 0);//
+
+					}
+					ImGui::SameLine();
+				}
+				ImGui::PopFont();
+				ImGui::End();
+			}
+			ImGui::PopFont();
 		}
 		if (mainscreen)
 		{

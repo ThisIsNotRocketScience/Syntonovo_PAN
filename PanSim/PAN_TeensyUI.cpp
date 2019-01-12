@@ -37,7 +37,7 @@ bool GetSwitch(SwitchEnum SwitchID);
 void ToggleSwitch(SwitchEnum SwitchID);
 void ClearSwitch(SwitchEnum SwitchID);
 
-
+void SetPresetSwitch(SwitchEnum SwitchID, PanPreset_t *prs);
 void InitPreset(PanPreset_t& preset)
 {
 	memset(&preset, 0, sizeof(PanPreset_t));
@@ -103,10 +103,13 @@ void InitPreset(PanPreset_t& preset)
 
 	preset.paramvalue[Output_VCF1_LEVEL] = 0xffff;
 	preset.paramvalue[Output_VCF1_CV] = 0x6fff;
+	preset.paramvalue[Output_VCF1_LIN] = 0x8000;
 
 	preset.paramvalue[Output_VCF1_PAN] = 0x8000;
 	preset.paramvalue[Output_VCF2_PAN] = 0x8000;
 	preset.paramvalue[Output_CLEANF_PAN] = 0x8000;
+
+	preset.paramvalue[Output_MASTER_PITCH] = 0x8000;
 
 	preset.paramvalue[Output_VCO1_PITCH] = 0x8000;
 	preset.paramvalue[Output_VCO2_PITCH] = 0x8000;
@@ -117,6 +120,7 @@ void InitPreset(PanPreset_t& preset)
 	preset.paramvalue[Output_VCO7_PITCH] = 0x8000;
 	
 	preset.paramvalue[Output_MASTER_LEVEL] = 0xFFFF;
+	preset.paramvalue[Output_VCA_FINAL] = 0xFFFF;
 
 	preset.paramvalue[Output_X_DEADZONE] = 0x200;
 	preset.paramvalue[Output_Y_DEADZONE] = 0x200;
@@ -140,19 +144,23 @@ void InitPreset(PanPreset_t& preset)
 
 //	preset.switches[0] |= (1 << Switch_SELEF4);
 
+	SetPresetSwitch(Switch_SEL1SAW, &preset);
+	SetPresetSwitch(Switch_SEL1SQR, &preset);
 
-	preset.switches[0] |= (1 << Switch_SEL1SAW);
+	SetPresetSwitch(Switch_SEL4SQR, &preset);
+	SetPresetSwitch(Switch_SEL5SQR, &preset);
+	SetPresetSwitch(Switch_SEL6SQR, &preset);
+	SetPresetSwitch(Switch_SEL7SQR, &preset);
 
-	preset.switches[0] |= (1 << Switch_SEL4SQR);
-	preset.switches[0] |= (1 << Switch_SEL5SQR);
-	preset.switches[0] |= (1 << Switch_SEL6SQR);
-	preset.switches[0] |= (1 << Switch_SEL7SQR);
+	SetPresetSwitch(Switch_SEL2SAW, &preset);
 
-	preset.switches[0] |= (1 << Switch_SEL2SAW);
+	SetPresetSwitch(Switch_SEL3SAW, &preset);
+	SetPresetSwitch(Switch_SEL3SQR, &preset);
 
-	preset.switches[0] |= (1 << Switch_SEL3SAW);
-	preset.switches[0] |= (1 << Switch_SEL3SQR);
-	preset.switches[0] |= (1 << Switch_SEL1SQR);
+	SetPresetSwitch(Switch_SELVCF21SER, &preset);
+	SetPresetSwitch(Switch_SELVCF23SER, &preset);
+
+
 
 	//preset.switches[0] |= (1 << Switch_SELVCF2L0);
 	//preset.switches[0] |= (1 << Switch_SELVCF2L1);
@@ -1873,14 +1881,18 @@ void Teensy_ModChangeDepth(int target, uint32_t value)
 	}
 }
 
-void SetSwitch(SwitchEnum SwitchID)
+
+void SetPresetSwitch(SwitchEnum SwitchID, PanPreset_t *prs)
 {
 	int switchset = ((int)SwitchID) / 32;
-
 	int adjustedswitchid = SwitchID % 32;
+	prs->switches[switchset] &= ~(1 << (adjustedswitchid));
+	prs->switches[switchset] |= (1 << (adjustedswitchid));
+}
+void SetSwitch(SwitchEnum SwitchID)
+{
 
-	gPreset.switches[switchset] &= ~(1 << (adjustedswitchid));
-	gPreset.switches[switchset] |=  (1 << (adjustedswitchid));
+	SetPresetSwitch(SwitchID, &gPreset);
 	Raspberry_guidata.switches[0] = gPreset.switches[0];
 	Raspberry_guidata.switches[1] = gPreset.switches[1];
 	Raspberry_guidata.dirty = 1;
@@ -2018,7 +2030,7 @@ int PresetRemapKnob(int param)
 }
 
 #ifndef abs
-int32_t abs(int32_t x)
+int32_t iabs(int32_t x)
 {
 	if (x < 0) return -x;
 	return x;
