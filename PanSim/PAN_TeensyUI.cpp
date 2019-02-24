@@ -1904,7 +1904,7 @@ bool GetSwitch(SwitchEnum SwitchID)
 	int switchset = ((int)SwitchID) / 32;
 	int adjustedswitchid = SwitchID % 32;
 
-	if ((gPreset.switches[switchset] >> adjustedswitchid)&1)
+	if ((gPreset.switches[switchset] >> adjustedswitchid)&1 == 1)
 	{
 		return true;
 	}
