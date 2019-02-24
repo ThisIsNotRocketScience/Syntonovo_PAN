@@ -67,11 +67,6 @@
                         <data>true</data>
                      </feature>
                   </dependency>
-                  <dependency resourceType="Peripheral" resourceId="FLEXCOMM1" description="Peripheral FLEXCOMM1 is not initialized" problem_level="1" source="Pins:BOARD_InitPins">
-                     <feature name="initialized" evaluation="equal">
-                        <data>true</data>
-                     </feature>
-                  </dependency>
                   <dependency resourceType="Peripheral" resourceId="FLEXCOMM0" description="Peripheral FLEXCOMM0 is not initialized" problem_level="1" source="Pins:BOARD_InitPins">
                      <feature name="initialized" evaluation="equal">
                         <data>true</data>
@@ -130,8 +125,6 @@
                         <pin_feature name="direction" value="OUTPUT"/>
                      </pin_features>
                   </pin>
-                  <pin peripheral="FLEXCOMM1" signal="RXD_SDA_MOSI" pin_num="41" pin_signal="PIO1_10/ENET_TXD1/FC1_RXD_SDA_MOSI/CTIMER1_MAT0/SCT0_OUT3/EMC_RASN"/>
-                  <pin peripheral="FLEXCOMM1" signal="TXD_SCL_MISO" pin_num="23" pin_signal="PIO0_10/FC6_SCK/CTIMER2_CAP2/CTIMER2_MAT0/FC1_TXD_SCL_MISO/SWO/ADC0_0"/>
                   <pin peripheral="GPIO" signal="PIO1, 18" pin_num="5" pin_signal="PIO1_18/FC8_TXD_SCL_MISO/SCT0_OUT5/CAN1_RD/EMC_BLSN(1)">
                      <pin_features>
                         <pin_feature name="direction" value="OUTPUT"/>
@@ -161,7 +154,6 @@
                      </pin_features>
                   </pin>
                   <pin peripheral="FLEXCOMM0" signal="RXD_SDA_MOSI" pin_num="38" pin_signal="PIO0_24/FC0_RXD_SDA_MOSI/SD_D(0)/CTIMER2_CAP0/SCT0_GPI0/SPIFI_IO(0)"/>
-                  <pin peripheral="FLEXCOMM1" signal="SCK" pin_num="39" pin_signal="PIO1_9/ENET_TXD0/FC1_SCK/CTIMER1_CAP0/SCT0_OUT2/FC4_CTS_SDA_SSEL0/EMC_CASN"/>
                   <pin peripheral="GPIO" signal="PIO1, 22" pin_num="43" pin_signal="PIO1_22/FC8_RTS_SCL_SSEL1/SD_CMD/CTIMER2_MAT3/SCT0_GPI5/FC4_SSEL3/EMC_CKE(1)">
                      <pin_features>
                         <pin_feature name="direction" value="INPUT"/>
@@ -408,17 +400,17 @@
                         <data type="Frequency" unit="Hz">0</data>
                      </feature>
                   </dependency>
-                  <dependency resourceType="ClockOutput" resourceId="FXCOM1_clock" description="FXCOM1 clock is inactive." problem_level="2" source="Peripherals:BOARD_InitPeripherals">
+                  <dependency resourceType="ClockOutput" resourceId="FXCOM2_clock" description="FXCOM2 clock is inactive." problem_level="2" source="Peripherals:BOARD_InitPeripherals">
                      <feature name="frequency" evaluation="greaterThan">
                         <data type="Frequency" unit="Hz">0</data>
                      </feature>
                   </dependency>
-                  <dependency resourceType="PeripheralUnifiedSignal" resourceId="FLEXCOMM1.usart_rxd" description="Signal RX of the peripheral FLEXCOMM1 is not routed." problem_level="1" source="Peripherals:BOARD_InitPeripherals">
+                  <dependency resourceType="PeripheralUnifiedSignal" resourceId="FLEXCOMM2.usart_rxd" description="Signal RX of the peripheral FLEXCOMM2 is not routed." problem_level="1" source="Peripherals:BOARD_InitPeripherals">
                      <feature name="routed" evaluation="equal">
                         <data type="Boolean">true</data>
                      </feature>
                   </dependency>
-                  <dependency resourceType="PeripheralUnifiedSignal" resourceId="FLEXCOMM1.usart_txd" description="Signal TX of the peripheral FLEXCOMM1 is not routed." problem_level="1" source="Peripherals:BOARD_InitPeripherals">
+                  <dependency resourceType="PeripheralUnifiedSignal" resourceId="FLEXCOMM2.usart_txd" description="Signal TX of the peripheral FLEXCOMM2 is not routed." problem_level="1" source="Peripherals:BOARD_InitPeripherals">
                      <feature name="routed" evaluation="equal">
                         <data type="Boolean">true</data>
                      </feature>
@@ -469,31 +461,6 @@
                      </feature>
                   </dependency>
                   <dependency resourceType="ClockOutput" resourceId="FXCOM0_clock" description="FXCOM0 clock is inactive." problem_level="1" source="Peripherals:BOARD_InitPeripherals">
-                     <feature name="frequency" evaluation="greaterThan">
-                        <data type="Frequency" unit="Hz">0</data>
-                     </feature>
-                  </dependency>
-                  <dependency resourceType="PeripheralUnifiedSignal" resourceId="FLEXCOMM2.spi_miso" description="Signal SPI master data in, slave data out of the peripheral FLEXCOMM2 is not routed." problem_level="1" source="Peripherals:BOARD_InitPeripherals">
-                     <feature name="routed" evaluation="">
-                        <data type="Boolean">true</data>
-                     </feature>
-                  </dependency>
-                  <dependency resourceType="PeripheralUnifiedSignal" resourceId="FLEXCOMM2.spi_mosi" description="Signal SPI master data out, slave data in of the peripheral FLEXCOMM2 is not routed." problem_level="1" source="Peripherals:BOARD_InitPeripherals">
-                     <feature name="routed" evaluation="">
-                        <data type="Boolean">true</data>
-                     </feature>
-                  </dependency>
-                  <dependency resourceType="PeripheralUnifiedSignal" resourceId="FLEXCOMM2.spi_sck" description="Signal SPI serial clock pin of the peripheral FLEXCOMM2 is not routed." problem_level="1" source="Peripherals:BOARD_InitPeripherals">
-                     <feature name="routed" evaluation="">
-                        <data type="Boolean">true</data>
-                     </feature>
-                  </dependency>
-                  <dependency resourceType="PeripheralUnifiedSignal" resourceId="FLEXCOMM2.spi_ss0" description="Signal SPI slave select 0 of the peripheral FLEXCOMM2 is not routed." problem_level="1" source="Peripherals:BOARD_InitPeripherals">
-                     <feature name="routed" evaluation="">
-                        <data type="Boolean">true</data>
-                     </feature>
-                  </dependency>
-                  <dependency resourceType="ClockOutput" resourceId="FXCOM2_clock" description="FXCOM2 clock is inactive." problem_level="1" source="Peripherals:BOARD_InitPeripherals">
                      <feature name="frequency" evaluation="greaterThan">
                         <data type="Frequency" unit="Hz">0</data>
                      </feature>
@@ -635,7 +602,7 @@
                   <instance name="GPIO_1" type="lpc_gpio" type_id="lpc_gpio_8c9ab9b3668a514c1f4609fe43001865" mode="GPIO" peripheral="GPIO" enabled="true">
                      <config_set name="lpc_gpio"/>
                   </instance>
-                  <instance name="USART_1" type="flexcomm_usart" type_id="flexcomm_usart_fcc110cc6b16332e9dfd9e0df675e21f" mode="interrupts" peripheral="FLEXCOMM1" enabled="true">
+                  <instance name="USART_1" type="flexcomm_usart" type_id="flexcomm_usart_fcc110cc6b16332e9dfd9e0df675e21f" mode="interrupts" peripheral="FLEXCOMM2" enabled="true">
                      <config_set name="interruptsCfg">
                         <set name="interrupts">
                            <selected/>
@@ -643,7 +610,7 @@
                         <struct name="interrupt_vectors">
                            <setting name="enable_rx_tx_irq" value="true"/>
                            <struct name="interrupt_rx_tx">
-                              <setting name="IRQn" value="FLEXCOMM1_IRQn"/>
+                              <setting name="IRQn" value="FLEXCOMM2_IRQn"/>
                               <setting name="enable_priority" value="false"/>
                               <setting name="enable_custom_name" value="false"/>
                            </struct>
@@ -743,7 +710,7 @@
                         </struct>
                      </config_set>
                   </instance>
-                  <instance name="SPI_2" type="flexcomm_spi" type_id="flexcomm_spi_fa73bcfbc0a2fd3b8c6ba5b0b1f1446f" mode="SPI_Interrupt" peripheral="FLEXCOMM2" enabled="true">
+                  <instance name="SPI_2" type="flexcomm_spi" type_id="flexcomm_spi_fa73bcfbc0a2fd3b8c6ba5b0b1f1446f" mode="SPI_Interrupt" peripheral="FLEXCOMM2" enabled="false">
                      <config_set name="interrupt" quick_selection="QS_IRQ_priority1">
                         <set name="interrupt_sel">
                            <selected>

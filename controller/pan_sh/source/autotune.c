@@ -13,6 +13,7 @@
 #include "fsl_inputmux.h"
 //#include "fsl_pint.h"
 #include "clock_config.h"
+#include "pin_mux.h"
 
 #include "ports.h"
 #include "synth_internal_ctrlmap.h"
@@ -268,7 +269,9 @@ void autotune_init()
 	EEPROM_Init(EEPROM, &config, BOARD_BOOTCLOCKRUN_CORE_CLOCK);
 
 	if (loadcal()) {
+		GPIO->B[BOARD_INITPINS_LED_PORT][BOARD_INITPINS_LED_PIN] = 0;
 		autotune_start();
+		GPIO->B[BOARD_INITPINS_LED_PORT][BOARD_INITPINS_LED_PIN] = 1;
 	}
 }
 
