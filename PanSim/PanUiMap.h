@@ -103,7 +103,7 @@ TARGET(Output_VCF1_PAN, ledbutton_VCF1_M_S, knob_PAN_VCF1, "VCF1 Pan")
 TARGET(Output_VCF2_PAN, ledbutton_VCF2_M_S, knob_PAN_VCF2, "VCF2 Pan")
 
 TARGET(Output_MASTER_PITCH, __LEDBUTTON_COUNT, knob_MASTER_TUNE, "")
-TARGET(Output_MASTER_LEVEL, __LEDBUTTON_COUNT, knob_TOTAL_OUT, "Master level")
+TARGET(Output_VCA_FINAL, __LEDBUTTON_COUNT, knob_TOTAL_OUT, "Master level")
 
 TARGET(Output_STASH, ledbutton_STASH, __KNOB_COUNT, "Stash")
 TARGET(Output_CHASE, ledbutton_CHASE, __KNOB_COUNT, "Chase")
