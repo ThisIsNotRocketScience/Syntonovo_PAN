@@ -37,6 +37,10 @@ void shiftctrl_set(int flag)
 
 void shiftctrl_clear(int flag)
 {
+	if (flag == 17 || flag == 18) {
+		shiftctrl_set(flag);
+		return;
+	}
 	if (flag < 32) {
 		shiftctrl_flags &= ~(1 << flag);
 	}

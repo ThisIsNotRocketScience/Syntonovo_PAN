@@ -1125,6 +1125,16 @@ void do_output_RM1_MIX2(int ctrlid, int port)
 	mixtwo_2(ctrlid, port, RM1_LEVEL, RM1_VCFMIX);
 }
 
+void do_output_RM2_MIX3(int ctrlid, int port)
+{
+	int value = synth_param[RM1_LEVEL].last;
+	int result = (synth_param[ctrlid].last != value) || doing_reset;
+	if (result) {
+		synth_param[ctrlid].last = value;
+		ports_value(port, synth_param[ctrlid].last);
+	}
+}
+
 void do_output_WHITENS_MIX1(int ctrlid, int port)
 {
 	mixtwo_1(ctrlid, port, WHITENS_LEVEL, WHITENS_VCFMIX);
@@ -1648,6 +1658,12 @@ void virt_VCO7_PITCH()
 void virt_GATE()
 {
 	synth_param[GATE].last = synth_param[GATE].value;
+	if (synth_param[GATE].last) {
+		GPIO->B[BOARD_INITPINS_LED_PORT][BOARD_INITPINS_LED_PIN] = 0;
+	}
+	else {
+		GPIO->B[BOARD_INITPINS_LED_PORT][BOARD_INITPINS_LED_PIN] = 1;
+	}
 }
 
 void virt_RETRIGGER()

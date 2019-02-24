@@ -230,14 +230,14 @@ instance:
 - mode: 'interrupts'
 - type_id: 'flexcomm_usart_fcc110cc6b16332e9dfd9e0df675e21f'
 - functional_group: 'BOARD_InitPeripherals'
-- peripheral: 'FLEXCOMM1'
+- peripheral: 'FLEXCOMM2'
 - config_sets:
   - interruptsCfg:
     - interrupts: ''
     - interrupt_vectors:
       - enable_rx_tx_irq: 'true'
       - interrupt_rx_tx:
-        - IRQn: 'FLEXCOMM1_IRQn'
+        - IRQn: 'FLEXCOMM2_IRQn'
         - enable_priority: 'false'
         - enable_custom_name: 'false'
   - usartConfig_t:
@@ -269,10 +269,10 @@ const usart_config_t USART_1_config = {
 
 void USART_1_init(void) {
   /* Reset FLEXCOMM device */
-  RESET_PeripheralReset(kFC1_RST_SHIFT_RSTn);
+  RESET_PeripheralReset(kFC2_RST_SHIFT_RSTn);
   USART_Init(USART_1_PERIPHERAL, &USART_1_config, USART_1_CLOCK_SOURCE);
   USART_EnableInterrupts(USART_1_PERIPHERAL, 0);
-  /* Enable interrupt FLEXCOMM1_IRQn request in the NVIC */
+  /* Enable interrupt FLEXCOMM2_IRQn request in the NVIC */
   EnableIRQ(USART_1_FLEXCOMM_IRQN);
 }
 
@@ -423,79 +423,6 @@ void SPI_0_init(void) {
 }
 
 /***********************************************************************************************************************
- * SPI_2 initialization code
- **********************************************************************************************************************/
-/* clang-format off */
-/* TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
-instance:
-- name: 'SPI_2'
-- type: 'flexcomm_spi'
-- mode: 'SPI_Interrupt'
-- type_id: 'flexcomm_spi_fa73bcfbc0a2fd3b8c6ba5b0b1f1446f'
-- functional_group: 'BOARD_InitPeripherals'
-- peripheral: 'FLEXCOMM2'
-- config_sets:
-  - interrupt:
-    - interrupt_sel: 'kSPI_RxLvlIrq kSPI_TxLvlIrq'
-    - interrupt:
-      - IRQn: 'FLEXCOMM2_IRQn'
-      - enable_priority: 'false'
-      - enable_custom_name: 'false'
-    - quick_selection: 'QS_IRQ_priority1'
-  - fsl_spi:
-    - spi_mode: 'kSPI_Master'
-    - clockSource: 'FXCOMFunctionClock'
-    - clockSourceFreq: 'GetFreq'
-    - spi_master_config:
-      - enableLoopback: 'false'
-      - enableMaster: 'true'
-      - polarity: 'kSPI_ClockPolarityActiveHigh'
-      - phase: 'kSPI_ClockPhaseFirstEdge'
-      - direction: 'kSPI_MsbFirst'
-      - baudRate_Bps: '20000000'
-      - dataWidth: 'kSPI_Data8Bits'
-      - sselNum: 'kSPI_Ssel0'
-      - sselPol: 'kSPI_SpolActiveAllLow'
-      - txWatermark: 'kSPI_TxFifo0'
-      - rxWatermark: 'kSPI_RxFifo1'
-      - delayConfig:
-        - preDelay: '0'
-        - postDelay: '0'
-        - frameDelay: '0'
-        - transferDelay: '0'
- * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
-/* clang-format on */
-const spi_master_config_t SPI_2_config = {
-  .enableLoopback = false,
-  .enableMaster = true,
-  .polarity = kSPI_ClockPolarityActiveHigh,
-  .phase = kSPI_ClockPhaseFirstEdge,
-  .direction = kSPI_MsbFirst,
-  .baudRate_Bps = 20000000,
-  .dataWidth = kSPI_Data8Bits,
-  .sselNum = kSPI_Ssel0,
-  .sselPol = kSPI_SpolActiveAllLow,
-  .txWatermark = kSPI_TxFifo0,
-  .rxWatermark = kSPI_RxFifo1,
-  .delayConfig = {
-    .preDelay = 0,
-    .postDelay = 0,
-    .frameDelay = 0,
-    .transferDelay = 0
-  }
-};
-
-void SPI_2_init(void) {
-  RESET_PeripheralReset( kFC2_RST_SHIFT_RSTn);
-  /* Enable interrupts */
-  SPI_EnableInterrupts(SPI_2_PERIPHERAL, (kSPI_RxLvlIrq | kSPI_TxLvlIrq));
-  /* Enable interrupt FLEXCOMM2_IRQn request in the NVIC */
-  EnableIRQ(SPI_2_FLEXCOMM_IRQN);
-  /* Initialization function */
-  SPI_MasterInit(SPI_2_PERIPHERAL, &SPI_2_config, SPI_2_CLOCK_SOURCE);
-}
-
-/***********************************************************************************************************************
  * I2C_1 initialization code
  **********************************************************************************************************************/
 /* clang-format off */
@@ -555,7 +482,6 @@ void BOARD_InitPeripherals(void)
   USART_1_init();
   SPI_4_init();
   SPI_0_init();
-  SPI_2_init();
   I2C_1_init();
 }
 

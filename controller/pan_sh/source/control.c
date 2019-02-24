@@ -122,7 +122,7 @@ void control_init()
 	EnableIRQ(USART_1_FLEXCOMM_IRQN);
 }
 
-WEAK void FLEXCOMM1_IRQHandler(void)
+WEAK void USART_1_FLEXCOMM_IRQHANDLER(void)
 {
     if (!receiveEnabled || (USART_1_PERIPHERAL->FIFOSTAT & USART_FIFOSTAT_RXERR_MASK))
     {

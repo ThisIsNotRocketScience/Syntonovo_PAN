@@ -63,13 +63,13 @@ extern "C" {
 /* Alias for GPIO peripheral */
 #define GPIO_1_GPIO GPIO
 /* Definition of peripheral ID */
-#define USART_1_PERIPHERAL ((USART_Type *)FLEXCOMM1)
+#define USART_1_PERIPHERAL ((USART_Type *)FLEXCOMM2)
 /* Definition of the clock source frequency */
 #define USART_1_CLOCK_SOURCE 96000000UL
 /* USART_1 interrupt vector ID (number). */
-#define USART_1_FLEXCOMM_IRQN FLEXCOMM1_IRQn
+#define USART_1_FLEXCOMM_IRQN FLEXCOMM2_IRQn
 /* USART_1 interrupt handler identifier. */
-#define USART_1_FLEXCOMM_IRQHANDLER FLEXCOMM1_IRQHandler
+#define USART_1_FLEXCOMM_IRQHANDLER FLEXCOMM2_IRQHandler
 /* BOARD_InitPeripherals defines for FLEXCOMM4 */
 /* Definition of peripheral ID */
 #define SPI_4_PERIPHERAL ((SPI_Type *)FLEXCOMM4)
@@ -88,15 +88,6 @@ extern "C" {
 #define SPI_0_FLEXCOMM_IRQN FLEXCOMM0_IRQn
 /* SPI_0 interrupt handler identifier. */
 #define SPI_0_FLEXCOMM_IRQHANDLER FLEXCOMM0_IRQHandler
-/* BOARD_InitPeripherals defines for FLEXCOMM2 */
-/* Definition of peripheral ID */
-#define SPI_2_PERIPHERAL ((SPI_Type *)FLEXCOMM2)
-/* Definition of the clock source frequency */
-#define SPI_2_CLOCK_SOURCE CLOCK_GetFreq(kCLOCK_Flexcomm2)
-/* SPI_2 interrupt vector ID (number). */
-#define SPI_2_FLEXCOMM_IRQN FLEXCOMM2_IRQn
-/* SPI_2 interrupt handler identifier. */
-#define SPI_2_FLEXCOMM_IRQHANDLER FLEXCOMM2_IRQHandler
 /* BOARD_InitPeripherals defines for FLEXCOMM5 */
 /* Definition of peripheral ID */
 #define I2C_1_PERIPHERAL ((I2C_Type *)FLEXCOMM5)
@@ -116,7 +107,6 @@ extern uint32_t SCTimer_1_event[2];
 extern const usart_config_t USART_1_config;
 extern const spi_master_config_t SPI_4_config;
 extern const spi_master_config_t SPI_0_config;
-extern const spi_master_config_t SPI_2_config;
 extern const i2c_master_config_t I2C_1_config;
 
 /***********************************************************************************************************************

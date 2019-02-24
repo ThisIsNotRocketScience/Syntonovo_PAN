@@ -219,16 +219,18 @@ void resetcal()
 
 struct flashcontent_t flashdata;
 
-void loadcal()
+int loadcal()
 {
 	//FLASH1_Read(FLASH1_DeviceData, FLASH1_USER_AREA0_DATA_ADDRESS, &caldata[0], sizeof(caldata));
 	memcpy(&flashdata, (void*)FSL_FEATURE_EEPROM_BASE_ADDRESS, sizeof(flashdata));
 
 	if (flashdata.caldata[0].magic == 0x55612347) {
 		memcpy(&caldata[0], &flashdata.caldata[0], 7*sizeof(struct caldata_t));
+		return 0;
 	}
 	else {
 		resetcal();
+		return 1;
 	}
 }
 
@@ -265,8 +267,9 @@ void autotune_init()
 	EEPROM_GetDefaultConfig(&config);
 	EEPROM_Init(EEPROM, &config, BOARD_BOOTCLOCKRUN_CORE_CLOCK);
 
-	loadcal();
-	//autotune_start();
+	if (loadcal()) {
+		autotune_start();
+	}
 }
 
 void autotune_set_routing(int osc)
@@ -303,6 +306,7 @@ void autotune_set_routing(int osc)
 
     shiftctrl_set(SELMUTEDNSAW);
     shiftctrl_set(SELMUTEVCOTUNE);
+    shiftctrl_clear(SELTUNEVCF);
     shiftctrl_update();
 
     // disable all outputs
