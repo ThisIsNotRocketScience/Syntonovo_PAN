@@ -735,7 +735,17 @@ void SendRaspberryState()
 
 }
 extern PanPreset_t gPreset;
+extern void SetSwitch(SwitchEnum SwitchID);
+extern void ClearSwitch(SwitchEnum SwitchID);
+extern bool GetSwitch(SwitchEnum SwitchID);
+std::string switchnames[] = {
 
+#define SWITCH(name,id) #name ,
+#include "../interface/paramdef.h"
+#undef SWITCH
+	"last"
+}
+;
 int main(int argc, char** argv)
 {
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) != 0)
@@ -836,6 +846,8 @@ int main(int argc, char** argv)
 	static bool parameters = false;
 	static bool mainscreen = true;
 	static bool keyboard = true;
+	static bool allswitches = true;
+
 	GetSerialPorts(dspport, uiport);
 
 	if (UISerial.IsOpen() == false)
@@ -905,9 +917,49 @@ int main(int argc, char** argv)
 				ImGui::MenuItem("Pan UI Controls", NULL, &parameters);
 				ImGui::MenuItem("Pan Main Screen", NULL, &mainscreen);
 				ImGui::MenuItem("Keyboard", NULL, &keyboard);
+				ImGui::MenuItem("Switches", NULL, &allswitches);
 				ImGui::EndMenu();
 			}
 			ImGui::EndMainMenuBar();
+		}
+		if (allswitches)
+		{
+
+			ImGui::PushFont(pFontBold);
+			{
+				ImGui::Begin("Switches", &allswitches, ImGuiWindowFlags_AlwaysAutoResize);
+				ImGui::PushFont(pFont);
+				for (int i = 0; i < __SWITCH_COUNT; i++)
+				{
+					char txt[230];
+					if (GetSwitch((SwitchEnum)i))
+					{
+						sprintf(txt, "Set %s", switchnames[ i].c_str());
+						if (ImGui::Button(txt))
+						{
+							SetSwitch((SwitchEnum)i);
+							//on_short_message(0x90, i + 0x40, 127, 0);//
+
+						}
+						
+						
+					}
+					else
+					{
+						sprintf(txt, "Clear %s", switchnames[i].c_str());
+						if (ImGui::Button(txt))
+						{
+							ClearSwitch((SwitchEnum)i);
+							//on_short_message(0x90, i + 0x40, 127, 0);//
+
+						}
+					}
+					if (i%10 != 0) ImGui::SameLine();
+				}
+				ImGui::PopFont();
+				ImGui::End();
+			}
+			ImGui::PopFont();
 		}
 		if (keyboard)
 		{
