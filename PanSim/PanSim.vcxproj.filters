@@ -74,6 +74,9 @@
     <ClCompile Include="PAN_Raspberry_Interface.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="FinalPanGui.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\libs\SDL2-2.0.7\lib\x86\SDL2main.lib" />
@@ -90,6 +93,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ModMenus.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FinalPanHeader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

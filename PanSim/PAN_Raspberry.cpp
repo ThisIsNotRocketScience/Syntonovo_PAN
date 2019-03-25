@@ -542,11 +542,11 @@ void RenderBootScreen()
 
 	if (res.BgImages[GuiState_Boot])
 	{
-		ImGui::Image(res.BgImages[GuiState_Boot], ImVec2(480, 800));
+		ImGui::Image(res.BgImages[GuiState_Boot], ImVec2(1024, 600));
 	}
 	else
 	{
-		ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(pos.x, pos.y), ImVec2(pos.x + 480, pos.y + 800), res.BGColor);
+		ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(pos.x, pos.y), ImVec2(pos.x + 1024, pos.y + 600), res.BGColor);
 	}
 }
 
@@ -605,6 +605,7 @@ void RenderAssignMenu()
 #undef ENDMENU
 
 }
+
 void Raspberry_RenderScreen()
 {
 	if (BootTime < 10)
@@ -613,6 +614,7 @@ void Raspberry_RenderScreen()
 		RenderBootScreen();
 		return;
 	}
+
 	if (Raspberry_guidata.GuiState == LastGuiState)
 	{
 		res.PageTime++;
@@ -625,16 +627,18 @@ void Raspberry_RenderScreen()
 
 	Raspberry_PushStyle();
 
+
 	ImVec2 pos = ImGui::GetCursorPos();
 	if (res.BgImages[Raspberry_guidata.GuiState])
 	{
-		ImGui::Image(res.BgImages[Raspberry_guidata.GuiState], ImVec2(480, 800));
+		ImGui::Image(res.BgImages[Raspberry_guidata.GuiState], ImVec2(1024, 600));
 	}
 	else
 	{
-		ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(pos.x, pos.y), ImVec2(pos.x + 480, pos.y + 800), res.BGColor);
+		ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(pos.x, pos.y), ImVec2(pos.x + 1024, pos.y + 600), res.BGColor);
 	}
 	ImGui::SetCursorPos(pos);
+
 
 	if (Raspberry_guidata.GuiState == GuiState_LfoSelect)
 	{
@@ -713,7 +717,7 @@ void Raspberry_WindowFrame()
 
 	ImGui::Begin("screen", 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoTitleBar);
 
-	ImGui::SetWindowSize(ImVec2(480, 800));
+	ImGui::SetWindowSize(ImVec2(1024, 600));
 
 
 	Raspberry_RenderScreen();

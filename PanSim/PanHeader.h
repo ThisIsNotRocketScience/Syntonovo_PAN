@@ -68,9 +68,6 @@ enum SwitchEnum
 	__SWITCH_COUNT
 };
 
-
-
-
 typedef struct _param_t
 {	
 	uint16_t value;
@@ -238,7 +235,7 @@ typedef enum
 	
 	Page_Source_LFO,
 	Page_Source_ADSR,
-	Page_Source_AR,
+	
 	Page_Source_KEYBOARD_VELOCITY,
 	Page_Source_KEYBOARD_GATE,
 	Page_Source_KEYBOARD_TRIGGER,

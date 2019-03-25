@@ -4,6 +4,7 @@
 
 #include "imgui.h"
 #include "imgui_impl_sdl_gl3.h"
+
 #include <stdio.h>
 #include <GL/gl3w.h>    
 #include <SDL.h>
@@ -11,6 +12,81 @@
 #include "../libs/lodepng-master/lodepng.h"
 
 #include  "PanHeader.h"
+#include "FinalPanHeader.h"
+extern void FinalPan_WindowFrame();
+extern void FinalPan_LoadResources();
+enum FinalLedEnum
+{
+#define LED(name,x,y,str)  led_##name,
+#include "FinalPanHeader.h"
+
+#undef LED
+	__FINALLED_COUNT
+};
+enum FinalLedButtonEnum
+{
+#define LEDBUTTON(name,x,y,id,str)  ledbutton_##name,
+#include "FinalPanHeader.h"
+
+#undef LEDBUTTON
+	__FINALLEDBUTTON_COUNT
+};
+
+enum FinalEncoderEnum
+{
+#define LEDENCODER(name,x,y,str)  encoder_##name,
+#include "FinalPanHeader.h"
+#undef LEDENCODER
+	__FINALENCODER_COUNT
+};
+
+
+class fLedButton
+{
+public:
+
+	char *name;
+	float x;
+	float y;
+	FinalLedButtonEnum id;
+	int fpid;
+	bool value;
+	int ledmode;
+};
+
+
+
+fLedButton FinalButtons[__FINALLEDBUTTON_COUNT] = {
+#define LEDBUTTON(iname,ix,iy,fpid,str) {str ,ix, iy,ledbutton_##iname, fpid},
+#include "FinalPanHeader.h"
+#undef LEDBUTTON
+
+};
+
+Led FinalLeds[__FINALLED_COUNT] = {
+#define LED(iname,ix,iy) {#iname,ix, iy, led_##iname},
+#include "FinalPanHeader.h"
+#undef LED
+
+};
+
+class fEncoder
+{
+public:
+	char *name;
+	float x;
+	float y;
+	FinalEncoderEnum id;
+	float pos;
+	int delta;
+};
+
+fEncoder FinalEncoders[__FINALENCODER_COUNT] = {
+#define LEDENCODER(iname,ix,iy,str) {str,ix, iy, encoder_##iname},
+#include "FinalPanHeader.h"
+#undef LEDENCODER
+};
+
 
 ImTextureID loadTexture(const char *filename)
 {
@@ -844,19 +920,22 @@ int main(int argc, char** argv)
 	ImGui::GetStyle().Colors[ImGuiCol_WindowBg] = ImVec4(1.0f, 1.0f, 1.0f, .800f);
 
 	static bool parameters = false;
-	static bool mainscreen = true;
-	static bool keyboard = true;
-	static bool allswitches = true;
+	static bool finalpan = true;
+	static bool finalparameters = true;
+	static bool mainscreen = false;
+	static bool keyboard = false;
+	static bool allswitches = false;
 
 	GetSerialPorts(dspport, uiport);
 
 	if (UISerial.IsOpen() == false)
 	{
-		parameters = true;
+		//parameters = true;
 		Teensy_Reset();
 		Teensy_InitPreset();
 	}
 	Raspberry_Init();
+	FinalPan_LoadResources();
 	Raspberry_Reset();
 	
 	for (int i = 0; i < __KNOB_COUNT; i++)
@@ -914,8 +993,10 @@ int main(int argc, char** argv)
 		{
 			if (ImGui::BeginMenu("PanSim Windows"))
 			{
-				ImGui::MenuItem("Pan UI Controls", NULL, &parameters);
-				ImGui::MenuItem("Pan Main Screen", NULL, &mainscreen);
+				ImGui::MenuItem("FinalPan UI Controls", NULL, &finalparameters);
+				ImGui::MenuItem("FinalPan Main Screen", NULL, &finalpan);
+				//ImGui::MenuItem("Pan UI Controls", NULL, &parameters);
+			//	ImGui::MenuItem("Pan Main Screen", NULL, &mainscreen);
 				ImGui::MenuItem("Keyboard", NULL, &keyboard);
 				ImGui::MenuItem("Switches", NULL, &allswitches);
 				ImGui::EndMenu();
@@ -983,6 +1064,13 @@ int main(int argc, char** argv)
 			}
 			ImGui::PopFont();
 		}
+		
+		if (finalpan)
+		{
+			ImGui::SetNextWindowPos(ImVec2(10, 30));
+			FinalPan_WindowFrame();
+		}
+
 		if (mainscreen)
 		{
 			ImGui::SetNextWindowPos(ImVec2(10, 30));
@@ -1003,6 +1091,8 @@ int main(int argc, char** argv)
 			ImGui::End();
 			ImGui::PopFont();*/
 		}
+
+
 		if (parameters)
 		{
 			if (UISerial.IsOpen() == false)
@@ -1087,6 +1177,86 @@ int main(int argc, char** argv)
 						Teensy_EncoderRotate(i, -1);
 					}
 					ImGui::SetCursorScreenPos(ImVec2(pos.x +( Encoders[i].x +0.6)* xscalefac,( pos.y+0.3) + Encoders[i].y * yscalefac));
+					sprintf(name, "ENCR%d", i);
+					if (ImGui::Button(name))
+					{
+						Teensy_EncoderRotate(i, 1);
+					}
+				}
+
+
+
+				ImGui::PopFont();
+
+
+				ImGui::End();
+				ImGui::PopFont();
+			}
+		}
+
+		if (finalparameters)
+		{
+			if (UISerial.IsOpen() == false)
+			{
+				if (Raspberry_guidata.dirty)
+				{
+					Raspberry_guidata.dirty = false;
+					SendRaspberryState();
+				}
+
+			}
+
+			ImGui::PushFont(pFontBold);
+			{
+				ImGui::Begin("FinalPan Parameters", &parameters, ImGuiWindowFlags_AlwaysAutoResize);
+				ImGui::PushFont(pFont);
+				if (ImGui::Button("Resend All Data"))
+				{
+					if (UISerial.IsOpen() == false) Teensy_ReSendPreset();
+					UISendCommand(0x60, 0);
+
+				}
+				ImGui::SameLine();
+				ImVec2 pos = ImGui::GetCursorScreenPos();
+				ImGui::SetCursorScreenPos(pos);
+
+				float xscalefac = 3.0f;
+				float yscalefac = 3.0f;
+				
+
+				for (int i = 0; i < __FINALLEDBUTTON_COUNT; i++)
+				{
+					ImGui::SetCursorScreenPos(ImVec2(pos.x + FinalButtons[i].x * xscalefac, pos.y + FinalButtons[i].y * yscalefac));
+					bool b = FinalButtons[i].value;
+					if (LedButton(FinalButtons[i].name, FinalButtons[i].ledmode))
+					{
+					//	Teensy_ButtonPressed(FinalButtons[i].id, FinalButtons[i].value);
+
+					}
+				}
+				for (int i = 0; i < __FINALLED_COUNT; i++)
+				{
+					ImGui::SetCursorScreenPos(ImVec2(pos.x + FinalLeds[i].x * xscalefac, pos.y + FinalLeds[i].y * yscalefac));
+					ImLed(FinalLeds[i].name, &FinalLeds[i].value);
+				}
+				for (int i = 0; i < __FINALENCODER_COUNT; i++)
+				{
+					ImGui::SetCursorScreenPos(ImVec2(pos.x + FinalEncoders[i].x * xscalefac, pos.y + FinalEncoders[i].y * yscalefac));
+					if (MyEncoder(FinalEncoders[i].name, &FinalEncoders[i].pos, &FinalEncoders[i].delta))
+					{
+						Teensy_EncoderPress(i);
+
+					}
+
+					char name[300];
+					sprintf(name, "ENCL%d", i);
+					ImGui::SetCursorScreenPos(ImVec2(pos.x + (FinalEncoders[i].x - 0.6) * xscalefac, (pos.y + 0.3) + FinalEncoders[i].y * yscalefac));
+					if (ImGui::Button(name))
+					{
+
+						Teensy_EncoderRotate(i, -1);
+					}
+					ImGui::SetCursorScreenPos(ImVec2(pos.x + (FinalEncoders[i].x + 0.6)* xscalefac, (pos.y + 0.3) + FinalEncoders[i].y * yscalefac));
 					sprintf(name, "ENCR%d", i);
 					if (ImGui::Button(name))
 					{
