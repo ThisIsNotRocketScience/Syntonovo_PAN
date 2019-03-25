@@ -87,6 +87,16 @@ param_t synth_param[SYNTH_PARAM_COUNT] =
 
 
 ////////////////////////////////////////////////////////////////
+// Modmatrix
+
+modmatrix_row_t modmatrix[SYNTH_MODSOURCE_COUNT];
+lfo_param_t lfo_param[NUM_LFOS];
+env_param_t env_param[NUM_ENVS];
+controller_param_t controller_param[NUM_CONTROLLERS];
+operator_param_t op_param[NUM_OPERATORS];
+
+
+////////////////////////////////////////////////////////////////
 // Virtual parameter handler forward declarations
 
 #define DO_OUTPUT_LIN(NAME, CTRLID, PID)
@@ -140,6 +150,17 @@ void synth_mapping_init()
 	synth_mapping_defaultpatch();
 }
 
+void synth_mapping_reset()
+{
+#define OUTPUT(NAME, PGROUP, PID, CTRLTYPE, CTRLID, MODE, INITVALUE) \
+		synth_param[CTRLID].sum = 0;
+#define OUTPUT_VIRT(NAME, PGROUP, PID, CTRLTYPE, CTRLID, MODE, INITVALUE) \
+		synth_param[CTRLID].sum = 0;
+#include "paramdef.h"
+#undef OUTPUT
+#undef OUTPUT_VIRT
+}
+
 void synth_mapping_run()
 {
 #define DO_OUTPUT_LIN(NAME, CTRLID, PID) \
@@ -154,7 +175,6 @@ void synth_mapping_run()
 	DO_OUTPUT_##MODE(NAME, CTRLID, PORTID(PGROUP, PID));
 
 #define OUTPUT_VIRT(NAME, PGROUP, PID, CTRLTYPE, CTRLID, MODE, INITVALUE)
-#define SWITCH(NAME, ID)
 
 #include "paramdef.h"
 
@@ -164,7 +184,6 @@ void synth_mapping_run()
 #undef DO_OUTPUT_CUSTOM
 #undef OUTPUT
 #undef OUTPUT_VIRT
-#undef SWITCH
 
 #define OUTPUT_VIRT(NAME, PGROUP, PID, CTRLTYPE, CTRLID, MODE, INITVALUE) \
 	virt_##NAME();

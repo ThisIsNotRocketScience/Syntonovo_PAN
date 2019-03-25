@@ -291,7 +291,9 @@ void synth_mapping_defaultpatch()
 	synth_param[VCO6_PITCH].note = 0x4000;
 	synth_param[VCO7_PITCH].note = 0x4000;
 
+#if FIXME
 	synth_param[VCO1_MIX1].adsr_depth = 0x7fff;
+#endif
 }
 
 volatile int sctimer_state = 0;
@@ -531,6 +533,7 @@ static void update_note()
 	update_porta_time(retrigger);
 	virt_NOTE();
 
+#if FIXME
 	if (note_change || retrigger) {
 		for (int i = 0; i < SYNTH_PARAM_COUNT; i++) {
 			if (synth_param[i].flags & SubParamFlags_LfoRetrigger) {
@@ -538,6 +541,7 @@ static void update_note()
 			}
 		}
 	}
+#endif
 
 	if (synth_param[GATE].value != 0xffff) {
 		synth_param[GATE].value = 0xffff;
@@ -593,88 +597,99 @@ void control_cb(int param, int subparam, uint16_t value)
 		return;
 	}
 
+	if (subparam & 0x80) {
+		// modsource
+		subparam &= 0x7f;
+
+		if (param >= 0x10 && param < 0x10 + NUM_LFOS) {
+			switch (subparam) {
+			case 0:
+				lfo_param[param - 0x10].flags = value;
+				break;
+			case 1:
+				lfo_param[param - 0x10].speed = value;
+				lfo_set_speed(param - 0x10, value);
+				break;
+			case 2:
+				lfo_param[param - 0x10].depth = value;
+				break;
+			case 3:
+				lfo_param[param - 0x10].shape = value;
+				break;
+			case 4:
+				lfo_param[param - 0x10].reset_phase = value;
+				break;
+			}
+		}
+		else if (param >= 0x30 && param < 0x30 + NUM_ENVS) {
+			switch (subparam) {
+			case 0:
+				env_param[param - 0x30].flags = value;
+				break;
+			case 1:
+				env_param[param - 0x30].a = value;
+				adsr_set_a(param - 0x30, value);
+				break;
+			case 2:
+				env_param[param - 0x30].d = value;
+				adsr_set_d(param - 0x30, value);
+				break;
+			case 3:
+				env_param[param - 0x30].s = value;
+				adsr_set_s(param - 0x30, value);
+				break;
+			case 4:
+				env_param[param - 0x30].r = value;
+				adsr_set_r(param - 0x30, value);
+				break;
+			}
+		}
+		else if (param >= 0x60 && param < 0x60 + NUM_CONTROLLERS) {
+			switch (subparam) {
+			case 0:
+				controller_param[param - 0x60].scale = value;
+				break;
+			case 1:
+				controller_param[param - 0x60].deadzone = value;
+				break;
+			}
+		}
+		else if (param >= 0x80 && param < 0x80 + NUM_OPERATORS) {
+			switch (subparam) {
+			case 0:
+				op_param[param - 0x80].modsource1 = value;
+				break;
+			case 1:
+				op_param[param - 0x80].modsource2 = value;
+				break;
+			case 2:
+				op_param[param - 0x80].op = value;
+				break;
+			case 3:
+				op_param[param - 0x80].parameter = value;
+				break;
+			}
+		}
+
+		return;
+	}
+	else if (subparam & 0x40) {
+		subparam &= 0x3f;
+
+		if (subparam & 1)
+			modmatrix[param].targets[subparam >> 1].outputid = value;
+		else
+			modmatrix[param].targets[subparam >> 1].depth = value;
+
+		return;
+	}
+
 	switch (subparam) {
 	case 0:
 		synth_param[param].value = value;
 		break;
 	case 1:
-		synth_param[param].lfo_speed = value;
-		lfo_set_speed(param, value);
-		break;
-	case 2:
-		synth_param[param].lfo_depth = value;
-		break;
-	case 3:
-		synth_param[param].lfo_shape = value;
-		break;
-	case 4:
-		synth_param[param].adsr_a = value;
-		adsr_set_a(param, value);
-		break;
-	case 5:
-		synth_param[param].adsr_d = value;
-		adsr_set_d(param, value);
-		break;
-	case 6:
-		synth_param[param].adsr_s = value;
-		adsr_set_s(param, value << 16);
-		break;
-	case 7:
-		synth_param[param].adsr_r = value;
-		adsr_set_r(param, value);
-		break;
-	case 8:
-		synth_param[param].adsr_depth = value;
-		break;
-	case 9:
-		synth_param[param].ad_a = value;
-		ad_set_a(param, value);
-		break;
-	case 10:
-		synth_param[param].ad_d = value;
-		ad_set_d(param, value);
-		break;
-	case 11:
-		synth_param[param].ad_depth = value;
-		break;
-	case 12:
-		synth_param[param].x = value;
-		break;
-	case 13:
-		synth_param[param].y = value;
-		break;
-	case 14:
-		synth_param[param].z = value;
-		break;
-	case 15:
-		synth_param[param].zprime = value;
-		break;
-	case 16:
 		synth_param[param].note = value;
-		break;
-	case 17:
-		synth_param[param].vel = value;
-		break;
-	case 18:
-		synth_param[param].lfo_reset_phase = value;
-		break;
-	case 19:
-		synth_param[param].pad_l_depth = value;
-		break;
-	case 20:
-		synth_param[param].pad_r_depth = value;
-		break;
-	case 21:
-		synth_param[param].sus_l_depth = value;
-		break;
-	case 22:
-		synth_param[param].sus_r_depth = value;
-		break;
-	case 23:
-		synth_param[param].unac_l_depth = value;
-		break;
-	case 24:
-		synth_param[param].unac_r_depth = value;
 		break;
 	case 32:
 		synth_param[param].flags = value;
@@ -686,55 +701,7 @@ int process_param_lin(int ctrlid)
 {
 	int result = doing_reset;
 
-	adsr_set_gate(ctrlid, synth_param[GATE].value, synth_param[ctrlid].flags & SubParamFlags_AdsrRetrigger);
-	ad_set_gate(ctrlid, synth_param[GATE].value, synth_param[ctrlid].flags & SubParamFlags_AdRetrigger);
-
-	int32_t value = synth_param[ctrlid].value;
-	if (synth_param[ctrlid].note) {
-		value += notetrack_scale(synth_param[NOTE].last, synth_param[ctrlid].note);
-	}
-	if (synth_param[ctrlid].lfo_depth) {
-		int32_t lfo = (int32_t)lfo_update(ctrlid) - 0x8000;
-		value += bipolar_signed_scale(lfo, synth_param[ctrlid].lfo_depth);
-	}
-	if (synth_param[ctrlid].adsr_depth) {
-		uint16_t adsr = adsr_update(ctrlid, una_corda_release);
-		value += signed_scale(adsr, synth_param[ctrlid].adsr_depth);
-	}
-	if (synth_param[ctrlid].ad_depth) {
-		uint16_t ad = ad_update(ctrlid, una_corda_release);
-		value += signed_scale(ad, synth_param[ctrlid].ad_depth);
-	}
-	if (synth_param[ctrlid].x) {
-		value += bipolar_signed_scale(pad_value[KEYBOARD_X], synth_param[ctrlid].x);
-	}
-	if (synth_param[ctrlid].y) {
-		value += bipolar_signed_scale(pad_value[KEYBOARD_Y], synth_param[ctrlid].y);
-	}
-	if (synth_param[ctrlid].z) {
-		value += bipolar_signed_scale(pad_value[KEYBOARD_Z], synth_param[ctrlid].z);
-	}
-	if (synth_param[ctrlid].zprime) {
-		value += bipolar_signed_scale(zprime_value, synth_param[ctrlid].zprime);
-	}
-	if (synth_param[ctrlid].pad_l_depth) {
-		value += bipolar_signed_scale(pad_value[PAD_MODL], synth_param[ctrlid].pad_l_depth);
-	}
-	if (synth_param[ctrlid].pad_r_depth) {
-		value += bipolar_signed_scale(pad_value[PAD_MODR], synth_param[ctrlid].pad_r_depth);
-	}
-	if (synth_param[ctrlid].sus_l_depth) {
-		value += bipolar_signed_scale(pad_value[PAD_SUSL], synth_param[ctrlid].sus_l_depth);
-	}
-	if (synth_param[ctrlid].sus_r_depth) {
-		value += bipolar_signed_scale(pad_value[PAD_SUSR], synth_param[ctrlid].sus_r_depth);
-	}
-	if (synth_param[ctrlid].unac_l_depth) {
-		value += bipolar_signed_scale(pad_value[PAD_UNACL], synth_param[ctrlid].unac_l_depth);
-	}
-	if (synth_param[ctrlid].unac_r_depth) {
-		value += bipolar_signed_scale(pad_value[PAD_UNACR], synth_param[ctrlid].unac_r_depth);
-	}
+	int32_t value = synth_param[ctrlid].value + synth_param[ctrlid].sum;
 
 	if (value < 0) value = 0;
 	else if (value > 65535) value = 65535;
@@ -749,55 +716,7 @@ int process_param_inv(int ctrlid)
 {
 	int result = doing_reset;
 
-	adsr_set_gate(ctrlid, synth_param[GATE].value, synth_param[ctrlid].flags & SubParamFlags_AdsrRetrigger);
-	ad_set_gate(ctrlid, synth_param[GATE].value, synth_param[ctrlid].flags & SubParamFlags_AdRetrigger);
-
-	int32_t value = synth_param[ctrlid].value;
-	if (synth_param[ctrlid].note) {
-		value += notetrack_scale(synth_param[NOTE].last, synth_param[ctrlid].note);
-	}
-	if (synth_param[ctrlid].lfo_depth) {
-		int32_t lfo = (int32_t)lfo_update(ctrlid) - 0x8000;
-		value += bipolar_signed_scale(lfo, synth_param[ctrlid].lfo_depth);
-	}
-	if (synth_param[ctrlid].adsr_depth) {
-		uint16_t adsr = adsr_update(ctrlid, una_corda_release);
-		value += signed_scale(adsr, synth_param[ctrlid].adsr_depth);
-	}
-	if (synth_param[ctrlid].ad_depth) {
-		uint16_t ad = ad_update(ctrlid, una_corda_release);
-		value += signed_scale(ad, synth_param[ctrlid].ad_depth);
-	}
-	if (synth_param[ctrlid].x) {
-		value += bipolar_signed_scale(pad_value[KEYBOARD_X], synth_param[ctrlid].x);
-	}
-	if (synth_param[ctrlid].y) {
-		value += bipolar_signed_scale(pad_value[KEYBOARD_Y], synth_param[ctrlid].y);
-	}
-	if (synth_param[ctrlid].z) {
-		value += bipolar_signed_scale(pad_value[KEYBOARD_Z], synth_param[ctrlid].z);
-	}
-	if (synth_param[ctrlid].zprime) {
-		value += bipolar_signed_scale(zprime_value, synth_param[ctrlid].zprime);
-	}
-	if (synth_param[ctrlid].pad_l_depth) {
-		value += bipolar_signed_scale(pad_value[PAD_MODL], synth_param[ctrlid].pad_l_depth);
-	}
-	if (synth_param[ctrlid].pad_r_depth) {
-		value += bipolar_signed_scale(pad_value[PAD_MODR], synth_param[ctrlid].pad_r_depth);
-	}
-	if (synth_param[ctrlid].sus_l_depth) {
-		value += bipolar_signed_scale(pad_value[PAD_SUSL], synth_param[ctrlid].sus_l_depth);
-	}
-	if (synth_param[ctrlid].sus_r_depth) {
-		value += bipolar_signed_scale(pad_value[PAD_SUSR], synth_param[ctrlid].sus_r_depth);
-	}
-	if (synth_param[ctrlid].unac_l_depth) {
-		value += bipolar_signed_scale(pad_value[PAD_UNACL], synth_param[ctrlid].unac_l_depth);
-	}
-	if (synth_param[ctrlid].unac_r_depth) {
-		value += bipolar_signed_scale(pad_value[PAD_UNACR], synth_param[ctrlid].unac_r_depth);
-	}
+	int32_t value = synth_param[ctrlid].value + synth_param[ctrlid].sum;
 
 	if (value < 0) value = 65535;
 	else if (value > 65535) value = 0;
@@ -813,57 +732,13 @@ int process_param_log_add(int ctrlid, int32_t add, int32_t addchase)
 {
 	int result = doing_reset;
 
-	adsr_set_gate(ctrlid, synth_param[GATE].value, synth_param[ctrlid].flags & SubParamFlags_AdsrRetrigger);
-	ad_set_gate(ctrlid, synth_param[GATE].value, synth_param[ctrlid].flags & SubParamFlags_AdRetrigger);
-
 	int32_t value = synth_param[ctrlid].value + add;
 	if (value < 0) value = 0;
 	else if (value > 65535) value = 65535;
 	value += addchase;
 	if (value < 0) value = 0;
 	else if (value > 65535) value = 65535;
-	if (synth_param[ctrlid].lfo_depth) {
-		int32_t lfo = (int32_t)lfo_update(ctrlid) - 0x8000;
-		value += bipolar_signed_scale(lfo, synth_param[ctrlid].lfo_depth);
-	}
-	if (synth_param[ctrlid].adsr_depth) {
-		uint16_t adsr = adsr_update(ctrlid, una_corda_release);
-		value += signed_scale(adsr, synth_param[ctrlid].adsr_depth);
-	}
-	if (synth_param[ctrlid].ad_depth) {
-		uint16_t ad = ad_update(ctrlid, una_corda_release);
-		value += signed_scale(ad, synth_param[ctrlid].ad_depth);
-	}
-	if (synth_param[ctrlid].x) {
-		value += bipolar_signed_scale(pad_value[KEYBOARD_X], synth_param[ctrlid].x);
-	}
-	if (synth_param[ctrlid].y) {
-		value += bipolar_signed_scale(pad_value[KEYBOARD_Y], synth_param[ctrlid].y);
-	}
-	if (synth_param[ctrlid].z) {
-		value += bipolar_signed_scale(pad_value[KEYBOARD_Z], synth_param[ctrlid].z);
-	}
-	if (synth_param[ctrlid].zprime) {
-		value += bipolar_signed_scale(zprime_value, synth_param[ctrlid].zprime);
-	}
-	if (synth_param[ctrlid].pad_l_depth) {
-		value += bipolar_signed_scale(pad_value[PAD_MODL], synth_param[ctrlid].pad_l_depth);
-	}
-	if (synth_param[ctrlid].pad_r_depth) {
-		value += bipolar_signed_scale(pad_value[PAD_MODR], synth_param[ctrlid].pad_r_depth);
-	}
-	if (synth_param[ctrlid].sus_l_depth) {
-		value += bipolar_signed_scale(pad_value[PAD_SUSL], synth_param[ctrlid].sus_l_depth);
-	}
-	if (synth_param[ctrlid].sus_r_depth) {
-		value += bipolar_signed_scale(pad_value[PAD_SUSR], synth_param[ctrlid].sus_r_depth);
-	}
-	if (synth_param[ctrlid].unac_l_depth) {
-		value += bipolar_signed_scale(pad_value[PAD_UNACL], synth_param[ctrlid].unac_l_depth);
-	}
-	if (synth_param[ctrlid].unac_r_depth) {
-		value += bipolar_signed_scale(pad_value[PAD_UNACR], synth_param[ctrlid].unac_r_depth);
-	}
+	value += synth_param[ctrlid].sum;
 
 	if (value < 0) value = 65535;
 	else if (value > 65535) value = 0;
@@ -1482,108 +1357,15 @@ void virt_ZPRIME_SPEED()
 	}
 }
 
-void virt_X_DEADZONE()
-{
-}
-
-void virt_Y_DEADZONE()
-{
-}
-
-void virt_Z_DEADZONE()
-{
-}
-
-void virt_X_SCALE()
-{
-}
-
-void virt_Y_SCALE()
-{
-}
-
-void virt_Z_SCALE()
-{
-}
-
-void virt_MODL_SCALE()
-{
-}
-
-void virt_SUSL_SCALE()
-{
-}
-
-void virt_UNACL_SCALE()
-{
-}
-
-void virt_MODR_SCALE()
-{
-}
-
-void virt_SUSR_SCALE()
-{
-}
-
-void virt_UNACR_SCALE()
-{
-}
-
 int process_param_note(int ctrlid, int32_t notevalue, int modrange)
 {
 	int result = doing_reset;
-
-	adsr_set_gate(ctrlid, synth_param[GATE].value, synth_param[ctrlid].flags & SubParamFlags_AdsrRetrigger);
-	ad_set_gate(ctrlid, synth_param[GATE].value, synth_param[ctrlid].flags & SubParamFlags_AdRetrigger);
 
 	int32_t value = notevalue;
 
 	value += (int32_t)synth_param[MASTER_PITCH].last - 0x8000;
 	value += (int32_t)synth_param[MASTER_PITCH2].last - 0x8000;
-	int modvalue = 0;
-	if (synth_param[ctrlid].lfo_depth) {
-		int32_t lfo = (int32_t)lfo_update(ctrlid) - 0x8000;
-		modvalue += bipolar_signed_scale(lfo, synth_param[ctrlid].lfo_depth);
-	}
-	if (synth_param[ctrlid].adsr_depth) {
-		uint16_t adsr = adsr_update(ctrlid, una_corda_release);
-		modvalue += signed_scale(adsr, synth_param[ctrlid].adsr_depth);
-	}
-	if (synth_param[ctrlid].ad_depth) {
-		uint16_t ad = ad_update(ctrlid, una_corda_release);
-		modvalue += signed_scale(ad, synth_param[ctrlid].ad_depth);
-	}
-	if (synth_param[ctrlid].x) {
-		modvalue += bipolar_signed_scale(pad_value[KEYBOARD_X], synth_param[ctrlid].x);
-	}
-	if (synth_param[ctrlid].y) {
-		modvalue += bipolar_signed_scale(pad_value[KEYBOARD_Y], synth_param[ctrlid].y);
-	}
-	if (synth_param[ctrlid].z) {
-		modvalue += bipolar_signed_scale(pad_value[KEYBOARD_Z], synth_param[ctrlid].z);
-	}
-	if (synth_param[ctrlid].zprime) {
-		modvalue += bipolar_signed_scale(zprime_value, synth_param[ctrlid].zprime);
-	}
-	if (synth_param[ctrlid].pad_l_depth) {
-		modvalue += bipolar_signed_scale(pad_value[PAD_MODL], synth_param[ctrlid].pad_l_depth);
-	}
-	if (synth_param[ctrlid].pad_r_depth) {
-		modvalue += bipolar_signed_scale(pad_value[PAD_MODR], synth_param[ctrlid].pad_r_depth);
-	}
-	if (synth_param[ctrlid].sus_l_depth) {
-		modvalue += bipolar_signed_scale(pad_value[PAD_SUSL], synth_param[ctrlid].sus_l_depth);
-	}
-	if (synth_param[ctrlid].sus_r_depth) {
-		modvalue += bipolar_signed_scale(pad_value[PAD_SUSR], synth_param[ctrlid].sus_r_depth);
-	}
-	if (synth_param[ctrlid].unac_l_depth) {
-		modvalue += bipolar_signed_scale(pad_value[PAD_UNACL], synth_param[ctrlid].unac_l_depth);
-	}
-	if (synth_param[ctrlid].unac_r_depth) {
-		modvalue += bipolar_signed_scale(pad_value[PAD_UNACR], synth_param[ctrlid].unac_r_depth);
-	}
+	int modvalue = synth_param[ctrlid].sum;
 	value += bipolar_signed_scale(modvalue, modrange * (0x8000 / 128));
 
 	if (value < 0) value = 0;
@@ -1758,6 +1540,12 @@ void pad_init()
 
 void synth_init()
 {
+	for (int i = 0; i < SYNTH_MODSOURCE_COUNT; i++) {
+		for(int k = 0; k < MODTARGET_COUNT; k++) {
+			modmatrix[i].targets[k].outputid = 0xff;
+		}
+	}
+
 	synth_mapping_init();
 	pan_law_init();
     lfo_init();
@@ -1805,34 +1593,34 @@ int32_t pad_threshold(int32_t value, int i)
 
 	switch (i) {
 	case 0:
-		dz = synth_param[X_DEADZONE].value >> 3;
-		scale = synth_param[X_SCALE].value >> 3;
+		dz = controller_param[0].deadzone >> 3;
+		scale = controller_param[0].scale >> 3;
 		break;
 	case 1:
-		dz = synth_param[Y_DEADZONE].value >> 3;
-		scale = synth_param[Y_SCALE].value >> 3;
+		dz = controller_param[1].deadzone >> 3;
+		scale = controller_param[1].scale >> 3;
 		break;
 	case 2:
-		dz = synth_param[Z_DEADZONE].value >> 3;
-		scale = synth_param[Z_SCALE].value >> 3;
+		dz = controller_param[2].deadzone >> 3;
+		scale = controller_param[2].scale >> 3;
 		break;
 	case 3:
-		scale = synth_param[MODL_SCALE].value >> 4;
+		scale = controller_param[4].scale >> 4;
 		break;
 	case 4:
-		scale = synth_param[SUSL_SCALE].value >> 4;
+		scale = controller_param[6].scale >> 4;
 		break;
 	case 5:
-		scale = synth_param[UNACL_SCALE].value >> 4;
+		scale = controller_param[8].scale >> 4;
 		break;
 	case 6:
-		scale = synth_param[MODR_SCALE].value >> 4;
+		scale = controller_param[5].scale >> 4;
 		break;
 	case 7:
-		scale = synth_param[SUSR_SCALE].value >> 4;
+		scale = controller_param[7].scale >> 4;
 		break;
 	case 8:
-		scale = synth_param[UNACR_SCALE].value >> 4;
+		scale = controller_param[9].scale >> 4;
 		break;
 	}
 	if (value < -dz) value += dz;
@@ -1877,12 +1665,86 @@ static void process_inputs()
 	}
 }
 
+void add_mod_targets(int modid, int32_t value)
+{
+	for (int k = 0; k < NUM_CONTROLLERS; k++) {
+		int outputid = modmatrix[modid].targets[k].outputid;
+		if (outputid != 0xff) {
+			int depth = modmatrix[modid].targets[k].depth;
+			synth_param[outputid].sum += bipolar_signed_scale(value, depth);
+		}
+	}
+}
+
+int32_t controller_update(int ctrlid)
+{
+	int32_t value = 0;
+
+	switch (ctrlid) {
+	case 0:
+		return pad_value[KEYBOARD_X];
+	case 1:
+		return pad_value[KEYBOARD_Y];
+	case 2:
+		return pad_value[KEYBOARD_Z];
+	case 3:
+		return zprime_value;
+	case 4:
+		return pad_value[PAD_MODL];
+	case 5:
+		return pad_value[PAD_MODR];
+	case 6:
+		return pad_value[PAD_SUSL];
+	case 7:
+		return pad_value[PAD_SUSR];
+	case 8:
+		return pad_value[PAD_UNACL];
+	case 9:
+		return pad_value[PAD_UNACR];
+	case 10:
+		return 0;//pedalxxxx;
+	}
+
+	return value;
+}
+
+void synth_modulation_run()
+{
+	for (int i = 0; i < NUM_LFOS; i++) {
+		int modid = 0x10 + i;
+		int32_t lfo = (int32_t)lfo_update(i) - 0x8000;
+		add_mod_targets(modid, lfo);
+	}
+	for (int i = 0; i < NUM_ENVS; i++) {
+		int modid = 0x30 + i;
+
+		adsr_set_gate(i, synth_param[GATE].value, env_param[i].flags & SubParamFlags_AdsrRetrigger);
+		//ad_set_gate(ctrlid, synth_param[GATE].value, synth_param[ctrlid].flags & SubParamFlags_AdRetrigger);
+
+		int32_t adsr = adsr_update(i, una_corda_release);
+		add_mod_targets(modid, adsr);
+		//uint16_t ad = ad_update(ctrlid, una_corda_release);
+	}
+	for (int i = 0; i < NUM_CONTROLLERS; i++) {
+		int modid = 0x60 + i;
+		int32_t value = controller_update(i);
+		add_mod_targets(modid, value);
+	}
+	for (int i = 0; i < NUM_OPERATORS; i++) {
+		int modid = 0x80 + i;
+	}
+}
+
 void synth_run()
 {
 	for (;;) {
 		doing_reset = reset;
 
 		inputcycle_start();
+
+		synth_mapping_reset();
+
+		synth_modulation_run();
 
 	    synth_mapping_run();
 	    synth_mapping_virt();
