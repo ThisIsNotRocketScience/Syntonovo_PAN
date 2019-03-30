@@ -676,6 +676,9 @@ void control_cb(int param, int subparam, uint16_t value)
 	else if (subparam & 0x40) {
 		subparam &= 0x3f;
 
+		if (subparam >= MODTARGET_COUNT)
+			return;
+
 		if (subparam & 1)
 			modmatrix[param].targets[subparam >> 1].outputid = value;
 		else
@@ -950,54 +953,68 @@ void mixtwo_2(int ctrlid, int port, int levelctrlid, int mixctrlid)
 	}
 }
 
+void mixtwo(int ctrlid, int port, int levelctrlid)
+{
+	int32_t value = synth_param[ctrlid].value + synth_param[ctrlid].sum;
+	int32_t mix = synth_param[levelctrlid].last;
+	value = bipolar_signed_scale(value, mix);
+
+	value = 65535 - value;
+	int result = (synth_param[ctrlid].last != value) || doing_reset;
+	if (result) {
+		synth_param[ctrlid].last = value;
+		ports_value(port, synth_param[ctrlid].last);
+	}
+}
+
 void do_output_VCO1_MIX1(int ctrlid, int port)
 {
-	mixtwo_1(ctrlid, port, VCO1_LEVEL, VCO1_VCFMIX);
+	mixtwo(ctrlid, port, VCO1_LEVEL);
 }
 
 void do_output_VCO1_MIX2(int ctrlid, int port)
 {
-	mixtwo_2(ctrlid, port, VCO1_LEVEL, VCO1_VCFMIX);
+	mixtwo(ctrlid, port, VCO1_LEVEL);
 }
 
 void do_output_VCO2_MIX1(int ctrlid, int port)
 {
-	mixtwo_1(ctrlid, port, VCO2_LEVEL, VCO2_VCFMIX);
+	mixtwo(ctrlid, port, VCO2_LEVEL);
 }
 
 void do_output_VCO2_MIX2(int ctrlid, int port)
 {
-	mixtwo_2(ctrlid, port, VCO2_LEVEL, VCO2_VCFMIX);
+	mixtwo(ctrlid, port, VCO2_LEVEL);
 }
 
 void do_output_VCO3_MIX1(int ctrlid, int port)
 {
-	mixtwo_1(ctrlid, port, VCO3_LEVEL, VCO3_VCFMIX);
+	mixtwo(ctrlid, port, VCO3_LEVEL);
 }
 
 void do_output_VCO3_MIX2(int ctrlid, int port)
 {
-	mixtwo_2(ctrlid, port, VCO3_LEVEL, VCO3_VCFMIX);
+	mixtwo(ctrlid, port, VCO3_LEVEL);
 }
 
 void do_output_VCO4567_MIX1(int ctrlid, int port)
 {
-	mixtwo_1(ctrlid, port, VCO4567_LEVEL, VCO4567_VCFMIX);
+	mixtwo(ctrlid, port, VCO4567_LEVEL);
 }
 
 void do_output_VCO4567_MIX2(int ctrlid, int port)
 {
-	mixtwo_2(ctrlid, port, VCO4567_LEVEL, VCO4567_VCFMIX);
+	mixtwo(ctrlid, port, VCO4567_LEVEL);
 }
 
 void do_output_RM1_MIX1(int ctrlid, int port)
 {
-	mixtwo_1(ctrlid, port, RM1_LEVEL, RM1_VCFMIX);
+	mixtwo(ctrlid, port, RM1_LEVEL);
 }
 
 void do_output_RM1_MIX2(int ctrlid, int port)
 {
-	mixtwo_2(ctrlid, port, RM1_LEVEL, RM1_VCFMIX);
+	mixtwo(ctrlid, port, RM1_LEVEL);
 }
 
 void do_output_RM2_MIX3(int ctrlid, int port)
@@ -1012,42 +1029,42 @@ void do_output_RM2_MIX3(int ctrlid, int port)
 
 void do_output_WHITENS_MIX1(int ctrlid, int port)
 {
-	mixtwo_1(ctrlid, port, WHITENS_LEVEL, WHITENS_VCFMIX);
+	mixtwo(ctrlid, port, WHITENS_LEVEL);
 }
 
 void do_output_WHITENS_MIX2(int ctrlid, int port)
 {
-	mixtwo_2(ctrlid, port, WHITENS_LEVEL, WHITENS_VCFMIX);
+	mixtwo(ctrlid, port, WHITENS_LEVEL);
 }
 
 void do_output_DIGINS_MIX1(int ctrlid, int port)
 {
-	mixtwo_1(ctrlid, port, DIGINS_LEVEL, DIGINS_VCFMIX);
+	mixtwo(ctrlid, port, DIGINS_LEVEL);
 }
 
 void do_output_DIGINS_MIX2(int ctrlid, int port)
 {
-	mixtwo_2(ctrlid, port, DIGINS_LEVEL, DIGINS_VCFMIX);
+	mixtwo(ctrlid, port, DIGINS_LEVEL);
 }
 
 void do_output_EXT_MIX1(int ctrlid, int port)
 {
-	mixtwo_1(ctrlid, port, EXT_LEVEL, EXT_VCFMIX);
+	mixtwo(ctrlid, port, EXT_LEVEL);
 }
 
 void do_output_EXT_MIX2(int ctrlid, int port)
 {
-	mixtwo_2(ctrlid, port, EXT_LEVEL, EXT_VCFMIX);
+	mixtwo(ctrlid, port, EXT_LEVEL);
 }
 
 void do_output_DNSSAW_MIX1(int ctrlid, int port)
 {
-	mixtwo_1(ctrlid, port, DNSSAW_LEVEL, DNSSAW_VCFMIX);
+	mixtwo(ctrlid, port, DNSSAW_LEVEL);
 }
 
 void do_output_DNSSAW_MIX2(int ctrlid, int port)
 {
-	mixtwo_2(ctrlid, port, DNSSAW_LEVEL, DNSSAW_VCFMIX);
+	mixtwo(ctrlid, port, DNSSAW_LEVEL);
 }
 
 void do_output_CLEANF_L_LIN(int ctrlid, int port)
