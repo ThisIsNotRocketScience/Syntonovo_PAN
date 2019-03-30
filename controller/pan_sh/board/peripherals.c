@@ -471,6 +471,63 @@ void I2C_1_init(void) {
 }
 
 /***********************************************************************************************************************
+ * USART_DSP initialization code
+ **********************************************************************************************************************/
+/* clang-format off */
+/* TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
+instance:
+- name: 'USART_DSP'
+- type: 'flexcomm_usart'
+- mode: 'interrupts'
+- type_id: 'flexcomm_usart_fcc110cc6b16332e9dfd9e0df675e21f'
+- functional_group: 'BOARD_InitPeripherals'
+- peripheral: 'FLEXCOMM7'
+- config_sets:
+  - interruptsCfg:
+    - interrupts: 'kUSART_RxLevelInterruptEnable'
+    - interrupt_vectors:
+      - enable_rx_tx_irq: 'true'
+      - interrupt_rx_tx:
+        - IRQn: 'FLEXCOMM7_IRQn'
+        - enable_priority: 'false'
+        - enable_custom_name: 'false'
+  - usartConfig_t:
+    - usartConfig:
+      - clockSource: 'FXCOMFunctionClock'
+      - clockSourceFreq: 'BOARD_BootClockRUN'
+      - baudRate_Bps: '1400000'
+      - parityMode: 'kUSART_ParityDisabled'
+      - stopBitCount: 'kUSART_OneStopBit'
+      - bitCountPerChar: 'kUSART_8BitsPerChar'
+      - loopback: 'false'
+      - txWatermark: 'kUSART_TxFifo0'
+      - rxWatermark: 'kUSART_RxFifo1'
+      - enableRx: 'true'
+      - enableTx: 'true'
+ * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
+/* clang-format on */
+const usart_config_t USART_DSP_config = {
+  .baudRate_Bps = 1400000,
+  .parityMode = kUSART_ParityDisabled,
+  .stopBitCount = kUSART_OneStopBit,
+  .bitCountPerChar = kUSART_8BitsPerChar,
+  .loopback = false,
+  .txWatermark = kUSART_TxFifo0,
+  .rxWatermark = kUSART_RxFifo1,
+  .enableRx = true,
+  .enableTx = true
+};
+
+void USART_DSP_init(void) {
+  /* Reset FLEXCOMM device */
+  RESET_PeripheralReset(kFC7_RST_SHIFT_RSTn);
+  USART_Init(USART_DSP_PERIPHERAL, &USART_DSP_config, USART_DSP_CLOCK_SOURCE);
+  USART_EnableInterrupts(USART_DSP_PERIPHERAL, kUSART_RxLevelInterruptEnable);
+  /* Enable interrupt FLEXCOMM7_IRQn request in the NVIC */
+  EnableIRQ(USART_DSP_FLEXCOMM_IRQN);
+}
+
+/***********************************************************************************************************************
  * Initialization functions
  **********************************************************************************************************************/
 void BOARD_InitPeripherals(void)
@@ -483,6 +540,7 @@ void BOARD_InitPeripherals(void)
   SPI_4_init();
   SPI_0_init();
   I2C_1_init();
+  USART_DSP_init();
 }
 
 /***********************************************************************************************************************

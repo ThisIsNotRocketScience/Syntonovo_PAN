@@ -97,6 +97,14 @@ extern "C" {
 #define I2C_1_FLEXCOMM_IRQN FLEXCOMM5_IRQn
 /* I2C_1 interrupt handler identifier. */
 #define I2C_1_FLEXCOMM_IRQHANDLER FLEXCOMM5_IRQHandler
+/* Definition of peripheral ID */
+#define USART_DSP_PERIPHERAL ((USART_Type *)FLEXCOMM7)
+/* Definition of the clock source frequency */
+#define USART_DSP_CLOCK_SOURCE 96000000UL
+/* USART_DSP interrupt vector ID (number). */
+#define USART_DSP_FLEXCOMM_IRQN FLEXCOMM7_IRQn
+/* USART_DSP interrupt handler identifier. */
+#define USART_DSP_FLEXCOMM_IRQHANDLER FLEXCOMM7_IRQHandler
 
 /***********************************************************************************************************************
  * Global variables
@@ -108,6 +116,7 @@ extern const usart_config_t USART_1_config;
 extern const spi_master_config_t SPI_4_config;
 extern const spi_master_config_t SPI_0_config;
 extern const i2c_master_config_t I2C_1_config;
+extern const usart_config_t USART_DSP_config;
 
 /***********************************************************************************************************************
  * Initialization functions
