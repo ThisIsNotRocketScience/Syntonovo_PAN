@@ -177,6 +177,7 @@
     <ClCompile Include="..\libs\imgui-master\imgui.cpp" />
     <ClCompile Include="..\libs\imgui-master\imgui_draw.cpp" />
     <ClCompile Include="..\libs\lodepng-master\lodepng.cpp" />
+    <ClCompile Include="FinalPanGui.cpp" />
     <ClCompile Include="PanSim.cpp" />
     <ClCompile Include="PanStructs.cpp" />
     <ClCompile Include="PAN_Raspberry.cpp" />
@@ -188,6 +189,7 @@
     <Library Include="..\libs\SDL2-2.0.7\lib\x86\SDL2main.lib" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="FinalPanHeader.h" />
     <ClInclude Include="ModMenus.h" />
     <ClInclude Include="PanControls.h" />
     <ClInclude Include="PanHeader.h" />

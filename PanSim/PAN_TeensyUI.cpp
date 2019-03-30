@@ -2273,8 +2273,6 @@ void Teensy_Reset()
 	Teensy_guidata.GuiState = GuiState_Root;
 }
 
-
-
 int Teensy_FindKnobIDX(int in)
 {
 	for (int i = 0; i < __KNOB_COUNT; i++)
@@ -2286,6 +2284,7 @@ int Teensy_FindKnobIDX(int in)
 	}
 	return -1;
 }
+
 int Teensy_FindButtonIDX(int in)
 {
 	for (int i = 0; i < __LEDBUTTON_COUNT; i++)
