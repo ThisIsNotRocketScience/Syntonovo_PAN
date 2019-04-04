@@ -592,9 +592,11 @@ WEAK void FLEXCOMM1_IRQHandler(void)
 }
 #endif
 
+#if 0
 WEAK void FLEXCOMM2_IRQHandler(void)
 {   FLEXCOMM2_DriverIRQHandler();
 }
+#endif
 
 WEAK void FLEXCOMM3_IRQHandler(void)
 {   FLEXCOMM3_DriverIRQHandler();
@@ -718,9 +720,11 @@ WEAK void CAN1_IRQ1_IRQHandler(void)
 {   CAN1_IRQ1_DriverIRQHandler();
 }
 
+#if 0
 WEAK void USB1_IRQHandler(void)
 {   USB1_DriverIRQHandler();
 }
+#endif
 
 WEAK void USB1_NEEDCLK_IRQHandler(void)
 {   USB1_NEEDCLK_DriverIRQHandler();

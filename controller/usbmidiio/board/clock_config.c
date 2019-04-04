@@ -67,10 +67,12 @@ outputs:
 - {id: MAIN_clock.outFreq, value: 180 MHz}
 - {id: SCT_clock.outFreq, value: 90 MHz}
 - {id: SYSPLL_clock.outFreq, value: 180 MHz}
-- {id: System_clock.outFreq, value: 90 MHz}
+- {id: System_clock.outFreq, value: 180 MHz}
+- {id: USB1_clock.outFreq, value: 48 MHz}
+- {id: USBPLL_clock.outFreq, value: 48 MHz}
 settings:
 - {id: ASYNC_SYSCON.ASYNCAPBCLKSELA.sel, value: SYSCON.audio_pll_clk}
-- {id: SYSCON.AHBCLKDIV.scale, value: '2'}
+- {id: SYSCON.AHBCLKDIV.scale, value: '1', locked: true}
 - {id: SYSCON.AUD_M_MULT.scale, value: '128', locked: true}
 - {id: SYSCON.AUD_N_DIV.scale, value: '4', locked: true}
 - {id: SYSCON.FXCLKSEL1.sel, value: SYSCON.AUDPLL_BYPASS}
@@ -82,8 +84,13 @@ settings:
 - {id: SYSCON.PDEC.scale, value: '2', locked: true}
 - {id: SYSCON.SCTCLKDIV.scale, value: '2', locked: true}
 - {id: SYSCON.SCTCLKSEL.sel, value: SYSCON.MAINCLKSELB}
+- {id: SYSCON.USB1CLKSEL.sel, value: SYSCON.USBDIRECT}
+- {id: SYSCON.USBPLL_PSEL.scale, value: '4', locked: true}
+- {id: SYSCON.USB_M_MULT.scale, value: '16', locked: true}
+- {id: SYSCON.USB_N_DIV.scale, value: '1', locked: true}
 - {id: SYSCON_PDRUNCFG0_PDEN_SYS_PLL_CFG, value: Power_up}
 - {id: SYSCON_PDRUNCFG1_PDEN_AUD_PLL_CFG, value: Power_up}
+- {id: SYSCON_PDRUNCFG1_PDEN_USB_PLL_CFG, value: Power_up}
 sources:
 - {id: SYSCON._clk_in.outFreq, value: 12 MHz, enabled: true}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
@@ -104,8 +111,8 @@ void BOARD_BootClockRUN(void)
                                                                 being below the voltage for current speed */
     POWER_DisablePD(kPDRUNCFG_PD_SYS_OSC);          /*!< Enable System Oscillator Power */
     SYSCON->SYSOSCCTRL = ((SYSCON->SYSOSCCTRL & ~SYSCON_SYSOSCCTRL_FREQRANGE_MASK) | SYSCON_SYSOSCCTRL_FREQRANGE(0U)); /*!< Set system oscillator range */
-    POWER_SetVoltageForFreq(90000000U);             /*!< Set voltage for the one of the fastest clock outputs: System clock output */
-    CLOCK_SetFLASHAccessCyclesForFreq(90000000U);    /*!< Set FLASH wait states for core */
+    POWER_SetVoltageForFreq(180000000U);             /*!< Set voltage for the one of the fastest clock outputs: System clock output */
+    CLOCK_SetFLASHAccessCyclesForFreq(180000000U);    /*!< Set FLASH wait states for core */
 
     /*!< Set up SYS PLL */
     const pll_setup_t pllSetup = {
@@ -130,14 +137,29 @@ void BOARD_BootClockRUN(void)
     CLOCK_AttachClk(kFRO12M_to_AUDIO_PLL);                         /*!< Set audio pll clock source*/
     CLOCK_SetAudioPLLFreq(&audio_pllSetup);                        /*!< Configure PLL to the desired value */
 
+    /*!< Set up USB PLL */
+    const usb_pll_setup_t usb_pllSetup = {
+        .msel = 15U,
+        .nsel = 0U,
+        .psel = 1U,
+        .direct = false,
+        .bypass = false,
+        .fbsel = false,
+        .inputRate = 12000000U,
+    };
+    CLOCK_SetUsbPLLFreq(&usb_pllSetup);                        /*!< Configure PLL to the desired value */
+
 
     /*!< Set up dividers */
-    CLOCK_SetClkDiv(kCLOCK_DivAhbClk, 2U, false);                  /*!< Reset divider counter and set divider to value 2 */
+    CLOCK_SetClkDiv(kCLOCK_DivAhbClk, 1U, false);                  /*!< Reset divider counter and set divider to value 1 */
+    CLOCK_SetClkDiv(kCLOCK_DivUsb1Clk, 0U, true);                  /*!< Reset USB1CLKDIV divider counter and halt it */
+    CLOCK_SetClkDiv(kCLOCK_DivUsb1Clk, 1U, false);                  /*!< Set USB1CLKDIV divider to value 1 */
     CLOCK_SetClkDiv(kCLOCK_DivSctClk, 0U, true);                  /*!< Reset SCTCLKDIV divider counter and halt it */
     CLOCK_SetClkDiv(kCLOCK_DivSctClk, 2U, false);                  /*!< Set SCTCLKDIV divider to value 2 */
 
     /*!< Set up clock selectors - Attach clocks to the peripheries */
     CLOCK_AttachClk(kSYS_PLL_to_MAIN_CLK);                  /*!< Switch MAIN_CLK to SYS_PLL */
+    CLOCK_AttachClk(kUSB_PLL_to_USB1_CLK);                  /*!< Switch USB1_CLK to USB_PLL */
     CLOCK_AttachClk(kAUDIO_PLL_to_FLEXCOMM1);                  /*!< Switch FLEXCOMM1 to AUDIO_PLL */
     CLOCK_AttachClk(kAUDIO_PLL_to_FLEXCOMM2);                  /*!< Switch FLEXCOMM2 to AUDIO_PLL */
     CLOCK_AttachClk(kAUDIO_PLL_to_FLEXCOMM7);                  /*!< Switch FLEXCOMM7 to AUDIO_PLL */

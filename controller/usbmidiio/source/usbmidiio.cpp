@@ -39,7 +39,9 @@
 #include "clock_config.h"
 #include "LPC54616.h"
 /* TODO: insert other include files here. */
+#include "fsl_power.h"
 #include "control.h"
+#include "rpi.h"
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
@@ -76,6 +78,7 @@ void dsp_cmd(int param, int subparam, uint16_t value)
 	data[3] = value & 0xFF;
 
 	control_write(data, 4);
+	rpi_write(data, 4);
 }
 
 BaseType_t keys_press(int keyindex, uint32_t timediff)
@@ -97,7 +100,7 @@ uint32_t ReadT()
 			| (BOARD_INITPINS_T2_GPIO->B[BOARD_INITPINS_T2_PORT][BOARD_INITPINS_T2_PIN] << 2)
 			| (BOARD_INITPINS_T3_GPIO->B[BOARD_INITPINS_T3_PORT][BOARD_INITPINS_T3_PIN] << 3)
 			| (BOARD_INITPINS_T4_GPIO->B[BOARD_INITPINS_T4_PORT][BOARD_INITPINS_T4_PIN] << 4)
-			//| (BOARD_INITPINS_T5_GPIO->B[BOARD_INITPINS_T5_PORT][BOARD_INITPINS_T5_PIN] << 5)
+			| (BOARD_INITPINS_T5_GPIO->B[BOARD_INITPINS_T5_PORT][BOARD_INITPINS_T5_PIN] << 5)
 			| (BOARD_INITPINS_T6_GPIO->B[BOARD_INITPINS_T6_PORT][BOARD_INITPINS_T6_PIN] << 6)
 			| (BOARD_INITPINS_T7_GPIO->B[BOARD_INITPINS_T7_PORT][BOARD_INITPINS_T7_PIN] << 7);
 }
@@ -110,8 +113,8 @@ void SetMkBr(uint16_t mask)
 	BOARD_INITPINS_MK0_GPIO->W[BOARD_INITPINS_MK0_PORT][BOARD_INITPINS_MK0_PIN] = mask & (1 << 0);
 	BOARD_INITPINS_BR1_GPIO->W[BOARD_INITPINS_BR1_PORT][BOARD_INITPINS_BR1_PIN] = mask & (1 << 3);
 	BOARD_INITPINS_MK1_GPIO->W[BOARD_INITPINS_MK1_PORT][BOARD_INITPINS_MK1_PIN] = mask & (1 << 2);
-	//BOARD_INITPINS_BR2_GPIO->W[BOARD_INITPINS_BR2_PORT][BOARD_INITPINS_BR2_PIN] = mask & (1 << 5);
-	//BOARD_INITPINS_MK2_GPIO->W[BOARD_INITPINS_MK2_PORT][BOARD_INITPINS_MK2_PIN] = mask & (1 << 4);
+	BOARD_INITPINS_BR2_GPIO->W[BOARD_INITPINS_BR2_PORT][BOARD_INITPINS_BR2_PIN] = mask & (1 << 5);
+	BOARD_INITPINS_MK2_GPIO->W[BOARD_INITPINS_MK2_PORT][BOARD_INITPINS_MK2_PIN] = mask & (1 << 4);
 	BOARD_INITPINS_BR3_GPIO->W[BOARD_INITPINS_BR3_PORT][BOARD_INITPINS_BR3_PIN] = mask & (1 << 7);
 	BOARD_INITPINS_MK3_GPIO->W[BOARD_INITPINS_MK3_PORT][BOARD_INITPINS_MK3_PIN] = mask & (1 << 6);
 	BOARD_INITPINS_BR4_GPIO->W[BOARD_INITPINS_BR4_PORT][BOARD_INITPINS_BR4_PIN] = mask & (1 << 9);
@@ -227,6 +230,114 @@ void KeyboardTask(void* pvParameters)
 }
 
 ///////////////////////////////////////////////////////////////////////
+#if 0
+struct rpi_transaction {
+	volatile int pos;
+	volatile int ready;
+	uint8_t data[260]; // 256 plus a little extra
+};
+
+rpi_transaction tr[2];
+int free_tr = 0;
+int tr_cancelled = 0;
+
+void rpi_ack()
+{
+	uint8_t ack_data[4] = { 0x1f, 0x2a, 0x06, 0x55 };
+	rpi_write(ack_data, 4);
+}
+
+void rpi_nack()
+{
+	rpi_reset();
+}
+
+void rpi_cb(uint8_t* data)
+{
+	uint32_t value = data[0] | (data[1] << 8) | (data[2] << 16) | (data[3] << 24);
+
+	const uint32_t START_CODE = 0x2A2A2A2A;
+	const uint32_t END_CODE = 0x5555AA55;
+
+	if (value == START_CODE) {
+		if (tr[free_tr].pos != 0) {
+			tr_cancelled = 1;
+		}
+
+		tr_cancelled = 0;
+		return;
+	}
+	else if (value == END_CODE) {
+		if (tr_cancelled) {
+			rpi_nack();
+			return;
+		}
+		transaction_ready(free_tr);
+/*		int other_tr = 1 - free_tr;
+		if (tr[other_tr].pos == 0) {
+			free_tr = other_tr;
+			ack();
+		}*/
+		// don't ack yet
+	}
+	// else {
+	// data
+	if (tr_cancelled) {
+		return;
+	}
+	rpi_transaction* t = &tr[free_tr];
+
+	if (t->pos >= 256) {
+		tr_cancelled = 1;
+		return;
+	}
+
+	uint8_t check = data[1] ^ data[2] ^ data[3];
+	check = check ^ (check >> 4);
+	if (data[0] & 0x0F != check) {
+		tr_cancelled = 1;
+		return;
+	}
+
+	memcpy(&t->data[t->pos], &data[1], 3);
+	t->pos += 3;
+}
+
+void RpiTask()
+{
+	uint32_t msg;
+
+	enum {
+		reset,
+		waiting_transaction,
+		sending_patch
+	} state = reset;
+
+	while(1)
+	{
+		switch (state) {
+		case reset:
+			rpi_reset();
+			state = sending_patch;
+			break;
+		case waiting_transaction:
+			if (xQueueReceive(rpi_queue, &msg, 10))
+			{
+
+			}
+			break;
+		case sending_patch:
+			break;
+		}
+	}
+}
+#endif
+
+void rpi_cb(uint8_t* data)
+{
+
+}
+///////////////////////////////////////////////////////////////////////
 
 #define FULLVALUE(param, subparam, value) dsp_cmd(param, subparam, value)
 #define MODSOURCE(source, subparam, value) dsp_cmd(source, subparam | 0x80, value)
@@ -341,13 +452,21 @@ void preset_init()
     SWITCH_ON(switch_SEL2SQR);
     SWITCH_ON(switch_SEL3SQR);
 
-    MODSOURCE(modsource_ENV0, 1, 0x10);
-    MODSOURCE(modsource_ENV0, 2, 0x2000);
-    MODSOURCE(modsource_ENV0, 3, 0x2000);
-    MODSOURCE(modsource_ENV0, 4, 0x5000);
+    for (int i = 0; i < 16; i++) {
+		MODSOURCE(i + modsource_ENV0, 1, 0x10);
+		MODSOURCE(i + modsource_ENV0, 2, 0x2000);
+		MODSOURCE(i + modsource_ENV0, 3, 0x2000);
+		MODSOURCE(i + modsource_ENV0, 4, 0x5000);
+    }
 
     MODMATRIX(modsource_ENV0, 0, 0, 0x3fff);
     MODMATRIX(modsource_ENV0, 0, 1, output_VCF1_LIN);
+
+    int target[] = { output_VCO1_PW, output_VCO2_PW, output_VCO3_PW, output_VCO4_PW, output_VCO5_PW, output_VCO6_PW, output_VCO7_PW };
+    for (int i = 1; i < 16; i++) {
+		MODMATRIX(i + modsource_ENV0, 0, 0, 0x300);
+		MODMATRIX(i + modsource_ENV0, 0, 1, target[i % 7]);
+    }
 
 //    MODSOURCE(modsource_LFO0, 1, 0x200);
 
@@ -355,6 +474,20 @@ void preset_init()
 //    MODMATRIX(modsource_LFO0, 0, 1, output_VCF1_LIN);
 }
 ///////////////////////////////////////////////////////////////////////
+
+
+extern "C" void APPInit(void);
+extern "C" void APPTask(void);
+
+void USBTask(void* pvParameters)
+{
+	APPInit();
+
+	while(1) {
+		APPTask();
+		vTaskDelay(1);
+	}
+}
 
 /*
  * @brief   Application entry point.
@@ -367,16 +500,33 @@ int main(void) {
 
     printf("Board init done\n");
 
+    POWER_DisablePD(kPDRUNCFG_PD_USB1_PHY);
+    /* enable usb1 host clock */
+    CLOCK_EnableClock(kCLOCK_Usbh1);
+    /* According to reference mannual, device mode setting has to be set by access usb host register */
+    *((uint32_t *)(USBHSH_BASE + 0x50)) |= USBHSH_PORTMODE_DEV_ENABLE_MASK;
+    /* disable usb1 host clock */
+    CLOCK_DisableClock(kCLOCK_Usbh1);
+
+    POWER_EnablePD(kPDRUNCFG_PD_VD5);
+    POWER_EnablePD(kPDRUNCFG_PD_USB1_PHY);
+
+    printf("USB init done\n");
+    //POWER_EnablePD(kPDRUNCFG_PD_VD3);
+
     CLOCK_EnableClock(kCLOCK_Gpio0);
     CLOCK_EnableClock(kCLOCK_Gpio1);
     CLOCK_EnableClock(kCLOCK_Gpio2);
     CLOCK_EnableClock(kCLOCK_Gpio3);
 
     control_init();
+    rpi_init();
 
     xKeyTimerSemaphore = xSemaphoreCreateBinary();
 
-    xTaskCreate(KeyboardTask, "main", 256, NULL, 4, NULL);
+    xTaskCreate(KeyboardTask, "keys", 256, NULL, 2, NULL);
+    //xTaskCreate(RpiTask, "rpi", 256, NULL, 4, NULL);
+    //xTaskCreate(USBTask, "usb", 512, NULL, 3, NULL);
 
     printf("Everything running\n");
 

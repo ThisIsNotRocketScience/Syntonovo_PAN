@@ -285,12 +285,12 @@ void BOARD_InitBootPins(void);
 #define BOARD_INITPINS_MK4_PIN 14U   /*!<@brief 0U pin index: 14 */
                                      /* @} */
 
-/*! @name PIO0_17 (number 70), T2OLD
+/*! @name PIO0_17 (number 70), BR2
   @{ */
-#define BOARD_INITPINS_T2OLD_GPIO GPIO /*!<@brief GPIO device name: GPIO */
-#define BOARD_INITPINS_T2OLD_PORT 0U   /*!<@brief PORT device name: 0U */
-#define BOARD_INITPINS_T2OLD_PIN 17U   /*!<@brief 0U pin index: 17 */
-                                       /* @} */
+#define BOARD_INITPINS_BR2_GPIO GPIO /*!<@brief GPIO device name: GPIO */
+#define BOARD_INITPINS_BR2_PORT 0U   /*!<@brief PORT device name: 0U */
+#define BOARD_INITPINS_BR2_PIN 17U   /*!<@brief 0U pin index: 17 */
+                                     /* @} */
 
 /*! @name PIO0_18 (number 72), BR4
   @{ */
@@ -299,12 +299,12 @@ void BOARD_InitBootPins(void);
 #define BOARD_INITPINS_BR4_PIN 18U   /*!<@brief 0U pin index: 18 */
                                      /* @} */
 
-/*! @name PIO1_28 (number 73), T0OLD
+/*! @name PIO1_28 (number 73), T5
   @{ */
-#define BOARD_INITPINS_T0OLD_GPIO GPIO /*!<@brief GPIO device name: GPIO */
-#define BOARD_INITPINS_T0OLD_PORT 1U   /*!<@brief PORT device name: 1U */
-#define BOARD_INITPINS_T0OLD_PIN 28U   /*!<@brief 1U pin index: 28 */
-                                       /* @} */
+#define BOARD_INITPINS_T5_GPIO GPIO /*!<@brief GPIO device name: GPIO */
+#define BOARD_INITPINS_T5_PORT 1U   /*!<@brief PORT device name: 1U */
+#define BOARD_INITPINS_T5_PIN 28U   /*!<@brief 1U pin index: 28 */
+                                    /* @} */
 
 /*! @name PIO1_3 (number 60), RASPI_DETECT
   @{ */

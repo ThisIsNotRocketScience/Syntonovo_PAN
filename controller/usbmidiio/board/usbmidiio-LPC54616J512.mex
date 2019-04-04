@@ -3,6 +3,7 @@
    <common>
       <processor>LPC54616J512</processor>
       <package>LPC54616J512BD100</package>
+      <board></board>
       <mcu_data>ksdk2_0</mcu_data>
       <cores selected="core0">
          <core name="Cortex-M4F" id="core0" description="M4 core"/>
@@ -34,9 +35,9 @@
                <pin_label pin_num="67" pin_signal="PIO0_13/FC1_CTS_SDA_SSEL0/UTICK_CAP0/CTIMER0_CAP0/SCT0_GPI0/ENET_RXD0" label="BR3" identifier="BR3"/>
                <pin_label pin_num="68" pin_signal="PIO1_27/FC2_RTS_SCL_SSEL1/SD_D(4)/CTIMER0_MAT3/CLKOUT/EMC_A(9)" label="T7" identifier="T7"/>
                <pin_label pin_num="69" pin_signal="PIO0_14/FC1_RTS_SCL_SSEL1/UTICK_CAP1/CTIMER0_CAP1/SCT0_GPI1/ENET_RXD1" label="MK4" identifier="MK4"/>
-               <pin_label pin_num="70" pin_signal="PIO0_17/FC4_SSEL2/SD_CARD_DET_N/SCT0_GPI7/SCT0_OUT0/EMC_OEN/ENET_TXD1" label="T2OLD" identifier="T2OLD"/>
+               <pin_label pin_num="70" pin_signal="PIO0_17/FC4_SSEL2/SD_CARD_DET_N/SCT0_GPI7/SCT0_OUT0/EMC_OEN/ENET_TXD1" label="BR2" identifier="BR2"/>
                <pin_label pin_num="72" pin_signal="PIO0_18/FC4_CTS_SDA_SSEL0/SD_WR_PRT/CTIMER1_MAT0/SCT0_OUT1/SCI1_SCLK/EMC_A(0)" label="BR4" identifier="BR4"/>
-               <pin_label pin_num="73" pin_signal="PIO1_28/FC7_SCK/SD_D(5)/CTIMER0_CAP2/EMC_D(12)" label="T0OLD" identifier="T0OLD"/>
+               <pin_label pin_num="73" pin_signal="PIO1_28/FC7_SCK/SD_D(5)/CTIMER0_CAP2/EMC_D(12)" label="T5" identifier="T5"/>
                <pin_label pin_num="60" pin_signal="PIO1_3/CAN0_RD/SCT0_OUT4/PDM1_DATA/USB0_PORTPWRN" label="RASPI_DETECT" identifier="RASPI_DETECT"/>
             </pin_labels>
          </pins_profile>
@@ -60,6 +61,11 @@
                      </feature>
                   </dependency>
                   <dependency resourceType="Peripheral" resourceId="FLEXCOMM7" description="Peripheral FLEXCOMM7 is not initialized" problem_level="1" source="Pins:BOARD_InitPins">
+                     <feature name="initialized" evaluation="equal">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="Peripheral" resourceId="USBHSH" description="Peripheral USBHSH is not initialized" problem_level="1" source="Pins:BOARD_InitPins">
                      <feature name="initialized" evaluation="equal">
                         <data>true</data>
                      </feature>
@@ -162,7 +168,8 @@
                   </pin>
                   <pin peripheral="GPIO" signal="PIO0, 17" pin_num="70" pin_signal="PIO0_17/FC4_SSEL2/SD_CARD_DET_N/SCT0_GPI7/SCT0_OUT0/EMC_OEN/ENET_TXD1">
                      <pin_features>
-                        <pin_feature name="direction" value="INPUT"/>
+                        <pin_feature name="direction" value="OUTPUT"/>
+                        <pin_feature name="gpio_init_state" value="true"/>
                         <pin_feature name="mode" value="pullUp"/>
                      </pin_features>
                   </pin>
@@ -187,6 +194,9 @@
                   </pin>
                   <pin peripheral="FLEXCOMM7" signal="RXD_SDA_MOSI_DATA" pin_num="81" pin_signal="PIO1_29/FC7_RXD_SDA_MOSI_DATA/SD_D(6)/SCT0_GPI6/USB1_PORTPWRN/USB1_FRAME/EMC_D(13)"/>
                   <pin peripheral="FLEXCOMM7" signal="TXD_SCL_MISO_WS" pin_num="86" pin_signal="PIO1_30/FC7_TXD_SCL_MISO_WS/SD_D(7)/SCT0_GPI7/USB1_OVERCURRENTN/USB1_UP_LED/EMC_D(14)"/>
+                  <pin peripheral="USBHSH" signal="USB_DM" pin_num="12" pin_signal="USB1_DM"/>
+                  <pin peripheral="USBHSH" signal="USB_DP" pin_num="13" pin_signal="USB1_DP"/>
+                  <pin peripheral="USBHSH" signal="USB_VBUS" pin_num="9" pin_signal="USB1_VBUS"/>
                </pins>
             </function>
          </functions_list>
@@ -239,11 +249,13 @@
                   <clock_output id="MAIN_clock.outFreq" value="180 MHz" locked="false" accuracy=""/>
                   <clock_output id="SCT_clock.outFreq" value="90 MHz" locked="false" accuracy=""/>
                   <clock_output id="SYSPLL_clock.outFreq" value="180 MHz" locked="false" accuracy=""/>
-                  <clock_output id="System_clock.outFreq" value="90 MHz" locked="false" accuracy=""/>
+                  <clock_output id="System_clock.outFreq" value="180 MHz" locked="false" accuracy=""/>
+                  <clock_output id="USB1_clock.outFreq" value="48 MHz" locked="false" accuracy=""/>
+                  <clock_output id="USBPLL_clock.outFreq" value="48 MHz" locked="false" accuracy=""/>
                </clock_outputs>
                <clock_settings>
                   <setting id="ASYNC_SYSCON.ASYNCAPBCLKSELA.sel" value="SYSCON.audio_pll_clk" locked="false"/>
-                  <setting id="SYSCON.AHBCLKDIV.scale" value="2" locked="false"/>
+                  <setting id="SYSCON.AHBCLKDIV.scale" value="1" locked="true"/>
                   <setting id="SYSCON.AUD_M_MULT.scale" value="128" locked="true"/>
                   <setting id="SYSCON.AUD_N_DIV.scale" value="4" locked="true"/>
                   <setting id="SYSCON.FXCLKSEL1.sel" value="SYSCON.AUDPLL_BYPASS" locked="false"/>
@@ -255,8 +267,13 @@
                   <setting id="SYSCON.PDEC.scale" value="2" locked="true"/>
                   <setting id="SYSCON.SCTCLKDIV.scale" value="2" locked="true"/>
                   <setting id="SYSCON.SCTCLKSEL.sel" value="SYSCON.MAINCLKSELB" locked="false"/>
+                  <setting id="SYSCON.USB1CLKSEL.sel" value="SYSCON.USBDIRECT" locked="false"/>
+                  <setting id="SYSCON.USBPLL_PSEL.scale" value="4" locked="true"/>
+                  <setting id="SYSCON.USB_M_MULT.scale" value="16" locked="true"/>
+                  <setting id="SYSCON.USB_N_DIV.scale" value="1" locked="true"/>
                   <setting id="SYSCON_PDRUNCFG0_PDEN_SYS_PLL_CFG" value="Power_up" locked="false"/>
                   <setting id="SYSCON_PDRUNCFG1_PDEN_AUD_PLL_CFG" value="Power_up" locked="false"/>
+                  <setting id="SYSCON_PDRUNCFG1_PDEN_USB_PLL_CFG" value="Power_up" locked="false"/>
                </clock_settings>
                <called_from_default_init>true</called_from_default_init>
             </clock_configuration>
@@ -293,7 +310,7 @@
                <description></description>
                <options/>
                <dependencies>
-                  <dependency resourceType="ClockOutput" resourceId="FXCOM2_clock" description="FXCOM2 clock is inactive." problem_level="1" source="Peripherals:BOARD_InitPeripherals">
+                  <dependency resourceType="ClockOutput" resourceId="FXCOM2_clock" description="FXCOM2 clock is inactive." problem_level="2" source="Peripherals:BOARD_InitPeripherals">
                      <feature name="frequency" evaluation="greaterThan">
                         <data type="Frequency" unit="Hz">0</data>
                      </feature>
@@ -359,7 +376,7 @@
                      <config_set name="usartConfig_t">
                         <struct name="usartConfig">
                            <setting name="clockSource" value="FXCOMFunctionClock"/>
-                           <setting name="clockSourceFreq" value="GetFreq"/>
+                           <setting name="clockSourceFreq" value="BOARD_BootClockRUN"/>
                            <setting name="baudRate_Bps" value="2000000"/>
                            <setting name="parityMode" value="kUSART_ParityDisabled"/>
                            <setting name="stopBitCount" value="kUSART_OneStopBit"/>

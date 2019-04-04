@@ -26,7 +26,7 @@ extern "C" {
 /* Definition of peripheral ID */
 #define USART_RPI_PERIPHERAL ((USART_Type *)FLEXCOMM2)
 /* Definition of the clock source frequency */
-#define USART_RPI_CLOCK_SOURCE CLOCK_GetFreq(kCLOCK_Flexcomm2)
+#define USART_RPI_CLOCK_SOURCE 48000000UL
 /* USART_RPI interrupt vector ID (number). */
 #define USART_RPI_FLEXCOMM_IRQN FLEXCOMM2_IRQn
 /* USART_RPI interrupt handler identifier. */

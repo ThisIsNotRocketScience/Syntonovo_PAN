@@ -57,7 +57,7 @@ instance:
   - usartConfig_t:
     - usartConfig:
       - clockSource: 'FXCOMFunctionClock'
-      - clockSourceFreq: 'GetFreq'
+      - clockSourceFreq: 'BOARD_BootClockRUN'
       - baudRate_Bps: '2000000'
       - parityMode: 'kUSART_ParityDisabled'
       - stopBitCount: 'kUSART_OneStopBit'

@@ -29,9 +29,9 @@ pin_labels:
 - {pin_num: '67', pin_signal: PIO0_13/FC1_CTS_SDA_SSEL0/UTICK_CAP0/CTIMER0_CAP0/SCT0_GPI0/ENET_RXD0, label: BR3, identifier: BR3}
 - {pin_num: '68', pin_signal: PIO1_27/FC2_RTS_SCL_SSEL1/SD_D(4)/CTIMER0_MAT3/CLKOUT/EMC_A(9), label: T7, identifier: T7}
 - {pin_num: '69', pin_signal: PIO0_14/FC1_RTS_SCL_SSEL1/UTICK_CAP1/CTIMER0_CAP1/SCT0_GPI1/ENET_RXD1, label: MK4, identifier: MK4}
-- {pin_num: '70', pin_signal: PIO0_17/FC4_SSEL2/SD_CARD_DET_N/SCT0_GPI7/SCT0_OUT0/EMC_OEN/ENET_TXD1, label: T2OLD, identifier: T2OLD}
+- {pin_num: '70', pin_signal: PIO0_17/FC4_SSEL2/SD_CARD_DET_N/SCT0_GPI7/SCT0_OUT0/EMC_OEN/ENET_TXD1, label: BR2, identifier: BR2}
 - {pin_num: '72', pin_signal: PIO0_18/FC4_CTS_SDA_SSEL0/SD_WR_PRT/CTIMER1_MAT0/SCT0_OUT1/SCI1_SCLK/EMC_A(0), label: BR4, identifier: BR4}
-- {pin_num: '73', pin_signal: PIO1_28/FC7_SCK/SD_D(5)/CTIMER0_CAP2/EMC_D(12), label: T0OLD, identifier: T0OLD}
+- {pin_num: '73', pin_signal: PIO1_28/FC7_SCK/SD_D(5)/CTIMER0_CAP2/EMC_D(12), label: T5, identifier: T5}
 - {pin_num: '60', pin_signal: PIO1_3/CAN0_RD/SCT0_OUT4/PDM1_DATA/USB0_PORTPWRN, label: RASPI_DETECT, identifier: RASPI_DETECT}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
  */
@@ -76,7 +76,8 @@ BOARD_InitPins:
   - {pin_num: '67', peripheral: GPIO, signal: 'PIO0, 13', pin_signal: PIO0_13/FC1_CTS_SDA_SSEL0/UTICK_CAP0/CTIMER0_CAP0/SCT0_GPI0/ENET_RXD0, direction: OUTPUT, gpio_init_state: 'true'}
   - {pin_num: '68', peripheral: GPIO, signal: 'PIO1, 27', pin_signal: PIO1_27/FC2_RTS_SCL_SSEL1/SD_D(4)/CTIMER0_MAT3/CLKOUT/EMC_A(9), direction: INPUT}
   - {pin_num: '69', peripheral: GPIO, signal: 'PIO0, 14', pin_signal: PIO0_14/FC1_RTS_SCL_SSEL1/UTICK_CAP1/CTIMER0_CAP1/SCT0_GPI1/ENET_RXD1, direction: OUTPUT, gpio_init_state: 'true'}
-  - {pin_num: '70', peripheral: GPIO, signal: 'PIO0, 17', pin_signal: PIO0_17/FC4_SSEL2/SD_CARD_DET_N/SCT0_GPI7/SCT0_OUT0/EMC_OEN/ENET_TXD1, direction: INPUT, mode: pullUp}
+  - {pin_num: '70', peripheral: GPIO, signal: 'PIO0, 17', pin_signal: PIO0_17/FC4_SSEL2/SD_CARD_DET_N/SCT0_GPI7/SCT0_OUT0/EMC_OEN/ENET_TXD1, direction: OUTPUT, gpio_init_state: 'true',
+    mode: pullUp}
   - {pin_num: '72', peripheral: GPIO, signal: 'PIO0, 18', pin_signal: PIO0_18/FC4_CTS_SDA_SSEL0/SD_WR_PRT/CTIMER1_MAT0/SCT0_OUT1/SCI1_SCLK/EMC_A(0), direction: OUTPUT,
     gpio_init_state: 'true'}
   - {pin_num: '73', peripheral: GPIO, signal: 'PIO1, 28', pin_signal: PIO1_28/FC7_SCK/SD_D(5)/CTIMER0_CAP2/EMC_D(12), direction: INPUT}
@@ -85,6 +86,9 @@ BOARD_InitPins:
   - {pin_num: '60', peripheral: GPIO, signal: 'PIO1, 3', pin_signal: PIO1_3/CAN0_RD/SCT0_OUT4/PDM1_DATA/USB0_PORTPWRN, direction: INPUT, mode: pullDown}
   - {pin_num: '81', peripheral: FLEXCOMM7, signal: RXD_SDA_MOSI_DATA, pin_signal: PIO1_29/FC7_RXD_SDA_MOSI_DATA/SD_D(6)/SCT0_GPI6/USB1_PORTPWRN/USB1_FRAME/EMC_D(13)}
   - {pin_num: '86', peripheral: FLEXCOMM7, signal: TXD_SCL_MISO_WS, pin_signal: PIO1_30/FC7_TXD_SCL_MISO_WS/SD_D(7)/SCT0_GPI7/USB1_OVERCURRENTN/USB1_UP_LED/EMC_D(14)}
+  - {pin_num: '12', peripheral: USBHSH, signal: USB_DM, pin_signal: USB1_DM}
+  - {pin_num: '13', peripheral: USBHSH, signal: USB_DP, pin_signal: USB1_DP}
+  - {pin_num: '9', peripheral: USBHSH, signal: USB_VBUS, pin_signal: USB1_VBUS}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
  */
 /* clang-format on */
@@ -126,12 +130,12 @@ void BOARD_InitPins(void)
     /* Initialize GPIO functionality on pin PIO0_14 (pin 69)  */
     GPIO_PinInit(BOARD_INITPINS_MK4_GPIO, BOARD_INITPINS_MK4_PORT, BOARD_INITPINS_MK4_PIN, &MK4_config);
 
-    gpio_pin_config_t T2OLD_config = {
-        .pinDirection = kGPIO_DigitalInput,
-        .outputLogic = 0U
+    gpio_pin_config_t BR2_config = {
+        .pinDirection = kGPIO_DigitalOutput,
+        .outputLogic = 1U
     };
     /* Initialize GPIO functionality on pin PIO0_17 (pin 70)  */
-    GPIO_PinInit(BOARD_INITPINS_T2OLD_GPIO, BOARD_INITPINS_T2OLD_PORT, BOARD_INITPINS_T2OLD_PIN, &T2OLD_config);
+    GPIO_PinInit(BOARD_INITPINS_BR2_GPIO, BOARD_INITPINS_BR2_PORT, BOARD_INITPINS_BR2_PIN, &BR2_config);
 
     gpio_pin_config_t BR4_config = {
         .pinDirection = kGPIO_DigitalOutput,
@@ -231,12 +235,12 @@ void BOARD_InitPins(void)
     /* Initialize GPIO functionality on pin PIO1_27 (pin 68)  */
     GPIO_PinInit(BOARD_INITPINS_T7_GPIO, BOARD_INITPINS_T7_PORT, BOARD_INITPINS_T7_PIN, &T7_config);
 
-    gpio_pin_config_t T0OLD_config = {
+    gpio_pin_config_t T5_config = {
         .pinDirection = kGPIO_DigitalInput,
         .outputLogic = 0U
     };
     /* Initialize GPIO functionality on pin PIO1_28 (pin 73)  */
-    GPIO_PinInit(BOARD_INITPINS_T0OLD_GPIO, BOARD_INITPINS_T0OLD_PORT, BOARD_INITPINS_T0OLD_PIN, &T0OLD_config);
+    GPIO_PinInit(BOARD_INITPINS_T5_GPIO, BOARD_INITPINS_T5_PORT, BOARD_INITPINS_T5_PIN, &T5_config);
 
     IOCON->PIO[0][13] = ((IOCON->PIO[0][13] &
                           /* Mask bits to zero which are setting */
