@@ -39,13 +39,16 @@ void BOARD_InitBootPins(void);
 #define PIO014_FUNC_ALT0 0x00u
 /*!
  * @brief Select Analog/Digital mode.: Digital mode. */
+#define PIO015_DIGIMODE_DIGITAL 0x01u
+/*!
+ * @brief Selects pin function.: Alternative connection 0. */
+#define PIO015_FUNC_ALT0 0x00u
+/*!
+ * @brief Select Analog/Digital mode.: Digital mode. */
 #define PIO017_DIGIMODE_DIGITAL 0x01u
 /*!
  * @brief Selects pin function.: Alternative connection 0. */
 #define PIO017_FUNC_ALT0 0x00u
-/*!
- * @brief Selects function mode (on-chip pull-up/pull-down resistor control).: Pull-up. Pull-up resistor enabled. */
-#define PIO017_MODE_PULL_UP 0x02u
 /*!
  * @brief Select Analog/Digital mode.: Digital mode. */
 #define PIO018_DIGIMODE_DIGITAL 0x01u
@@ -54,28 +57,94 @@ void BOARD_InitBootPins(void);
 #define PIO018_FUNC_ALT0 0x00u
 /*!
  * @brief Select Analog/Digital mode.: Digital mode. */
-#define PIO024_DIGIMODE_DIGITAL 0x01u
+#define PIO019_DIGIMODE_DIGITAL 0x01u
 /*!
  * @brief Selects pin function.: Alternative connection 0. */
-#define PIO024_FUNC_ALT0 0x00u
+#define PIO019_FUNC_ALT0 0x00u
+/*!
+ * @brief Select Analog/Digital mode.: Digital mode. */
+#define PIO01_DIGIMODE_DIGITAL 0x01u
+/*!
+ * @brief Selects pin function.: Alternative connection 0. */
+#define PIO01_FUNC_ALT0 0x00u
+/*!
+ * @brief Select Analog/Digital mode.: Digital mode. */
+#define PIO020_DIGIMODE_DIGITAL 0x01u
+/*!
+ * @brief Selects pin function.: Alternative connection 0. */
+#define PIO020_FUNC_ALT0 0x00u
+/*!
+ * @brief Select Analog/Digital mode.: Digital mode. */
+#define PIO021_DIGIMODE_DIGITAL 0x01u
+/*!
+ * @brief Selects pin function.: Alternative connection 0. */
+#define PIO021_FUNC_ALT0 0x00u
+/*!
+ * @brief Select Analog/Digital mode.: Digital mode. */
+#define PIO022_DIGIMODE_DIGITAL 0x01u
+/*!
+ * @brief Selects pin function.: Alternative connection 0. */
+#define PIO022_FUNC_ALT0 0x00u
+/*!
+ * @brief Select Analog/Digital mode.: Digital mode. */
+#define PIO023_DIGIMODE_DIGITAL 0x01u
+/*!
+ * @brief Selects pin function.: Alternative connection 6. */
+#define PIO023_FUNC_ALT6 0x06u
+/*!
+ * @brief Select Analog/Digital mode.: Digital mode. */
+#define PIO024_DIGIMODE_DIGITAL 0x01u
+/*!
+ * @brief Selects pin function.: Alternative connection 6. */
+#define PIO024_FUNC_ALT6 0x06u
 /*!
  * @brief Select Analog/Digital mode.: Digital mode. */
 #define PIO025_DIGIMODE_DIGITAL 0x01u
 /*!
- * @brief Selects pin function.: Alternative connection 0. */
-#define PIO025_FUNC_ALT0 0x00u
+ * @brief Selects pin function.: Alternative connection 6. */
+#define PIO025_FUNC_ALT6 0x06u
+/*!
+ * @brief Select Analog/Digital mode.: Digital mode. */
+#define PIO026_DIGIMODE_DIGITAL 0x01u
+/*!
+ * @brief Selects pin function.: Alternative connection 6. */
+#define PIO026_FUNC_ALT6 0x06u
 /*!
  * @brief Select Analog/Digital mode.: Digital mode. */
 #define PIO027_DIGIMODE_DIGITAL 0x01u
 /*!
- * @brief Selects pin function.: Alternative connection 0. */
-#define PIO027_FUNC_ALT0 0x00u
+ * @brief Selects pin function.: Alternative connection 6. */
+#define PIO027_FUNC_ALT6 0x06u
 /*!
  * @brief Select Analog/Digital mode.: Digital mode. */
 #define PIO028_DIGIMODE_DIGITAL 0x01u
 /*!
+ * @brief Selects pin function.: Alternative connection 6. */
+#define PIO028_FUNC_ALT6 0x06u
+/*!
+ * @brief Select Analog/Digital mode.: Digital mode. */
+#define PIO03_DIGIMODE_DIGITAL 0x01u
+/*!
  * @brief Selects pin function.: Alternative connection 0. */
-#define PIO028_FUNC_ALT0 0x00u
+#define PIO03_FUNC_ALT0 0x00u
+/*!
+ * @brief Select Analog/Digital mode.: Digital mode. */
+#define PIO05_DIGIMODE_DIGITAL 0x01u
+/*!
+ * @brief Selects pin function.: Alternative connection 0. */
+#define PIO05_FUNC_ALT0 0x00u
+/*!
+ * @brief Select Analog/Digital mode.: Digital mode. */
+#define PIO06_DIGIMODE_DIGITAL 0x01u
+/*!
+ * @brief Selects pin function.: Alternative connection 0. */
+#define PIO06_FUNC_ALT0 0x00u
+/*!
+ * @brief Select Analog/Digital mode.: Digital mode. */
+#define PIO07_DIGIMODE_DIGITAL 0x01u
+/*!
+ * @brief Selects pin function.: Alternative connection 0. */
+#define PIO07_FUNC_ALT0 0x00u
 /*!
  * @brief Select Analog/Digital mode.: Digital mode. */
 #define PIO08_DIGIMODE_DIGITAL 0x01u
@@ -84,16 +153,58 @@ void BOARD_InitBootPins(void);
 #define PIO08_FUNC_ALT0 0x00u
 /*!
  * @brief Select Analog/Digital mode.: Digital mode. */
+#define PIO09_DIGIMODE_DIGITAL 0x01u
+/*!
+ * @brief Selects pin function.: Alternative connection 0. */
+#define PIO09_FUNC_ALT0 0x00u
+/*!
+ * @brief Select Analog/Digital mode.: Digital mode. */
 #define PIO110_DIGIMODE_DIGITAL 0x01u
 /*!
  * @brief Selects pin function.: Alternative connection 2. */
 #define PIO110_FUNC_ALT2 0x02u
 /*!
  * @brief Select Analog/Digital mode.: Digital mode. */
+#define PIO111_DIGIMODE_DIGITAL 0x01u
+/*!
+ * @brief Selects pin function.: Alternative connection 0. */
+#define PIO111_FUNC_ALT0 0x00u
+/*!
+ * @brief Select Analog/Digital mode.: Digital mode. */
+#define PIO112_DIGIMODE_DIGITAL 0x01u
+/*!
+ * @brief Selects pin function.: Alternative connection 0. */
+#define PIO112_FUNC_ALT0 0x00u
+/*!
+ * @brief Select Analog/Digital mode.: Digital mode. */
+#define PIO113_DIGIMODE_DIGITAL 0x01u
+/*!
+ * @brief Selects pin function.: Alternative connection 0. */
+#define PIO113_FUNC_ALT0 0x00u
+/*!
+ * @brief Select Analog/Digital mode.: Digital mode. */
+#define PIO114_DIGIMODE_DIGITAL 0x01u
+/*!
+ * @brief Selects pin function.: Alternative connection 0. */
+#define PIO114_FUNC_ALT0 0x00u
+/*!
+ * @brief Select Analog/Digital mode.: Digital mode. */
 #define PIO117_DIGIMODE_DIGITAL 0x01u
 /*!
  * @brief Selects pin function.: Alternative connection 0. */
 #define PIO117_FUNC_ALT0 0x00u
+/*!
+ * @brief Select Analog/Digital mode.: Digital mode. */
+#define PIO119_DIGIMODE_DIGITAL 0x01u
+/*!
+ * @brief Selects pin function.: Alternative connection 0. */
+#define PIO119_FUNC_ALT0 0x00u
+/*!
+ * @brief Select Analog/Digital mode.: Digital mode. */
+#define PIO120_DIGIMODE_DIGITAL 0x01u
+/*!
+ * @brief Selects pin function.: Alternative connection 0. */
+#define PIO120_FUNC_ALT0 0x00u
 /*!
  * @brief Select Analog/Digital mode.: Digital mode. */
 #define PIO121_DIGIMODE_DIGITAL 0x01u
@@ -156,6 +267,12 @@ void BOARD_InitBootPins(void);
 #define PIO130_FUNC_ALT1 0x01u
 /*!
  * @brief Select Analog/Digital mode.: Digital mode. */
+#define PIO131_DIGIMODE_DIGITAL 0x01u
+/*!
+ * @brief Selects pin function.: Alternative connection 0. */
+#define PIO131_FUNC_ALT0 0x00u
+/*!
+ * @brief Select Analog/Digital mode.: Digital mode. */
 #define PIO13_DIGIMODE_DIGITAL 0x01u
 /*!
  * @brief Selects pin function.: Alternative connection 0. */
@@ -180,46 +297,25 @@ void BOARD_InitBootPins(void);
  * @brief Selects pin function.: Alternative connection 0. */
 #define PIO19_FUNC_ALT0 0x00u
 
-/*! @name PIO1_8 (number 36), T4
+/*! @name PIO1_8 (number 36), MK0
   @{ */
-#define BOARD_INITPINS_T4_GPIO GPIO /*!<@brief GPIO device name: GPIO */
-#define BOARD_INITPINS_T4_PORT 1U   /*!<@brief PORT device name: 1U */
-#define BOARD_INITPINS_T4_PIN 8U    /*!<@brief 1U pin index: 8 */
-                                    /* @} */
-
-/*! @name PIO1_21 (number 37), MK2
-  @{ */
-#define BOARD_INITPINS_MK2_GPIO GPIO /*!<@brief GPIO device name: GPIO */
-#define BOARD_INITPINS_MK2_PORT 1U   /*!<@brief PORT device name: 1U */
-#define BOARD_INITPINS_MK2_PIN 21U   /*!<@brief 1U pin index: 21 */
+#define BOARD_INITPINS_MK0_GPIO GPIO /*!<@brief GPIO device name: GPIO */
+#define BOARD_INITPINS_MK0_PORT 1U   /*!<@brief PORT device name: 1U */
+#define BOARD_INITPINS_MK0_PIN 8U    /*!<@brief 1U pin index: 8 */
                                      /* @} */
 
-/*! @name PIO0_24 (number 38), T3
+/*! @name PIO1_21 (number 37), T0
   @{ */
-#define BOARD_INITPINS_T3_GPIO GPIO /*!<@brief GPIO device name: GPIO */
-#define BOARD_INITPINS_T3_PORT 0U   /*!<@brief PORT device name: 0U */
-#define BOARD_INITPINS_T3_PIN 24U   /*!<@brief 0U pin index: 24 */
+#define BOARD_INITPINS_T0_GPIO GPIO /*!<@brief GPIO device name: GPIO */
+#define BOARD_INITPINS_T0_PORT 1U   /*!<@brief PORT device name: 1U */
+#define BOARD_INITPINS_T0_PIN 21U   /*!<@brief 1U pin index: 21 */
                                     /* @} */
 
-/*! @name PIO1_9 (number 39), BR1
+/*! @name PIO1_9 (number 39), BR0
   @{ */
-#define BOARD_INITPINS_BR1_GPIO GPIO /*!<@brief GPIO device name: GPIO */
-#define BOARD_INITPINS_BR1_PORT 1U   /*!<@brief PORT device name: 1U */
-#define BOARD_INITPINS_BR1_PIN 9U    /*!<@brief 1U pin index: 9 */
-                                     /* @} */
-
-/*! @name PIO0_25 (number 40), T2
-  @{ */
-#define BOARD_INITPINS_T2_GPIO GPIO /*!<@brief GPIO device name: GPIO */
-#define BOARD_INITPINS_T2_PORT 0U   /*!<@brief PORT device name: 0U */
-#define BOARD_INITPINS_T2_PIN 25U   /*!<@brief 0U pin index: 25 */
-                                    /* @} */
-
-/*! @name PIO0_27 (number 42), MK1
-  @{ */
-#define BOARD_INITPINS_MK1_GPIO GPIO /*!<@brief GPIO device name: GPIO */
-#define BOARD_INITPINS_MK1_PORT 0U   /*!<@brief PORT device name: 0U */
-#define BOARD_INITPINS_MK1_PIN 27U   /*!<@brief 0U pin index: 27 */
+#define BOARD_INITPINS_BR0_GPIO GPIO /*!<@brief GPIO device name: GPIO */
+#define BOARD_INITPINS_BR0_PORT 1U   /*!<@brief PORT device name: 1U */
+#define BOARD_INITPINS_BR0_PIN 9U    /*!<@brief 1U pin index: 9 */
                                      /* @} */
 
 /*! @name PIO1_22 (number 43), T1
@@ -229,81 +325,60 @@ void BOARD_InitBootPins(void);
 #define BOARD_INITPINS_T1_PIN 22U   /*!<@brief 1U pin index: 22 */
                                     /* @} */
 
-/*! @name PIO0_28 (number 44), BR0
+/*! @name PIO1_17 (number 47), T2
   @{ */
-#define BOARD_INITPINS_BR0_GPIO GPIO /*!<@brief GPIO device name: GPIO */
-#define BOARD_INITPINS_BR0_PORT 0U   /*!<@brief PORT device name: 0U */
-#define BOARD_INITPINS_BR0_PIN 28U   /*!<@brief 0U pin index: 28 */
-                                     /* @} */
-
-/*! @name PIO1_23 (number 46), T0
-  @{ */
-#define BOARD_INITPINS_T0_GPIO GPIO /*!<@brief GPIO device name: GPIO */
-#define BOARD_INITPINS_T0_PORT 1U   /*!<@brief PORT device name: 1U */
-#define BOARD_INITPINS_T0_PIN 23U   /*!<@brief 1U pin index: 23 */
+#define BOARD_INITPINS_T2_GPIO GPIO /*!<@brief GPIO device name: GPIO */
+#define BOARD_INITPINS_T2_PORT 1U   /*!<@brief PORT device name: 1U */
+#define BOARD_INITPINS_T2_PIN 17U   /*!<@brief 1U pin index: 17 */
                                     /* @} */
 
-/*! @name PIO1_17 (number 47), MK0
+/*! @name PIO1_26 (number 63), BR1
   @{ */
-#define BOARD_INITPINS_MK0_GPIO GPIO /*!<@brief GPIO device name: GPIO */
-#define BOARD_INITPINS_MK0_PORT 1U   /*!<@brief PORT device name: 1U */
-#define BOARD_INITPINS_MK0_PIN 17U   /*!<@brief 1U pin index: 17 */
+#define BOARD_INITPINS_BR1_GPIO GPIO /*!<@brief GPIO device name: GPIO */
+#define BOARD_INITPINS_BR1_PORT 1U   /*!<@brief PORT device name: 1U */
+#define BOARD_INITPINS_BR1_PIN 26U   /*!<@brief 1U pin index: 26 */
                                      /* @} */
 
-/*! @name PIO1_26 (number 63), MK3
+/*! @name PIO0_8 (number 64), T3
   @{ */
-#define BOARD_INITPINS_MK3_GPIO GPIO /*!<@brief GPIO device name: GPIO */
-#define BOARD_INITPINS_MK3_PORT 1U   /*!<@brief PORT device name: 1U */
-#define BOARD_INITPINS_MK3_PIN 26U   /*!<@brief 1U pin index: 26 */
-                                     /* @} */
-
-/*! @name PIO0_8 (number 64), T6
-  @{ */
-#define BOARD_INITPINS_T6_GPIO GPIO /*!<@brief GPIO device name: GPIO */
-#define BOARD_INITPINS_T6_PORT 0U   /*!<@brief PORT device name: 0U */
-#define BOARD_INITPINS_T6_PIN 8U    /*!<@brief 0U pin index: 8 */
+#define BOARD_INITPINS_T3_GPIO GPIO /*!<@brief GPIO device name: GPIO */
+#define BOARD_INITPINS_T3_PORT 0U   /*!<@brief PORT device name: 0U */
+#define BOARD_INITPINS_T3_PIN 8U    /*!<@brief 0U pin index: 8 */
                                     /* @} */
 
-/*! @name PIO0_13 (number 67), BR3
+/*! @name PIO0_13 (number 67), MK2
   @{ */
-#define BOARD_INITPINS_BR3_GPIO GPIO /*!<@brief GPIO device name: GPIO */
-#define BOARD_INITPINS_BR3_PORT 0U   /*!<@brief PORT device name: 0U */
-#define BOARD_INITPINS_BR3_PIN 13U   /*!<@brief 0U pin index: 13 */
+#define BOARD_INITPINS_MK2_GPIO GPIO /*!<@brief GPIO device name: GPIO */
+#define BOARD_INITPINS_MK2_PORT 0U   /*!<@brief PORT device name: 0U */
+#define BOARD_INITPINS_MK2_PIN 13U   /*!<@brief 0U pin index: 13 */
                                      /* @} */
 
-/*! @name PIO1_27 (number 68), T7
+/*! @name PIO1_27 (number 68), T4
   @{ */
-#define BOARD_INITPINS_T7_GPIO GPIO /*!<@brief GPIO device name: GPIO */
-#define BOARD_INITPINS_T7_PORT 1U   /*!<@brief PORT device name: 1U */
-#define BOARD_INITPINS_T7_PIN 27U   /*!<@brief 1U pin index: 27 */
+#define BOARD_INITPINS_T4_GPIO GPIO /*!<@brief GPIO device name: GPIO */
+#define BOARD_INITPINS_T4_PORT 1U   /*!<@brief PORT device name: 1U */
+#define BOARD_INITPINS_T4_PIN 27U   /*!<@brief 1U pin index: 27 */
                                     /* @} */
 
-/*! @name PIO0_14 (number 69), MK4
-  @{ */
-#define BOARD_INITPINS_MK4_GPIO GPIO /*!<@brief GPIO device name: GPIO */
-#define BOARD_INITPINS_MK4_PORT 0U   /*!<@brief PORT device name: 0U */
-#define BOARD_INITPINS_MK4_PIN 14U   /*!<@brief 0U pin index: 14 */
-                                     /* @} */
-
-/*! @name PIO0_17 (number 70), BR2
+/*! @name PIO0_14 (number 69), BR2
   @{ */
 #define BOARD_INITPINS_BR2_GPIO GPIO /*!<@brief GPIO device name: GPIO */
 #define BOARD_INITPINS_BR2_PORT 0U   /*!<@brief PORT device name: 0U */
-#define BOARD_INITPINS_BR2_PIN 17U   /*!<@brief 0U pin index: 17 */
+#define BOARD_INITPINS_BR2_PIN 14U   /*!<@brief 0U pin index: 14 */
                                      /* @} */
 
-/*! @name PIO0_18 (number 72), BR4
+/*! @name PIO0_18 (number 72), MK3
   @{ */
-#define BOARD_INITPINS_BR4_GPIO GPIO /*!<@brief GPIO device name: GPIO */
-#define BOARD_INITPINS_BR4_PORT 0U   /*!<@brief PORT device name: 0U */
-#define BOARD_INITPINS_BR4_PIN 18U   /*!<@brief 0U pin index: 18 */
+#define BOARD_INITPINS_MK3_GPIO GPIO /*!<@brief GPIO device name: GPIO */
+#define BOARD_INITPINS_MK3_PORT 0U   /*!<@brief PORT device name: 0U */
+#define BOARD_INITPINS_MK3_PIN 18U   /*!<@brief 0U pin index: 18 */
                                      /* @} */
 
-/*! @name PIO1_28 (number 73), T5
+/*! @name PIO1_28 (number 73), T6
   @{ */
-#define BOARD_INITPINS_T5_GPIO GPIO /*!<@brief GPIO device name: GPIO */
-#define BOARD_INITPINS_T5_PORT 1U   /*!<@brief PORT device name: 1U */
-#define BOARD_INITPINS_T5_PIN 28U   /*!<@brief 1U pin index: 28 */
+#define BOARD_INITPINS_T6_GPIO GPIO /*!<@brief GPIO device name: GPIO */
+#define BOARD_INITPINS_T6_PORT 1U   /*!<@brief PORT device name: 1U */
+#define BOARD_INITPINS_T6_PIN 28U   /*!<@brief 1U pin index: 28 */
                                     /* @} */
 
 /*! @name PIO1_3 (number 60), RASPI_DETECT
@@ -312,6 +387,146 @@ void BOARD_InitBootPins(void);
 #define BOARD_INITPINS_RASPI_DETECT_PORT 1U   /*!<@brief PORT device name: 1U */
 #define BOARD_INITPINS_RASPI_DETECT_PIN 3U    /*!<@brief 1U pin index: 3 */
                                               /* @} */
+
+/*! @name PIO1_19 (number 16), SW2CLK
+  @{ */
+#define BOARD_INITPINS_SW2CLK_GPIO GPIO /*!<@brief GPIO device name: GPIO */
+#define BOARD_INITPINS_SW2CLK_PORT 1U   /*!<@brief PORT device name: 1U */
+#define BOARD_INITPINS_SW2CLK_PIN 19U   /*!<@brief 1U pin index: 19 */
+                                        /* @} */
+
+/*! @name PIO1_20 (number 17), SW2DATA
+  @{ */
+#define BOARD_INITPINS_SW2DATA_GPIO GPIO /*!<@brief GPIO device name: GPIO */
+#define BOARD_INITPINS_SW2DATA_PORT 1U   /*!<@brief PORT device name: 1U */
+#define BOARD_INITPINS_SW2DATA_PIN 20U   /*!<@brief 1U pin index: 20 */
+                                         /* @} */
+
+/*! @name PIO0_15 (number 26), LD1XLAT
+  @{ */
+#define BOARD_INITPINS_LD1XLAT_GPIO GPIO /*!<@brief GPIO device name: GPIO */
+#define BOARD_INITPINS_LD1XLAT_PORT 0U   /*!<@brief PORT device name: 0U */
+#define BOARD_INITPINS_LD1XLAT_PIN 15U   /*!<@brief 0U pin index: 15 */
+                                         /* @} */
+
+/*! @name PIO1_23 (number 46), MK1
+  @{ */
+#define BOARD_INITPINS_MK1_GPIO GPIO /*!<@brief GPIO device name: GPIO */
+#define BOARD_INITPINS_MK1_PORT 1U   /*!<@brief PORT device name: 1U */
+#define BOARD_INITPINS_MK1_PIN 23U   /*!<@brief 1U pin index: 23 */
+                                     /* @} */
+
+/*! @name PIO0_7 (number 61), SW1CLK
+  @{ */
+#define BOARD_INITPINS_SW1CLK_GPIO GPIO /*!<@brief GPIO device name: GPIO */
+#define BOARD_INITPINS_SW1CLK_PORT 0U   /*!<@brief PORT device name: 0U */
+#define BOARD_INITPINS_SW1CLK_PIN 7U    /*!<@brief 0U pin index: 7 */
+                                        /* @} */
+
+/*! @name PIO1_12 (number 62), LD2CLK
+  @{ */
+#define BOARD_INITPINS_LD2CLK_GPIO GPIO /*!<@brief GPIO device name: GPIO */
+#define BOARD_INITPINS_LD2CLK_PORT 1U   /*!<@brief PORT device name: 1U */
+#define BOARD_INITPINS_LD2CLK_PIN 12U   /*!<@brief 1U pin index: 12 */
+                                        /* @} */
+
+/*! @name PIO0_9 (number 65), SW1DATA
+  @{ */
+#define BOARD_INITPINS_SW1DATA_GPIO GPIO /*!<@brief GPIO device name: GPIO */
+#define BOARD_INITPINS_SW1DATA_PORT 0U   /*!<@brief PORT device name: 0U */
+#define BOARD_INITPINS_SW1DATA_PIN 9U    /*!<@brief 0U pin index: 9 */
+                                         /* @} */
+
+/*! @name PIO1_13 (number 66), LD2DATA
+  @{ */
+#define BOARD_INITPINS_LD2DATA_GPIO GPIO /*!<@brief GPIO device name: GPIO */
+#define BOARD_INITPINS_LD2DATA_PORT 1U   /*!<@brief PORT device name: 1U */
+#define BOARD_INITPINS_LD2DATA_PIN 13U   /*!<@brief 1U pin index: 13 */
+                                         /* @} */
+
+/*! @name PIO0_17 (number 70), T5
+  @{ */
+#define BOARD_INITPINS_T5_GPIO GPIO /*!<@brief GPIO device name: GPIO */
+#define BOARD_INITPINS_T5_PORT 0U   /*!<@brief PORT device name: 0U */
+#define BOARD_INITPINS_T5_PIN 17U   /*!<@brief 0U pin index: 17 */
+                                    /* @} */
+
+/*! @name PIO0_20 (number 74), BR3
+  @{ */
+#define BOARD_INITPINS_BR3_GPIO GPIO /*!<@brief GPIO device name: GPIO */
+#define BOARD_INITPINS_BR3_PORT 0U   /*!<@brief PORT device name: 0U */
+#define BOARD_INITPINS_BR3_PIN 20U   /*!<@brief 0U pin index: 20 */
+                                     /* @} */
+
+/*! @name PIO0_21 (number 77), T7
+  @{ */
+#define BOARD_INITPINS_T7_GPIO GPIO /*!<@brief GPIO device name: GPIO */
+#define BOARD_INITPINS_T7_PORT 0U   /*!<@brief PORT device name: 0U */
+#define BOARD_INITPINS_T7_PIN 21U   /*!<@brief 0U pin index: 21 */
+                                    /* @} */
+
+/*! @name PIO1_14 (number 78), MK4
+  @{ */
+#define BOARD_INITPINS_MK4_GPIO GPIO /*!<@brief GPIO device name: GPIO */
+#define BOARD_INITPINS_MK4_PORT 1U   /*!<@brief PORT device name: 1U */
+#define BOARD_INITPINS_MK4_PIN 14U   /*!<@brief 1U pin index: 14 */
+                                     /* @} */
+
+/*! @name PIO0_22 (number 80), BR4
+  @{ */
+#define BOARD_INITPINS_BR4_GPIO GPIO /*!<@brief GPIO device name: GPIO */
+#define BOARD_INITPINS_BR4_PORT 0U   /*!<@brief PORT device name: 0U */
+#define BOARD_INITPINS_BR4_PIN 22U   /*!<@brief 0U pin index: 22 */
+                                     /* @} */
+
+/*! @name PIO0_3 (number 85), LD1DATA
+  @{ */
+#define BOARD_INITPINS_LD1DATA_GPIO GPIO /*!<@brief GPIO device name: GPIO */
+#define BOARD_INITPINS_LD1DATA_PORT 0U   /*!<@brief PORT device name: 0U */
+#define BOARD_INITPINS_LD1DATA_PIN 3U    /*!<@brief 0U pin index: 3 */
+                                         /* @} */
+
+/*! @name PIO0_5 (number 89), LD2BLANK
+  @{ */
+#define BOARD_INITPINS_LD2BLANK_GPIO GPIO /*!<@brief GPIO device name: GPIO */
+#define BOARD_INITPINS_LD2BLANK_PORT 0U   /*!<@brief PORT device name: 0U */
+#define BOARD_INITPINS_LD2BLANK_PIN 5U    /*!<@brief 0U pin index: 5 */
+                                          /* @} */
+
+/*! @name PIO0_6 (number 90), LD1CLK
+  @{ */
+#define BOARD_INITPINS_LD1CLK_GPIO GPIO /*!<@brief GPIO device name: GPIO */
+#define BOARD_INITPINS_LD1CLK_PORT 0U   /*!<@brief PORT device name: 0U */
+#define BOARD_INITPINS_LD1CLK_PIN 6U    /*!<@brief 0U pin index: 6 */
+                                        /* @} */
+
+/*! @name PIO0_19 (number 91), SW1LATCH
+  @{ */
+#define BOARD_INITPINS_SW1LATCH_GPIO GPIO /*!<@brief GPIO device name: GPIO */
+#define BOARD_INITPINS_SW1LATCH_PORT 0U   /*!<@brief PORT device name: 0U */
+#define BOARD_INITPINS_SW1LATCH_PIN 19U   /*!<@brief 0U pin index: 19 */
+                                          /* @} */
+
+/*! @name PIO1_31 (number 92), LD2XLAT
+  @{ */
+#define BOARD_INITPINS_LD2XLAT_GPIO GPIO /*!<@brief GPIO device name: GPIO */
+#define BOARD_INITPINS_LD2XLAT_PORT 1U   /*!<@brief PORT device name: 1U */
+#define BOARD_INITPINS_LD2XLAT_PIN 31U   /*!<@brief 1U pin index: 31 */
+                                         /* @} */
+
+/*! @name PIO1_11 (number 94), SW2LATCH
+  @{ */
+#define BOARD_INITPINS_SW2LATCH_GPIO GPIO /*!<@brief GPIO device name: GPIO */
+#define BOARD_INITPINS_SW2LATCH_PORT 1U   /*!<@brief PORT device name: 1U */
+#define BOARD_INITPINS_SW2LATCH_PIN 11U   /*!<@brief 1U pin index: 11 */
+                                          /* @} */
+
+/*! @name PIO0_1 (number 100), LD1BLANK
+  @{ */
+#define BOARD_INITPINS_LD1BLANK_GPIO GPIO /*!<@brief GPIO device name: GPIO */
+#define BOARD_INITPINS_LD1BLANK_PORT 0U   /*!<@brief PORT device name: 0U */
+#define BOARD_INITPINS_LD1BLANK_PIN 1U    /*!<@brief 0U pin index: 1 */
+                                          /* @} */
 
 /*!
  * @brief Configures pin routing and optionally pin electrical features.
