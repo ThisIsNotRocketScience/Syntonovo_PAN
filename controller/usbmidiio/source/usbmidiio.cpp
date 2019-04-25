@@ -47,6 +47,9 @@
 #include "queue.h"
 #include "semphr.h"
 #include "paramlist.h"
+#include <math.h>
+#include <stdlib.h>
+
 /* TODO: insert other definitions and declarations here. */
 
 void preset_init();
@@ -93,6 +96,238 @@ BaseType_t keys_release(int keyindex)
 	return pdFALSE;
 }
 
+void L2ClkOn()
+{
+	BOARD_INITPINS_LD2CLK_GPIO->W[BOARD_INITPINS_LD2CLK_PORT][BOARD_INITPINS_LD2CLK_PIN] = 1;
+}
+
+void L2ClkOff()
+{
+	BOARD_INITPINS_LD2CLK_GPIO->W[BOARD_INITPINS_LD2CLK_PORT][BOARD_INITPINS_LD2CLK_PIN] = 0;
+}
+
+void L2DatOn()
+{
+	BOARD_INITPINS_LD2DATA_GPIO->W[BOARD_INITPINS_LD2DATA_PORT][BOARD_INITPINS_LD2DATA_PIN] = 1;
+}
+
+void L2DatOff()
+{
+	BOARD_INITPINS_LD2DATA_GPIO->W[BOARD_INITPINS_LD2DATA_PORT][BOARD_INITPINS_LD2DATA_PIN] = 0;
+}
+
+
+void L2LatchOn()
+{
+	BOARD_INITPINS_LD2XLAT_GPIO->W[BOARD_INITPINS_LD2XLAT_PORT][BOARD_INITPINS_LD2XLAT_PIN] = 1;
+}
+
+void L2LatchOff()
+{
+	BOARD_INITPINS_LD2XLAT_GPIO->W[BOARD_INITPINS_LD2XLAT_PORT][BOARD_INITPINS_LD2XLAT_PIN] = 0;
+}
+
+
+
+void L1ClkOn()
+{
+	BOARD_INITPINS_LD1CLK_GPIO->W[BOARD_INITPINS_LD1CLK_PORT][BOARD_INITPINS_LD1CLK_PIN] = 1;
+}
+
+void L1ClkOff()
+{
+	BOARD_INITPINS_LD1CLK_GPIO->W[BOARD_INITPINS_LD1CLK_PORT][BOARD_INITPINS_LD1CLK_PIN] = 0;
+}
+
+void L1DatOn()
+{
+	BOARD_INITPINS_LD1DATA_GPIO->W[BOARD_INITPINS_LD1DATA_PORT][BOARD_INITPINS_LD1DATA_PIN] = 1;
+}
+
+void L1DatOff()
+{
+	BOARD_INITPINS_LD1DATA_GPIO->W[BOARD_INITPINS_LD1DATA_PORT][BOARD_INITPINS_LD1DATA_PIN] = 0;
+}
+
+
+void L1LatchOn()
+{
+	BOARD_INITPINS_LD1XLAT_GPIO->W[BOARD_INITPINS_LD1XLAT_PORT][BOARD_INITPINS_LD1XLAT_PIN] = 1;
+}
+
+void L1LatchOff()
+{
+	BOARD_INITPINS_LD1XLAT_GPIO->W[BOARD_INITPINS_LD1XLAT_PORT][BOARD_INITPINS_LD1XLAT_PIN] = 0;
+}
+
+void L1BlankOff()
+{
+	BOARD_INITPINS_LD1BLANK_GPIO->W[BOARD_INITPINS_LD1BLANK_PORT][BOARD_INITPINS_LD1BLANK_PIN] = 0;
+}
+void L1BlankOn()
+{
+	BOARD_INITPINS_LD1BLANK_GPIO->W[BOARD_INITPINS_LD1BLANK_PORT][BOARD_INITPINS_LD1BLANK_PIN] = 1;
+}
+
+void L2BlankOff()
+{
+	BOARD_INITPINS_LD2BLANK_GPIO->W[BOARD_INITPINS_LD2BLANK_PORT][BOARD_INITPINS_LD2BLANK_PIN] = 0;
+}
+void L2BlankOn()
+{
+	BOARD_INITPINS_LD2BLANK_GPIO->W[BOARD_INITPINS_LD2BLANK_PORT][BOARD_INITPINS_LD2BLANK_PIN] = 1;
+}
+
+int Cur = 0;
+
+
+
+//int colorset1[24]= {255,255,0,  255,0,255,  0,255,255,  255,0,0,   0,255,0 ,  0,0,255,    255,255,255,  255,255,255};
+//int colorset1[24]= {255,255,0,  255,0,255,  0,255,255,  255,0,0,   0,255,0 ,  0,0,255,    255,255,255,  255,255,255};
+
+//                    brg      brg       brg
+int colorset1[24*2]= {0,40,0,  0,60,0,  0,80,0,  0,100,0,   0,110,0,   0,255,0,   0,400,0,  0,500,0};
+
+int colorset2[24*2]= {0,0,40,  0,0,60,  0,0,80,  0,0,100,   0,0,110 ,  0,0,255,    0,0,400,  0,0,500};
+
+void SetColor(int Led, int r, int g, int b)
+{
+	int idx = (Led) % 16;
+	int set = (Led) / 16;
+	int *colorset = set>0?colorset2:colorset1;
+	colorset[idx * 3 + 0] = b;
+	colorset[idx * 3 + 1] = r ;
+	colorset[idx * 3 + 2] = g;
+
+
+}
+
+void PWM2Set(int off)
+{
+	for (int c = 0;c<24;c++)
+		{
+			// 24 channels per TLC5974
+			// 12 bits per channel, send MSB first
+			for (int8_t b = 11; b >= 0; b--) {
+				L2ClkOff();
+
+				if (colorset2[c + off] & (1 << b))
+				{ L2DatOn();}
+				else
+				{L2DatOff();}
+
+				L2ClkOn();
+			}
+		}
+		L2ClkOff();
+
+}
+
+void Led2bits(int inp)
+{
+	for(int i =0 ;i<16;i++)
+	{
+		L2DatOn();
+		L2ClkOn();
+		L2ClkOff();
+	}
+}
+
+
+
+
+void PWM1Set(int off)
+{
+	for (int c = 0;c<24;c++)
+	{
+		// 24 channels per TLC5974
+		// 12 bits per channel, send MSB first
+		for (int8_t b = 11; b >= 0; b--) {
+			L1ClkOff();
+
+			if (colorset1[c + off] & (1 << b))
+			{ L1DatOn();}
+			else
+			{L1DatOff();}
+
+			L1ClkOn();
+		}
+	}
+	L1ClkOff();
+
+
+}
+
+void Led1bits(int inp)
+{
+	for(int i =0 ;i<16;i++)
+	{
+		L1ClkOff();
+		L1DatOn();
+		L1ClkOn();
+	}
+	L1ClkOff();
+}
+
+void SendLeds()
+{
+
+	// PWM ON ON PWM
+
+	// ON PWM ON PWM
+
+
+	Cur++;
+	for (int i = 0;i<32;i++)
+	{
+
+
+		SetColor(i,
+
+				sinf(i*6.283/32.0f + Cur *0.1)*2047+2048,
+				sinf(i*6.283/33.0f + Cur *0.13)*2047+2048,
+				sinf(i*6.283/34.0f + Cur *0.11)*2047+2048
+
+
+				);
+	}
+	// 1 chip 11 + 12 * 3 * 8  = 299
+	int pwmchip = 299;
+
+	int drv = 16;
+	PWM1Set(0);
+	Led1bits(0xffff);
+	PWM1Set(24);
+	Led1bits(0xffff);
+
+	L1LatchOn();
+	L1LatchOff();
+
+	PWM2Set(0);
+	Led2bits(0xffff);
+	Led2bits(0xffff);
+	PWM2Set(24);
+
+	L2LatchOn();
+	L2LatchOff();
+}
+
+void ScanButtonsAndEncoders()
+{
+
+}
+void LedsOff()
+{
+	L1BlankOn();
+	L2BlankOn();
+}
+
+
+void LedsOn()
+{
+	L1BlankOff();
+	L2BlankOff();
+}
 uint32_t ReadT()
 {
 	return (BOARD_INITPINS_T0_GPIO->B[BOARD_INITPINS_T0_PORT][BOARD_INITPINS_T0_PIN] << 0)
@@ -492,12 +727,27 @@ void USBTask(void* pvParameters)
 /*
  * @brief   Application entry point.
  */
+
+/* Task to be created. */
+void LedTask( void * pvParameters )
+{
+	const TickType_t xDelay = 15 / portTICK_PERIOD_MS;
+	for( ;; )
+    {
+        SendLeds();
+        vTaskDelay( xDelay );
+    }
+
+}
+
 int main(void) {
   	/* Init board hardware. */
-    BOARD_InitBootPins();
+       BOARD_InitBootPins();
     BOARD_InitBootClocks();
     BOARD_InitBootPeripherals();
 
+    LedsOff();
+    LedsOn();
     printf("Board init done\n");
 
     POWER_DisablePD(kPDRUNCFG_PD_USB1_PHY);
@@ -522,9 +772,13 @@ int main(void) {
     control_init();
     rpi_init();
 
+   // while(1) SendLeds();
+
+
     xKeyTimerSemaphore = xSemaphoreCreateBinary();
 
     xTaskCreate(KeyboardTask, "keys", 256, NULL, 2, NULL);
+    xTaskCreate(LedTask, "Leds", 256, NULL, 2, NULL);
     //xTaskCreate(RpiTask, "rpi", 256, NULL, 4, NULL);
     //xTaskCreate(USBTask, "usb", 512, NULL, 3, NULL);
 

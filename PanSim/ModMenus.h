@@ -58,6 +58,7 @@ ENDMENU()
 
 MENU(GuiState_CtrlSelect, "Control Assign", dataCtrl)
 
+/*
 CTRLMENU(Source_left_mod,"Left Mod")
 PARA("Scale", Output_MODL_SCALE)
 CTRLENDMENU()
@@ -111,6 +112,8 @@ CTRLENDMENU()
 
 CTRLMENU(Source_vel,"Velocity" )
 CTRLENDMENU()
+
+*/
 
 ENDMENU()
 

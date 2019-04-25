@@ -9,6 +9,8 @@
 
 #endif
 #include "../libs/lodepng-master/lodepng.h"
+#include "FinalPanEnums.h"
+
 #include "PanHeader.h"
 
 #define MENU(id,button,name) static int const MenuItemCount_##id = 0

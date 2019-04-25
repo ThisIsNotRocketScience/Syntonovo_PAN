@@ -16,7 +16,6 @@
 #endif
 
 LED(test,0,0,"led")
-
 LEDENCODER(VCO1, 42, 25, "VCO 1")
 LEDENCODER(VCO2, 77, 25, "VCO 2")
 LEDENCODER(VCO3, 112, 25, "VCO 3")
@@ -40,8 +39,8 @@ LEDENCODER(Cleanmix, 520, 65, "Cleanmix")
 LEDENCODER(Masterout, 553, 94, "Masterout")
 LEDENCODER(MasteroutHeadphone, 26, 94, "MasteroutHeadphone")
 
-LEDENCODER(SketchLeft, 0, 142, "SketchLeft")
-LEDENCODER(SketchRight, 0, 142, "SketchRight")
+LEDENCODER(SketchLeft, 100, 142, "SketchLeft")
+LEDENCODER(SketchRight, 400, 142, "SketchRight")
 
 
 LEDENCODER( F1, 221, 131, "F1")

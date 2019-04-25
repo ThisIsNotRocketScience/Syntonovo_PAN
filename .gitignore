@@ -45,3 +45,4 @@ Raspberry/Release
 *.TTF
 
 PanSim/imgui.ini
+/.metadata/

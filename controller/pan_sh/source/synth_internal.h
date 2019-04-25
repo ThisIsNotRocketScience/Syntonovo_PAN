@@ -77,7 +77,7 @@ param_t synth_param[SYNTH_PARAM_COUNT] =
 #define OUTPUT_VIRT(NAME, PGROUP, PID, CTRLTYPE, CTRLID, MODE, INITVALUE) \
 	MAPPING_##CTRLTYPE(CTRLID, NAME, 0)
 
-#include "paramdef.h"
+#include "../../interface/paramdef.h"
 
 #undef MAPPING_CTRL
 #undef MAPPING_INT
@@ -110,7 +110,7 @@ operator_param_t op_param[NUM_OPERATORS];
 	void virt_##NAME();
 #define SWITCH(NAME, ID)
 
-#include "paramdef.h"
+#include "../../interface/paramdef.h"
 
 #undef DO_OUTPUT_LIN
 #undef DO_OUTPUT_INV
@@ -141,7 +141,7 @@ void synth_mapping_init()
 
 #define SWITCH(NAME, ID)
 
-#include "paramdef.h"
+#include "../../interface/paramdef.h"
 
 #undef OUTPUT
 #undef OUTPUT_VIRT
@@ -156,7 +156,7 @@ void synth_mapping_reset()
 		synth_param[CTRLID].sum = 0;
 #define OUTPUT_VIRT(NAME, PGROUP, PID, CTRLTYPE, CTRLID, MODE, INITVALUE) \
 		synth_param[CTRLID].sum = 0;
-#include "paramdef.h"
+#include "../../interface/paramdef.h"
 #undef OUTPUT
 #undef OUTPUT_VIRT
 }
@@ -176,7 +176,7 @@ void synth_mapping_run()
 
 #define OUTPUT_VIRT(NAME, PGROUP, PID, CTRLTYPE, CTRLID, MODE, INITVALUE)
 
-#include "paramdef.h"
+#include "../../interface/paramdef.h"
 
 #undef DO_OUTPUT_LIN
 #undef DO_OUTPUT_INV
@@ -191,7 +191,7 @@ void synth_mapping_run()
 #define OUTPUT(NAME, PGROUP, PID, CTRLTYPE, CTRLID, MODE, INITVALUE)
 #define SWITCH(NAME, ID)
 
-#include "paramdef.h"
+#include "../../interface/paramdef.h"
 
 #undef OUTPUT
 #undef OUTPUT_VIRT

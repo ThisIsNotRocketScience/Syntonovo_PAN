@@ -91,6 +91,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessToFile>false</PreprocessToFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -177,6 +178,7 @@
     <ClCompile Include="..\libs\imgui-master\imgui.cpp" />
     <ClCompile Include="..\libs\imgui-master\imgui_draw.cpp" />
     <ClCompile Include="..\libs\lodepng-master\lodepng.cpp" />
+    <ClCompile Include="FinalPanEnums.h" />
     <ClCompile Include="FinalPanGui.cpp" />
     <ClCompile Include="PanSim.cpp" />
     <ClCompile Include="PanStructs.cpp" />
@@ -193,6 +195,7 @@
     <ClInclude Include="ModMenus.h" />
     <ClInclude Include="PanControls.h" />
     <ClInclude Include="PanHeader.h" />
+    <ClInclude Include="PanPreset.h" />
     <ClInclude Include="PanUiMap.h" />
   </ItemGroup>
   <ItemGroup>

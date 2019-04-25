@@ -10,35 +10,13 @@
 #include <SDL.h>
 
 #include "../libs/lodepng-master/lodepng.h"
+#include "FinalPanEnums.h"
 
 #include  "PanHeader.h"
 #include "FinalPanHeader.h"
+
 extern void FinalPan_WindowFrame();
 extern void FinalPan_LoadResources();
-enum FinalLedEnum
-{
-#define LED(name,x,y,str)  led_##name,
-#include "FinalPanHeader.h"
-
-#undef LED
-	__FINALLED_COUNT
-};
-enum FinalLedButtonEnum
-{
-#define LEDBUTTON(name,x,y,id,str)  ledbutton_##name,
-#include "FinalPanHeader.h"
-
-#undef LEDBUTTON
-	__FINALLEDBUTTON_COUNT
-};
-
-enum FinalEncoderEnum
-{
-#define LEDENCODER(name,x,y,str)  encoder_##name,
-#include "FinalPanHeader.h"
-#undef LEDENCODER
-	__FINALENCODER_COUNT
-};
 
 
 class fLedButton
@@ -1020,10 +998,7 @@ int main(int argc, char** argv)
 						{
 							SetSwitch((SwitchEnum)i);
 							//on_short_message(0x90, i + 0x40, 127, 0);//
-
-						}
-						
-						
+						}												
 					}
 					else
 					{
@@ -1032,7 +1007,6 @@ int main(int argc, char** argv)
 						{
 							ClearSwitch((SwitchEnum)i);
 							//on_short_message(0x90, i + 0x40, 127, 0);//
-
 						}
 					}
 					if (i%10 != 0) ImGui::SameLine();
@@ -1234,33 +1208,36 @@ int main(int argc, char** argv)
 
 					}
 				}
+				
 				for (int i = 0; i < __FINALLED_COUNT; i++)
 				{
 					ImGui::SetCursorScreenPos(ImVec2(pos.x + FinalLeds[i].x * xscalefac, pos.y + FinalLeds[i].y * yscalefac));
 					ImLed(FinalLeds[i].name, &FinalLeds[i].value);
 				}
+
 				for (int i = 0; i < __FINALENCODER_COUNT; i++)
 				{
-					ImGui::SetCursorScreenPos(ImVec2(pos.x + FinalEncoders[i].x * xscalefac, pos.y + FinalEncoders[i].y * yscalefac));
-					if (MyEncoder(FinalEncoders[i].name, &FinalEncoders[i].pos, &FinalEncoders[i].delta))
+					ImGui::SetCursorScreenPos(ImVec2(pos.x + FinalEncoders[i].x * xscalefac, pos.y +25 + FinalEncoders[i].y * yscalefac));
+					if (ImGui::Button(FinalEncoders[i].name))//, &FinalEncoders[i].pos, &FinalEncoders[i].delta))
 					{
-						Teensy_EncoderPress(i);
-
+					//	Teensy_EncoderPress(i);
+						LedEncoderButtonPress(FinalEncoders[i].id);
 					}
 
 					char name[300];
 					sprintf(name, "ENCL%d", i);
-					ImGui::SetCursorScreenPos(ImVec2(pos.x + (FinalEncoders[i].x - 0.6) * xscalefac, (pos.y + 0.3) + FinalEncoders[i].y * yscalefac));
+					ImGui::SetCursorScreenPos(ImVec2(pos.x + (FinalEncoders[i].x - 3.6) * xscalefac, (pos.y + 0.8) + FinalEncoders[i].y * yscalefac));
 					if (ImGui::Button(name))
 					{
-
-						Teensy_EncoderRotate(i, -1);
+						LedEncoderButtonLeft(FinalEncoders[i].id);
+					//	Teensy_EncoderRotate(i, -1);
 					}
-					ImGui::SetCursorScreenPos(ImVec2(pos.x + (FinalEncoders[i].x + 0.6)* xscalefac, (pos.y + 0.3) + FinalEncoders[i].y * yscalefac));
+					ImGui::SetCursorScreenPos(ImVec2(pos.x + (FinalEncoders[i].x + 3.6)* xscalefac, (pos.y + 0.8) + FinalEncoders[i].y * yscalefac));
 					sprintf(name, "ENCR%d", i);
 					if (ImGui::Button(name))
 					{
-						Teensy_EncoderRotate(i, 1);
+						LedEncoderButtonRight(FinalEncoders[i].id);
+						//	Teensy_EncoderRotate(i, 1);
 					}
 				}
 
