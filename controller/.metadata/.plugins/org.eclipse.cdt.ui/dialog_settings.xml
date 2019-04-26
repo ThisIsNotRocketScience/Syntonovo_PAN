@@ -1,10 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section name="Workbench">
-	<item value="&quot;${workspace_loc:/${ProjName}/CMSIS/drivers}&quot;" key="org.eclipse.cdt.utils.ui.controls.FileListControl"/>
+	<item value="USB_STACK_USE_DEDICATED_RAM=1" key="org.eclipse.cdt.utils.ui.controls.FileListControl"/>
+	<item value="Default C source template" key="LastUsedSourceTemplate"/>
+	<item value="Default C header template" key="LastUsedHeaderTemplate"/>
 	<section name="org.eclipse.cdt.ui.text.hover.CMacroExpansionExploration">
+	</section>
+	<section name="PDOMSearchPage">
+		<item value="false" key="caseSensitive"/>
+		<item value="227191" key="searchFlags"/>
+		<list key="previousPatterns">
+			<item value="databufstart"/>
+			<item value="USB1CLKSEL"/>
+			<item value="PortMode"/>
+			<item value="EventGroupHandle_t"/>
+			<item value="SCT0_"/>
+			<item value="SCT0_IRQn"/>
+		</list>
+	</section>
+	<section name="RenameInformationPopup">
 	</section>
 	<section name="OptionalMessageDialog.hide.">
 		<item value="0" key="askReindex.detail"/>
+		<item value="false" key="askReindex"/>
+	</section>
+	<section name="CRenameRefactoringInputPage">
 	</section>
 	<section name="completion_proposal_size">
 	</section>

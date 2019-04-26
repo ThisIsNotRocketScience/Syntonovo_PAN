@@ -1,6 +1,6 @@
 LaunchTargetManager/org.eclipse.launchbar.core.launchTargetType.local,Local/arch=x86
 LaunchTargetManager/org.eclipse.launchbar.core.launchTargetType.local,Local/os=win32
-configDescList=org.eclipse.launchbar.core.descriptorType.default\:pan_synth.axf
+configDescList=org.eclipse.launchbar.core.descriptorType.default\:pan_synth.axf,org.eclipse.launchbar.core.descriptorType.default\:usbmidiio LinkServer Release,org.eclipse.launchbar.core.descriptorType.default\:usbmidiio LinkServer Debug,org.eclipse.launchbar.core.descriptorType.default\:pan_sh JLink Release,org.eclipse.launchbar.core.descriptorType.default\:pan_sh JLink Debug
 eclipse.preferences.version=1
 org.eclipse.launchbar.core.descriptorType.default\:pan_synth.axf/activeLaunchMode=debug
 org.eclipse.launchbar.core.descriptorType.default\:pan_synth.axf/activeLaunchTarget=org.eclipse.launchbar.core.launchTargetType.local\:Local

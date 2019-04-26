@@ -1,0 +1,30 @@
+20:11:21 **** Incremental Build of configuration Debug for project usbmidiio ****
+make -r -j8 all 
+Building file: ../source/usbmidiio.cpp
+Invoking: MCU C++ Compiler
+arm-none-eabi-c++ -D__NEWLIB__ -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/usbmidiio.d" -MT"source/usbmidiio.o" -MT"source/usbmidiio.d" -o "source/usbmidiio.o" "../source/usbmidiio.cpp"
+../source/usbmidiio.cpp: In function 'void KeyScan()':
+../source/usbmidiio.cpp:190:70: warning: format '%d' expects argument of type 'int', but argument 2 has type 'long unsigned int' [-Wformat=]
+                      printf("%d break\n", (keyscanindex >> 1) * 8 + i);
+                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+Finished building: ../source/usbmidiio.cpp
+ 
+Building target: usbmidiio.axf
+Invoking: MCU C++ Linker
+arm-none-eabi-c++ -nostdlib -L"C:\work\pan\Syntonovo_PAN\controller\usbmidiio\libs" -Xlinker -Map="usbmidiio.map" -Xlinker --gc-sections -Xlinker -print-memory-usage -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -T "usbmidiio_Debug.ld" -o "usbmidiio.axf"  ./usb/osa/usb_osa_freertos.o  ./usb/device/usb_device_dci.o ./usb/device/usb_device_lpcip3511.o  ./startup/startup_lpc54616.o  ./source/usb/usb_device_cdc_acm.o ./source/usb/usb_device_ch9.o ./source/usb/usb_device_class.o ./source/usb/usb_device_descriptor.o ./source/usb/virtual_com.o  ./source/control.o ./source/rpi.o ./source/semihost_hardfault.o ./source/uart_crc.o ./source/usbmidiio.o  ./freertos/source/croutine.o ./freertos/source/event_groups.o ./freertos/source/list.o ./freertos/source/queue.o ./freertos/source/tasks.o ./freertos/source/timers.o  ./freertos/portable/fsl_tickless_systick.o ./freertos/portable/heap_4.o ./freertos/portable/port.o  ./board/board.o ./board/clock_config.o ./board/peripherals.o ./board/pin_mux.o  ./CMSIS/drivers/fsl_adc.o ./CMSIS/drivers/fsl_clock.o ./CMSIS/drivers/fsl_common.o ./CMSIS/drivers/fsl_crc.o ./CMSIS/drivers/fsl_ctimer.o ./CMSIS/drivers/fsl_dma.o ./CMSIS/drivers/fsl_dmic.o ./CMSIS/drivers/fsl_dmic_dma.o ./CMSIS/drivers/fsl_eeprom.o ./CMSIS/drivers/fsl_emc.o ./CMSIS/drivers/fsl_enet.o ./CMSIS/drivers/fsl_flashiap.o ./CMSIS/drivers/fsl_flexcomm.o ./CMSIS/drivers/fsl_fmc.o ./CMSIS/drivers/fsl_fmeas.o ./CMSIS/drivers/fsl_gint.o ./CMSIS/drivers/fsl_gpio.o ./CMSIS/drivers/fsl_i2c.o ./CMSIS/drivers/fsl_i2c_dma.o ./CMSIS/drivers/fsl_i2c_freertos.o ./CMSIS/drivers/fsl_i2s.o ./CMSIS/drivers/fsl_i2s_dma.o ./CMSIS/drivers/fsl_inputmux.o ./CMSIS/drivers/fsl_mcan.o ./CMSIS/drivers/fsl_mrt.o ./CMSIS/drivers/fsl_pint.o ./CMSIS/drivers/fsl_power.o ./CMSIS/drivers/fsl_reset.o ./CMSIS/drivers/fsl_rit.o ./CMSIS/drivers/fsl_rtc.o ./CMSIS/drivers/fsl_sctimer.o ./CMSIS/drivers/fsl_sdif.o ./CMSIS/drivers/fsl_spi.o ./CMSIS/drivers/fsl_spi_dma.o ./CMSIS/drivers/fsl_spi_freertos.o ./CMSIS/drivers/fsl_spifi.o ./CMSIS/drivers/fsl_spifi_dma.o ./CMSIS/drivers/fsl_usart.o ./CMSIS/drivers/fsl_usart_dma.o ./CMSIS/drivers/fsl_usart_freertos.o ./CMSIS/drivers/fsl_utick.o ./CMSIS/drivers/fsl_wwdt.o  ./CMSIS/system_LPC54616.o   -lpower_hardabi
+Memory region         Used Size  Region Size  %age Used
+   PROGRAM_FLASH:       67684 B       512 KB     12.91%
+    SRAM_0_1_2_3:       24316 B       160 KB     14.84%
+           SRAMX:          0 GB        32 KB      0.00%
+         USB_RAM:          7 KB         8 KB     87.50%
+Finished building target: usbmidiio.axf
+ 
+make --no-print-directory post-build
+Performing post-build steps
+arm-none-eabi-size "usbmidiio.axf"; # arm-none-eabi-objcopy -v -O binary "usbmidiio.axf" "usbmidiio.bin" ; # checksum -p LPC54616J512 -d "usbmidiio.bin";
+   text	   data	    bss	    dec	    hex	filename
+  66000	   1684	  29692	  97376	  17c60	usbmidiio.axf
+ 
+
+20:11:22 Build Finished (took 1s.251ms)
+

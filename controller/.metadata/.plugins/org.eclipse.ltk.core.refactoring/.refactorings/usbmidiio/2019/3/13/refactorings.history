@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;usbmidiio/source/usbmidiio2.cpp&apos; to &apos;usbmidiio.cpp&apos;" description="Rename resource &apos;usbmidiio2.cpp&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="source/usbmidiio2.cpp" name="usbmidiio.cpp" stamp="1553435843869" updateReferences="true"/>
+</session>

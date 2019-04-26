@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">&#x0A;<refactoring comment="Rename resource &apos;usbmidiio/source/rpi.c&apos; to &apos;rpi.cpp&apos;" description="Rename resource &apos;rpi.c&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="source/rpi.c" name="rpi.cpp" stamp="1556294226810" updateReferences="true"/>&#x0A;<refactoring comment="Rename resource &apos;usbmidiio/source/uart_crc.cpp&apos; to &apos;uart.cpp&apos;" description="Rename resource &apos;uart_crc.cpp&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="source/uart_crc.cpp" name="uart.cpp" stamp="1556302730326" updateReferences="true"/>
+</session>

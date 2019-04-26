@@ -1,446 +1,1430 @@
-19:55:10 **** Incremental Build of configuration Debug for project pan_synth ****
+17:57:14 **** Incremental Build of configuration Debug for project usbmidiio ****
 make -r -j8 all 
-Building target: pan_synth.axf
-Invoking: MCU Linker
-arm-none-eabi-gcc -nostdlib -L"C:\work\pan\git\controller\pan_synth\CMSIS\drivers" -Xlinker -print-memory-usage -Xlinker --gc-sections -Xlinker -Map="pan_synth.map" -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -T LPC54616J512_Project_Debug.ld -o "pan_synth.axf"  ./startup/startup_lpc54616.o  ./source/LPC54616J512_Project.o ./source/MAX11300.o ./source/MAX11311.o ./source/MAX5134.o ./source/ad.o ./source/adsr.o ./source/autotune.o ./source/control.o ./source/lfo.o ./source/notestack.o ./source/semihost_hardfault.o ./source/shiftctrl.o ./source/spi_sched.o ./source/synth.o  ./board/board.o ./board/clock_config.o ./board/peripherals.o ./board/pin_mux.o  ./CMSIS/drivers/fsl_clock.o ./CMSIS/drivers/fsl_common.o ./CMSIS/drivers/fsl_ctimer.o ./CMSIS/drivers/fsl_dma.o ./CMSIS/drivers/fsl_eeprom.o ./CMSIS/drivers/fsl_flexcomm.o ./CMSIS/drivers/fsl_fmc.o ./CMSIS/drivers/fsl_fmeas.o ./CMSIS/drivers/fsl_gint.o ./CMSIS/drivers/fsl_gpio.o ./CMSIS/drivers/fsl_inputmux.o ./CMSIS/drivers/fsl_mrt.o ./CMSIS/drivers/fsl_pint.o ./CMSIS/drivers/fsl_power.o ./CMSIS/drivers/fsl_reset.o ./CMSIS/drivers/fsl_rit.o ./CMSIS/drivers/fsl_rtc.o ./CMSIS/drivers/fsl_sctimer.o ./CMSIS/drivers/fsl_spi.o ./CMSIS/drivers/fsl_spi_dma.o ./CMSIS/drivers/fsl_usart.o ./CMSIS/drivers/fsl_usart_dma.o ./CMSIS/drivers/fsl_utick.o ./CMSIS/drivers/fsl_wwdt.o  ./CMSIS/cmsis_drivers/fsl_i2c_cmsis.o ./CMSIS/cmsis_drivers/fsl_spi_cmsis.o ./CMSIS/cmsis_drivers/fsl_usart_cmsis.o  ./CMSIS/system_LPC54616.o   -lpower_hardabi
+Building file: ../source/rpi.cpp
+Building file: ../source/uart_crc.cpp
+Building file: ../source/usbmidiio.cpp
+Invoking: MCU C++ Compiler
+Invoking: MCU C++ Compiler
+arm-none-eabi-c++ -D__NEWLIB__ -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/rpi.d" -MT"source/rpi.o" -MT"source/rpi.d" -o "source/rpi.o" "../source/rpi.cpp"
+Invoking: MCU C++ Compiler
+arm-none-eabi-c++ -D__NEWLIB__ -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/uart_crc.d" -MT"source/uart_crc.o" -MT"source/uart_crc.d" -o "source/uart_crc.o" "../source/uart_crc.cpp"
+arm-none-eabi-c++ -D__NEWLIB__ -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/usbmidiio.d" -MT"source/usbmidiio.o" -MT"source/usbmidiio.d" -o "source/usbmidiio.o" "../source/usbmidiio.cpp"
+../source/uart_crc.cpp:122:15: error: declaration of 'int (* sync_state_t::oob_data_cb)(uint8_t, uint32_t)' [-fpermissive]
+   oob_data_cb oob_data_cb;
+               ^~~~~~~~~~~
+../source/uart_crc.cpp:86:15: error: changes meaning of 'oob_data_cb' from 'typedef int (* oob_data_cb)(uint8_t, uint32_t)' [-fpermissive]
+ typedef int (*oob_data_cb)(uint8_t cmd, uint32_t data);
+               ^~~~~~~~~~~
+../source/uart_crc.cpp: In function 'void sync_in_read_complete(int, void*)':
+../source/uart_crc.cpp:144:20: error: 'uart_peek' was not declared in this scope
+     uint8_t data = uart_peek();
+                    ^~~~~~~~~
+../source/uart_crc.cpp:146:7: error: 'uart_read' was not declared in this scope
+       uart_read(sync_read_buf, 1);
+       ^~~~~~~~~
+../source/uart_crc.cpp:151:5: error: 'uart_waitfor' was not declared in this scope
+     uart_waitfor(6);
+     ^~~~~~~~~~~~
+../source/uart_crc.cpp:161:3: error: 'uart_read' was not declared in this scope
+   uart_read(data, 6);
+   ^~~~~~~~~
+../source/uart_crc.cpp:171:5: error: 'uart_waitfor' was not declared in this scope
+     uart_waitfor(1);
+     ^~~~~~~~~~~~
+../source/uart_crc.cpp:214:3: error: 'uart_waitfor' was not declared in this scope
+   uart_waitfor(6);
+   ^~~~~~~~~~~~
+../source/uart_crc.cpp: In function 'void sync_out_write_begin(sync_state_t*, int, uint8_t*, int)':
+../source/uart_crc.cpp:234:21: error: 'uart_write' was not declared in this scope
+   int write_count = uart_write(sync_write_buf, size);
+                     ^~~~~~~~~~
+../source/uart_crc.cpp:234:21: note: suggested alternative: 'fwrite'
+   int write_count = uart_write(sync_write_buf, size);
+                     ^~~~~~~~~~
+                     fwrite
+../source/uart_crc.cpp: In function 'void sync_out_write_complete(int, void*)':
+../source/uart_crc.cpp:268:7: error: 'uart_write' was not declared in this scope
+       uart_write(data, 4);
+       ^~~~~~~~~~
+../source/uart_crc.cpp:268:7: note: suggested alternative: 'fwrite'
+       uart_write(data, 4);
+       ^~~~~~~~~~
+       fwrite
+../source/uart_crc.cpp: In function 'int oobfunc(uint8_t, uint32_t)':
+../source/uart_crc.cpp:430:50: warning: format '%x' expects argument of type 'unsigned int', but argument 3 has type 'uint32_t {aka long unsigned int}' [-Wformat=]
+   printf("oob data(cmd=%d, data=%x)\n", cmd, data);
+                                                  ^
+../source/uart_crc.cpp: In function 'void test()':
+../source/uart_crc.cpp:453:19: error: 'uart0' was not declared in this scope
+   uart_configure(&uart0,
+                   ^~~~~
+../source/uart_crc.cpp:453:3: error: 'uart_configure' was not declared in this scope
+   uart_configure(&uart0,
+   ^~~~~~~~~~~~~~
+../source/uart_crc.cpp:466:3: error: 'uart_waitfor' was not declared in this scope
+   uart_waitfor(6);
+   ^~~~~~~~~~~~
+../source/uart_crc.cpp:473:5: error: 'uart_run' was not declared in this scope
+     uart_run(&uart0);
+     ^~~~~~~~
+../source/uart_crc.cpp: In function 'int main()':
+../source/uart_crc.cpp:483:5: error: 'uart_byte_counter' was not declared in this scope
+     uart_byte_counter = 0;
+     ^~~~~~~~~~~~~~~~~
+../source/uart_crc.cpp:484:5: error: 'uart_dropbyte' was not declared in this scope
+     uart_dropbyte = random() % 255;
+     ^~~~~~~~~~~~~
+../source/uart_crc.cpp:485:5: error: 'uart_errorbit' was not declared in this scope
+     uart_errorbit = random() % 2047;
+     ^~~~~~~~~~~~~
+../source/uart_crc.cpp:486:5: error: 'databuf_read' was not declared in this scope
+     databuf_read = 0;
+     ^~~~~~~~~~~~
+../source/rpi.cpp: In function 'void fifo_rx_process()':
+../source/rpi.cpp:96:51: error: invalid conversion from 'void*' to 'int' [-fpermissive]
+   rpi_uart->config.read_complete(rpi_uart->config.read_complete_data);
+                                  ~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~
+../source/rpi.cpp:96:69: error: too few arguments to function
+   rpi_uart->config.read_complete(rpi_uart->config.read_complete_data);
+                                                                     ^
+../source/uart_crc.cpp:487:5: error: 'databuf_write' was not declared in this scope
+     databuf_write = 0;
+     ^~~~~~~~~~~~~
+../source/rpi.cpp: At global scope:
+../source/rpi.cpp:70:12: warning: 'int fifo_tx_full()' defined but not used [-Wunused-function]
+ static int fifo_tx_full()
+            ^~~~~~~~~~~~
+../source/rpi.cpp:35:12: warning: 'int fifo_rx_empty()' defined but not used [-Wunused-function]
+ static int fifo_rx_empty()
+            ^~~~~~~~~~~~~
+make: *** [source/uart_crc.o] Error 1
+make: *** Waiting for unfinished jobs....
+make: *** [source/rpi.o] Error 1
+../source/usbmidiio.cpp: In function 'void dsp_cmd(int, int, uint16_t)':
+../source/usbmidiio.cpp:81:2: error: 'rpi_write' was not declared in this scope
+  rpi_write(data, 4);
+  ^~~~~~~~~
+../source/usbmidiio.cpp:81:2: note: suggested alternative: 'rpi_init'
+  rpi_write(data, 4);
+  ^~~~~~~~~
+  rpi_init
+../source/usbmidiio.cpp: In function 'void KeyScan()':
+../source/usbmidiio.cpp:190:70: warning: format '%d' expects argument of type 'int', but argument 2 has type 'long unsigned int' [-Wformat=]
+                      printf("%d break\n", (keyscanindex >> 1) * 8 + i);
+                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+../source/usbmidiio.cpp: In function 'int main()':
+../source/usbmidiio.cpp:523:14: error: too few arguments to function 'void rpi_init(uart_t*)'
+     rpi_init();
+              ^
+In file included from ../source/usbmidiio.cpp:44:0:
+../source/rpi.h:10:6: note: declared here
+ void rpi_init(uart_t* uart);
+      ^~~~~~~~
+make: *** [source/usbmidiio.o] Error 1
+17:57:39 **** Incremental Build of configuration Debug for project usbmidiio ****
+make -r -j8 all 
+Building file: ../source/rpi.cpp
+Building file: ../source/uart_crc.cpp
+Building file: ../source/usbmidiio.cpp
+Invoking: MCU C++ Compiler
+Invoking: MCU C++ Compiler
+arm-none-eabi-c++ -D__NEWLIB__ -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/rpi.d" -MT"source/rpi.o" -MT"source/rpi.d" -o "source/rpi.o" "../source/rpi.cpp"
+Invoking: MCU C++ Compiler
+arm-none-eabi-c++ -D__NEWLIB__ -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/uart_crc.d" -MT"source/uart_crc.o" -MT"source/uart_crc.d" -o "source/uart_crc.o" "../source/uart_crc.cpp"
+arm-none-eabi-c++ -D__NEWLIB__ -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/usbmidiio.d" -MT"source/usbmidiio.o" -MT"source/usbmidiio.d" -o "source/usbmidiio.o" "../source/usbmidiio.cpp"
+../source/uart_crc.cpp: In function 'void sync_in_read_complete(int, void*)':
+../source/uart_crc.cpp:144:20: error: 'uart_peek' was not declared in this scope
+     uint8_t data = uart_peek();
+                    ^~~~~~~~~
+../source/uart_crc.cpp:146:7: error: 'uart_read' was not declared in this scope
+       uart_read(sync_read_buf, 1);
+       ^~~~~~~~~
+../source/uart_crc.cpp:151:5: error: 'uart_waitfor' was not declared in this scope
+     uart_waitfor(6);
+     ^~~~~~~~~~~~
+../source/uart_crc.cpp:161:3: error: 'uart_read' was not declared in this scope
+   uart_read(data, 6);
+   ^~~~~~~~~
+../source/uart_crc.cpp:171:5: error: 'uart_waitfor' was not declared in this scope
+     uart_waitfor(1);
+     ^~~~~~~~~~~~
+../source/uart_crc.cpp:192:14: error: 'struct sync_state_t' has no member named 'data_cb'; did you mean 'data'?
+       state->data_cb(in_dst, &data[1]);
+              ^~~~~~~
+              data
+../source/uart_crc.cpp:201:16: error: 'struct sync_state_t' has no member named 'oob_data_cb'; did you mean 'oob_data'?
+     if (state->oob_data_cb) {
+                ^~~~~~~~~~~
+                oob_data
+../source/uart_crc.cpp:204:18: error: 'struct sync_state_t' has no member named 'oob_data_cb'; did you mean 'oob_data'?
+       if (state->oob_data_cb(cmd, d) == 0) {
+                  ^~~~~~~~~~~
+                  oob_data
+../source/uart_crc.cpp:214:3: error: 'uart_waitfor' was not declared in this scope
+   uart_waitfor(6);
+   ^~~~~~~~~~~~
+../source/uart_crc.cpp: In function 'void sync_out_write_begin(sync_state_t*, int, uint8_t*, int)':
+../source/uart_crc.cpp:234:21: error: 'uart_write' was not declared in this scope
+   int write_count = uart_write(sync_write_buf, size);
+                     ^~~~~~~~~~
+../source/uart_crc.cpp:234:21: note: suggested alternative: 'fwrite'
+   int write_count = uart_write(sync_write_buf, size);
+                     ^~~~~~~~~~
+                     fwrite
+../source/uart_crc.cpp: In function 'void sync_out_write_complete(int, void*)':
+../source/uart_crc.cpp:245:12: error: 'struct sync_state_t' has no member named 'complete_cb'; did you mean 'complete'?
+     state->complete_cb(1);
+            ^~~~~~~~~~~
+            complete
+../source/uart_crc.cpp:257:14: error: 'struct sync_state_t' has no member named 'ack_receive_cb'; did you mean 'ack_receive'?
+       state->ack_receive_cb = 0;
+              ^~~~~~~~~~~~~~
+              ack_receive
+../source/uart_crc.cpp:258:14: error: 'struct sync_state_t' has no member named 'complete_cb'; did you mean 'complete'?
+       state->complete_cb(1);
+              ^~~~~~~~~~~
+              complete
+../source/uart_crc.cpp:268:7: error: 'uart_write' was not declared in this scope
+       uart_write(data, 4);
+       ^~~~~~~~~~
+../source/uart_crc.cpp:268:7: note: suggested alternative: 'fwrite'
+       uart_write(data, 4);
+       ^~~~~~~~~~
+       fwrite
+../source/uart_crc.cpp:290:12: error: 'struct sync_state_t' has no member named 'ack_receive_cb'; did you mean 'ack_receive'?
+     state->ack_receive_cb = state->oob_queue[state->oob_queue_read].complete_cb;
+            ^~~~~~~~~~~~~~
+            ack_receive
+../source/uart_crc.cpp:312:12: error: 'struct sync_state_t' has no member named 'complete_cb'; did you mean 'complete'?
+     state->complete_cb(0);
+            ^~~~~~~~~~~
+            complete
+../source/uart_crc.cpp: In function 'void sync_out_ack_received(sync_state_t*, uint8_t)':
+../source/uart_crc.cpp:364:14: error: 'struct sync_state_t' has no member named 'ack_receive_cb'; did you mean 'ack_receive'?
+   if (state->ack_receive_cb) {
+              ^~~~~~~~~~~~~~
+              ack_receive
+../source/uart_crc.cpp:365:12: error: 'struct sync_state_t' has no member named 'ack_receive_cb'; did you mean 'ack_receive'?
+     state->ack_receive_cb();
+            ^~~~~~~~~~~~~~
+            ack_receive
+../source/uart_crc.cpp:366:12: error: 'struct sync_state_t' has no member named 'ack_receive_cb'; did you mean 'ack_receive'?
+     state->ack_receive_cb = 0;
+            ^~~~~~~~~~~~~~
+            ack_receive
+../source/uart_crc.cpp: In function 'void sync_block(sync_state_t*, uint8_t*, int, int, sync_complete_cb)':
+../source/uart_crc.cpp:389:10: error: 'struct sync_state_t' has no member named 'complete_cb'; did you mean 'complete'?
+   state->complete_cb = complete_cb;
+          ^~~~~~~~~~~
+          complete
+../source/rpi.cpp: In function 'void fifo_rx_process()':
+../source/rpi.cpp:96:51: error: invalid conversion from 'void*' to 'int' [-fpermissive]
+   rpi_uart->config.read_complete(rpi_uart->config.read_complete_data);
+                                  ~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~
+../source/rpi.cpp:96:69: error: too few arguments to function
+   rpi_uart->config.read_complete(rpi_uart->config.read_complete_data);
+                                                                     ^
+../source/uart_crc.cpp: In function 'int oobfunc(uint8_t, uint32_t)':
+../source/uart_crc.cpp:430:50: warning: format '%x' expects argument of type 'unsigned int', but argument 3 has type 'uint32_t {aka long unsigned int}' [-Wformat=]
+   printf("oob data(cmd=%d, data=%x)\n", cmd, data);
+                                                  ^
+../source/uart_crc.cpp: In function 'void test()':
+../source/uart_crc.cpp:453:19: error: 'uart0' was not declared in this scope
+   uart_configure(&uart0,
+                   ^~~~~
+../source/uart_crc.cpp:453:3: error: 'uart_configure' was not declared in this scope
+   uart_configure(&uart0,
+   ^~~~~~~~~~~~~~
+../source/rpi.cpp: At global scope:
+../source/rpi.cpp:70:12: warning: 'int fifo_tx_full()' defined but not used [-Wunused-function]
+ static int fifo_tx_full()
+            ^~~~~~~~~~~~
+../source/rpi.cpp:35:12: warning: 'int fifo_rx_empty()' defined but not used [-Wunused-function]
+ static int fifo_rx_empty()
+            ^~~~~~~~~~~~~
+../source/uart_crc.cpp:462:14: error: 'struct sync_state_t' has no member named 'data_cb'; did you mean 'data'?
+   sync_state.data_cb = datafunc;
+              ^~~~~~~
+              data
+../source/uart_crc.cpp:463:14: error: 'struct sync_state_t' has no member named 'oob_data_cb'; did you mean 'oob_data'?
+   sync_state.oob_data_cb = oobfunc;
+              ^~~~~~~~~~~
+              oob_data
+../source/uart_crc.cpp:466:3: error: 'uart_waitfor' was not declared in this scope
+   uart_waitfor(6);
+   ^~~~~~~~~~~~
+../source/uart_crc.cpp:473:5: error: 'uart_run' was not declared in this scope
+     uart_run(&uart0);
+     ^~~~~~~~
+../source/uart_crc.cpp: In function 'int main()':
+../source/uart_crc.cpp:483:5: error: 'uart_byte_counter' was not declared in this scope
+     uart_byte_counter = 0;
+     ^~~~~~~~~~~~~~~~~
+../source/uart_crc.cpp:484:5: error: 'uart_dropbyte' was not declared in this scope
+     uart_dropbyte = random() % 255;
+     ^~~~~~~~~~~~~
+../source/uart_crc.cpp:485:5: error: 'uart_errorbit' was not declared in this scope
+     uart_errorbit = random() % 2047;
+     ^~~~~~~~~~~~~
+../source/uart_crc.cpp:486:5: error: 'databuf_read' was not declared in this scope
+     databuf_read = 0;
+     ^~~~~~~~~~~~
+../source/uart_crc.cpp:487:5: error: 'databuf_write' was not declared in this scope
+     databuf_write = 0;
+     ^~~~~~~~~~~~~
+make: *** [source/rpi.o] Error 1
+make: *** Waiting for unfinished jobs....
+make: *** [source/uart_crc.o] Error 1
+../source/usbmidiio.cpp: In function 'void dsp_cmd(int, int, uint16_t)':
+../source/usbmidiio.cpp:81:2: error: 'rpi_write' was not declared in this scope
+  rpi_write(data, 4);
+  ^~~~~~~~~
+../source/usbmidiio.cpp:81:2: note: suggested alternative: 'rpi_init'
+  rpi_write(data, 4);
+  ^~~~~~~~~
+  rpi_init
+../source/usbmidiio.cpp: In function 'void KeyScan()':
+../source/usbmidiio.cpp:190:70: warning: format '%d' expects argument of type 'int', but argument 2 has type 'long unsigned int' [-Wformat=]
+                      printf("%d break\n", (keyscanindex >> 1) * 8 + i);
+                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+../source/usbmidiio.cpp: In function 'int main()':
+../source/usbmidiio.cpp:523:14: error: too few arguments to function 'void rpi_init(uart_t*)'
+     rpi_init();
+              ^
+In file included from ../source/usbmidiio.cpp:44:0:
+../source/rpi.h:10:6: note: declared here
+ void rpi_init(uart_t* uart);
+      ^~~~~~~~
+make: *** [source/usbmidiio.o] Error 1
+17:58:21 **** Incremental Build of configuration Debug for project usbmidiio ****
+make -r -j8 all 
+Building file: ../source/rpi.cpp
+Building file: ../source/uart_crc.cpp
+Building file: ../source/usbmidiio.cpp
+Invoking: MCU C++ Compiler
+Invoking: MCU C++ Compiler
+arm-none-eabi-c++ -D__NEWLIB__ -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/rpi.d" -MT"source/rpi.o" -MT"source/rpi.d" -o "source/rpi.o" "../source/rpi.cpp"
+Invoking: MCU C++ Compiler
+arm-none-eabi-c++ -D__NEWLIB__ -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/uart_crc.d" -MT"source/uart_crc.o" -MT"source/uart_crc.d" -o "source/uart_crc.o" "../source/uart_crc.cpp"
+arm-none-eabi-c++ -D__NEWLIB__ -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/usbmidiio.d" -MT"source/usbmidiio.o" -MT"source/usbmidiio.d" -o "source/usbmidiio.o" "../source/usbmidiio.cpp"
+../source/uart_crc.cpp:97:2: error: 'uart_t' does not name a type; did you mean 'uid_t'?
+  uart_t* uart;
+  ^~~~~~
+  uid_t
+../source/uart_crc.cpp: In function 'void sync_in_read_complete(int, void*)':
+../source/uart_crc.cpp:146:27: error: 'struct sync_state_t' has no member named 'uart'
+     uint8_t data = state->uart->peek();
+                           ^~~~
+../source/uart_crc.cpp:148:7: error: 'uart_read' was not declared in this scope
+       uart_read(sync_read_buf, 1);
+       ^~~~~~~~~
+../source/uart_crc.cpp:153:5: error: 'uart_waitfor' was not declared in this scope
+     uart_waitfor(6);
+     ^~~~~~~~~~~~
+../source/uart_crc.cpp:163:3: error: 'uart_read' was not declared in this scope
+   uart_read(data, 6);
+   ^~~~~~~~~
+../source/uart_crc.cpp:173:5: error: 'uart_waitfor' was not declared in this scope
+     uart_waitfor(1);
+     ^~~~~~~~~~~~
+../source/uart_crc.cpp:194:14: error: 'struct sync_state_t' has no member named 'data_cb'; did you mean 'data'?
+       state->data_cb(in_dst, &data[1]);
+              ^~~~~~~
+              data
+../source/uart_crc.cpp:203:16: error: 'struct sync_state_t' has no member named 'oob_data_cb'; did you mean 'oob_data'?
+     if (state->oob_data_cb) {
+                ^~~~~~~~~~~
+                oob_data
+../source/uart_crc.cpp:206:18: error: 'struct sync_state_t' has no member named 'oob_data_cb'; did you mean 'oob_data'?
+       if (state->oob_data_cb(cmd, d) == 0) {
+                  ^~~~~~~~~~~
+                  oob_data
+../source/uart_crc.cpp:216:3: error: 'uart_waitfor' was not declared in this scope
+   uart_waitfor(6);
+   ^~~~~~~~~~~~
+../source/uart_crc.cpp: In function 'void sync_out_write_begin(sync_state_t*, int, uint8_t*, int)':
+../source/uart_crc.cpp:236:21: error: 'uart_write' was not declared in this scope
+   int write_count = uart_write(sync_write_buf, size);
+                     ^~~~~~~~~~
+../source/rpi.cpp: In function 'void fifo_rx_process()':
+../source/rpi.cpp:96:51: error: invalid conversion from 'void*' to 'int' [-fpermissive]
+   rpi_uart->config.read_complete(rpi_uart->config.read_complete_data);
+                                  ~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~
+../source/rpi.cpp:96:69: error: too few arguments to function
+   rpi_uart->config.read_complete(rpi_uart->config.read_complete_data);
+                                                                     ^
+../source/uart_crc.cpp:236:21: note: suggested alternative: 'fwrite'
+   int write_count = uart_write(sync_write_buf, size);
+                     ^~~~~~~~~~
+                     fwrite
+../source/uart_crc.cpp: In function 'void sync_out_write_complete(int, void*)':
+../source/uart_crc.cpp:247:12: error: 'struct sync_state_t' has no member named 'complete_cb'; did you mean 'complete'?
+     state->complete_cb(1);
+            ^~~~~~~~~~~
+            complete
+../source/uart_crc.cpp:259:14: error: 'struct sync_state_t' has no member named 'ack_receive_cb'; did you mean 'ack_receive'?
+       state->ack_receive_cb = 0;
+              ^~~~~~~~~~~~~~
+              ack_receive
+../source/uart_crc.cpp:260:14: error: 'struct sync_state_t' has no member named 'complete_cb'; did you mean 'complete'?
+       state->complete_cb(1);
+              ^~~~~~~~~~~
+              complete
+../source/uart_crc.cpp:270:7: error: 'uart_write' was not declared in this scope
+       uart_write(data, 4);
+       ^~~~~~~~~~
+../source/rpi.cpp: At global scope:
+../source/rpi.cpp:70:12: warning: 'int fifo_tx_full()' defined but not used [-Wunused-function]
+ static int fifo_tx_full()
+            ^~~~~~~~~~~~
+../source/rpi.cpp:35:12: warning: 'int fifo_rx_empty()' defined but not used [-Wunused-function]
+ static int fifo_rx_empty()
+            ^~~~~~~~~~~~~
+../source/uart_crc.cpp:270:7: note: suggested alternative: 'fwrite'
+       uart_write(data, 4);
+       ^~~~~~~~~~
+       fwrite
+../source/uart_crc.cpp:292:12: error: 'struct sync_state_t' has no member named 'ack_receive_cb'; did you mean 'ack_receive'?
+     state->ack_receive_cb = state->oob_queue[state->oob_queue_read].complete_cb;
+            ^~~~~~~~~~~~~~
+            ack_receive
+../source/uart_crc.cpp:314:12: error: 'struct sync_state_t' has no member named 'complete_cb'; did you mean 'complete'?
+     state->complete_cb(0);
+            ^~~~~~~~~~~
+            complete
+../source/uart_crc.cpp: In function 'void sync_out_ack_received(sync_state_t*, uint8_t)':
+../source/uart_crc.cpp:366:14: error: 'struct sync_state_t' has no member named 'ack_receive_cb'; did you mean 'ack_receive'?
+   if (state->ack_receive_cb) {
+              ^~~~~~~~~~~~~~
+              ack_receive
+../source/uart_crc.cpp:367:12: error: 'struct sync_state_t' has no member named 'ack_receive_cb'; did you mean 'ack_receive'?
+     state->ack_receive_cb();
+            ^~~~~~~~~~~~~~
+            ack_receive
+../source/uart_crc.cpp:368:12: error: 'struct sync_state_t' has no member named 'ack_receive_cb'; did you mean 'ack_receive'?
+     state->ack_receive_cb = 0;
+            ^~~~~~~~~~~~~~
+            ack_receive
+../source/uart_crc.cpp: In function 'void sync_block(sync_state_t*, uint8_t*, int, int, sync_complete_cb)':
+../source/uart_crc.cpp:391:10: error: 'struct sync_state_t' has no member named 'complete_cb'; did you mean 'complete'?
+   state->complete_cb = complete_cb;
+          ^~~~~~~~~~~
+          complete
+../source/uart_crc.cpp: In function 'int oobfunc(uint8_t, uint32_t)':
+../source/uart_crc.cpp:432:50: warning: format '%x' expects argument of type 'unsigned int', but argument 3 has type 'uint32_t {aka long unsigned int}' [-Wformat=]
+   printf("oob data(cmd=%d, data=%x)\n", cmd, data);
+                                                  ^
+../source/uart_crc.cpp: In function 'void test()':
+../source/uart_crc.cpp:455:19: error: 'uart0' was not declared in this scope
+   uart_configure(&uart0,
+                   ^~~~~
+../source/uart_crc.cpp:455:3: error: 'uart_configure' was not declared in this scope
+   uart_configure(&uart0,
+   ^~~~~~~~~~~~~~
+../source/uart_crc.cpp:464:14: error: 'struct sync_state_t' has no member named 'data_cb'; did you mean 'data'?
+   sync_state.data_cb = datafunc;
+              ^~~~~~~
+              data
+../source/uart_crc.cpp:465:14: error: 'struct sync_state_t' has no member named 'oob_data_cb'; did you mean 'oob_data'?
+   sync_state.oob_data_cb = oobfunc;
+              ^~~~~~~~~~~
+              oob_data
+../source/uart_crc.cpp:468:3: error: 'uart_waitfor' was not declared in this scope
+   uart_waitfor(6);
+   ^~~~~~~~~~~~
+../source/uart_crc.cpp:475:5: error: 'uart_run' was not declared in this scope
+     uart_run(&uart0);
+     ^~~~~~~~
+../source/uart_crc.cpp: In function 'int main()':
+../source/uart_crc.cpp:485:5: error: 'uart_byte_counter' was not declared in this scope
+     uart_byte_counter = 0;
+     ^~~~~~~~~~~~~~~~~
+make: *** [source/rpi.o] Error 1
+make: *** Waiting for unfinished jobs....
+../source/uart_crc.cpp:486:5: error: 'uart_dropbyte' was not declared in this scope
+     uart_dropbyte = random() % 255;
+     ^~~~~~~~~~~~~
+../source/uart_crc.cpp:487:5: error: 'uart_errorbit' was not declared in this scope
+     uart_errorbit = random() % 2047;
+     ^~~~~~~~~~~~~
+../source/uart_crc.cpp:488:5: error: 'databuf_read' was not declared in this scope
+     databuf_read = 0;
+     ^~~~~~~~~~~~
+../source/uart_crc.cpp:489:5: error: 'databuf_write' was not declared in this scope
+     databuf_write = 0;
+     ^~~~~~~~~~~~~
+../source/usbmidiio.cpp: In function 'void dsp_cmd(int, int, uint16_t)':
+../source/usbmidiio.cpp:81:2: error: 'rpi_write' was not declared in this scope
+  rpi_write(data, 4);
+  ^~~~~~~~~
+../source/usbmidiio.cpp:81:2: note: suggested alternative: 'rpi_init'
+  rpi_write(data, 4);
+  ^~~~~~~~~
+  rpi_init
+../source/usbmidiio.cpp: In function 'void KeyScan()':
+../source/usbmidiio.cpp:190:70: warning: format '%d' expects argument of type 'int', but argument 2 has type 'long unsigned int' [-Wformat=]
+                      printf("%d break\n", (keyscanindex >> 1) * 8 + i);
+                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+../source/usbmidiio.cpp: In function 'int main()':
+../source/usbmidiio.cpp:523:14: error: too few arguments to function 'void rpi_init(uart_t*)'
+     rpi_init();
+              ^
+In file included from ../source/usbmidiio.cpp:44:0:
+../source/rpi.h:10:6: note: declared here
+ void rpi_init(uart_t* uart);
+      ^~~~~~~~
+make: *** [source/uart_crc.o] Error 1
+make: *** [source/usbmidiio.o] Error 1
+17:58:50 **** Incremental Build of configuration Debug for project usbmidiio ****
+make -r -j8 all 
+Building file: ../source/rpi.cpp
+Building file: ../source/uart_crc.cpp
+Building file: ../source/usbmidiio.cpp
+Invoking: MCU C++ Compiler
+arm-none-eabi-c++ -D__NEWLIB__ -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/rpi.d" -MT"source/rpi.o" -MT"source/rpi.d" -o "source/rpi.o" "../source/rpi.cpp"
+Invoking: MCU C++ Compiler
+Invoking: MCU C++ Compiler
+arm-none-eabi-c++ -D__NEWLIB__ -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/uart_crc.d" -MT"source/uart_crc.o" -MT"source/uart_crc.d" -o "source/uart_crc.o" "../source/uart_crc.cpp"
+arm-none-eabi-c++ -D__NEWLIB__ -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/usbmidiio.d" -MT"source/usbmidiio.o" -MT"source/usbmidiio.d" -o "source/usbmidiio.o" "../source/usbmidiio.cpp"
+../source/uart_crc.cpp:97:2: error: 'uart_t' does not name a type; did you mean 'uid_t'?
+  uart_t* uart;
+  ^~~~~~
+  uid_t
+../source/uart_crc.cpp: In function 'void sync_in_read_complete(int, void*)':
+../source/uart_crc.cpp:146:27: error: 'struct sync_state_t' has no member named 'uart'
+     uint8_t data = state->uart->peek();
+                           ^~~~
+../source/uart_crc.cpp:148:7: error: 'uart_read' was not declared in this scope
+       uart_read(sync_read_buf, 1);
+       ^~~~~~~~~
+../source/uart_crc.cpp:153:5: error: 'uart_waitfor' was not declared in this scope
+     uart_waitfor(6);
+     ^~~~~~~~~~~~
+../source/uart_crc.cpp:163:3: error: 'uart_read' was not declared in this scope
+   uart_read(data, 6);
+   ^~~~~~~~~
+../source/uart_crc.cpp:173:5: error: 'uart_waitfor' was not declared in this scope
+     uart_waitfor(1);
+     ^~~~~~~~~~~~
+../source/uart_crc.cpp:194:14: error: 'struct sync_state_t' has no member named 'data_cb'; did you mean 'data'?
+       state->data_cb(in_dst, &data[1]);
+              ^~~~~~~
+              data
+../source/uart_crc.cpp:203:16: error: 'struct sync_state_t' has no member named 'oob_data_cb'; did you mean 'oob_data'?
+     if (state->oob_data_cb) {
+                ^~~~~~~~~~~
+                oob_data
+../source/uart_crc.cpp:206:18: error: 'struct sync_state_t' has no member named 'oob_data_cb'; did you mean 'oob_data'?
+       if (state->oob_data_cb(cmd, d) == 0) {
+                  ^~~~~~~~~~~
+                  oob_data
+../source/uart_crc.cpp:216:3: error: 'uart_waitfor' was not declared in this scope
+   uart_waitfor(6);
+   ^~~~~~~~~~~~
+../source/uart_crc.cpp: In function 'void sync_out_write_begin(sync_state_t*, int, uint8_t*, int)':
+../source/uart_crc.cpp:236:21: error: 'uart_write' was not declared in this scope
+   int write_count = uart_write(sync_write_buf, size);
+                     ^~~~~~~~~~
+../source/uart_crc.cpp:236:21: note: suggested alternative: 'fwrite'
+   int write_count = uart_write(sync_write_buf, size);
+                     ^~~~~~~~~~
+                     fwrite
+../source/uart_crc.cpp: In function 'void sync_out_write_complete(int, void*)':
+../source/uart_crc.cpp:247:12: error: 'struct sync_state_t' has no member named 'complete_cb'; did you mean 'complete'?
+     state->complete_cb(1);
+            ^~~~~~~~~~~
+            complete
+../source/uart_crc.cpp:270:7: error: 'uart_write' was not declared in this scope
+       uart_write(data, 4);
+       ^~~~~~~~~~
+../source/uart_crc.cpp:270:7: note: suggested alternative: 'fwrite'
+       uart_write(data, 4);
+       ^~~~~~~~~~
+       fwrite
+../source/uart_crc.cpp:314:12: error: 'struct sync_state_t' has no member named 'complete_cb'; did you mean 'complete'?
+     state->complete_cb(0);
+            ^~~~~~~~~~~
+            complete
+../source/uart_crc.cpp: In function 'int sync_oob_word(sync_state_t*, uint8_t, uint32_t, oob_transfer_complete_cb)':
+../source/uart_crc.cpp:404:44: error: 'struct oob_entry_t' has no member named 'complete'; did you mean 'complete_cb'?
+   state->oob_queue[state->oob_queue_write].complete = complete_cb;
+                                            ^~~~~~~~
+                                            complete_cb
+../source/uart_crc.cpp: In function 'int oobfunc(uint8_t, uint32_t)':
+../source/uart_crc.cpp:432:50: warning: format '%x' expects argument of type 'unsigned int', but argument 3 has type 'uint32_t {aka long unsigned int}' [-Wformat=]
+   printf("oob data(cmd=%d, data=%x)\n", cmd, data);
+                                                  ^
+../source/uart_crc.cpp: In function 'void test()':
+../source/uart_crc.cpp:455:19: error: 'uart0' was not declared in this scope
+   uart_configure(&uart0,
+                   ^~~~~
+../source/uart_crc.cpp:455:3: error: 'uart_configure' was not declared in this scope
+   uart_configure(&uart0,
+   ^~~~~~~~~~~~~~
+../source/uart_crc.cpp:468:3: error: 'uart_waitfor' was not declared in this scope
+   uart_waitfor(6);
+   ^~~~~~~~~~~~
+../source/uart_crc.cpp:475:5: error: 'uart_run' was not declared in this scope
+     uart_run(&uart0);
+     ^~~~~~~~
+../source/uart_crc.cpp: In function 'int main()':
+../source/uart_crc.cpp:485:5: error: 'uart_byte_counter' was not declared in this scope
+     uart_byte_counter = 0;
+     ^~~~~~~~~~~~~~~~~
+../source/uart_crc.cpp:486:5: error: 'uart_dropbyte' was not declared in this scope
+     uart_dropbyte = random() % 255;
+     ^~~~~~~~~~~~~
+../source/uart_crc.cpp:487:5: error: 'uart_errorbit' was not declared in this scope
+     uart_errorbit = random() % 2047;
+     ^~~~~~~~~~~~~
+../source/uart_crc.cpp:488:5: error: 'databuf_read' was not declared in this scope
+     databuf_read = 0;
+     ^~~~~~~~~~~~
+../source/rpi.cpp: In function 'void fifo_rx_process()':
+../source/rpi.cpp:96:51: error: invalid conversion from 'void*' to 'int' [-fpermissive]
+   rpi_uart->config.read_complete(rpi_uart->config.read_complete_data);
+                                  ~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~
+../source/rpi.cpp:96:69: error: too few arguments to function
+   rpi_uart->config.read_complete(rpi_uart->config.read_complete_data);
+                                                                     ^
+../source/uart_crc.cpp:489:5: error: 'databuf_write' was not declared in this scope
+     databuf_write = 0;
+     ^~~~~~~~~~~~~
+../source/rpi.cpp: At global scope:
+../source/rpi.cpp:70:12: warning: 'int fifo_tx_full()' defined but not used [-Wunused-function]
+ static int fifo_tx_full()
+            ^~~~~~~~~~~~
+../source/rpi.cpp:35:12: warning: 'int fifo_rx_empty()' defined but not used [-Wunused-function]
+ static int fifo_rx_empty()
+            ^~~~~~~~~~~~~
+make: *** [source/rpi.o] Error 1
+make: *** Waiting for unfinished jobs....
+make: *** [source/uart_crc.o] Error 1
+../source/usbmidiio.cpp: In function 'void dsp_cmd(int, int, uint16_t)':
+../source/usbmidiio.cpp:81:2: error: 'rpi_write' was not declared in this scope
+  rpi_write(data, 4);
+  ^~~~~~~~~
+../source/usbmidiio.cpp:81:2: note: suggested alternative: 'rpi_init'
+  rpi_write(data, 4);
+  ^~~~~~~~~
+  rpi_init
+../source/usbmidiio.cpp: In function 'void KeyScan()':
+../source/usbmidiio.cpp:190:70: warning: format '%d' expects argument of type 'int', but argument 2 has type 'long unsigned int' [-Wformat=]
+                      printf("%d break\n", (keyscanindex >> 1) * 8 + i);
+                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+../source/usbmidiio.cpp: In function 'int main()':
+../source/usbmidiio.cpp:523:14: error: too few arguments to function 'void rpi_init(uart_t*)'
+     rpi_init();
+              ^
+In file included from ../source/usbmidiio.cpp:44:0:
+../source/rpi.h:10:6: note: declared here
+ void rpi_init(uart_t* uart);
+      ^~~~~~~~
+make: *** [source/usbmidiio.o] Error 1
+17:59:05 **** Incremental Build of configuration Debug for project usbmidiio ****
+make -r -j8 all 
+Building file: ../source/rpi.cpp
+Building file: ../source/uart_crc.cpp
+Building file: ../source/usbmidiio.cpp
+Invoking: MCU C++ Compiler
+Invoking: MCU C++ Compiler
+arm-none-eabi-c++ -D__NEWLIB__ -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/rpi.d" -MT"source/rpi.o" -MT"source/rpi.d" -o "source/rpi.o" "../source/rpi.cpp"
+arm-none-eabi-c++ -D__NEWLIB__ -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/uart_crc.d" -MT"source/uart_crc.o" -MT"source/uart_crc.d" -o "source/uart_crc.o" "../source/uart_crc.cpp"
+Invoking: MCU C++ Compiler
+arm-none-eabi-c++ -D__NEWLIB__ -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/usbmidiio.d" -MT"source/usbmidiio.o" -MT"source/usbmidiio.d" -o "source/usbmidiio.o" "../source/usbmidiio.cpp"
+../source/uart_crc.cpp: In function 'void sync_in_read_complete(int, void*)':
+../source/uart_crc.cpp:148:33: error: 'struct uart_t' has no member named 'peek'
+     uint8_t data = state->uart->peek();
+                                 ^~~~
+../source/uart_crc.cpp:150:7: error: 'uart_read' was not declared in this scope
+       uart_read(sync_read_buf, 1);
+       ^~~~~~~~~
+../source/uart_crc.cpp:150:7: note: suggested alternative: 'uart_rx_t'
+       uart_read(sync_read_buf, 1);
+       ^~~~~~~~~
+       uart_rx_t
+../source/uart_crc.cpp:155:5: warning: statement has no effect [-Wunused-value]
+     uart_waitfor(6);
+     ^~~~~~~~~~~~~~~
+../source/uart_crc.cpp:165:3: error: 'uart_read' was not declared in this scope
+   uart_read(data, 6);
+   ^~~~~~~~~
+../source/uart_crc.cpp:165:3: note: suggested alternative: 'uart_rx_t'
+   uart_read(data, 6);
+   ^~~~~~~~~
+   uart_rx_t
+../source/uart_crc.cpp:175:5: warning: statement has no effect [-Wunused-value]
+     uart_waitfor(1);
+     ^~~~~~~~~~~~~~~
+../source/uart_crc.cpp:196:14: error: 'struct sync_state_t' has no member named 'data_cb'; did you mean 'data'?
+       state->data_cb(in_dst, &data[1]);
+              ^~~~~~~
+              data
+../source/uart_crc.cpp:205:16: error: 'struct sync_state_t' has no member named 'oob_data_cb'; did you mean 'oob_data'?
+     if (state->oob_data_cb) {
+                ^~~~~~~~~~~
+                oob_data
+../source/uart_crc.cpp:208:18: error: 'struct sync_state_t' has no member named 'oob_data_cb'; did you mean 'oob_data'?
+       if (state->oob_data_cb(cmd, d) == 0) {
+                  ^~~~~~~~~~~
+                  oob_data
+../source/uart_crc.cpp:218:3: warning: statement has no effect [-Wunused-value]
+   uart_waitfor(6);
+   ^~~~~~~~~~~~~~~
+../source/uart_crc.cpp: In function 'void sync_out_write_begin(sync_state_t*, int, uint8_t*, int)':
+../source/uart_crc.cpp:238:21: error: 'uart_write' was not declared in this scope
+   int write_count = uart_write(sync_write_buf, size);
+                     ^~~~~~~~~~
+../source/uart_crc.cpp:238:21: note: suggested alternative: 'uart_init'
+   int write_count = uart_write(sync_write_buf, size);
+                     ^~~~~~~~~~
+                     uart_init
+../source/uart_crc.cpp: In function 'void sync_out_write_complete(int, void*)':
+../source/uart_crc.cpp:249:12: error: 'struct sync_state_t' has no member named 'complete_cb'; did you mean 'complete'?
+     state->complete_cb(1);
+            ^~~~~~~~~~~
+            complete
+../source/uart_crc.cpp:272:7: error: 'uart_write' was not declared in this scope
+       uart_write(data, 4);
+       ^~~~~~~~~~
+../source/uart_crc.cpp:272:7: note: suggested alternative: 'uart_init'
+       uart_write(data, 4);
+       ^~~~~~~~~~
+       uart_init
+../source/uart_crc.cpp:316:12: error: 'struct sync_state_t' has no member named 'complete_cb'; did you mean 'complete'?
+     state->complete_cb(0);
+            ^~~~~~~~~~~
+            complete
+../source/uart_crc.cpp: In function 'int sync_oob_word(sync_state_t*, uint8_t, uint32_t, oob_transfer_complete_cb)':
+../source/uart_crc.cpp:406:44: error: 'struct oob_entry_t' has no member named 'complete'; did you mean 'complete_cb'?
+   state->oob_queue[state->oob_queue_write].complete = complete_cb;
+                                            ^~~~~~~~
+                                            complete_cb
+../source/uart_crc.cpp: In function 'int oobfunc(uint8_t, uint32_t)':
+../source/uart_crc.cpp:434:50: warning: format '%x' expects argument of type 'unsigned int', but argument 3 has type 'uint32_t {aka long unsigned int}' [-Wformat=]
+   printf("oob data(cmd=%d, data=%x)\n", cmd, data);
+                                                  ^
+../source/uart_crc.cpp: In function 'void test()':
+../source/uart_crc.cpp:457:19: error: 'uart0' was not declared in this scope
+   uart_configure(&uart0,
+                   ^~~~~
+../source/uart_crc.cpp:457:19: note: suggested alternative: 'uart_t'
+   uart_configure(&uart0,
+                   ^~~~~
+                   uart_t
+../source/uart_crc.cpp:470:3: warning: statement has no effect [-Wunused-value]
+   uart_waitfor(6);
+   ^~~~~~~~~~~~~~~
+../source/uart_crc.cpp:477:5: error: 'uart_run' was not declared in this scope
+     uart_run(&uart0);
+     ^~~~~~~~
+../source/uart_crc.cpp:477:5: note: suggested alternative: 'uart_t'
+     uart_run(&uart0);
+     ^~~~~~~~
+     uart_t
+../source/uart_crc.cpp: In function 'int main()':
+../source/uart_crc.cpp:487:5: error: 'uart_byte_counter' was not declared in this scope
+     uart_byte_counter = 0;
+     ^~~~~~~~~~~~~~~~~
+../source/uart_crc.cpp:487:5: note: suggested alternative: 'uart_write_func'
+     uart_byte_counter = 0;
+     ^~~~~~~~~~~~~~~~~
+     uart_write_func
+../source/uart_crc.cpp:488:5: error: 'uart_dropbyte' was not declared in this scope
+     uart_dropbyte = random() % 255;
+     ^~~~~~~~~~~~~
+../source/uart_crc.cpp:488:5: note: suggested alternative: 'uart_rx_t'
+     uart_dropbyte = random() % 255;
+     ^~~~~~~~~~~~~
+     uart_rx_t
+../source/uart_crc.cpp:489:5: error: 'uart_errorbit' was not declared in this scope
+     uart_errorbit = random() % 2047;
+     ^~~~~~~~~~~~~
+../source/uart_crc.cpp:489:5: note: suggested alternative: 'uart_init'
+     uart_errorbit = random() % 2047;
+     ^~~~~~~~~~~~~
+     uart_init
+../source/uart_crc.cpp:490:5: error: 'databuf_read' was not declared in this scope
+     databuf_read = 0;
+     ^~~~~~~~~~~~
+../source/uart_crc.cpp:491:5: error: 'databuf_write' was not declared in this scope
+     databuf_write = 0;
+     ^~~~~~~~~~~~~
+../source/rpi.cpp: In function 'void fifo_rx_process()':
+../source/rpi.cpp:96:51: error: invalid conversion from 'void*' to 'int' [-fpermissive]
+   rpi_uart->config.read_complete(rpi_uart->config.read_complete_data);
+                                  ~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~
+../source/rpi.cpp:96:69: error: too few arguments to function
+   rpi_uart->config.read_complete(rpi_uart->config.read_complete_data);
+                                                                     ^
+../source/rpi.cpp: At global scope:
+../source/rpi.cpp:70:12: warning: 'int fifo_tx_full()' defined but not used [-Wunused-function]
+ static int fifo_tx_full()
+            ^~~~~~~~~~~~
+../source/rpi.cpp:35:12: warning: 'int fifo_rx_empty()' defined but not used [-Wunused-function]
+ static int fifo_rx_empty()
+            ^~~~~~~~~~~~~
+make: *** [source/uart_crc.o] Error 1
+make: *** Waiting for unfinished jobs....
+make: *** [source/rpi.o] Error 1
+../source/usbmidiio.cpp: In function 'void dsp_cmd(int, int, uint16_t)':
+../source/usbmidiio.cpp:81:2: error: 'rpi_write' was not declared in this scope
+  rpi_write(data, 4);
+  ^~~~~~~~~
+../source/usbmidiio.cpp:81:2: note: suggested alternative: 'rpi_init'
+  rpi_write(data, 4);
+  ^~~~~~~~~
+  rpi_init
+../source/usbmidiio.cpp: In function 'void KeyScan()':
+../source/usbmidiio.cpp:190:70: warning: format '%d' expects argument of type 'int', but argument 2 has type 'long unsigned int' [-Wformat=]
+                      printf("%d break\n", (keyscanindex >> 1) * 8 + i);
+                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+../source/usbmidiio.cpp: In function 'int main()':
+../source/usbmidiio.cpp:523:14: error: too few arguments to function 'void rpi_init(uart_t*)'
+     rpi_init();
+              ^
+In file included from ../source/usbmidiio.cpp:44:0:
+../source/rpi.h:10:6: note: declared here
+ void rpi_init(uart_t* uart);
+      ^~~~~~~~
+make: *** [source/usbmidiio.o] Error 1
+17:59:55 **** Incremental Build of configuration Debug for project usbmidiio ****
+make -r -j8 all 
+Building file: ../source/rpi.cpp
+Building file: ../source/uart_crc.cpp
+Building file: ../source/usbmidiio.cpp
+Invoking: MCU C++ Compiler
+Invoking: MCU C++ Compiler
+arm-none-eabi-c++ -D__NEWLIB__ -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/rpi.d" -MT"source/rpi.o" -MT"source/rpi.d" -o "source/rpi.o" "../source/rpi.cpp"
+Invoking: MCU C++ Compiler
+arm-none-eabi-c++ -D__NEWLIB__ -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/uart_crc.d" -MT"source/uart_crc.o" -MT"source/uart_crc.d" -o "source/uart_crc.o" "../source/uart_crc.cpp"
+arm-none-eabi-c++ -D__NEWLIB__ -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/usbmidiio.d" -MT"source/usbmidiio.o" -MT"source/usbmidiio.d" -o "source/usbmidiio.o" "../source/usbmidiio.cpp"
+../source/uart_crc.cpp: In function 'void sync_in_read_complete(int, void*)':
+../source/uart_crc.cpp:148:33: error: 'struct uart_t' has no member named 'peek'
+     uint8_t data = state->uart->peek();
+                                 ^~~~
+../source/uart_crc.cpp:150:19: error: 'struct uart_t' has no member named 'read'
+      state->uart->read(sync_read_buf, 1);
+                   ^~~~
+../source/uart_crc.cpp:155:18: error: 'struct uart_t' has no member named 'waitfor'
+     state->uart->waitfor(6);
+                  ^~~~~~~
+../source/uart_crc.cpp:165:16: error: 'struct uart_t' has no member named 'read'
+   state->uart->read(data, 6);
+                ^~~~
+../source/uart_crc.cpp:175:18: error: 'struct uart_t' has no member named 'waitfor'
+     state->uart->waitfor(1);
+                  ^~~~~~~
+../source/uart_crc.cpp:196:14: error: 'struct sync_state_t' has no member named 'data_cb'; did you mean 'data'?
+       state->data_cb(in_dst, &data[1]);
+              ^~~~~~~
+              data
+../source/uart_crc.cpp:205:16: error: 'struct sync_state_t' has no member named 'oob_data_cb'; did you mean 'oob_data'?
+     if (state->oob_data_cb) {
+                ^~~~~~~~~~~
+                oob_data
+../source/uart_crc.cpp:208:18: error: 'struct sync_state_t' has no member named 'oob_data_cb'; did you mean 'oob_data'?
+       if (state->oob_data_cb(cmd, d) == 0) {
+                  ^~~~~~~~~~~
+                  oob_data
+../source/uart_crc.cpp:218:16: error: 'struct uart_t' has no member named 'waitfor'
+   state->uart->waitfor(6);
+                ^~~~~~~
+../source/uart_crc.cpp: In function 'void sync_out_write_begin(sync_state_t*, int, uint8_t*, int)':
+../source/uart_crc.cpp:238:34: error: 'struct uart_t' has no member named 'write'
+   int write_count = state->uart->write(sync_write_buf, size);
+                                  ^~~~~
+../source/uart_crc.cpp: In function 'void sync_out_write_complete(int, void*)':
+../source/uart_crc.cpp:249:12: error: 'struct sync_state_t' has no member named 'complete_cb'; did you mean 'complete'?
+     state->complete_cb(1);
+            ^~~~~~~~~~~
+            complete
+../source/uart_crc.cpp:272:20: error: 'struct uart_t' has no member named 'write'
+       state->uart->write(data, 4);
+                    ^~~~~
+../source/uart_crc.cpp:316:12: error: 'struct sync_state_t' has no member named 'complete_cb'; did you mean 'complete'?
+     state->complete_cb(0);
+            ^~~~~~~~~~~
+            complete
+../source/uart_crc.cpp: In function 'int sync_oob_word(sync_state_t*, uint8_t, uint32_t, oob_transfer_complete_cb)':
+../source/uart_crc.cpp:406:44: error: 'struct oob_entry_t' has no member named 'complete'; did you mean 'complete_cb'?
+   state->oob_queue[state->oob_queue_write].complete = complete_cb;
+                                            ^~~~~~~~
+                                            complete_cb
+../source/uart_crc.cpp: In function 'int oobfunc(uint8_t, uint32_t)':
+../source/uart_crc.cpp:434:50: warning: format '%x' expects argument of type 'unsigned int', but argument 3 has type 'uint32_t {aka long unsigned int}' [-Wformat=]
+   printf("oob data(cmd=%d, data=%x)\n", cmd, data);
+                                                  ^
+../source/uart_crc.cpp: At global scope:
+../source/uart_crc.cpp:19:13: warning: 'void crc_init()' defined but not used [-Wunused-function]
+ static void crc_init(void)
+             ^~~~~~~~
+../source/rpi.cpp: In function 'void fifo_rx_process()':
+../source/rpi.cpp:96:51: error: invalid conversion from 'void*' to 'int' [-fpermissive]
+   rpi_uart->config.read_complete(rpi_uart->config.read_complete_data);
+                                  ~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~
+../source/rpi.cpp:96:69: error: too few arguments to function
+   rpi_uart->config.read_complete(rpi_uart->config.read_complete_data);
+                                                                     ^
+../source/rpi.cpp: At global scope:
+../source/rpi.cpp:70:12: warning: 'int fifo_tx_full()' defined but not used [-Wunused-function]
+ static int fifo_tx_full()
+            ^~~~~~~~~~~~
+../source/rpi.cpp:35:12: warning: 'int fifo_rx_empty()' defined but not used [-Wunused-function]
+ static int fifo_rx_empty()
+            ^~~~~~~~~~~~~
+make: *** [source/uart_crc.o] Error 1
+make: *** Waiting for unfinished jobs....
+make: *** [source/rpi.o] Error 1
+../source/usbmidiio.cpp: In function 'void dsp_cmd(int, int, uint16_t)':
+../source/usbmidiio.cpp:81:2: error: 'rpi_write' was not declared in this scope
+  rpi_write(data, 4);
+  ^~~~~~~~~
+../source/usbmidiio.cpp:81:2: note: suggested alternative: 'rpi_init'
+  rpi_write(data, 4);
+  ^~~~~~~~~
+  rpi_init
+../source/usbmidiio.cpp: In function 'void KeyScan()':
+../source/usbmidiio.cpp:190:70: warning: format '%d' expects argument of type 'int', but argument 2 has type 'long unsigned int' [-Wformat=]
+                      printf("%d break\n", (keyscanindex >> 1) * 8 + i);
+                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+../source/usbmidiio.cpp: In function 'int main()':
+../source/usbmidiio.cpp:523:14: error: too few arguments to function 'void rpi_init(uart_t*)'
+     rpi_init();
+              ^
+In file included from ../source/usbmidiio.cpp:44:0:
+../source/rpi.h:10:6: note: declared here
+ void rpi_init(uart_t* uart);
+      ^~~~~~~~
+make: *** [source/usbmidiio.o] Error 1
+18:00:57 **** Incremental Build of configuration Debug for project usbmidiio ****
+make -r -j8 all 
+Building file: ../source/rpi.cpp
+Building file: ../source/uart_crc.cpp
+Building file: ../source/usbmidiio.cpp
+Invoking: MCU C++ Compiler
+Invoking: MCU C++ Compiler
+arm-none-eabi-c++ -D__NEWLIB__ -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/rpi.d" -MT"source/rpi.o" -MT"source/rpi.d" -o "source/rpi.o" "../source/rpi.cpp"
+Invoking: MCU C++ Compiler
+arm-none-eabi-c++ -D__NEWLIB__ -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/uart_crc.d" -MT"source/uart_crc.o" -MT"source/uart_crc.d" -o "source/uart_crc.o" "../source/uart_crc.cpp"
+arm-none-eabi-c++ -D__NEWLIB__ -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/usbmidiio.d" -MT"source/usbmidiio.o" -MT"source/usbmidiio.d" -o "source/usbmidiio.o" "../source/usbmidiio.cpp"
+../source/uart_crc.cpp: In function 'int sync_oob_word(sync_state_t*, uint8_t, uint32_t, oob_transfer_complete_cb)':
+../source/uart_crc.cpp:406:44: error: 'struct oob_entry_t' has no member named 'complete'; did you mean 'complete_cb'?
+   state->oob_queue[state->oob_queue_write].complete = complete_cb;
+                                            ^~~~~~~~
+                                            complete_cb
+../source/uart_crc.cpp: In function 'int oobfunc(uint8_t, uint32_t)':
+../source/uart_crc.cpp:434:50: warning: format '%x' expects argument of type 'unsigned int', but argument 3 has type 'uint32_t {aka long unsigned int}' [-Wformat=]
+   printf("oob data(cmd=%d, data=%x)\n", cmd, data);
+                                                  ^
+../source/uart_crc.cpp: At global scope:
+../source/uart_crc.cpp:19:13: warning: 'void crc_init()' defined but not used [-Wunused-function]
+ static void crc_init(void)
+             ^~~~~~~~
+../source/rpi.cpp: In function 'void fifo_rx_process()':
+../source/rpi.cpp:96:51: error: invalid conversion from 'void*' to 'int' [-fpermissive]
+   rpi_uart->config.read_complete(rpi_uart->config.read_complete_data);
+                                  ~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~
+../source/rpi.cpp:96:69: error: too few arguments to function
+   rpi_uart->config.read_complete(rpi_uart->config.read_complete_data);
+                                                                     ^
+../source/rpi.cpp: At global scope:
+../source/rpi.cpp:70:12: warning: 'int fifo_tx_full()' defined but not used [-Wunused-function]
+ static int fifo_tx_full()
+            ^~~~~~~~~~~~
+../source/rpi.cpp:35:12: warning: 'int fifo_rx_empty()' defined but not used [-Wunused-function]
+ static int fifo_rx_empty()
+            ^~~~~~~~~~~~~
+make: *** [source/uart_crc.o] Error 1
+make: *** Waiting for unfinished jobs....
+make: *** [source/rpi.o] Error 1
+../source/usbmidiio.cpp: In function 'void dsp_cmd(int, int, uint16_t)':
+../source/usbmidiio.cpp:81:2: error: 'rpi_write' was not declared in this scope
+  rpi_write(data, 4);
+  ^~~~~~~~~
+../source/usbmidiio.cpp:81:2: note: suggested alternative: 'rpi_init'
+  rpi_write(data, 4);
+  ^~~~~~~~~
+  rpi_init
+../source/usbmidiio.cpp: In function 'void KeyScan()':
+../source/usbmidiio.cpp:190:70: warning: format '%d' expects argument of type 'int', but argument 2 has type 'long unsigned int' [-Wformat=]
+                      printf("%d break\n", (keyscanindex >> 1) * 8 + i);
+                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+../source/usbmidiio.cpp: In function 'int main()':
+../source/usbmidiio.cpp:523:14: error: too few arguments to function 'void rpi_init(uart_t*)'
+     rpi_init();
+              ^
+In file included from ../source/usbmidiio.cpp:44:0:
+../source/rpi.h:10:6: note: declared here
+ void rpi_init(uart_t* uart);
+      ^~~~~~~~
+make: *** [source/usbmidiio.o] Error 1
+18:01:25 **** Incremental Build of configuration Debug for project usbmidiio ****
+make -r -j8 all 
+Building file: ../source/rpi.cpp
+Building file: ../source/uart_crc.cpp
+Building file: ../source/usbmidiio.cpp
+Invoking: MCU C++ Compiler
+Invoking: MCU C++ Compiler
+arm-none-eabi-c++ -D__NEWLIB__ -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/rpi.d" -MT"source/rpi.o" -MT"source/rpi.d" -o "source/rpi.o" "../source/rpi.cpp"
+Invoking: MCU C++ Compiler
+arm-none-eabi-c++ -D__NEWLIB__ -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/uart_crc.d" -MT"source/uart_crc.o" -MT"source/uart_crc.d" -o "source/uart_crc.o" "../source/uart_crc.cpp"
+arm-none-eabi-c++ -D__NEWLIB__ -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/usbmidiio.d" -MT"source/usbmidiio.o" -MT"source/usbmidiio.d" -o "source/usbmidiio.o" "../source/usbmidiio.cpp"
+../source/uart_crc.cpp: In function 'int oobfunc(uint8_t, uint32_t)':
+../source/uart_crc.cpp:434:50: warning: format '%x' expects argument of type 'unsigned int', but argument 3 has type 'uint32_t {aka long unsigned int}' [-Wformat=]
+   printf("oob data(cmd=%d, data=%x)\n", cmd, data);
+                                                  ^
+../source/uart_crc.cpp: At global scope:
+../source/uart_crc.cpp:19:13: warning: 'void crc_init()' defined but not used [-Wunused-function]
+ static void crc_init(void)
+             ^~~~~~~~
+../source/rpi.cpp: In function 'void fifo_rx_process()':
+../source/rpi.cpp:96:51: error: invalid conversion from 'void*' to 'int' [-fpermissive]
+   rpi_uart->config.read_complete(rpi_uart->config.read_complete_data);
+                                  ~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~
+../source/rpi.cpp:96:69: error: too few arguments to function
+   rpi_uart->config.read_complete(rpi_uart->config.read_complete_data);
+                                                                     ^
+../source/rpi.cpp: At global scope:
+../source/rpi.cpp:70:12: warning: 'int fifo_tx_full()' defined but not used [-Wunused-function]
+ static int fifo_tx_full()
+            ^~~~~~~~~~~~
+../source/rpi.cpp:35:12: warning: 'int fifo_rx_empty()' defined but not used [-Wunused-function]
+ static int fifo_rx_empty()
+            ^~~~~~~~~~~~~
+make: *** [source/rpi.o] Error 1
+make: *** Waiting for unfinished jobs....
+../source/usbmidiio.cpp: In function 'void dsp_cmd(int, int, uint16_t)':
+../source/usbmidiio.cpp:81:2: error: 'rpi_write' was not declared in this scope
+  rpi_write(data, 4);
+  ^~~~~~~~~
+../source/usbmidiio.cpp:81:2: note: suggested alternative: 'rpi_init'
+  rpi_write(data, 4);
+  ^~~~~~~~~
+  rpi_init
+../source/usbmidiio.cpp: In function 'void KeyScan()':
+../source/usbmidiio.cpp:190:70: warning: format '%d' expects argument of type 'int', but argument 2 has type 'long unsigned int' [-Wformat=]
+                      printf("%d break\n", (keyscanindex >> 1) * 8 + i);
+                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+../source/usbmidiio.cpp: In function 'int main()':
+../source/usbmidiio.cpp:523:14: error: too few arguments to function 'void rpi_init(uart_t*)'
+     rpi_init();
+              ^
+In file included from ../source/usbmidiio.cpp:44:0:
+../source/rpi.h:10:6: note: declared here
+ void rpi_init(uart_t* uart);
+      ^~~~~~~~
+make: *** [source/usbmidiio.o] Error 1
+Finished building: ../source/uart_crc.cpp
+ 
+18:01:45 **** Incremental Build of configuration Debug for project usbmidiio ****
+make -r -j8 all 
+Building file: ../source/rpi.cpp
+Building file: ../source/usbmidiio.cpp
+Invoking: MCU C++ Compiler
+arm-none-eabi-c++ -D__NEWLIB__ -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/rpi.d" -MT"source/rpi.o" -MT"source/rpi.d" -o "source/rpi.o" "../source/rpi.cpp"
+Invoking: MCU C++ Compiler
+arm-none-eabi-c++ -D__NEWLIB__ -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/usbmidiio.d" -MT"source/usbmidiio.o" -MT"source/usbmidiio.d" -o "source/usbmidiio.o" "../source/usbmidiio.cpp"
+../source/rpi.cpp:70:12: warning: 'int fifo_tx_full()' defined but not used [-Wunused-function]
+ static int fifo_tx_full()
+            ^~~~~~~~~~~~
+../source/rpi.cpp:35:12: warning: 'int fifo_rx_empty()' defined but not used [-Wunused-function]
+ static int fifo_rx_empty()
+            ^~~~~~~~~~~~~
+../source/usbmidiio.cpp: In function 'void dsp_cmd(int, int, uint16_t)':
+../source/usbmidiio.cpp:81:2: error: 'rpi_write' was not declared in this scope
+  rpi_write(data, 4);
+  ^~~~~~~~~
+../source/usbmidiio.cpp:81:2: note: suggested alternative: 'rpi_init'
+  rpi_write(data, 4);
+  ^~~~~~~~~
+  rpi_init
+../source/usbmidiio.cpp: In function 'void KeyScan()':
+../source/usbmidiio.cpp:190:70: warning: format '%d' expects argument of type 'int', but argument 2 has type 'long unsigned int' [-Wformat=]
+                      printf("%d break\n", (keyscanindex >> 1) * 8 + i);
+                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+../source/usbmidiio.cpp: In function 'int main()':
+../source/usbmidiio.cpp:523:14: error: too few arguments to function 'void rpi_init(uart_t*)'
+     rpi_init();
+              ^
+In file included from ../source/usbmidiio.cpp:44:0:
+../source/rpi.h:10:6: note: declared here
+ void rpi_init(uart_t* uart);
+      ^~~~~~~~
+make: *** [source/usbmidiio.o] Error 1
+make: *** Waiting for unfinished jobs....
+Finished building: ../source/rpi.cpp
+ 
+18:01:59 **** Incremental Build of configuration Debug for project usbmidiio ****
+make -r -j8 all 
+Building file: ../source/usbmidiio.cpp
+Invoking: MCU C++ Compiler
+arm-none-eabi-c++ -D__NEWLIB__ -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/usbmidiio.d" -MT"source/usbmidiio.o" -MT"source/usbmidiio.d" -o "source/usbmidiio.o" "../source/usbmidiio.cpp"
+../source/usbmidiio.cpp: In function 'void KeyScan()':
+../source/usbmidiio.cpp:190:70: warning: format '%d' expects argument of type 'int', but argument 2 has type 'long unsigned int' [-Wformat=]
+                      printf("%d break\n", (keyscanindex >> 1) * 8 + i);
+                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+../source/usbmidiio.cpp: In function 'int main()':
+../source/usbmidiio.cpp:523:14: error: too few arguments to function 'void rpi_init(uart_t*)'
+     rpi_init();
+              ^
+In file included from ../source/usbmidiio.cpp:44:0:
+../source/rpi.h:10:6: note: declared here
+ void rpi_init(uart_t* uart);
+      ^~~~~~~~
+make: *** [source/usbmidiio.o] Error 1
+18:02:56 **** Incremental Build of configuration Debug for project usbmidiio ****
+make -r -j8 all 
+Building file: ../source/rpi.cpp
+Building file: ../source/usbmidiio.cpp
+Invoking: MCU C++ Compiler
+Invoking: MCU C++ Compiler
+arm-none-eabi-c++ -D__NEWLIB__ -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/rpi.d" -MT"source/rpi.o" -MT"source/rpi.d" -o "source/rpi.o" "../source/rpi.cpp"
+arm-none-eabi-c++ -D__NEWLIB__ -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/usbmidiio.d" -MT"source/usbmidiio.o" -MT"source/usbmidiio.d" -o "source/usbmidiio.o" "../source/usbmidiio.cpp"
+../source/rpi.cpp:70:12: warning: 'int fifo_tx_full()' defined but not used [-Wunused-function]
+ static int fifo_tx_full()
+            ^~~~~~~~~~~~
+../source/rpi.cpp:35:12: warning: 'int fifo_rx_empty()' defined but not used [-Wunused-function]
+ static int fifo_rx_empty()
+            ^~~~~~~~~~~~~
+../source/usbmidiio.cpp: In function 'void KeyScan()':
+../source/usbmidiio.cpp:190:70: warning: format '%d' expects argument of type 'int', but argument 2 has type 'long unsigned int' [-Wformat=]
+                      printf("%d break\n", (keyscanindex >> 1) * 8 + i);
+                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+Finished building: ../source/rpi.cpp
+ 
+Finished building: ../source/usbmidiio.cpp
+ 
+Building target: usbmidiio.axf
+Invoking: MCU C++ Linker
+arm-none-eabi-c++ -nostdlib -L"C:\work\pan\Syntonovo_PAN\controller\usbmidiio\libs" -Xlinker -Map="usbmidiio.map" -Xlinker --gc-sections -Xlinker -print-memory-usage -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -T "usbmidiio_Debug.ld" -o "usbmidiio.axf"  ./usb/osa/usb_osa_freertos.o  ./usb/device/usb_device_dci.o ./usb/device/usb_device_lpcip3511.o  ./startup/startup_lpc54616.o  ./source/usb/usb_device_cdc_acm.o ./source/usb/usb_device_ch9.o ./source/usb/usb_device_class.o ./source/usb/usb_device_descriptor.o ./source/usb/virtual_com.o  ./source/control.o ./source/rpi.o ./source/semihost_hardfault.o ./source/uart_crc.o ./source/usbmidiio.o  ./freertos/source/croutine.o ./freertos/source/event_groups.o ./freertos/source/list.o ./freertos/source/queue.o ./freertos/source/tasks.o ./freertos/source/timers.o  ./freertos/portable/fsl_tickless_systick.o ./freertos/portable/heap_4.o ./freertos/portable/port.o  ./board/board.o ./board/clock_config.o ./board/peripherals.o ./board/pin_mux.o  ./CMSIS/drivers/fsl_adc.o ./CMSIS/drivers/fsl_clock.o ./CMSIS/drivers/fsl_common.o ./CMSIS/drivers/fsl_crc.o ./CMSIS/drivers/fsl_ctimer.o ./CMSIS/drivers/fsl_dma.o ./CMSIS/drivers/fsl_dmic.o ./CMSIS/drivers/fsl_dmic_dma.o ./CMSIS/drivers/fsl_eeprom.o ./CMSIS/drivers/fsl_emc.o ./CMSIS/drivers/fsl_enet.o ./CMSIS/drivers/fsl_flashiap.o ./CMSIS/drivers/fsl_flexcomm.o ./CMSIS/drivers/fsl_fmc.o ./CMSIS/drivers/fsl_fmeas.o ./CMSIS/drivers/fsl_gint.o ./CMSIS/drivers/fsl_gpio.o ./CMSIS/drivers/fsl_i2c.o ./CMSIS/drivers/fsl_i2c_dma.o ./CMSIS/drivers/fsl_i2c_freertos.o ./CMSIS/drivers/fsl_i2s.o ./CMSIS/drivers/fsl_i2s_dma.o ./CMSIS/drivers/fsl_inputmux.o ./CMSIS/drivers/fsl_mcan.o ./CMSIS/drivers/fsl_mrt.o ./CMSIS/drivers/fsl_pint.o ./CMSIS/drivers/fsl_power.o ./CMSIS/drivers/fsl_reset.o ./CMSIS/drivers/fsl_rit.o ./CMSIS/drivers/fsl_rtc.o ./CMSIS/drivers/fsl_sctimer.o ./CMSIS/drivers/fsl_sdif.o ./CMSIS/drivers/fsl_spi.o ./CMSIS/drivers/fsl_spi_dma.o ./CMSIS/drivers/fsl_spi_freertos.o ./CMSIS/drivers/fsl_spifi.o ./CMSIS/drivers/fsl_spifi_dma.o ./CMSIS/drivers/fsl_usart.o ./CMSIS/drivers/fsl_usart_dma.o ./CMSIS/drivers/fsl_usart_freertos.o ./CMSIS/drivers/fsl_utick.o ./CMSIS/drivers/fsl_wwdt.o  ./CMSIS/system_LPC54616.o   -lpower_hardabi
 Memory region         Used Size  Region Size  %age Used
-   PROGRAM_FLASH:       58600 B       512 KB     11.18%
-    SRAM_0_1_2_3:      116196 B       160 KB     70.92%
+   PROGRAM_FLASH:       65300 B       512 KB     12.45%
+    SRAM_0_1_2_3:       23780 B       160 KB     14.51%
            SRAMX:          0 GB        32 KB      0.00%
-         USB_RAM:          0 GB         8 KB      0.00%
-Finished building target: pan_synth.axf
+         USB_RAM:          7 KB         8 KB     87.50%
+Finished building target: usbmidiio.axf
  
 make --no-print-directory post-build
 Performing post-build steps
-arm-none-eabi-size "pan_synth.axf"; # arm-none-eabi-objcopy -v -O binary "pan_synth.axf" "pan_synth.bin" ; # checksum -p LPC54616J512 -d "pan_synth.bin";
+arm-none-eabi-size "usbmidiio.axf"; # arm-none-eabi-objcopy -v -O binary "usbmidiio.axf" "usbmidiio.bin" ; # checksum -p LPC54616J512 -d "usbmidiio.bin";
    text	   data	    bss	    dec	    hex	filename
-  56548	   2052	 113636	 172236	  2a0cc	pan_synth.axf
+  63616	   1684	  29156	  94456	  170f8	usbmidiio.axf
  
-16:21:13 **** Incremental Build of configuration Debug for project pan_synth ****
-make -r -j4 all 
-Building file: ../source/autotune.c
-Building file: ../source/synth.c
-Building file: ../board/clock_config.c
-Building file: ../board/peripherals.c
-Invoking: MCU C Compiler
-Invoking: MCU C Compiler
-Invoking: MCU C Compiler
-Invoking: MCU C Compiler
-arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\board" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\source" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\startup" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\CMSIS" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\CMSIS\drivers" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"board/clock_config.d" -MT"board/clock_config.o" -MT"board/clock_config.d" -o "board/clock_config.o" "../board/clock_config.c"
-arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\board" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\source" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\startup" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\CMSIS" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\CMSIS\drivers" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"source/synth.d" -MT"source/synth.o" -MT"source/synth.d" -o "source/synth.o" "../source/synth.c"
-arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\board" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\source" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\startup" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\CMSIS" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\CMSIS\drivers" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"source/autotune.d" -MT"source/autotune.o" -MT"source/autotune.d" -o "source/autotune.o" "../source/autotune.c"
-arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\board" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\source" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\startup" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\CMSIS" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\CMSIS\drivers" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"board/peripherals.d" -MT"board/peripherals.o" -MT"board/peripherals.d" -o "board/peripherals.o" "../board/peripherals.c"
-../source/autotune.c: In function 'autotune_set_routing':
-../source/autotune.c:285:21: error: 'SEL4SAW' undeclared (first use in this function); did you mean 'SEL3SAW'?
-     shiftctrl_clear(SEL4SAW);
-                     ^~~~~~~
-                     SEL3SAW
-../source/autotune.c:285:21: note: each undeclared identifier is reported only once for each function it appears in
-../source/autotune.c:286:21: error: 'SEL5SAW' undeclared (first use in this function); did you mean 'SEL4SAW'?
-     shiftctrl_clear(SEL5SAW);
-                     ^~~~~~~
-                     SEL4SAW
-../source/autotune.c:287:21: error: 'SEL6SAW' undeclared (first use in this function); did you mean 'SEL5SAW'?
-     shiftctrl_clear(SEL6SAW);
-                     ^~~~~~~
-                     SEL5SAW
-../source/autotune.c:288:21: error: 'SEL7SAW' undeclared (first use in this function); did you mean 'SEL6SAW'?
-     shiftctrl_clear(SEL7SAW);
-                     ^~~~~~~
-                     SEL6SAW
-../source/autotune.c:307:14: error: 'PORT_VCO123_FM1' undeclared (first use in this function); did you mean 'PORT_VCO123_FM3'?
-  ports_value(PORT_VCO123_FM1, 0);
-              ^~~~~~~~~~~~~~~
-              PORT_VCO123_FM3
-In file included from ../source/synth.c:15:0:
-../source/synth_internal.h:112:35: error: 'BASE_0' undeclared here (not in a function); did you mean 'BASE_P4_0'?
-  MAPPING_##CTRLTYPE(CTRLID, NAME, BASE_##PGROUP + PID)
-                                   ^
-../source/synth_internal.h:103:26: note: in definition of macro 'MAPPING_CTRL'
-  const int PORT_##NAME = PORTID;
-                          ^~~~~~
-c:\projects\synton\pan\syntonovo_pan\interface\paramdef.h:29:1: note: in expansion of macro 'OUTPUT'
- OUTPUT(VCO1_MIX1,  0, 0, CTRL, 0x10, CUSTOM, 0)
- ^~~~~~
-../source/synth_internal.h:112:35: error: 'BASE_1' undeclared here (not in a function); did you mean 'BASE_0'?
-  MAPPING_##CTRLTYPE(CTRLID, NAME, BASE_##PGROUP + PID)
-                                   ^
-../source/synth_internal.h:103:26: note: in definition of macro 'MAPPING_CTRL'
-  const int PORT_##NAME = PORTID;
-                          ^~~~~~
-c:\projects\synton\pan\syntonovo_pan\interface\paramdef.h:30:1: note: in expansion of macro 'OUTPUT'
- OUTPUT(WHITENS_MIX1, 1, 0, CTRL, 0x18, CUSTOM, 0)
- ^~~~~~
-../source/synth_internal.h:112:35: error: 'BASE_2' undeclared here (not in a function); did you mean 'BASE_1'?
-  MAPPING_##CTRLTYPE(CTRLID, NAME, BASE_##PGROUP + PID)
-                                   ^
-../source/synth_internal.h:103:26: note: in definition of macro 'MAPPING_CTRL'
-  const int PORT_##NAME = PORTID;
-                          ^~~~~~
-c:\projects\synton\pan\syntonovo_pan\interface\paramdef.h:45:1: note: in expansion of macro 'OUTPUT'
- OUTPUT(VCO2_FREQ,  2, 0, CTRL, 0x20, CUSTOM, 0)
- ^~~~~~
-../source/synth_internal.h:112:35: error: 'BASE_3' undeclared here (not in a function); did you mean 'BASE_2'?
-  MAPPING_##CTRLTYPE(CTRLID, NAME, BASE_##PGROUP + PID)
-                                   ^
-../source/synth_internal.h:103:26: note: in definition of macro 'MAPPING_CTRL'
-  const int PORT_##NAME = PORTID;
-                          ^~~~~~
-c:\projects\synton\pan\syntonovo_pan\interface\paramdef.h:46:1: note: in expansion of macro 'OUTPUT'
- OUTPUT(VCO4_FREQ,  3, 0, CTRL, 0x28, CUSTOM, 0)
- ^~~~~~
-../source/synth_internal.h:112:35: error: 'BASE_4' undeclared here (not in a function); did you mean 'BASE_3'?
-  MAPPING_##CTRLTYPE(CTRLID, NAME, BASE_##PGROUP + PID)
-                                   ^
-../source/synth_internal.h:106:26: note: in definition of macro 'MAPPING_INT'
-  const int PORT_##NAME = PORTID;
-                          ^~~~~~
-c:\projects\synton\pan\syntonovo_pan\interface\paramdef.h:61:1: note: in expansion of macro 'OUTPUT'
- OUTPUT(VCF2_R_LOG,  4, 0, INT, 0x30, CUSTOM, 0)
- ^~~~~~
-../source/synth_internal.h:112:35: error: 'BASE_5' undeclared here (not in a function); did you mean 'BASE_4'?
-  MAPPING_##CTRLTYPE(CTRLID, NAME, BASE_##PGROUP + PID)
-                                   ^
-../source/synth_internal.h:103:26: note: in definition of macro 'MAPPING_CTRL'
-  const int PORT_##NAME = PORTID;
-                          ^~~~~~
-c:\projects\synton\pan\syntonovo_pan\interface\paramdef.h:63:1: note: in expansion of macro 'OUTPUT'
- OUTPUT(BN_MIX3,   5, 0, CTRL, 0x3F, LOG, 0)
- ^~~~~~
-../source/synth_internal.h:112:35: error: 'BASE_6' undeclared here (not in a function); did you mean 'BASE_5'?
-  MAPPING_##CTRLTYPE(CTRLID, NAME, BASE_##PGROUP + PID)
-                                   ^
-../source/synth_internal.h:106:26: note: in definition of macro 'MAPPING_INT'
-  const int PORT_##NAME = PORTID;
-                          ^~~~~~
-c:\projects\synton\pan\syntonovo_pan\interface\paramdef.h:88:1: note: in expansion of macro 'OUTPUT'
- OUTPUT(VCF1_R_LIN,  6, 0, INT, 0x47, CUSTOM, 0)
- ^~~~~~
-../source/synth_internal.h:112:35: error: 'BASE_7' undeclared here (not in a function); did you mean 'BASE_6'?
-  MAPPING_##CTRLTYPE(CTRLID, NAME, BASE_##PGROUP + PID)
-                                   ^
-../source/synth_internal.h:103:26: note: in definition of macro 'MAPPING_CTRL'
-  const int PORT_##NAME = PORTID;
-                          ^~~~~~
-c:\projects\synton\pan\syntonovo_pan\interface\paramdef.h:91:1: note: in expansion of macro 'OUTPUT'
- OUTPUT(VCO123_FM2,  7, 0, CTRL, 0x17, INV, 0)
- ^~~~~~
-../source/synth_internal.h:112:35: error: 'BASE_8' undeclared here (not in a function); did you mean 'BASE_7'?
-  MAPPING_##CTRLTYPE(CTRLID, NAME, BASE_##PGROUP + PID)
-                                   ^
-../source/synth_internal.h:103:26: note: in definition of macro 'MAPPING_CTRL'
-  const int PORT_##NAME = PORTID;
-                          ^~~~~~
-c:\projects\synton\pan\syntonovo_pan\interface\paramdef.h:121:1: note: in expansion of macro 'OUTPUT'
- OUTPUT(VCF2_L_RES,  8, 0, CTRL, 0x49, INV, 0)
- ^~~~~~
-../source/synth_internal.h:112:35: error: 'BASE_9' undeclared here (not in a function); did you mean 'BASE_8'?
-  MAPPING_##CTRLTYPE(CTRLID, NAME, BASE_##PGROUP + PID)
-                                   ^
-../source/synth_internal.h:103:26: note: in definition of macro 'MAPPING_CTRL'
-  const int PORT_##NAME = PORTID;
-                          ^~~~~~
-c:\projects\synton\pan\syntonovo_pan\interface\paramdef.h:123:1: note: in expansion of macro 'OUTPUT'
- OUTPUT(VCF2_H_RES,  9, 0, CTRL, 0x5D, INV, 0)
- ^~~~~~
-../source/synth_internal.h:112:35: error: 'BASE_10' undeclared here (not in a function); did you mean 'BASE_1'?
-  MAPPING_##CTRLTYPE(CTRLID, NAME, BASE_##PGROUP + PID)
-                                   ^
-../source/synth_internal.h:103:26: note: in definition of macro 'MAPPING_CTRL'
-  const int PORT_##NAME = PORTID;
-                          ^~~~~~
-c:\projects\synton\pan\syntonovo_pan\interface\paramdef.h:152:1: note: in expansion of macro 'OUTPUT'
- OUTPUT(VCF2_L_MIX,  10, 0, CTRL, 0x67, CUSTOM, 0)
- ^~~~~~
-../source/synth_internal.h:112:35: error: 'BASE_11' undeclared here (not in a function); did you mean 'BASE_10'?
-  MAPPING_##CTRLTYPE(CTRLID, NAME, BASE_##PGROUP + PID)
-                                   ^
-../source/synth_internal.h:103:26: note: in definition of macro 'MAPPING_CTRL'
-  const int PORT_##NAME = PORTID;
-                          ^~~~~~
-c:\projects\synton\pan\syntonovo_pan\interface\paramdef.h:153:1: note: in expansion of macro 'OUTPUT'
- OUTPUT(CV_EXT_3,  11, 0, CTRL, 0x68, LIN, 0)
- ^~~~~~
-../source/synth.c: In function 'synth_init':
-../source/synth.c:1483:19: error: 'SELMOST3' undeclared (first use in this function); did you mean 'SELEF3'?
-     shiftctrl_set(SELMOST3);
-                   ^~~~~~~~
-                   SELEF3
-../source/synth.c:1483:19: note: each undeclared identifier is reported only once for each function it appears in
-../source/synth.c:1484:19: error: 'SELVCF2L0' undeclared (first use in this function); did you mean 'SELVCF24B'?
-     shiftctrl_set(SELVCF2L0);
-                   ^~~~~~~~~
-                   SELVCF24B
-../source/synth.c:1485:19: error: 'SELVCF2L1' undeclared (first use in this function); did you mean 'SELVCF2L0'?
-     shiftctrl_set(SELVCF2L1);
-                   ^~~~~~~~~
-                   SELVCF2L0
-../source/synth.c: In function 'pad_threshold':
-../source/synth.c:1510:20: error: 'X_DEADZONE' undeclared (first use in this function); did you mean 'virt_X_DEADZONE'?
-   dz = synth_param[X_DEADZONE].value >> 3;
-                    ^~~~~~~~~~
-                    virt_X_DEADZONE
-../source/synth.c:1511:23: error: 'X_SCALE' undeclared (first use in this function)
-   scale = synth_param[X_SCALE].value >> 3;
-                       ^~~~~~~
-../source/synth.c:1514:20: error: 'Y_DEADZONE' undeclared (first use in this function); did you mean 'X_DEADZONE'?
-   dz = synth_param[Y_DEADZONE].value >> 3;
-                    ^~~~~~~~~~
-                    X_DEADZONE
-../source/synth.c:1515:23: error: 'Y_SCALE' undeclared (first use in this function); did you mean 'X_SCALE'?
-   scale = synth_param[Y_SCALE].value >> 3;
-                       ^~~~~~~
-                       X_SCALE
-../source/synth.c:1518:20: error: 'Z_DEADZONE' undeclared (first use in this function); did you mean 'Y_DEADZONE'?
-   dz = synth_param[Z_DEADZONE].value >> 3;
-                    ^~~~~~~~~~
-                    Y_DEADZONE
-../source/synth.c:1519:23: error: 'Z_SCALE' undeclared (first use in this function); did you mean 'Y_SCALE'?
-   scale = synth_param[Z_SCALE].value >> 3;
-                       ^~~~~~~
-                       Y_SCALE
-make: *** [source/autotune.o] Error 1
+18:05:23 **** Incremental Build of configuration Debug for project usbmidiio ****
+make -r -j8 all 
+Building file: ../source/rpi.cpp
+Building file: ../source/uart_crc.cpp
+Building file: ../source/usbmidiio.cpp
+Invoking: MCU C++ Compiler
+Invoking: MCU C++ Compiler
+arm-none-eabi-c++ -D__NEWLIB__ -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/rpi.d" -MT"source/rpi.o" -MT"source/rpi.d" -o "source/rpi.o" "../source/rpi.cpp"
+Invoking: MCU C++ Compiler
+arm-none-eabi-c++ -D__NEWLIB__ -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/uart_crc.d" -MT"source/uart_crc.o" -MT"source/uart_crc.d" -o "source/uart_crc.o" "../source/uart_crc.cpp"
+arm-none-eabi-c++ -D__NEWLIB__ -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/usbmidiio.d" -MT"source/usbmidiio.o" -MT"source/usbmidiio.d" -o "source/usbmidiio.o" "../source/usbmidiio.cpp"
+../source/uart_crc.cpp:90:8: error: redefinition of 'struct oob_entry_t'
+ struct oob_entry_t
+        ^~~~~~~~~~~
+In file included from ../source/uart_crc.cpp:6:0:
+../source/uart.h:63:8: note: previous definition of 'struct oob_entry_t'
+ struct oob_entry_t
+        ^~~~~~~~~~~
+../source/uart_crc.cpp:97:8: error: redefinition of 'struct sync_state_t'
+ struct sync_state_t
+        ^~~~~~~~~~~~
+In file included from ../source/uart_crc.cpp:6:0:
+../source/uart.h:70:8: note: previous definition of 'struct sync_state_t'
+ struct sync_state_t
+        ^~~~~~~~~~~~
+../source/uart_crc.cpp: In function 'int oobfunc(uint8_t, uint32_t)':
+../source/uart_crc.cpp:434:50: warning: format '%x' expects argument of type 'unsigned int', but argument 3 has type 'uint32_t {aka long unsigned int}' [-Wformat=]
+   printf("oob data(cmd=%d, data=%x)\n", cmd, data);
+                                                  ^
+../source/uart_crc.cpp: In function 'void sync_init(sync_state_t*, uart_t*)':
+../source/uart_crc.cpp:464:8: error: cannot convert 'uart_t*' to 'uart_config_t*' for argument '1' to 'void uart_configure(uart_config_t*, uart_write_complete_cb, void*, uart_read_complete_cb, void*, uart_timer_tick_cb, void*)'
+   state);
+        ^
+../source/uart_crc.cpp:471:15: error: 'struct uart_t' has no member named 'waitfor'
+  state->uart->waitfor(6);
+               ^~~~~~~
+../source/uart_crc.cpp: At global scope:
+../source/uart_crc.cpp:19:13: warning: 'void crc_init()' defined but not used [-Wunused-function]
+ static void crc_init(void)
+             ^~~~~~~~
+../source/rpi.cpp:70:12: warning: 'int fifo_tx_full()' defined but not used [-Wunused-function]
+ static int fifo_tx_full()
+            ^~~~~~~~~~~~
+../source/rpi.cpp:35:12: warning: 'int fifo_rx_empty()' defined but not used [-Wunused-function]
+ static int fifo_rx_empty()
+            ^~~~~~~~~~~~~
+make: *** [source/uart_crc.o] Error 1
 make: *** Waiting for unfinished jobs....
-../source/synth.c:1522:23: error: 'MODL_SCALE' undeclared (first use in this function); did you mean 'Z_SCALE'?
-   scale = synth_param[MODL_SCALE].value >> 4;
-                       ^~~~~~~~~~
-                       Z_SCALE
-../source/synth.c:1525:23: error: 'SUSL_SCALE' undeclared (first use in this function); did you mean 'MODL_SCALE'?
-   scale = synth_param[SUSL_SCALE].value >> 4;
-                       ^~~~~~~~~~
-                       MODL_SCALE
-../source/synth.c:1528:23: error: 'UNACL_SCALE' undeclared (first use in this function); did you mean 'SUSL_SCALE'?
-   scale = synth_param[UNACL_SCALE].value >> 4;
-                       ^~~~~~~~~~~
-                       SUSL_SCALE
-../source/synth.c:1531:23: error: 'MODR_SCALE' undeclared (first use in this function); did you mean 'MODL_SCALE'?
-   scale = synth_param[MODR_SCALE].value >> 4;
-                       ^~~~~~~~~~
-                       MODL_SCALE
-../source/synth.c:1534:23: error: 'SUSR_SCALE' undeclared (first use in this function); did you mean 'SUSL_SCALE'?
-   scale = synth_param[SUSR_SCALE].value >> 4;
-                       ^~~~~~~~~~
-                       SUSL_SCALE
-../source/synth.c:1537:23: error: 'UNACR_SCALE' undeclared (first use in this function); did you mean 'UNACL_SCALE'?
-   scale = synth_param[UNACR_SCALE].value >> 4;
-                       ^~~~~~~~~~~
-                       UNACL_SCALE
-make: *** [source/synth.o] Error 1
-Finished building: ../board/clock_config.c
+../source/usbmidiio.cpp: In function 'void KeyScan()':
+../source/usbmidiio.cpp:190:70: warning: format '%d' expects argument of type 'int', but argument 2 has type 'long unsigned int' [-Wformat=]
+                      printf("%d break\n", (keyscanindex >> 1) * 8 + i);
+                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+Finished building: ../source/rpi.cpp
  
-Finished building: ../board/peripherals.c
+Finished building: ../source/usbmidiio.cpp
  
-16:21:30 **** Incremental Build of configuration Debug for project pan_synth ****
-make -r -j4 all 
-Building file: ../source/autotune.c
-Building file: ../source/synth.c
-Building file: ../CMSIS/drivers/fsl_clock.c
-Building file: ../board/pin_mux.c
-Invoking: MCU C Compiler
-Invoking: MCU C Compiler
-arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\board" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\source" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\startup" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\CMSIS" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\CMSIS\drivers" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"source/autotune.d" -MT"source/autotune.o" -MT"source/autotune.d" -o "source/autotune.o" "../source/autotune.c"
-arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\board" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\source" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\startup" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\CMSIS" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\CMSIS\drivers" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"source/synth.d" -MT"source/synth.o" -MT"source/synth.d" -o "source/synth.o" "../source/synth.c"
-Invoking: MCU C Compiler
-Invoking: MCU C Compiler
-arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\board" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\source" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\startup" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\CMSIS" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\CMSIS\drivers" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"CMSIS/drivers/fsl_clock.d" -MT"CMSIS/drivers/fsl_clock.o" -MT"CMSIS/drivers/fsl_clock.d" -o "CMSIS/drivers/fsl_clock.o" "../CMSIS/drivers/fsl_clock.c"
-arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\board" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\source" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\startup" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\CMSIS" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\CMSIS\drivers" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"board/pin_mux.d" -MT"board/pin_mux.o" -MT"board/pin_mux.d" -o "board/pin_mux.o" "../board/pin_mux.c"
-../source/autotune.c: In function 'autotune_set_routing':
-../source/autotune.c:285:21: error: 'SEL4SAW' undeclared (first use in this function); did you mean 'SEL3SAW'?
-     shiftctrl_clear(SEL4SAW);
-                     ^~~~~~~
-                     SEL3SAW
-../source/autotune.c:285:21: note: each undeclared identifier is reported only once for each function it appears in
-../source/autotune.c:286:21: error: 'SEL5SAW' undeclared (first use in this function); did you mean 'SEL4SAW'?
-     shiftctrl_clear(SEL5SAW);
-                     ^~~~~~~
-                     SEL4SAW
-../source/autotune.c:287:21: error: 'SEL6SAW' undeclared (first use in this function); did you mean 'SEL5SAW'?
-     shiftctrl_clear(SEL6SAW);
-                     ^~~~~~~
-                     SEL5SAW
-../source/autotune.c:288:21: error: 'SEL7SAW' undeclared (first use in this function); did you mean 'SEL6SAW'?
-     shiftctrl_clear(SEL7SAW);
-                     ^~~~~~~
-                     SEL6SAW
-../source/autotune.c:307:14: error: 'PORT_VCO123_FM1' undeclared (first use in this function); did you mean 'PORT_VCO123_FM3'?
-  ports_value(PORT_VCO123_FM1, 0);
-              ^~~~~~~~~~~~~~~
-              PORT_VCO123_FM3
-In file included from ../source/synth.c:15:0:
-../source/synth_internal.h:112:35: error: 'BASE_0' undeclared here (not in a function); did you mean 'BASE_P4_0'?
-  MAPPING_##CTRLTYPE(CTRLID, NAME, BASE_##PGROUP + PID)
-                                   ^
-../source/synth_internal.h:103:26: note: in definition of macro 'MAPPING_CTRL'
-  const int PORT_##NAME = PORTID;
-                          ^~~~~~
-c:\projects\synton\pan\syntonovo_pan\interface\paramdef.h:29:1: note: in expansion of macro 'OUTPUT'
- OUTPUT(VCO1_MIX1,  0, 0, CTRL, 0x10, CUSTOM, 0)
- ^~~~~~
-../source/synth_internal.h:112:35: error: 'BASE_1' undeclared here (not in a function); did you mean 'BASE_0'?
-  MAPPING_##CTRLTYPE(CTRLID, NAME, BASE_##PGROUP + PID)
-                                   ^
-../source/synth_internal.h:103:26: note: in definition of macro 'MAPPING_CTRL'
-  const int PORT_##NAME = PORTID;
-                          ^~~~~~
-c:\projects\synton\pan\syntonovo_pan\interface\paramdef.h:30:1: note: in expansion of macro 'OUTPUT'
- OUTPUT(WHITENS_MIX1, 1, 0, CTRL, 0x18, CUSTOM, 0)
- ^~~~~~
-../source/synth_internal.h:112:35: error: 'BASE_2' undeclared here (not in a function); did you mean 'BASE_1'?
-  MAPPING_##CTRLTYPE(CTRLID, NAME, BASE_##PGROUP + PID)
-                                   ^
-../source/synth_internal.h:103:26: note: in definition of macro 'MAPPING_CTRL'
-  const int PORT_##NAME = PORTID;
-                          ^~~~~~
-c:\projects\synton\pan\syntonovo_pan\interface\paramdef.h:45:1: note: in expansion of macro 'OUTPUT'
- OUTPUT(VCO2_FREQ,  2, 0, CTRL, 0x20, CUSTOM, 0)
- ^~~~~~
-../source/synth_internal.h:112:35: error: 'BASE_3' undeclared here (not in a function); did you mean 'BASE_2'?
-  MAPPING_##CTRLTYPE(CTRLID, NAME, BASE_##PGROUP + PID)
-                                   ^
-../source/synth_internal.h:103:26: note: in definition of macro 'MAPPING_CTRL'
-  const int PORT_##NAME = PORTID;
-                          ^~~~~~
-c:\projects\synton\pan\syntonovo_pan\interface\paramdef.h:46:1: note: in expansion of macro 'OUTPUT'
- OUTPUT(VCO4_FREQ,  3, 0, CTRL, 0x28, CUSTOM, 0)
- ^~~~~~
-../source/synth_internal.h:112:35: error: 'BASE_4' undeclared here (not in a function); did you mean 'BASE_3'?
-  MAPPING_##CTRLTYPE(CTRLID, NAME, BASE_##PGROUP + PID)
-                                   ^
-../source/synth_internal.h:106:26: note: in definition of macro 'MAPPING_INT'
-  const int PORT_##NAME = PORTID;
-                          ^~~~~~
-c:\projects\synton\pan\syntonovo_pan\interface\paramdef.h:61:1: note: in expansion of macro 'OUTPUT'
- OUTPUT(VCF2_R_LOG,  4, 0, INT, 0x30, CUSTOM, 0)
- ^~~~~~
-../source/synth_internal.h:112:35: error: 'BASE_5' undeclared here (not in a function); did you mean 'BASE_4'?
-  MAPPING_##CTRLTYPE(CTRLID, NAME, BASE_##PGROUP + PID)
-                                   ^
-../source/synth_internal.h:103:26: note: in definition of macro 'MAPPING_CTRL'
-  const int PORT_##NAME = PORTID;
-                          ^~~~~~
-c:\projects\synton\pan\syntonovo_pan\interface\paramdef.h:63:1: note: in expansion of macro 'OUTPUT'
- OUTPUT(BN_MIX3,   5, 0, CTRL, 0x3F, LOG, 0)
- ^~~~~~
-../source/synth_internal.h:112:35: error: 'BASE_6' undeclared here (not in a function); did you mean 'BASE_5'?
-  MAPPING_##CTRLTYPE(CTRLID, NAME, BASE_##PGROUP + PID)
-                                   ^
-../source/synth_internal.h:106:26: note: in definition of macro 'MAPPING_INT'
-  const int PORT_##NAME = PORTID;
-                          ^~~~~~
-c:\projects\synton\pan\syntonovo_pan\interface\paramdef.h:88:1: note: in expansion of macro 'OUTPUT'
- OUTPUT(VCF1_R_LIN,  6, 0, INT, 0x47, CUSTOM, 0)
- ^~~~~~
-../source/synth_internal.h:112:35: error: 'BASE_7' undeclared here (not in a function); did you mean 'BASE_6'?
-  MAPPING_##CTRLTYPE(CTRLID, NAME, BASE_##PGROUP + PID)
-                                   ^
-../source/synth_internal.h:103:26: note: in definition of macro 'MAPPING_CTRL'
-  const int PORT_##NAME = PORTID;
-                          ^~~~~~
-c:\projects\synton\pan\syntonovo_pan\interface\paramdef.h:91:1: note: in expansion of macro 'OUTPUT'
- OUTPUT(VCO123_FM2,  7, 0, CTRL, 0x17, INV, 0)
- ^~~~~~
-../source/synth_internal.h:112:35: error: 'BASE_8' undeclared here (not in a function); did you mean 'BASE_7'?
-  MAPPING_##CTRLTYPE(CTRLID, NAME, BASE_##PGROUP + PID)
-                                   ^
-../source/synth_internal.h:103:26: note: in definition of macro 'MAPPING_CTRL'
-  const int PORT_##NAME = PORTID;
-                          ^~~~~~
-c:\projects\synton\pan\syntonovo_pan\interface\paramdef.h:121:1: note: in expansion of macro 'OUTPUT'
- OUTPUT(VCF2_L_RES,  8, 0, CTRL, 0x49, INV, 0)
- ^~~~~~
-../source/synth_internal.h:112:35: error: 'BASE_9' undeclared here (not in a function); did you mean 'BASE_8'?
-  MAPPING_##CTRLTYPE(CTRLID, NAME, BASE_##PGROUP + PID)
-                                   ^
-../source/synth_internal.h:103:26: note: in definition of macro 'MAPPING_CTRL'
-  const int PORT_##NAME = PORTID;
-                          ^~~~~~
-c:\projects\synton\pan\syntonovo_pan\interface\paramdef.h:123:1: note: in expansion of macro 'OUTPUT'
- OUTPUT(VCF2_H_RES,  9, 0, CTRL, 0x5D, INV, 0)
- ^~~~~~
-../source/synth_internal.h:112:35: error: 'BASE_10' undeclared here (not in a function); did you mean 'BASE_1'?
-  MAPPING_##CTRLTYPE(CTRLID, NAME, BASE_##PGROUP + PID)
-                                   ^
-../source/synth_internal.h:103:26: note: in definition of macro 'MAPPING_CTRL'
-  const int PORT_##NAME = PORTID;
-                          ^~~~~~
-c:\projects\synton\pan\syntonovo_pan\interface\paramdef.h:152:1: note: in expansion of macro 'OUTPUT'
- OUTPUT(VCF2_L_MIX,  10, 0, CTRL, 0x67, CUSTOM, 0)
- ^~~~~~
-../source/synth_internal.h:112:35: error: 'BASE_11' undeclared here (not in a function); did you mean 'BASE_10'?
-  MAPPING_##CTRLTYPE(CTRLID, NAME, BASE_##PGROUP + PID)
-                                   ^
-../source/synth_internal.h:103:26: note: in definition of macro 'MAPPING_CTRL'
-  const int PORT_##NAME = PORTID;
-                          ^~~~~~
-c:\projects\synton\pan\syntonovo_pan\interface\paramdef.h:153:1: note: in expansion of macro 'OUTPUT'
- OUTPUT(CV_EXT_3,  11, 0, CTRL, 0x68, LIN, 0)
- ^~~~~~
-../source/synth.c: In function 'synth_init':
-../source/synth.c:1483:19: error: 'SELMOST3' undeclared (first use in this function); did you mean 'SELEF3'?
-     shiftctrl_set(SELMOST3);
-                   ^~~~~~~~
-                   SELEF3
-../source/synth.c:1483:19: note: each undeclared identifier is reported only once for each function it appears in
-../source/synth.c:1484:19: error: 'SELVCF2L0' undeclared (first use in this function); did you mean 'SELVCF24B'?
-     shiftctrl_set(SELVCF2L0);
-                   ^~~~~~~~~
-                   SELVCF24B
-../source/synth.c:1485:19: error: 'SELVCF2L1' undeclared (first use in this function); did you mean 'SELVCF2L0'?
-     shiftctrl_set(SELVCF2L1);
-                   ^~~~~~~~~
-                   SELVCF2L0
-../source/synth.c: In function 'pad_threshold':
-../source/synth.c:1510:20: error: 'X_DEADZONE' undeclared (first use in this function); did you mean 'virt_X_DEADZONE'?
-   dz = synth_param[X_DEADZONE].value >> 3;
-                    ^~~~~~~~~~
-                    virt_X_DEADZONE
-../source/synth.c:1511:23: error: 'X_SCALE' undeclared (first use in this function)
-   scale = synth_param[X_SCALE].value >> 3;
-                       ^~~~~~~
-../source/synth.c:1514:20: error: 'Y_DEADZONE' undeclared (first use in this function); did you mean 'X_DEADZONE'?
-   dz = synth_param[Y_DEADZONE].value >> 3;
-                    ^~~~~~~~~~
-                    X_DEADZONE
-../source/synth.c:1515:23: error: 'Y_SCALE' undeclared (first use in this function); did you mean 'X_SCALE'?
-   scale = synth_param[Y_SCALE].value >> 3;
-                       ^~~~~~~
-                       X_SCALE
-../source/synth.c:1518:20: error: 'Z_DEADZONE' undeclared (first use in this function); did you mean 'Y_DEADZONE'?
-   dz = synth_param[Z_DEADZONE].value >> 3;
-                    ^~~~~~~~~~
-                    Y_DEADZONE
-../source/synth.c:1519:23: error: 'Z_SCALE' undeclared (first use in this function); did you mean 'Y_SCALE'?
-   scale = synth_param[Z_SCALE].value >> 3;
-                       ^~~~~~~
-                       Y_SCALE
-../source/synth.c:1522:23: error: 'MODL_SCALE' undeclared (first use in this function); did you mean 'Z_SCALE'?
-   scale = synth_param[MODL_SCALE].value >> 4;
-                       ^~~~~~~~~~
-                       Z_SCALE
-../source/synth.c:1525:23: error: 'SUSL_SCALE' undeclared (first use in this function); did you mean 'MODL_SCALE'?
-   scale = synth_param[SUSL_SCALE].value >> 4;
-                       ^~~~~~~~~~
-                       MODL_SCALE
-../source/synth.c:1528:23: error: 'UNACL_SCALE' undeclared (first use in this function); did you mean 'SUSL_SCALE'?
-   scale = synth_param[UNACL_SCALE].value >> 4;
-                       ^~~~~~~~~~~
-                       SUSL_SCALE
-../source/synth.c:1531:23: error: 'MODR_SCALE' undeclared (first use in this function); did you mean 'MODL_SCALE'?
-   scale = synth_param[MODR_SCALE].value >> 4;
-                       ^~~~~~~~~~
-                       MODL_SCALE
-../source/synth.c:1534:23: error: 'SUSR_SCALE' undeclared (first use in this function); did you mean 'SUSL_SCALE'?
-   scale = synth_param[SUSR_SCALE].value >> 4;
-                       ^~~~~~~~~~
-                       SUSL_SCALE
-../source/synth.c:1537:23: error: 'UNACR_SCALE' undeclared (first use in this function); did you mean 'UNACL_SCALE'?
-   scale = synth_param[UNACR_SCALE].value >> 4;
-                       ^~~~~~~~~~~
-                       UNACL_SCALE
-make: *** [source/autotune.o] Error 1
+18:05:34 **** Incremental Build of configuration Debug for project usbmidiio ****
+make -r -j8 all 
+Building file: ../source/uart_crc.cpp
+Invoking: MCU C++ Compiler
+arm-none-eabi-c++ -D__NEWLIB__ -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/uart_crc.d" -MT"source/uart_crc.o" -MT"source/uart_crc.d" -o "source/uart_crc.o" "../source/uart_crc.cpp"
+../source/uart_crc.cpp: In function 'int oobfunc(uint8_t, uint32_t)':
+../source/uart_crc.cpp:388:50: warning: format '%x' expects argument of type 'unsigned int', but argument 3 has type 'uint32_t {aka long unsigned int}' [-Wformat=]
+   printf("oob data(cmd=%d, data=%x)\n", cmd, data);
+                                                  ^
+../source/uart_crc.cpp: In function 'void sync_init(sync_state_t*, uart_t*)':
+../source/uart_crc.cpp:418:8: error: cannot convert 'uart_t*' to 'uart_config_t*' for argument '1' to 'void uart_configure(uart_config_t*, uart_write_complete_cb, void*, uart_read_complete_cb, void*, uart_timer_tick_cb, void*)'
+   state);
+        ^
+../source/uart_crc.cpp:425:15: error: 'struct uart_t' has no member named 'waitfor'
+  state->uart->waitfor(6);
+               ^~~~~~~
+../source/uart_crc.cpp: At global scope:
+../source/uart_crc.cpp:19:13: warning: 'void crc_init()' defined but not used [-Wunused-function]
+ static void crc_init(void)
+             ^~~~~~~~
+make: *** [source/uart_crc.o] Error 1
+18:05:59 **** Incremental Build of configuration Debug for project usbmidiio ****
+make -r -j8 all 
+Building file: ../source/uart_crc.cpp
+Invoking: MCU C++ Compiler
+arm-none-eabi-c++ -D__NEWLIB__ -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/uart_crc.d" -MT"source/uart_crc.o" -MT"source/uart_crc.d" -o "source/uart_crc.o" "../source/uart_crc.cpp"
+../source/uart_crc.cpp: In function 'void sync_init(sync_state_t*, uart_t*)':
+../source/uart_crc.cpp:418:8: error: cannot convert 'uart_t*' to 'uart_config_t*' for argument '1' to 'void uart_configure(uart_config_t*, uart_write_complete_cb, void*, uart_read_complete_cb, void*, uart_timer_tick_cb, void*)'
+   state);
+        ^
+../source/uart_crc.cpp:425:15: error: 'struct uart_t' has no member named 'waitfor'
+  state->uart->waitfor(6);
+               ^~~~~~~
+../source/uart_crc.cpp: At global scope:
+../source/uart_crc.cpp:19:13: warning: 'void crc_init()' defined but not used [-Wunused-function]
+ static void crc_init(void)
+             ^~~~~~~~
+make: *** [source/uart_crc.o] Error 1
+18:06:08 **** Incremental Build of configuration Debug for project usbmidiio ****
+make -r -j8 all 
+Building file: ../source/uart_crc.cpp
+Invoking: MCU C++ Compiler
+arm-none-eabi-c++ -D__NEWLIB__ -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/uart_crc.d" -MT"source/uart_crc.o" -MT"source/uart_crc.d" -o "source/uart_crc.o" "../source/uart_crc.cpp"
+../source/uart_crc.cpp: In function 'void sync_init(sync_state_t*, uart_t*)':
+../source/uart_crc.cpp:425:15: error: 'struct uart_t' has no member named 'waitfor'
+  state->uart->waitfor(6);
+               ^~~~~~~
+../source/uart_crc.cpp: At global scope:
+../source/uart_crc.cpp:19:13: warning: 'void crc_init()' defined but not used [-Wunused-function]
+ static void crc_init(void)
+             ^~~~~~~~
+make: *** [source/uart_crc.o] Error 1
+18:06:14 **** Incremental Build of configuration Debug for project usbmidiio ****
+make -r -j8 all 
+Building file: ../source/uart_crc.cpp
+Invoking: MCU C++ Compiler
+arm-none-eabi-c++ -D__NEWLIB__ -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/uart_crc.d" -MT"source/uart_crc.o" -MT"source/uart_crc.d" -o "source/uart_crc.o" "../source/uart_crc.cpp"
+../source/uart_crc.cpp:19:13: warning: 'void crc_init()' defined but not used [-Wunused-function]
+ static void crc_init(void)
+             ^~~~~~~~
+Finished building: ../source/uart_crc.cpp
+ 
+Building target: usbmidiio.axf
+Invoking: MCU C++ Linker
+arm-none-eabi-c++ -nostdlib -L"C:\work\pan\Syntonovo_PAN\controller\usbmidiio\libs" -Xlinker -Map="usbmidiio.map" -Xlinker --gc-sections -Xlinker -print-memory-usage -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -T "usbmidiio_Debug.ld" -o "usbmidiio.axf"  ./usb/osa/usb_osa_freertos.o  ./usb/device/usb_device_dci.o ./usb/device/usb_device_lpcip3511.o  ./startup/startup_lpc54616.o  ./source/usb/usb_device_cdc_acm.o ./source/usb/usb_device_ch9.o ./source/usb/usb_device_class.o ./source/usb/usb_device_descriptor.o ./source/usb/virtual_com.o  ./source/control.o ./source/rpi.o ./source/semihost_hardfault.o ./source/uart_crc.o ./source/usbmidiio.o  ./freertos/source/croutine.o ./freertos/source/event_groups.o ./freertos/source/list.o ./freertos/source/queue.o ./freertos/source/tasks.o ./freertos/source/timers.o  ./freertos/portable/fsl_tickless_systick.o ./freertos/portable/heap_4.o ./freertos/portable/port.o  ./board/board.o ./board/clock_config.o ./board/peripherals.o ./board/pin_mux.o  ./CMSIS/drivers/fsl_adc.o ./CMSIS/drivers/fsl_clock.o ./CMSIS/drivers/fsl_common.o ./CMSIS/drivers/fsl_crc.o ./CMSIS/drivers/fsl_ctimer.o ./CMSIS/drivers/fsl_dma.o ./CMSIS/drivers/fsl_dmic.o ./CMSIS/drivers/fsl_dmic_dma.o ./CMSIS/drivers/fsl_eeprom.o ./CMSIS/drivers/fsl_emc.o ./CMSIS/drivers/fsl_enet.o ./CMSIS/drivers/fsl_flashiap.o ./CMSIS/drivers/fsl_flexcomm.o ./CMSIS/drivers/fsl_fmc.o ./CMSIS/drivers/fsl_fmeas.o ./CMSIS/drivers/fsl_gint.o ./CMSIS/drivers/fsl_gpio.o ./CMSIS/drivers/fsl_i2c.o ./CMSIS/drivers/fsl_i2c_dma.o ./CMSIS/drivers/fsl_i2c_freertos.o ./CMSIS/drivers/fsl_i2s.o ./CMSIS/drivers/fsl_i2s_dma.o ./CMSIS/drivers/fsl_inputmux.o ./CMSIS/drivers/fsl_mcan.o ./CMSIS/drivers/fsl_mrt.o ./CMSIS/drivers/fsl_pint.o ./CMSIS/drivers/fsl_power.o ./CMSIS/drivers/fsl_reset.o ./CMSIS/drivers/fsl_rit.o ./CMSIS/drivers/fsl_rtc.o ./CMSIS/drivers/fsl_sctimer.o ./CMSIS/drivers/fsl_sdif.o ./CMSIS/drivers/fsl_spi.o ./CMSIS/drivers/fsl_spi_dma.o ./CMSIS/drivers/fsl_spi_freertos.o ./CMSIS/drivers/fsl_spifi.o ./CMSIS/drivers/fsl_spifi_dma.o ./CMSIS/drivers/fsl_usart.o ./CMSIS/drivers/fsl_usart_dma.o ./CMSIS/drivers/fsl_usart_freertos.o ./CMSIS/drivers/fsl_utick.o ./CMSIS/drivers/fsl_wwdt.o  ./CMSIS/system_LPC54616.o   -lpower_hardabi
+Memory region         Used Size  Region Size  %age Used
+   PROGRAM_FLASH:       65300 B       512 KB     12.45%
+    SRAM_0_1_2_3:       23780 B       160 KB     14.51%
+           SRAMX:          0 GB        32 KB      0.00%
+         USB_RAM:          7 KB         8 KB     87.50%
+Finished building target: usbmidiio.axf
+ 
+make --no-print-directory post-build
+Performing post-build steps
+arm-none-eabi-size "usbmidiio.axf"; # arm-none-eabi-objcopy -v -O binary "usbmidiio.axf" "usbmidiio.bin" ; # checksum -p LPC54616J512 -d "usbmidiio.bin";
+   text	   data	    bss	    dec	    hex	filename
+  63616	   1684	  29156	  94456	  170f8	usbmidiio.axf
+ 
+18:08:08 **** Incremental Build of configuration Debug for project usbmidiio ****
+make -r -j8 all 
+Building file: ../source/rpi.cpp
+Building file: ../source/uart_crc.cpp
+Building file: ../source/usbmidiio.cpp
+Invoking: MCU C++ Compiler
+Invoking: MCU C++ Compiler
+arm-none-eabi-c++ -D__NEWLIB__ -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/rpi.d" -MT"source/rpi.o" -MT"source/rpi.d" -o "source/rpi.o" "../source/rpi.cpp"
+arm-none-eabi-c++ -D__NEWLIB__ -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/uart_crc.d" -MT"source/uart_crc.o" -MT"source/uart_crc.d" -o "source/uart_crc.o" "../source/uart_crc.cpp"
+Invoking: MCU C++ Compiler
+arm-none-eabi-c++ -D__NEWLIB__ -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/usbmidiio.d" -MT"source/usbmidiio.o" -MT"source/usbmidiio.d" -o "source/usbmidiio.o" "../source/usbmidiio.cpp"
+../source/uart_crc.cpp:19:13: warning: 'void crc_init()' defined but not used [-Wunused-function]
+ static void crc_init(void)
+             ^~~~~~~~
+../source/rpi.cpp:70:12: warning: 'int fifo_tx_full()' defined but not used [-Wunused-function]
+ static int fifo_tx_full()
+            ^~~~~~~~~~~~
+../source/rpi.cpp:35:12: warning: 'int fifo_rx_empty()' defined but not used [-Wunused-function]
+ static int fifo_rx_empty()
+            ^~~~~~~~~~~~~
+../source/usbmidiio.cpp: In function 'void KeyScan()':
+../source/usbmidiio.cpp:190:70: warning: format '%d' expects argument of type 'int', but argument 2 has type 'long unsigned int' [-Wformat=]
+                      printf("%d break\n", (keyscanindex >> 1) * 8 + i);
+                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+../source/usbmidiio.cpp: In function 'int main()':
+../source/usbmidiio.cpp:537:53: error: 'sync_oobdata_func' was not declared in this scope
+     sync_init(&rpi_sync, &rpi_uart, sync_data_func, sync_oobdata_func);
+                                                     ^~~~~~~~~~~~~~~~~
+../source/usbmidiio.cpp:537:53: note: suggested alternative: 'sync_data_func'
+     sync_init(&rpi_sync, &rpi_uart, sync_data_func, sync_oobdata_func);
+                                                     ^~~~~~~~~~~~~~~~~
+                                                     sync_data_func
+make: *** [source/usbmidiio.o] Error 1
 make: *** Waiting for unfinished jobs....
-make: *** [source/synth.o] Error 1
-Finished building: ../board/pin_mux.c
+Finished building: ../source/uart_crc.cpp
  
-Finished building: ../CMSIS/drivers/fsl_clock.c
+Finished building: ../source/rpi.cpp
+ 
+18:08:34 **** Incremental Build of configuration Debug for project usbmidiio ****
+make -r -j8 all 
+Building file: ../source/uart_crc.cpp
+Building file: ../source/usbmidiio.cpp
+Invoking: MCU C++ Compiler
+Invoking: MCU C++ Compiler
+arm-none-eabi-c++ -D__NEWLIB__ -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/uart_crc.d" -MT"source/uart_crc.o" -MT"source/uart_crc.d" -o "source/uart_crc.o" "../source/uart_crc.cpp"
+arm-none-eabi-c++ -D__NEWLIB__ -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/usbmidiio.d" -MT"source/usbmidiio.o" -MT"source/usbmidiio.d" -o "source/usbmidiio.o" "../source/usbmidiio.cpp"
+../source/usbmidiio.cpp: In function 'void KeyScan()':
+../source/usbmidiio.cpp:190:70: warning: format '%d' expects argument of type 'int', but argument 2 has type 'long unsigned int' [-Wformat=]
+                      printf("%d break\n", (keyscanindex >> 1) * 8 + i);
+                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+Finished building: ../source/uart_crc.cpp
+ 
+Finished building: ../source/usbmidiio.cpp
+ 
+Building target: usbmidiio.axf
+Invoking: MCU C++ Linker
+arm-none-eabi-c++ -nostdlib -L"C:\work\pan\Syntonovo_PAN\controller\usbmidiio\libs" -Xlinker -Map="usbmidiio.map" -Xlinker --gc-sections -Xlinker -print-memory-usage -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -T "usbmidiio_Debug.ld" -o "usbmidiio.axf"  ./usb/osa/usb_osa_freertos.o  ./usb/device/usb_device_dci.o ./usb/device/usb_device_lpcip3511.o  ./startup/startup_lpc54616.o  ./source/usb/usb_device_cdc_acm.o ./source/usb/usb_device_ch9.o ./source/usb/usb_device_class.o ./source/usb/usb_device_descriptor.o ./source/usb/virtual_com.o  ./source/control.o ./source/rpi.o ./source/semihost_hardfault.o ./source/uart_crc.o ./source/usbmidiio.o  ./freertos/source/croutine.o ./freertos/source/event_groups.o ./freertos/source/list.o ./freertos/source/queue.o ./freertos/source/tasks.o ./freertos/source/timers.o  ./freertos/portable/fsl_tickless_systick.o ./freertos/portable/heap_4.o ./freertos/portable/port.o  ./board/board.o ./board/clock_config.o ./board/peripherals.o ./board/pin_mux.o  ./CMSIS/drivers/fsl_adc.o ./CMSIS/drivers/fsl_clock.o ./CMSIS/drivers/fsl_common.o ./CMSIS/drivers/fsl_crc.o ./CMSIS/drivers/fsl_ctimer.o ./CMSIS/drivers/fsl_dma.o ./CMSIS/drivers/fsl_dmic.o ./CMSIS/drivers/fsl_dmic_dma.o ./CMSIS/drivers/fsl_eeprom.o ./CMSIS/drivers/fsl_emc.o ./CMSIS/drivers/fsl_enet.o ./CMSIS/drivers/fsl_flashiap.o ./CMSIS/drivers/fsl_flexcomm.o ./CMSIS/drivers/fsl_fmc.o ./CMSIS/drivers/fsl_fmeas.o ./CMSIS/drivers/fsl_gint.o ./CMSIS/drivers/fsl_gpio.o ./CMSIS/drivers/fsl_i2c.o ./CMSIS/drivers/fsl_i2c_dma.o ./CMSIS/drivers/fsl_i2c_freertos.o ./CMSIS/drivers/fsl_i2s.o ./CMSIS/drivers/fsl_i2s_dma.o ./CMSIS/drivers/fsl_inputmux.o ./CMSIS/drivers/fsl_mcan.o ./CMSIS/drivers/fsl_mrt.o ./CMSIS/drivers/fsl_pint.o ./CMSIS/drivers/fsl_power.o ./CMSIS/drivers/fsl_reset.o ./CMSIS/drivers/fsl_rit.o ./CMSIS/drivers/fsl_rtc.o ./CMSIS/drivers/fsl_sctimer.o ./CMSIS/drivers/fsl_sdif.o ./CMSIS/drivers/fsl_spi.o ./CMSIS/drivers/fsl_spi_dma.o ./CMSIS/drivers/fsl_spi_freertos.o ./CMSIS/drivers/fsl_spifi.o ./CMSIS/drivers/fsl_spifi_dma.o ./CMSIS/drivers/fsl_usart.o ./CMSIS/drivers/fsl_usart_dma.o ./CMSIS/drivers/fsl_usart_freertos.o ./CMSIS/drivers/fsl_utick.o ./CMSIS/drivers/fsl_wwdt.o  ./CMSIS/system_LPC54616.o   -lpower_hardabi
+Memory region         Used Size  Region Size  %age Used
+./source/uart_crc.o: In function `sync_init':
+C:\work\pan\Syntonovo_PAN\controller\usbmidiio\Debug/../source/uart_crc.cpp:417: undefined reference to `uart_configure'
+collect2.exe: error: ld returned 1 exit status
+   PROGRAM_FLASH:       67512 B       512 KB     12.88%
+    SRAM_0_1_2_3:       24316 B       160 KB     14.84%
+           SRAMX:          0 GB        32 KB      0.00%
+         USB_RAM:          7 KB         8 KB     87.50%
+make: *** [usbmidiio.axf] Error 1
+18:09:19 **** Incremental Build of configuration Debug for project usbmidiio ****
+make -r -j8 all 
+Building file: ../source/uart_crc.cpp
+Invoking: MCU C++ Compiler
+arm-none-eabi-c++ -D__NEWLIB__ -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/uart_crc.d" -MT"source/uart_crc.o" -MT"source/uart_crc.d" -o "source/uart_crc.o" "../source/uart_crc.cpp"
+Finished building: ../source/uart_crc.cpp
+ 
+Building target: usbmidiio.axf
+Invoking: MCU C++ Linker
+arm-none-eabi-c++ -nostdlib -L"C:\work\pan\Syntonovo_PAN\controller\usbmidiio\libs" -Xlinker -Map="usbmidiio.map" -Xlinker --gc-sections -Xlinker -print-memory-usage -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -T "usbmidiio_Debug.ld" -o "usbmidiio.axf"  ./usb/osa/usb_osa_freertos.o  ./usb/device/usb_device_dci.o ./usb/device/usb_device_lpcip3511.o  ./startup/startup_lpc54616.o  ./source/usb/usb_device_cdc_acm.o ./source/usb/usb_device_ch9.o ./source/usb/usb_device_class.o ./source/usb/usb_device_descriptor.o ./source/usb/virtual_com.o  ./source/control.o ./source/rpi.o ./source/semihost_hardfault.o ./source/uart_crc.o ./source/usbmidiio.o  ./freertos/source/croutine.o ./freertos/source/event_groups.o ./freertos/source/list.o ./freertos/source/queue.o ./freertos/source/tasks.o ./freertos/source/timers.o  ./freertos/portable/fsl_tickless_systick.o ./freertos/portable/heap_4.o ./freertos/portable/port.o  ./board/board.o ./board/clock_config.o ./board/peripherals.o ./board/pin_mux.o  ./CMSIS/drivers/fsl_adc.o ./CMSIS/drivers/fsl_clock.o ./CMSIS/drivers/fsl_common.o ./CMSIS/drivers/fsl_crc.o ./CMSIS/drivers/fsl_ctimer.o ./CMSIS/drivers/fsl_dma.o ./CMSIS/drivers/fsl_dmic.o ./CMSIS/drivers/fsl_dmic_dma.o ./CMSIS/drivers/fsl_eeprom.o ./CMSIS/drivers/fsl_emc.o ./CMSIS/drivers/fsl_enet.o ./CMSIS/drivers/fsl_flashiap.o ./CMSIS/drivers/fsl_flexcomm.o ./CMSIS/drivers/fsl_fmc.o ./CMSIS/drivers/fsl_fmeas.o ./CMSIS/drivers/fsl_gint.o ./CMSIS/drivers/fsl_gpio.o ./CMSIS/drivers/fsl_i2c.o ./CMSIS/drivers/fsl_i2c_dma.o ./CMSIS/drivers/fsl_i2c_freertos.o ./CMSIS/drivers/fsl_i2s.o ./CMSIS/drivers/fsl_i2s_dma.o ./CMSIS/drivers/fsl_inputmux.o ./CMSIS/drivers/fsl_mcan.o ./CMSIS/drivers/fsl_mrt.o ./CMSIS/drivers/fsl_pint.o ./CMSIS/drivers/fsl_power.o ./CMSIS/drivers/fsl_reset.o ./CMSIS/drivers/fsl_rit.o ./CMSIS/drivers/fsl_rtc.o ./CMSIS/drivers/fsl_sctimer.o ./CMSIS/drivers/fsl_sdif.o ./CMSIS/drivers/fsl_spi.o ./CMSIS/drivers/fsl_spi_dma.o ./CMSIS/drivers/fsl_spi_freertos.o ./CMSIS/drivers/fsl_spifi.o ./CMSIS/drivers/fsl_spifi_dma.o ./CMSIS/drivers/fsl_usart.o ./CMSIS/drivers/fsl_usart_dma.o ./CMSIS/drivers/fsl_usart_freertos.o ./CMSIS/drivers/fsl_utick.o ./CMSIS/drivers/fsl_wwdt.o  ./CMSIS/system_LPC54616.o   -lpower_hardabi
+Memory region         Used Size  Region Size  %age Used
+   PROGRAM_FLASH:       67576 B       512 KB     12.89%
+    SRAM_0_1_2_3:       24316 B       160 KB     14.84%
+           SRAMX:          0 GB        32 KB      0.00%
+         USB_RAM:          7 KB         8 KB     87.50%
+Finished building target: usbmidiio.axf
+ 
+make --no-print-directory post-build
+Performing post-build steps
+arm-none-eabi-size "usbmidiio.axf"; # arm-none-eabi-objcopy -v -O binary "usbmidiio.axf" "usbmidiio.bin" ; # checksum -p LPC54616J512 -d "usbmidiio.bin";
+   text	   data	    bss	    dec	    hex	filename
+  65892	   1684	  29692	  97268	  17bf4	usbmidiio.axf
+ 
+18:09:56 **** Incremental Build of configuration Debug for project usbmidiio ****
+make -r -j8 all 
+Building file: ../source/rpi.cpp
+Building file: ../source/usbmidiio.cpp
+Invoking: MCU C++ Compiler
+Invoking: MCU C++ Compiler
+arm-none-eabi-c++ -D__NEWLIB__ -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/rpi.d" -MT"source/rpi.o" -MT"source/rpi.d" -o "source/rpi.o" "../source/rpi.cpp"
+arm-none-eabi-c++ -D__NEWLIB__ -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/usbmidiio.d" -MT"source/usbmidiio.o" -MT"source/usbmidiio.d" -o "source/usbmidiio.o" "../source/usbmidiio.cpp"
+../source/rpi.cpp:70:12: warning: 'int fifo_tx_full()' defined but not used [-Wunused-function]
+ static int fifo_tx_full()
+            ^~~~~~~~~~~~
+../source/rpi.cpp:35:12: warning: 'int fifo_rx_empty()' defined but not used [-Wunused-function]
+ static int fifo_rx_empty()
+            ^~~~~~~~~~~~~
+../source/usbmidiio.cpp: In function 'void KeyScan()':
+../source/usbmidiio.cpp:190:70: warning: format '%d' expects argument of type 'int', but argument 2 has type 'long unsigned int' [-Wformat=]
+                      printf("%d break\n", (keyscanindex >> 1) * 8 + i);
+                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+Finished building: ../source/rpi.cpp
+ 
+Finished building: ../source/usbmidiio.cpp
+ 
+Building target: usbmidiio.axf
+Invoking: MCU C++ Linker
+arm-none-eabi-c++ -nostdlib -L"C:\work\pan\Syntonovo_PAN\controller\usbmidiio\libs" -Xlinker -Map="usbmidiio.map" -Xlinker --gc-sections -Xlinker -print-memory-usage -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -T "usbmidiio_Debug.ld" -o "usbmidiio.axf"  ./usb/osa/usb_osa_freertos.o  ./usb/device/usb_device_dci.o ./usb/device/usb_device_lpcip3511.o  ./startup/startup_lpc54616.o  ./source/usb/usb_device_cdc_acm.o ./source/usb/usb_device_ch9.o ./source/usb/usb_device_class.o ./source/usb/usb_device_descriptor.o ./source/usb/virtual_com.o  ./source/control.o ./source/rpi.o ./source/semihost_hardfault.o ./source/uart_crc.o ./source/usbmidiio.o  ./freertos/source/croutine.o ./freertos/source/event_groups.o ./freertos/source/list.o ./freertos/source/queue.o ./freertos/source/tasks.o ./freertos/source/timers.o  ./freertos/portable/fsl_tickless_systick.o ./freertos/portable/heap_4.o ./freertos/portable/port.o  ./board/board.o ./board/clock_config.o ./board/peripherals.o ./board/pin_mux.o  ./CMSIS/drivers/fsl_adc.o ./CMSIS/drivers/fsl_clock.o ./CMSIS/drivers/fsl_common.o ./CMSIS/drivers/fsl_crc.o ./CMSIS/drivers/fsl_ctimer.o ./CMSIS/drivers/fsl_dma.o ./CMSIS/drivers/fsl_dmic.o ./CMSIS/drivers/fsl_dmic_dma.o ./CMSIS/drivers/fsl_eeprom.o ./CMSIS/drivers/fsl_emc.o ./CMSIS/drivers/fsl_enet.o ./CMSIS/drivers/fsl_flashiap.o ./CMSIS/drivers/fsl_flexcomm.o ./CMSIS/drivers/fsl_fmc.o ./CMSIS/drivers/fsl_fmeas.o ./CMSIS/drivers/fsl_gint.o ./CMSIS/drivers/fsl_gpio.o ./CMSIS/drivers/fsl_i2c.o ./CMSIS/drivers/fsl_i2c_dma.o ./CMSIS/drivers/fsl_i2c_freertos.o ./CMSIS/drivers/fsl_i2s.o ./CMSIS/drivers/fsl_i2s_dma.o ./CMSIS/drivers/fsl_inputmux.o ./CMSIS/drivers/fsl_mcan.o ./CMSIS/drivers/fsl_mrt.o ./CMSIS/drivers/fsl_pint.o ./CMSIS/drivers/fsl_power.o ./CMSIS/drivers/fsl_reset.o ./CMSIS/drivers/fsl_rit.o ./CMSIS/drivers/fsl_rtc.o ./CMSIS/drivers/fsl_sctimer.o ./CMSIS/drivers/fsl_sdif.o ./CMSIS/drivers/fsl_spi.o ./CMSIS/drivers/fsl_spi_dma.o ./CMSIS/drivers/fsl_spi_freertos.o ./CMSIS/drivers/fsl_spifi.o ./CMSIS/drivers/fsl_spifi_dma.o ./CMSIS/drivers/fsl_usart.o ./CMSIS/drivers/fsl_usart_dma.o ./CMSIS/drivers/fsl_usart_freertos.o ./CMSIS/drivers/fsl_utick.o ./CMSIS/drivers/fsl_wwdt.o  ./CMSIS/system_LPC54616.o   -lpower_hardabi
+Memory region         Used Size  Region Size  %age Used
+   PROGRAM_FLASH:       67592 B       512 KB     12.89%
+    SRAM_0_1_2_3:       24316 B       160 KB     14.84%
+           SRAMX:          0 GB        32 KB      0.00%
+         USB_RAM:          7 KB         8 KB     87.50%
+Finished building target: usbmidiio.axf
+ 
+make --no-print-directory post-build
+Performing post-build steps
+arm-none-eabi-size "usbmidiio.axf"; # arm-none-eabi-objcopy -v -O binary "usbmidiio.axf" "usbmidiio.bin" ; # checksum -p LPC54616J512 -d "usbmidiio.bin";
+   text	   data	    bss	    dec	    hex	filename
+  65908	   1684	  29692	  97284	  17c04	usbmidiio.axf
+ 
+20:11:03 **** Incremental Build of configuration Debug for project usbmidiio ****
+make -r -j8 all 
+Building file: ../source/usbmidiio.cpp
+Invoking: MCU C++ Compiler
+arm-none-eabi-c++ -D__NEWLIB__ -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/usbmidiio.d" -MT"source/usbmidiio.o" -MT"source/usbmidiio.d" -o "source/usbmidiio.o" "../source/usbmidiio.cpp"
+../source/usbmidiio.cpp: In function 'void KeyScan()':
+../source/usbmidiio.cpp:190:70: warning: format '%d' expects argument of type 'int', but argument 2 has type 'long unsigned int' [-Wformat=]
+                      printf("%d break\n", (keyscanindex >> 1) * 8 + i);
+                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+../source/usbmidiio.cpp: In function 'void IdleTask(void*)':
+../source/usbmidiio.cpp:498:30: error: too few arguments to function
+   rpi_uart.config.timer_tick();
+                              ^
+make: *** [source/usbmidiio.o] Error 1
+20:11:12 **** Incremental Build of configuration Debug for project usbmidiio ****
+make -r -j8 all 
+Building file: ../source/usbmidiio.cpp
+Invoking: MCU C++ Compiler
+arm-none-eabi-c++ -D__NEWLIB__ -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/usbmidiio.d" -MT"source/usbmidiio.o" -MT"source/usbmidiio.d" -o "source/usbmidiio.o" "../source/usbmidiio.cpp"
+../source/usbmidiio.cpp: In function 'void KeyScan()':
+../source/usbmidiio.cpp:190:70: warning: format '%d' expects argument of type 'int', but argument 2 has type 'long unsigned int' [-Wformat=]
+                      printf("%d break\n", (keyscanindex >> 1) * 8 + i);
+                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+../source/usbmidiio.cpp: In function 'void IdleTask(void*)':
+../source/usbmidiio.cpp:498:46: error: 'struct uart_config_t' has no member named 'timer_data'; did you mean 'timer_tick'?
+   rpi_uart.config.timer_tick(rpi_uart.config.timer_data);
+                                              ^~~~~~~~~~
+                                              timer_tick
+make: *** [source/usbmidiio.o] Error 1
+20:11:21 **** Incremental Build of configuration Debug for project usbmidiio ****
+make -r -j8 all 
+Building file: ../source/usbmidiio.cpp
+Invoking: MCU C++ Compiler
+arm-none-eabi-c++ -D__NEWLIB__ -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/usbmidiio.d" -MT"source/usbmidiio.o" -MT"source/usbmidiio.d" -o "source/usbmidiio.o" "../source/usbmidiio.cpp"
+../source/usbmidiio.cpp: In function 'void KeyScan()':
+../source/usbmidiio.cpp:190:70: warning: format '%d' expects argument of type 'int', but argument 2 has type 'long unsigned int' [-Wformat=]
+                      printf("%d break\n", (keyscanindex >> 1) * 8 + i);
+                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+Finished building: ../source/usbmidiio.cpp
+ 
+Building target: usbmidiio.axf
+Invoking: MCU C++ Linker
+arm-none-eabi-c++ -nostdlib -L"C:\work\pan\Syntonovo_PAN\controller\usbmidiio\libs" -Xlinker -Map="usbmidiio.map" -Xlinker --gc-sections -Xlinker -print-memory-usage -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -T "usbmidiio_Debug.ld" -o "usbmidiio.axf"  ./usb/osa/usb_osa_freertos.o  ./usb/device/usb_device_dci.o ./usb/device/usb_device_lpcip3511.o  ./startup/startup_lpc54616.o  ./source/usb/usb_device_cdc_acm.o ./source/usb/usb_device_ch9.o ./source/usb/usb_device_class.o ./source/usb/usb_device_descriptor.o ./source/usb/virtual_com.o  ./source/control.o ./source/rpi.o ./source/semihost_hardfault.o ./source/uart_crc.o ./source/usbmidiio.o  ./freertos/source/croutine.o ./freertos/source/event_groups.o ./freertos/source/list.o ./freertos/source/queue.o ./freertos/source/tasks.o ./freertos/source/timers.o  ./freertos/portable/fsl_tickless_systick.o ./freertos/portable/heap_4.o ./freertos/portable/port.o  ./board/board.o ./board/clock_config.o ./board/peripherals.o ./board/pin_mux.o  ./CMSIS/drivers/fsl_adc.o ./CMSIS/drivers/fsl_clock.o ./CMSIS/drivers/fsl_common.o ./CMSIS/drivers/fsl_crc.o ./CMSIS/drivers/fsl_ctimer.o ./CMSIS/drivers/fsl_dma.o ./CMSIS/drivers/fsl_dmic.o ./CMSIS/drivers/fsl_dmic_dma.o ./CMSIS/drivers/fsl_eeprom.o ./CMSIS/drivers/fsl_emc.o ./CMSIS/drivers/fsl_enet.o ./CMSIS/drivers/fsl_flashiap.o ./CMSIS/drivers/fsl_flexcomm.o ./CMSIS/drivers/fsl_fmc.o ./CMSIS/drivers/fsl_fmeas.o ./CMSIS/drivers/fsl_gint.o ./CMSIS/drivers/fsl_gpio.o ./CMSIS/drivers/fsl_i2c.o ./CMSIS/drivers/fsl_i2c_dma.o ./CMSIS/drivers/fsl_i2c_freertos.o ./CMSIS/drivers/fsl_i2s.o ./CMSIS/drivers/fsl_i2s_dma.o ./CMSIS/drivers/fsl_inputmux.o ./CMSIS/drivers/fsl_mcan.o ./CMSIS/drivers/fsl_mrt.o ./CMSIS/drivers/fsl_pint.o ./CMSIS/drivers/fsl_power.o ./CMSIS/drivers/fsl_reset.o ./CMSIS/drivers/fsl_rit.o ./CMSIS/drivers/fsl_rtc.o ./CMSIS/drivers/fsl_sctimer.o ./CMSIS/drivers/fsl_sdif.o ./CMSIS/drivers/fsl_spi.o ./CMSIS/drivers/fsl_spi_dma.o ./CMSIS/drivers/fsl_spi_freertos.o ./CMSIS/drivers/fsl_spifi.o ./CMSIS/drivers/fsl_spifi_dma.o ./CMSIS/drivers/fsl_usart.o ./CMSIS/drivers/fsl_usart_dma.o ./CMSIS/drivers/fsl_usart_freertos.o ./CMSIS/drivers/fsl_utick.o ./CMSIS/drivers/fsl_wwdt.o  ./CMSIS/system_LPC54616.o   -lpower_hardabi
+Memory region         Used Size  Region Size  %age Used
+   PROGRAM_FLASH:       67684 B       512 KB     12.91%
+    SRAM_0_1_2_3:       24316 B       160 KB     14.84%
+           SRAMX:          0 GB        32 KB      0.00%
+         USB_RAM:          7 KB         8 KB     87.50%
+Finished building target: usbmidiio.axf
+ 
+make --no-print-directory post-build
+Performing post-build steps
+arm-none-eabi-size "usbmidiio.axf"; # arm-none-eabi-objcopy -v -O binary "usbmidiio.axf" "usbmidiio.bin" ; # checksum -p LPC54616J512 -d "usbmidiio.bin";
+   text	   data	    bss	    dec	    hex	filename
+  66000	   1684	  29692	  97376	  17c60	usbmidiio.axf
  
