@@ -16,3 +16,431 @@ arm-none-eabi-size "pan_synth.axf"; # arm-none-eabi-objcopy -v -O binary "pan_sy
    text	   data	    bss	    dec	    hex	filename
   56548	   2052	 113636	 172236	  2a0cc	pan_synth.axf
  
+16:21:13 **** Incremental Build of configuration Debug for project pan_synth ****
+make -r -j4 all 
+Building file: ../source/autotune.c
+Building file: ../source/synth.c
+Building file: ../board/clock_config.c
+Building file: ../board/peripherals.c
+Invoking: MCU C Compiler
+Invoking: MCU C Compiler
+Invoking: MCU C Compiler
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\board" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\source" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\startup" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\CMSIS" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\CMSIS\drivers" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"board/clock_config.d" -MT"board/clock_config.o" -MT"board/clock_config.d" -o "board/clock_config.o" "../board/clock_config.c"
+arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\board" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\source" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\startup" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\CMSIS" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\CMSIS\drivers" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"source/synth.d" -MT"source/synth.o" -MT"source/synth.d" -o "source/synth.o" "../source/synth.c"
+arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\board" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\source" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\startup" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\CMSIS" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\CMSIS\drivers" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"source/autotune.d" -MT"source/autotune.o" -MT"source/autotune.d" -o "source/autotune.o" "../source/autotune.c"
+arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\board" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\source" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\startup" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\CMSIS" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\CMSIS\drivers" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"board/peripherals.d" -MT"board/peripherals.o" -MT"board/peripherals.d" -o "board/peripherals.o" "../board/peripherals.c"
+../source/autotune.c: In function 'autotune_set_routing':
+../source/autotune.c:285:21: error: 'SEL4SAW' undeclared (first use in this function); did you mean 'SEL3SAW'?
+     shiftctrl_clear(SEL4SAW);
+                     ^~~~~~~
+                     SEL3SAW
+../source/autotune.c:285:21: note: each undeclared identifier is reported only once for each function it appears in
+../source/autotune.c:286:21: error: 'SEL5SAW' undeclared (first use in this function); did you mean 'SEL4SAW'?
+     shiftctrl_clear(SEL5SAW);
+                     ^~~~~~~
+                     SEL4SAW
+../source/autotune.c:287:21: error: 'SEL6SAW' undeclared (first use in this function); did you mean 'SEL5SAW'?
+     shiftctrl_clear(SEL6SAW);
+                     ^~~~~~~
+                     SEL5SAW
+../source/autotune.c:288:21: error: 'SEL7SAW' undeclared (first use in this function); did you mean 'SEL6SAW'?
+     shiftctrl_clear(SEL7SAW);
+                     ^~~~~~~
+                     SEL6SAW
+../source/autotune.c:307:14: error: 'PORT_VCO123_FM1' undeclared (first use in this function); did you mean 'PORT_VCO123_FM3'?
+  ports_value(PORT_VCO123_FM1, 0);
+              ^~~~~~~~~~~~~~~
+              PORT_VCO123_FM3
+In file included from ../source/synth.c:15:0:
+../source/synth_internal.h:112:35: error: 'BASE_0' undeclared here (not in a function); did you mean 'BASE_P4_0'?
+  MAPPING_##CTRLTYPE(CTRLID, NAME, BASE_##PGROUP + PID)
+                                   ^
+../source/synth_internal.h:103:26: note: in definition of macro 'MAPPING_CTRL'
+  const int PORT_##NAME = PORTID;
+                          ^~~~~~
+c:\projects\synton\pan\syntonovo_pan\interface\paramdef.h:29:1: note: in expansion of macro 'OUTPUT'
+ OUTPUT(VCO1_MIX1,  0, 0, CTRL, 0x10, CUSTOM, 0)
+ ^~~~~~
+../source/synth_internal.h:112:35: error: 'BASE_1' undeclared here (not in a function); did you mean 'BASE_0'?
+  MAPPING_##CTRLTYPE(CTRLID, NAME, BASE_##PGROUP + PID)
+                                   ^
+../source/synth_internal.h:103:26: note: in definition of macro 'MAPPING_CTRL'
+  const int PORT_##NAME = PORTID;
+                          ^~~~~~
+c:\projects\synton\pan\syntonovo_pan\interface\paramdef.h:30:1: note: in expansion of macro 'OUTPUT'
+ OUTPUT(WHITENS_MIX1, 1, 0, CTRL, 0x18, CUSTOM, 0)
+ ^~~~~~
+../source/synth_internal.h:112:35: error: 'BASE_2' undeclared here (not in a function); did you mean 'BASE_1'?
+  MAPPING_##CTRLTYPE(CTRLID, NAME, BASE_##PGROUP + PID)
+                                   ^
+../source/synth_internal.h:103:26: note: in definition of macro 'MAPPING_CTRL'
+  const int PORT_##NAME = PORTID;
+                          ^~~~~~
+c:\projects\synton\pan\syntonovo_pan\interface\paramdef.h:45:1: note: in expansion of macro 'OUTPUT'
+ OUTPUT(VCO2_FREQ,  2, 0, CTRL, 0x20, CUSTOM, 0)
+ ^~~~~~
+../source/synth_internal.h:112:35: error: 'BASE_3' undeclared here (not in a function); did you mean 'BASE_2'?
+  MAPPING_##CTRLTYPE(CTRLID, NAME, BASE_##PGROUP + PID)
+                                   ^
+../source/synth_internal.h:103:26: note: in definition of macro 'MAPPING_CTRL'
+  const int PORT_##NAME = PORTID;
+                          ^~~~~~
+c:\projects\synton\pan\syntonovo_pan\interface\paramdef.h:46:1: note: in expansion of macro 'OUTPUT'
+ OUTPUT(VCO4_FREQ,  3, 0, CTRL, 0x28, CUSTOM, 0)
+ ^~~~~~
+../source/synth_internal.h:112:35: error: 'BASE_4' undeclared here (not in a function); did you mean 'BASE_3'?
+  MAPPING_##CTRLTYPE(CTRLID, NAME, BASE_##PGROUP + PID)
+                                   ^
+../source/synth_internal.h:106:26: note: in definition of macro 'MAPPING_INT'
+  const int PORT_##NAME = PORTID;
+                          ^~~~~~
+c:\projects\synton\pan\syntonovo_pan\interface\paramdef.h:61:1: note: in expansion of macro 'OUTPUT'
+ OUTPUT(VCF2_R_LOG,  4, 0, INT, 0x30, CUSTOM, 0)
+ ^~~~~~
+../source/synth_internal.h:112:35: error: 'BASE_5' undeclared here (not in a function); did you mean 'BASE_4'?
+  MAPPING_##CTRLTYPE(CTRLID, NAME, BASE_##PGROUP + PID)
+                                   ^
+../source/synth_internal.h:103:26: note: in definition of macro 'MAPPING_CTRL'
+  const int PORT_##NAME = PORTID;
+                          ^~~~~~
+c:\projects\synton\pan\syntonovo_pan\interface\paramdef.h:63:1: note: in expansion of macro 'OUTPUT'
+ OUTPUT(BN_MIX3,   5, 0, CTRL, 0x3F, LOG, 0)
+ ^~~~~~
+../source/synth_internal.h:112:35: error: 'BASE_6' undeclared here (not in a function); did you mean 'BASE_5'?
+  MAPPING_##CTRLTYPE(CTRLID, NAME, BASE_##PGROUP + PID)
+                                   ^
+../source/synth_internal.h:106:26: note: in definition of macro 'MAPPING_INT'
+  const int PORT_##NAME = PORTID;
+                          ^~~~~~
+c:\projects\synton\pan\syntonovo_pan\interface\paramdef.h:88:1: note: in expansion of macro 'OUTPUT'
+ OUTPUT(VCF1_R_LIN,  6, 0, INT, 0x47, CUSTOM, 0)
+ ^~~~~~
+../source/synth_internal.h:112:35: error: 'BASE_7' undeclared here (not in a function); did you mean 'BASE_6'?
+  MAPPING_##CTRLTYPE(CTRLID, NAME, BASE_##PGROUP + PID)
+                                   ^
+../source/synth_internal.h:103:26: note: in definition of macro 'MAPPING_CTRL'
+  const int PORT_##NAME = PORTID;
+                          ^~~~~~
+c:\projects\synton\pan\syntonovo_pan\interface\paramdef.h:91:1: note: in expansion of macro 'OUTPUT'
+ OUTPUT(VCO123_FM2,  7, 0, CTRL, 0x17, INV, 0)
+ ^~~~~~
+../source/synth_internal.h:112:35: error: 'BASE_8' undeclared here (not in a function); did you mean 'BASE_7'?
+  MAPPING_##CTRLTYPE(CTRLID, NAME, BASE_##PGROUP + PID)
+                                   ^
+../source/synth_internal.h:103:26: note: in definition of macro 'MAPPING_CTRL'
+  const int PORT_##NAME = PORTID;
+                          ^~~~~~
+c:\projects\synton\pan\syntonovo_pan\interface\paramdef.h:121:1: note: in expansion of macro 'OUTPUT'
+ OUTPUT(VCF2_L_RES,  8, 0, CTRL, 0x49, INV, 0)
+ ^~~~~~
+../source/synth_internal.h:112:35: error: 'BASE_9' undeclared here (not in a function); did you mean 'BASE_8'?
+  MAPPING_##CTRLTYPE(CTRLID, NAME, BASE_##PGROUP + PID)
+                                   ^
+../source/synth_internal.h:103:26: note: in definition of macro 'MAPPING_CTRL'
+  const int PORT_##NAME = PORTID;
+                          ^~~~~~
+c:\projects\synton\pan\syntonovo_pan\interface\paramdef.h:123:1: note: in expansion of macro 'OUTPUT'
+ OUTPUT(VCF2_H_RES,  9, 0, CTRL, 0x5D, INV, 0)
+ ^~~~~~
+../source/synth_internal.h:112:35: error: 'BASE_10' undeclared here (not in a function); did you mean 'BASE_1'?
+  MAPPING_##CTRLTYPE(CTRLID, NAME, BASE_##PGROUP + PID)
+                                   ^
+../source/synth_internal.h:103:26: note: in definition of macro 'MAPPING_CTRL'
+  const int PORT_##NAME = PORTID;
+                          ^~~~~~
+c:\projects\synton\pan\syntonovo_pan\interface\paramdef.h:152:1: note: in expansion of macro 'OUTPUT'
+ OUTPUT(VCF2_L_MIX,  10, 0, CTRL, 0x67, CUSTOM, 0)
+ ^~~~~~
+../source/synth_internal.h:112:35: error: 'BASE_11' undeclared here (not in a function); did you mean 'BASE_10'?
+  MAPPING_##CTRLTYPE(CTRLID, NAME, BASE_##PGROUP + PID)
+                                   ^
+../source/synth_internal.h:103:26: note: in definition of macro 'MAPPING_CTRL'
+  const int PORT_##NAME = PORTID;
+                          ^~~~~~
+c:\projects\synton\pan\syntonovo_pan\interface\paramdef.h:153:1: note: in expansion of macro 'OUTPUT'
+ OUTPUT(CV_EXT_3,  11, 0, CTRL, 0x68, LIN, 0)
+ ^~~~~~
+../source/synth.c: In function 'synth_init':
+../source/synth.c:1483:19: error: 'SELMOST3' undeclared (first use in this function); did you mean 'SELEF3'?
+     shiftctrl_set(SELMOST3);
+                   ^~~~~~~~
+                   SELEF3
+../source/synth.c:1483:19: note: each undeclared identifier is reported only once for each function it appears in
+../source/synth.c:1484:19: error: 'SELVCF2L0' undeclared (first use in this function); did you mean 'SELVCF24B'?
+     shiftctrl_set(SELVCF2L0);
+                   ^~~~~~~~~
+                   SELVCF24B
+../source/synth.c:1485:19: error: 'SELVCF2L1' undeclared (first use in this function); did you mean 'SELVCF2L0'?
+     shiftctrl_set(SELVCF2L1);
+                   ^~~~~~~~~
+                   SELVCF2L0
+../source/synth.c: In function 'pad_threshold':
+../source/synth.c:1510:20: error: 'X_DEADZONE' undeclared (first use in this function); did you mean 'virt_X_DEADZONE'?
+   dz = synth_param[X_DEADZONE].value >> 3;
+                    ^~~~~~~~~~
+                    virt_X_DEADZONE
+../source/synth.c:1511:23: error: 'X_SCALE' undeclared (first use in this function)
+   scale = synth_param[X_SCALE].value >> 3;
+                       ^~~~~~~
+../source/synth.c:1514:20: error: 'Y_DEADZONE' undeclared (first use in this function); did you mean 'X_DEADZONE'?
+   dz = synth_param[Y_DEADZONE].value >> 3;
+                    ^~~~~~~~~~
+                    X_DEADZONE
+../source/synth.c:1515:23: error: 'Y_SCALE' undeclared (first use in this function); did you mean 'X_SCALE'?
+   scale = synth_param[Y_SCALE].value >> 3;
+                       ^~~~~~~
+                       X_SCALE
+../source/synth.c:1518:20: error: 'Z_DEADZONE' undeclared (first use in this function); did you mean 'Y_DEADZONE'?
+   dz = synth_param[Z_DEADZONE].value >> 3;
+                    ^~~~~~~~~~
+                    Y_DEADZONE
+../source/synth.c:1519:23: error: 'Z_SCALE' undeclared (first use in this function); did you mean 'Y_SCALE'?
+   scale = synth_param[Z_SCALE].value >> 3;
+                       ^~~~~~~
+                       Y_SCALE
+make: *** [source/autotune.o] Error 1
+make: *** Waiting for unfinished jobs....
+../source/synth.c:1522:23: error: 'MODL_SCALE' undeclared (first use in this function); did you mean 'Z_SCALE'?
+   scale = synth_param[MODL_SCALE].value >> 4;
+                       ^~~~~~~~~~
+                       Z_SCALE
+../source/synth.c:1525:23: error: 'SUSL_SCALE' undeclared (first use in this function); did you mean 'MODL_SCALE'?
+   scale = synth_param[SUSL_SCALE].value >> 4;
+                       ^~~~~~~~~~
+                       MODL_SCALE
+../source/synth.c:1528:23: error: 'UNACL_SCALE' undeclared (first use in this function); did you mean 'SUSL_SCALE'?
+   scale = synth_param[UNACL_SCALE].value >> 4;
+                       ^~~~~~~~~~~
+                       SUSL_SCALE
+../source/synth.c:1531:23: error: 'MODR_SCALE' undeclared (first use in this function); did you mean 'MODL_SCALE'?
+   scale = synth_param[MODR_SCALE].value >> 4;
+                       ^~~~~~~~~~
+                       MODL_SCALE
+../source/synth.c:1534:23: error: 'SUSR_SCALE' undeclared (first use in this function); did you mean 'SUSL_SCALE'?
+   scale = synth_param[SUSR_SCALE].value >> 4;
+                       ^~~~~~~~~~
+                       SUSL_SCALE
+../source/synth.c:1537:23: error: 'UNACR_SCALE' undeclared (first use in this function); did you mean 'UNACL_SCALE'?
+   scale = synth_param[UNACR_SCALE].value >> 4;
+                       ^~~~~~~~~~~
+                       UNACL_SCALE
+make: *** [source/synth.o] Error 1
+Finished building: ../board/clock_config.c
+ 
+Finished building: ../board/peripherals.c
+ 
+16:21:30 **** Incremental Build of configuration Debug for project pan_synth ****
+make -r -j4 all 
+Building file: ../source/autotune.c
+Building file: ../source/synth.c
+Building file: ../CMSIS/drivers/fsl_clock.c
+Building file: ../board/pin_mux.c
+Invoking: MCU C Compiler
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\board" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\source" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\startup" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\CMSIS" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\CMSIS\drivers" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"source/autotune.d" -MT"source/autotune.o" -MT"source/autotune.d" -o "source/autotune.o" "../source/autotune.c"
+arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\board" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\source" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\startup" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\CMSIS" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\CMSIS\drivers" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"source/synth.d" -MT"source/synth.o" -MT"source/synth.d" -o "source/synth.o" "../source/synth.c"
+Invoking: MCU C Compiler
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\board" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\source" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\startup" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\CMSIS" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\CMSIS\drivers" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"CMSIS/drivers/fsl_clock.d" -MT"CMSIS/drivers/fsl_clock.o" -MT"CMSIS/drivers/fsl_clock.d" -o "CMSIS/drivers/fsl_clock.o" "../CMSIS/drivers/fsl_clock.c"
+arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\board" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\source" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\startup" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\CMSIS" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller\pan_synth\CMSIS\drivers" -I"C:\Projects\Synton\PAN\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"board/pin_mux.d" -MT"board/pin_mux.o" -MT"board/pin_mux.d" -o "board/pin_mux.o" "../board/pin_mux.c"
+../source/autotune.c: In function 'autotune_set_routing':
+../source/autotune.c:285:21: error: 'SEL4SAW' undeclared (first use in this function); did you mean 'SEL3SAW'?
+     shiftctrl_clear(SEL4SAW);
+                     ^~~~~~~
+                     SEL3SAW
+../source/autotune.c:285:21: note: each undeclared identifier is reported only once for each function it appears in
+../source/autotune.c:286:21: error: 'SEL5SAW' undeclared (first use in this function); did you mean 'SEL4SAW'?
+     shiftctrl_clear(SEL5SAW);
+                     ^~~~~~~
+                     SEL4SAW
+../source/autotune.c:287:21: error: 'SEL6SAW' undeclared (first use in this function); did you mean 'SEL5SAW'?
+     shiftctrl_clear(SEL6SAW);
+                     ^~~~~~~
+                     SEL5SAW
+../source/autotune.c:288:21: error: 'SEL7SAW' undeclared (first use in this function); did you mean 'SEL6SAW'?
+     shiftctrl_clear(SEL7SAW);
+                     ^~~~~~~
+                     SEL6SAW
+../source/autotune.c:307:14: error: 'PORT_VCO123_FM1' undeclared (first use in this function); did you mean 'PORT_VCO123_FM3'?
+  ports_value(PORT_VCO123_FM1, 0);
+              ^~~~~~~~~~~~~~~
+              PORT_VCO123_FM3
+In file included from ../source/synth.c:15:0:
+../source/synth_internal.h:112:35: error: 'BASE_0' undeclared here (not in a function); did you mean 'BASE_P4_0'?
+  MAPPING_##CTRLTYPE(CTRLID, NAME, BASE_##PGROUP + PID)
+                                   ^
+../source/synth_internal.h:103:26: note: in definition of macro 'MAPPING_CTRL'
+  const int PORT_##NAME = PORTID;
+                          ^~~~~~
+c:\projects\synton\pan\syntonovo_pan\interface\paramdef.h:29:1: note: in expansion of macro 'OUTPUT'
+ OUTPUT(VCO1_MIX1,  0, 0, CTRL, 0x10, CUSTOM, 0)
+ ^~~~~~
+../source/synth_internal.h:112:35: error: 'BASE_1' undeclared here (not in a function); did you mean 'BASE_0'?
+  MAPPING_##CTRLTYPE(CTRLID, NAME, BASE_##PGROUP + PID)
+                                   ^
+../source/synth_internal.h:103:26: note: in definition of macro 'MAPPING_CTRL'
+  const int PORT_##NAME = PORTID;
+                          ^~~~~~
+c:\projects\synton\pan\syntonovo_pan\interface\paramdef.h:30:1: note: in expansion of macro 'OUTPUT'
+ OUTPUT(WHITENS_MIX1, 1, 0, CTRL, 0x18, CUSTOM, 0)
+ ^~~~~~
+../source/synth_internal.h:112:35: error: 'BASE_2' undeclared here (not in a function); did you mean 'BASE_1'?
+  MAPPING_##CTRLTYPE(CTRLID, NAME, BASE_##PGROUP + PID)
+                                   ^
+../source/synth_internal.h:103:26: note: in definition of macro 'MAPPING_CTRL'
+  const int PORT_##NAME = PORTID;
+                          ^~~~~~
+c:\projects\synton\pan\syntonovo_pan\interface\paramdef.h:45:1: note: in expansion of macro 'OUTPUT'
+ OUTPUT(VCO2_FREQ,  2, 0, CTRL, 0x20, CUSTOM, 0)
+ ^~~~~~
+../source/synth_internal.h:112:35: error: 'BASE_3' undeclared here (not in a function); did you mean 'BASE_2'?
+  MAPPING_##CTRLTYPE(CTRLID, NAME, BASE_##PGROUP + PID)
+                                   ^
+../source/synth_internal.h:103:26: note: in definition of macro 'MAPPING_CTRL'
+  const int PORT_##NAME = PORTID;
+                          ^~~~~~
+c:\projects\synton\pan\syntonovo_pan\interface\paramdef.h:46:1: note: in expansion of macro 'OUTPUT'
+ OUTPUT(VCO4_FREQ,  3, 0, CTRL, 0x28, CUSTOM, 0)
+ ^~~~~~
+../source/synth_internal.h:112:35: error: 'BASE_4' undeclared here (not in a function); did you mean 'BASE_3'?
+  MAPPING_##CTRLTYPE(CTRLID, NAME, BASE_##PGROUP + PID)
+                                   ^
+../source/synth_internal.h:106:26: note: in definition of macro 'MAPPING_INT'
+  const int PORT_##NAME = PORTID;
+                          ^~~~~~
+c:\projects\synton\pan\syntonovo_pan\interface\paramdef.h:61:1: note: in expansion of macro 'OUTPUT'
+ OUTPUT(VCF2_R_LOG,  4, 0, INT, 0x30, CUSTOM, 0)
+ ^~~~~~
+../source/synth_internal.h:112:35: error: 'BASE_5' undeclared here (not in a function); did you mean 'BASE_4'?
+  MAPPING_##CTRLTYPE(CTRLID, NAME, BASE_##PGROUP + PID)
+                                   ^
+../source/synth_internal.h:103:26: note: in definition of macro 'MAPPING_CTRL'
+  const int PORT_##NAME = PORTID;
+                          ^~~~~~
+c:\projects\synton\pan\syntonovo_pan\interface\paramdef.h:63:1: note: in expansion of macro 'OUTPUT'
+ OUTPUT(BN_MIX3,   5, 0, CTRL, 0x3F, LOG, 0)
+ ^~~~~~
+../source/synth_internal.h:112:35: error: 'BASE_6' undeclared here (not in a function); did you mean 'BASE_5'?
+  MAPPING_##CTRLTYPE(CTRLID, NAME, BASE_##PGROUP + PID)
+                                   ^
+../source/synth_internal.h:106:26: note: in definition of macro 'MAPPING_INT'
+  const int PORT_##NAME = PORTID;
+                          ^~~~~~
+c:\projects\synton\pan\syntonovo_pan\interface\paramdef.h:88:1: note: in expansion of macro 'OUTPUT'
+ OUTPUT(VCF1_R_LIN,  6, 0, INT, 0x47, CUSTOM, 0)
+ ^~~~~~
+../source/synth_internal.h:112:35: error: 'BASE_7' undeclared here (not in a function); did you mean 'BASE_6'?
+  MAPPING_##CTRLTYPE(CTRLID, NAME, BASE_##PGROUP + PID)
+                                   ^
+../source/synth_internal.h:103:26: note: in definition of macro 'MAPPING_CTRL'
+  const int PORT_##NAME = PORTID;
+                          ^~~~~~
+c:\projects\synton\pan\syntonovo_pan\interface\paramdef.h:91:1: note: in expansion of macro 'OUTPUT'
+ OUTPUT(VCO123_FM2,  7, 0, CTRL, 0x17, INV, 0)
+ ^~~~~~
+../source/synth_internal.h:112:35: error: 'BASE_8' undeclared here (not in a function); did you mean 'BASE_7'?
+  MAPPING_##CTRLTYPE(CTRLID, NAME, BASE_##PGROUP + PID)
+                                   ^
+../source/synth_internal.h:103:26: note: in definition of macro 'MAPPING_CTRL'
+  const int PORT_##NAME = PORTID;
+                          ^~~~~~
+c:\projects\synton\pan\syntonovo_pan\interface\paramdef.h:121:1: note: in expansion of macro 'OUTPUT'
+ OUTPUT(VCF2_L_RES,  8, 0, CTRL, 0x49, INV, 0)
+ ^~~~~~
+../source/synth_internal.h:112:35: error: 'BASE_9' undeclared here (not in a function); did you mean 'BASE_8'?
+  MAPPING_##CTRLTYPE(CTRLID, NAME, BASE_##PGROUP + PID)
+                                   ^
+../source/synth_internal.h:103:26: note: in definition of macro 'MAPPING_CTRL'
+  const int PORT_##NAME = PORTID;
+                          ^~~~~~
+c:\projects\synton\pan\syntonovo_pan\interface\paramdef.h:123:1: note: in expansion of macro 'OUTPUT'
+ OUTPUT(VCF2_H_RES,  9, 0, CTRL, 0x5D, INV, 0)
+ ^~~~~~
+../source/synth_internal.h:112:35: error: 'BASE_10' undeclared here (not in a function); did you mean 'BASE_1'?
+  MAPPING_##CTRLTYPE(CTRLID, NAME, BASE_##PGROUP + PID)
+                                   ^
+../source/synth_internal.h:103:26: note: in definition of macro 'MAPPING_CTRL'
+  const int PORT_##NAME = PORTID;
+                          ^~~~~~
+c:\projects\synton\pan\syntonovo_pan\interface\paramdef.h:152:1: note: in expansion of macro 'OUTPUT'
+ OUTPUT(VCF2_L_MIX,  10, 0, CTRL, 0x67, CUSTOM, 0)
+ ^~~~~~
+../source/synth_internal.h:112:35: error: 'BASE_11' undeclared here (not in a function); did you mean 'BASE_10'?
+  MAPPING_##CTRLTYPE(CTRLID, NAME, BASE_##PGROUP + PID)
+                                   ^
+../source/synth_internal.h:103:26: note: in definition of macro 'MAPPING_CTRL'
+  const int PORT_##NAME = PORTID;
+                          ^~~~~~
+c:\projects\synton\pan\syntonovo_pan\interface\paramdef.h:153:1: note: in expansion of macro 'OUTPUT'
+ OUTPUT(CV_EXT_3,  11, 0, CTRL, 0x68, LIN, 0)
+ ^~~~~~
+../source/synth.c: In function 'synth_init':
+../source/synth.c:1483:19: error: 'SELMOST3' undeclared (first use in this function); did you mean 'SELEF3'?
+     shiftctrl_set(SELMOST3);
+                   ^~~~~~~~
+                   SELEF3
+../source/synth.c:1483:19: note: each undeclared identifier is reported only once for each function it appears in
+../source/synth.c:1484:19: error: 'SELVCF2L0' undeclared (first use in this function); did you mean 'SELVCF24B'?
+     shiftctrl_set(SELVCF2L0);
+                   ^~~~~~~~~
+                   SELVCF24B
+../source/synth.c:1485:19: error: 'SELVCF2L1' undeclared (first use in this function); did you mean 'SELVCF2L0'?
+     shiftctrl_set(SELVCF2L1);
+                   ^~~~~~~~~
+                   SELVCF2L0
+../source/synth.c: In function 'pad_threshold':
+../source/synth.c:1510:20: error: 'X_DEADZONE' undeclared (first use in this function); did you mean 'virt_X_DEADZONE'?
+   dz = synth_param[X_DEADZONE].value >> 3;
+                    ^~~~~~~~~~
+                    virt_X_DEADZONE
+../source/synth.c:1511:23: error: 'X_SCALE' undeclared (first use in this function)
+   scale = synth_param[X_SCALE].value >> 3;
+                       ^~~~~~~
+../source/synth.c:1514:20: error: 'Y_DEADZONE' undeclared (first use in this function); did you mean 'X_DEADZONE'?
+   dz = synth_param[Y_DEADZONE].value >> 3;
+                    ^~~~~~~~~~
+                    X_DEADZONE
+../source/synth.c:1515:23: error: 'Y_SCALE' undeclared (first use in this function); did you mean 'X_SCALE'?
+   scale = synth_param[Y_SCALE].value >> 3;
+                       ^~~~~~~
+                       X_SCALE
+../source/synth.c:1518:20: error: 'Z_DEADZONE' undeclared (first use in this function); did you mean 'Y_DEADZONE'?
+   dz = synth_param[Z_DEADZONE].value >> 3;
+                    ^~~~~~~~~~
+                    Y_DEADZONE
+../source/synth.c:1519:23: error: 'Z_SCALE' undeclared (first use in this function); did you mean 'Y_SCALE'?
+   scale = synth_param[Z_SCALE].value >> 3;
+                       ^~~~~~~
+                       Y_SCALE
+../source/synth.c:1522:23: error: 'MODL_SCALE' undeclared (first use in this function); did you mean 'Z_SCALE'?
+   scale = synth_param[MODL_SCALE].value >> 4;
+                       ^~~~~~~~~~
+                       Z_SCALE
+../source/synth.c:1525:23: error: 'SUSL_SCALE' undeclared (first use in this function); did you mean 'MODL_SCALE'?
+   scale = synth_param[SUSL_SCALE].value >> 4;
+                       ^~~~~~~~~~
+                       MODL_SCALE
+../source/synth.c:1528:23: error: 'UNACL_SCALE' undeclared (first use in this function); did you mean 'SUSL_SCALE'?
+   scale = synth_param[UNACL_SCALE].value >> 4;
+                       ^~~~~~~~~~~
+                       SUSL_SCALE
+../source/synth.c:1531:23: error: 'MODR_SCALE' undeclared (first use in this function); did you mean 'MODL_SCALE'?
+   scale = synth_param[MODR_SCALE].value >> 4;
+                       ^~~~~~~~~~
+                       MODL_SCALE
+../source/synth.c:1534:23: error: 'SUSR_SCALE' undeclared (first use in this function); did you mean 'SUSL_SCALE'?
+   scale = synth_param[SUSR_SCALE].value >> 4;
+                       ^~~~~~~~~~
+                       SUSL_SCALE
+../source/synth.c:1537:23: error: 'UNACR_SCALE' undeclared (first use in this function); did you mean 'UNACL_SCALE'?
+   scale = synth_param[UNACR_SCALE].value >> 4;
+                       ^~~~~~~~~~~
+                       UNACL_SCALE
+make: *** [source/autotune.o] Error 1
+make: *** Waiting for unfinished jobs....
+make: *** [source/synth.o] Error 1
+Finished building: ../board/pin_mux.c
+ 
+Finished building: ../CMSIS/drivers/fsl_clock.c
+ 

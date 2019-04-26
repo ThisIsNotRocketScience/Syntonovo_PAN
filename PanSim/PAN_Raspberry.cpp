@@ -9,6 +9,8 @@
 
 #endif
 #include "../libs/lodepng-master/lodepng.h"
+#include "FinalPanEnums.h"
+
 #include "PanHeader.h"
 
 #define MENU(id,button,name) static int const MenuItemCount_##id = 0
@@ -68,12 +70,6 @@ typedef struct guirow_state_t
 } guirow_state_t;
 
 
-enum
-{
-	BOX_REGULAR,
-	BOX_MID,
-	BOX_INV
-};
 
 void RenderBox(int val, guirow_state_t &rowstate, int mode = BOX_REGULAR);
 
@@ -412,7 +408,7 @@ void RenderMenuTitle(const char *name)
 	for (int i = 0; i < 13; i++)
 	{
 		float x = w - (distance[i] * 1);
-		float L = (ImGui::GetTextLineHeight() * pow(0.6, distance[i] / 10.0f) + 20)* pt;
+		float L =(float)( (ImGui::GetTextLineHeight() * pow(0.6f, distance[i] / 10.0f) + 20)* pt);
 		ImGui::GetWindowDrawList()->AddLine(ImVec2(curspos.x + x, curspos.y - 2), ImVec2(curspos.x + x, curspos.y + L), IM_COL32(255, 255, 255, 255), 5);
 		ImGui::GetWindowDrawList()->AddLine(ImVec2(curspos.x + 480 - x, curspos.y - 2), ImVec2(curspos.x + 480 - x, curspos.y + L), IM_COL32(255, 255, 255, 255), 5);
 	}

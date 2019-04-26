@@ -27,7 +27,7 @@
 #define SWITCH(NAME, ID) \
 	extern const int NAME;
 
-#include "paramdef.h"
+#include "../../interface/paramdef.h"
 
 #undef MAPPING_CTRL
 #undef MAPPING_INT

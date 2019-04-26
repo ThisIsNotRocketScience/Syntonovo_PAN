@@ -1,5 +1,7 @@
 #pragma GCC diagnostic ignored "-Wswitch"
 #pragma GCC diagnostic ignored "-Wwrite-strings"
+#include "FinalPanEnums.h"
+
 
 #include "PanHeader.h"
 
@@ -122,7 +124,7 @@ void InitPreset(PanPreset_t& preset)
 	preset.paramvalue[Output_MASTER_LEVEL] = 0xFFFF;
 	preset.paramvalue[Output_VCA_FINAL] = 0xFFFF;
 
-	preset.paramvalue[Output_X_DEADZONE] = 0x200;
+/*	preset.paramvalue[Output_X_DEADZONE] = 0x200;
 	preset.paramvalue[Output_Y_DEADZONE] = 0x200;
 	preset.paramvalue[Output_Z_DEADZONE] = 0x200;
 
@@ -135,7 +137,7 @@ void InitPreset(PanPreset_t& preset)
 	preset.paramvalue[Output_UNACL_SCALE] = 0x2000;
 	preset.paramvalue[Output_MODR_SCALE] = 0x2000;
 	preset.paramvalue[Output_SUSR_SCALE] = 0x2000;
-	preset.paramvalue[Output_UNACR_SCALE] = 0x2000;
+	preset.paramvalue[Output_UNACR_SCALE] = 0x2000;*/
 
 	preset.paramvalue[Output_ZPRIME_SPEED] = 0xa000;
 
@@ -228,6 +230,7 @@ void WriteCtrl(PanPreset_t& preset, int i)
 		WriteCtrlDepth(param, preset.ctrlmod[i].source, preset.ctrlmod[i].target[j].depth);
 	}
 }
+
 
 void LoadPreset(PanPreset_t& preset)
 {
@@ -839,11 +842,11 @@ void UpdateTargets()
 	SetLedButton(ledbutton_OCTUP_RIGHT, octaveup ? LED_ON : LED_OFF);
 
 	switch (Teensy_guidata.GuiState) {
-	case GuiState_Menu_EFFECTS1:
+	//case GuiState_Menu_EFFECTS1:/
 	
-	SetLedButton(ledbutton_Cleanfeed_FX, LED_ON);
-	SetLedButton(ledbutton_VCF1_FX, LED_ON);
-	SetLedButton(ledbutton_VCF2_FX, LED_ON);
+//	SetLedButton(ledbutton_Cleanfeed_FX, LED_ON);
+//	SetLedButton(ledbutton_VCF1_FX, LED_ON);
+//	SetLedButton(ledbutton_VCF2_FX, LED_ON);
 	break;
 	case GuiState_LfoSelect:
 	{
@@ -1904,7 +1907,7 @@ bool GetSwitch(SwitchEnum SwitchID)
 	int switchset = ((int)SwitchID) / 32;
 	int adjustedswitchid = SwitchID % 32;
 
-	if ((gPreset.switches[switchset] >> adjustedswitchid)&1 == 1)
+	if (((gPreset.switches[switchset] >> adjustedswitchid)&1) == 1)
 	{
 		return true;
 	}
@@ -1950,10 +1953,10 @@ bool Teensy_ActivateMenu(int buttonid)
 		bool waschase = false;
 		switch (Raspberry_guidata.GuiState)
 		{
-		case GuiState_Menu_CHASE:
-			waschase = true;
-			break;
-		case GuiState_Menu_EFFECTS1:
+//		case GuiState_Menu_CHASE:
+	//		waschase = true;
+		//	break;
+		case GuiState_Menu_EFFECTS:
 			waseffect = true;
 			break;
 		}
@@ -1974,7 +1977,7 @@ bool Teensy_ActivateMenu(int buttonid)
 					}
 				}
 			}break;*/
-			case GuiState_Menu_EFFECTS1:
+			case GuiState_Menu_EFFECTS:
 				if (waseffect)
 				{
 					if (buttonid == ledbutton_Cleanfeed_FX)

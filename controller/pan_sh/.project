@@ -28,7 +28,7 @@
 		<link>
 			<name>source/paramdef.h</name>
 			<type>1</type>
-			<locationURI>PARENT-1-WORKSPACE_LOC/interface/paramdef.h</locationURI>
+			<locationURI>$%7BPARENT-2-PROJECT_LOC%7D/interface/paramdef.h</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>
