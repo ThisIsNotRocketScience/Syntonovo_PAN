@@ -78,7 +78,7 @@ void dsp_cmd(int param, int subparam, uint16_t value)
 	data[3] = value & 0xFF;
 
 	control_write(data, 4);
-	rpi_write(data, 4);
+	//rpi_write(data, 4);
 }
 
 BaseType_t keys_press(int keyindex, uint32_t timediff)
@@ -489,6 +489,27 @@ void USBTask(void* pvParameters)
 	}
 }
 
+uart_t rpi_uart;
+sync_state_t rpi_sync;
+
+void IdleTask(void* pvParameters)
+{
+	while(1) {
+		rpi_uart.config.timer_tick(rpi_uart.config.timer_tick_data);
+		vTaskDelay(1);
+	}
+}
+
+void sync_data_func(int addr, uint8_t* data)
+{
+
+}
+
+int sync_oobdata_func(uint8_t cmd, uint32_t data)
+{
+	return 0;
+}
+
 /*
  * @brief   Application entry point.
  */
@@ -520,13 +541,16 @@ int main(void) {
     CLOCK_EnableClock(kCLOCK_Gpio3);
 
     control_init();
-    rpi_init();
+    rpi_init(&rpi_uart);
+    sync_init(&rpi_sync, &rpi_uart, sync_data_func, sync_oobdata_func);
+    rpi_start();
 
     xKeyTimerSemaphore = xSemaphoreCreateBinary();
 
     xTaskCreate(KeyboardTask, "keys", 256, NULL, 2, NULL);
     //xTaskCreate(RpiTask, "rpi", 256, NULL, 4, NULL);
     //xTaskCreate(USBTask, "usb", 512, NULL, 3, NULL);
+    xTaskCreate(IdleTask, "idle", 256, NULL, 7, NULL);
 
     printf("Everything running\n");
 

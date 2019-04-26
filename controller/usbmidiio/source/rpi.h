@@ -5,12 +5,10 @@
 extern "C" {
 #endif
 
-void rpi_init();
-void rpi_reset();
-void rpi_write(uint8_t* data, int count);
+#include "uart.h"
 
-// callback: 4 bytes of data
-void rpi_cb(uint8_t* data);
+void rpi_init(uart_t* uart);
+void rpi_start();
 
 #ifdef __cplusplus
 };
