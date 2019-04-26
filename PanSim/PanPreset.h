@@ -1,6 +1,7 @@
 #pragma once
 #include <stdint.h>
-
+#include <vector>
+#include "FinalPanEnums.h"
 #pragma pack(1)
 
 #ifdef WIN32
@@ -53,6 +54,19 @@ enum ModSource_t : unsigned char {
 	__ModSource_COUNT
 };
 
+enum PresetCategoryEnum
+{
+	PresetCategory_Lead,
+	PresetCategory_Bass,
+	PresetCategory_Keys,
+	PresetCategory_Effect,
+	PresetCategory_Percussive,
+	PresetCategory_Drone,
+	PresetCategory_Brass,
+	__PresetCategoryCount
+};
+
+
 typedef struct {
 	ModTarget_t target[16];
 	ModSource_t source;
@@ -60,7 +74,90 @@ typedef struct {
 
 #define PRESET_NAME_LENGTH 16
 
-typedef struct {
+class PanPreset_Listener
+{
+public:
+	static std::vector<PanPreset_Listener* > RegisteredPresetListeners;
+
+	virtual void ParamChanged(OutputEnum paramID, uint16_t newvalue) {};
+	virtual void SwitchChanged(SwitchEnum switchID, bool newvalue) {};
+	virtual void NameChanged(char *newname) {}
+	virtual void CategoryChanged(PresetCategoryEnum newcategory) {}
+};
+
+class PanPreset_t {
+public:
+	void PutSwitch(SwitchEnum SwitchID, bool v)
+	{
+		if (v) SetSwitch(SwitchID); else ClearSwitch(SwitchID);
+	}
+
+	void ClearSwitch(SwitchEnum SwitchID)
+	{
+		int switchset = ((int)SwitchID) / 32;
+		int adjustedswitchid = SwitchID % 32;
+		switches[switchset] &= ~(1 << adjustedswitchid);
+	}
+
+	void SetSwitch(SwitchEnum SwitchID)
+	{
+		int switchset = ((int)SwitchID) / 32;
+		int adjustedswitchid = SwitchID % 32;
+		switches[switchset] &= ~(1 << (adjustedswitchid));
+		switches[switchset] |= (1 << (adjustedswitchid));
+	}
+
+	bool GetSwitch(SwitchEnum SwitchID)
+	{
+		int switchset = ((int)SwitchID) / 32;
+		int adjustedswitchid = SwitchID % 32;
+
+		if (((switches[switchset] >> adjustedswitchid) & 1) == 1)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	void ToggleSwitch(SwitchEnum SwitchID)
+	{
+		if (GetSwitch(SwitchID))
+		{
+			ClearSwitch(SwitchID);
+		}
+
+		else
+		{
+			SetSwitch(SwitchID);
+		}
+
+	}
+
+	void TweakParameter(OutputEnum param, int delta)
+	{
+		int OrigVal = paramvalue[param];
+		int32_t val = OrigVal + delta * 1000;
+		if (val < 0) val = 0;
+		if (val > 0xffff) val = 0xffff;
+		paramvalue[param] = val;		
+	}
+	
+	void DescribeParam(OutputEnum param, int style, char *targetbuffer, int bufferlength)
+	{
+		switch (style)
+		{
+			case MenuEntry_MidValue:  sprintf_s(targetbuffer, bufferlength, "%1.1f%%", (float)((int)paramvalue[param]) * (200.0f / (float)0xFFFF)-100); break;
+			case MenuEntry_Value:  sprintf_s(targetbuffer, bufferlength, "%1.1f%%", (float)((int)paramvalue[param]) * (100.0f / (float)0xFFFF)); break;
+			case MenuEntry_Percentage: 	sprintf_s(targetbuffer, bufferlength, "%1.1f%%", (float)((int)paramvalue[param]) * (100.0f / (float)0xFFFF));
+			
+			
+			default: sprintf_s(targetbuffer, bufferlength, ""); break;
+		}
+	}
+
 	uint32_t switches[2];
 	uint16_t paramvalue[256];
 
@@ -69,4 +166,4 @@ typedef struct {
 	AdModulation_t admod[16];
 	ControlModulation_t ctrlmod[16];
 	char Name[PRESET_NAME_LENGTH];
-} PACK PanPreset_t;
+} PACK ;

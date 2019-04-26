@@ -231,6 +231,7 @@ void WriteCtrl(PanPreset_t& preset, int i)
 	}
 }
 
+
 void LoadPreset(PanPreset_t& preset)
 {
 #define OUTPUT(name,codecport,codecpin, type,id, style,defaultvalue) \

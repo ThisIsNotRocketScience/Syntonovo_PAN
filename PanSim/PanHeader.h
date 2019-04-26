@@ -6,9 +6,6 @@
 #define SYNTONPAN
 #include <string>
 
-#define LED_BLINK 2
-#define LED_ON 1
-#define LED_OFF 0
 
 #define KNOB(name,x,y,min,max,idx,lbl) +1
 const int knobcount = 0
@@ -51,13 +48,6 @@ enum EncoderEnum
 };
 
 
-enum SwitchEnum
-{
-#define SWITCH(name,id) Switch_##name = id,
-#include "../interface/paramdef.h"
-#undef SWITCH
-	__SWITCH_COUNT
-};
 
 typedef struct _param_t
 {	

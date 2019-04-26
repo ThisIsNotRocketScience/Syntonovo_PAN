@@ -15,10 +15,13 @@
 #include  "PanHeader.h"
 #include "FinalPanHeader.h"
 
+void FinalPan_SetupLeds();
+
 extern void FinalPan_WindowFrame();
 extern void FinalPan_LoadResources();
+extern void FinalPan_SetupLeds();
 
-
+extern PanState_t gPanState;
 class fLedButton
 {
 public:
@@ -28,25 +31,28 @@ public:
 	float y;
 	FinalLedButtonEnum id;
 	int fpid;
+	float r, g, b;
 	bool value;
-	int ledmode;
+	ledmodes ledmode;
 };
 
 
 
 fLedButton FinalButtons[__FINALLEDBUTTON_COUNT] = {
-#define LEDBUTTON(iname,ix,iy,fpid,str) {str ,ix, iy,ledbutton_##iname, fpid},
+#define LEDBUTTON(iname,ix,iy,fpid,str,r,g,b) {str ,ix, iy,ledbutton_##iname, fpid,r,g,b},
 #include "FinalPanHeader.h"
 #undef LEDBUTTON
 
 };
 
+#if (__FINALLED_COUNT>0)
 Led FinalLeds[__FINALLED_COUNT] = {
 #define LED(iname,ix,iy) {#iname,ix, iy, led_##iname},
 #include "FinalPanHeader.h"
 #undef LED
 
 };
+#endif
 
 class fEncoder
 {
@@ -54,13 +60,15 @@ public:
 	char *name;
 	float x;
 	float y;
+	
 	FinalEncoderEnum id;
 	float pos;
 	int delta;
+	ImVec4 ledcolor;
 };
 
 fEncoder FinalEncoders[__FINALENCODER_COUNT] = {
-#define LEDENCODER(iname,ix,iy,str) {str,ix, iy, encoder_##iname},
+#define LEDENCODER(iname,ix,iy,str) {str,ix, iy, encoder_##iname,0,0,ImVec4(0,0,0,1)},
 #include "FinalPanHeader.h"
 #undef LEDENCODER
 };
@@ -501,7 +509,10 @@ static bool MySlider(const char* label, float* p_value, float v_min, float v_max
 	return value_changed;
 }
 
-bool LedButton(const char* label, int mode)
+int blinktime = 0;
+int blinkon = 0;
+
+bool LedButton(const char* label, ledmodes mode, float r, float g, float b)
 {
 
 	ImGuiIO& io = ImGui::GetIO();
@@ -518,20 +529,22 @@ bool LedButton(const char* label, int mode)
 	bool is_active = ImGui::IsItemActive();
 	bool is_hovered = ImGui::IsItemHovered();
 
+	draw_list->AddCircleFilled(center, radius_outer, IM_COL32((int)(r * 100), (int)(g * 100), (int)(b * 100), 255), 16);
 
-	draw_list->AddCircleFilled(center, radius_outer, ImGui::GetColorU32(is_active ? ImGuiCol_FrameBgActive : is_hovered ? ImGuiCol_FrameBgHovered : ImGuiCol_FrameBg), 16);
+//	draw_list->AddCircleFilled(center, radius_outer, ImGui::GetColorU32(is_active ? ImGuiCol_FrameBgActive : is_hovered ? ImGuiCol_FrameBgHovered : ImGuiCol_FrameBg), 16);
 	auto R = ImGui::CalcTextSize(label);
 	draw_list->AddText(ImVec2(center.x - R.x / 2, pos.y - line_height - style.ItemInnerSpacing.y), ImGui::GetColorU32(ImGuiCol_Text), label);
 
 	//if (pressed) *v = !*v;
-	if (mode == LED_ON)
+	if (mode == ledmode_solid)
 	{
-		draw_list->AddCircleFilled(center, radius_outer, IM_COL32(255, 255, 0, 255), 16);
+		draw_list->AddCircleFilled(center, radius_outer, IM_COL32((int)(r * 255), (int)(g * 255), (int)(b*255), 255), 16);
 
 	}
-	if (mode == LED_BLINK)
+	if ((mode == ledmode_blinkslow  || mode == ledmode_blinkfast)&& blinkon == 1)
 	{
-		draw_list->AddCircleFilled(center, radius_outer, IM_COL32(100, 255, 0, 255), 16);
+		draw_list->AddCircleFilled(center, radius_outer, IM_COL32((int)(r * 255), (int)(g * 255), (int)(b * 255), 255), 16);
+		//draw_list->AddCircleFilled(center, radius_outer, IM_COL32(100, 255, 0, 255), 16);
 
 	}
 
@@ -973,8 +986,7 @@ int main(int argc, char** argv)
 			{
 				ImGui::MenuItem("FinalPan UI Controls", NULL, &finalparameters);
 				ImGui::MenuItem("FinalPan Main Screen", NULL, &finalpan);
-				//ImGui::MenuItem("Pan UI Controls", NULL, &parameters);
-			//	ImGui::MenuItem("Pan Main Screen", NULL, &mainscreen);
+
 				ImGui::MenuItem("Keyboard", NULL, &keyboard);
 				ImGui::MenuItem("Switches", NULL, &allswitches);
 				ImGui::EndMenu();
@@ -1043,130 +1055,11 @@ int main(int argc, char** argv)
 		{
 			ImGui::SetNextWindowPos(ImVec2(10, 30));
 			FinalPan_WindowFrame();
+			FinalPan_SetupLeds();
+			blinktime++;
+			blinkon = ((blinktime % 30) > 15) ? 1 : 0;
 		}
-
-		if (mainscreen)
-		{
-			ImGui::SetNextWindowPos(ImVec2(10, 30));
-			Raspberry_WindowFrame();
-			/*ImGui::PushFont(pFontBold);
-
-			ImGui::Begin("Pan Mainscreen", &parameters, ImGuiWindowFlags_AlwaysAutoResize);
-			ImGui::PushFont(pFont);
-
-
-			ImGui::BeginChild("screen", ImVec2(480, 800), false);
-			Raspberry_RenderScreen();
-			ImGui::EndChild();
-
-			ImGui::PopFont();
-
-
-			ImGui::End();
-			ImGui::PopFont();*/
-		}
-
-
-		if (parameters)
-		{
-			if (UISerial.IsOpen() == false)
-			{
-				if (Raspberry_guidata.dirty )
-				{
-					Raspberry_guidata.dirty = false;
-					SendRaspberryState();
-				}
-				
-			}
-
-			ImGui::PushFont(pFontBold);
-			{
-				ImGui::Begin("Pan Parameters", &parameters, ImGuiWindowFlags_AlwaysAutoResize);
-				ImGui::PushFont(pFont);
-				if (ImGui::Button("Resend All Data"))
-				{
-					if (UISerial.IsOpen() == false) Teensy_ReSendPreset();
-					UISendCommand(0x60, 0);
-
-				}
-				ImGui::SameLine();
-				ImGui::Text("preset size in bytes: %d", sizeof(PanPreset_t));
-				ImVec2 pos = ImGui::GetCursorScreenPos();
-				if (BG) ImGui::Image(BG, ImVec2(2534 * 0.6f, 1183 * 0.6f));
-				ImGui::SetCursorScreenPos(pos);
-
-				ImGui::LabelText("l1", "%d left %d bytes this frame.. %d handled", bytecount - handledbytes, bytecount, handledbytes);
-				//ImVec2 pos = ImGui::GetCursorScreenPos();
-				float xscalefac = 60;
-				float yscalefac = 60;
-				for (int i = 0; i < __KNOB_COUNT; i++)
-				{
-					ImGui::SetCursorScreenPos(ImVec2(pos.x + Knobs[i].x * xscalefac, pos.y + Knobs[i].y * yscalefac));
-					if (Knobs[i].isslider == 1)
-					{
-						if (MySlider(Knobs[i].name, &Knobs[i].value, 0, 1))
-						{
-							Teensy_KnobChanged(Knobs[i].id, uint32_t(floor((Knobs[i].value*65535.0))));
-						}
-					}
-					else
-					{
-						if (MyKnob(Knobs[i].name, &Knobs[i].value, 0, 1, Knobs[i].label))
-						{
-							Teensy_KnobChanged(Knobs[i].id, uint32_t(floor((Knobs[i].value*65535.0))));
-						}
-					}
-				}
-
-				for (int i = 0; i < __LEDBUTTON_COUNT; i++)
-				{
-					ImGui::SetCursorScreenPos(ImVec2(pos.x + Buttons[i].x * xscalefac, pos.y + Buttons[i].y * yscalefac));
-					bool b = Buttons[i].value;
-					if (LedButton(Buttons[i].name, Buttons[i].ledmode ))
-					{
-						Teensy_ButtonPressed(Buttons[i].id, Buttons[i].value);
-
-					}
-				}
-				for (int i = 0; i < __LED_COUNT; i++)
-				{
-					ImGui::SetCursorScreenPos(ImVec2(pos.x + Leds[i].x * xscalefac, pos.y + Leds[i].y * yscalefac));
-					ImLed(Leds[i].name, &Leds[i].value);
-				}
-				for (int i = 0; i < __ENCODER_COUNT; i++)
-				{
-					ImGui::SetCursorScreenPos(ImVec2(pos.x + Encoders[i].x * xscalefac, pos.y + Encoders[i].y * yscalefac));
-					if (MyEncoder(Encoders[i].name, &Encoders[i].pos, &Encoders[i].delta))
-					{
-						Teensy_EncoderPress(i);
-
-					}
-
-					char name[300];
-					sprintf(name, "ENCL%d", i);
-					ImGui::SetCursorScreenPos(ImVec2(pos.x + (Encoders[i].x -0.6) * xscalefac, (pos.y+0.3) + Encoders[i].y * yscalefac));
-					if (ImGui::Button(name))
-					{
-
-						Teensy_EncoderRotate(i, -1);
-					}
-					ImGui::SetCursorScreenPos(ImVec2(pos.x +( Encoders[i].x +0.6)* xscalefac,( pos.y+0.3) + Encoders[i].y * yscalefac));
-					sprintf(name, "ENCR%d", i);
-					if (ImGui::Button(name))
-					{
-						Teensy_EncoderRotate(i, 1);
-					}
-				}
-
-
-
-				ImGui::PopFont();
-
-
-				ImGui::End();
-				ImGui::PopFont();
-			}
-		}
+		
 
 		if (finalparameters)
 		{
@@ -1177,7 +1070,6 @@ int main(int argc, char** argv)
 					Raspberry_guidata.dirty = false;
 					SendRaspberryState();
 				}
-
 			}
 
 			ImGui::PushFont(pFontBold);
@@ -1200,25 +1092,30 @@ int main(int argc, char** argv)
 
 				for (int i = 0; i < __FINALLEDBUTTON_COUNT; i++)
 				{
+					FinalButtons[i].ledmode = gPanState.ledbuttons[i].led.mode;
 					ImGui::SetCursorScreenPos(ImVec2(pos.x + FinalButtons[i].x * xscalefac, pos.y + FinalButtons[i].y * yscalefac));
 					bool b = FinalButtons[i].value;
-					if (LedButton(FinalButtons[i].name, FinalButtons[i].ledmode))
+					if (LedButton(FinalButtons[i].name, FinalButtons[i].ledmode, FinalButtons[i].r, FinalButtons[i].g, FinalButtons[i].b))
 					{
 					//	Teensy_ButtonPressed(FinalButtons[i].id, FinalButtons[i].value);
-
+						LedButtonPressed(FinalButtons[i].id);
 					}
 				}
-				
+#if (__FINALLED_COUNT>0)
 				for (int i = 0; i < __FINALLED_COUNT; i++)
 				{
 					ImGui::SetCursorScreenPos(ImVec2(pos.x + FinalLeds[i].x * xscalefac, pos.y + FinalLeds[i].y * yscalefac));
 					ImLed(FinalLeds[i].name, &FinalLeds[i].value);
 				}
-
+#endif
 				for (int i = 0; i < __FINALENCODER_COUNT; i++)
 				{
+
+					auto R = ImGui::CalcTextSize(FinalEncoders[i].name);
+					ImGui::SetCursorScreenPos(ImVec2(pos.x + FinalEncoders[i].x * xscalefac -R.x/2, pos.y + 45 + FinalEncoders[i].y * yscalefac));
+					ImGui::TextColored(ImVec4(0,0,0,1), FinalEncoders[i].name);
 					ImGui::SetCursorScreenPos(ImVec2(pos.x + FinalEncoders[i].x * xscalefac, pos.y +25 + FinalEncoders[i].y * yscalefac));
-					if (ImGui::Button(FinalEncoders[i].name))//, &FinalEncoders[i].pos, &FinalEncoders[i].delta))
+					if (ImGui::ColorButton(FinalEncoders[i].name, FinalEncoders[i].ledcolor))//, &FinalEncoders[i].pos, &FinalEncoders[i].delta))
 					{
 					//	Teensy_EncoderPress(i);
 						LedEncoderButtonPress(FinalEncoders[i].id);
@@ -1227,14 +1124,14 @@ int main(int argc, char** argv)
 					char name[300];
 					sprintf(name, "ENCL%d", i);
 					ImGui::SetCursorScreenPos(ImVec2(pos.x + (FinalEncoders[i].x - 3.6) * xscalefac, (pos.y + 0.8) + FinalEncoders[i].y * yscalefac));
-					if (ImGui::Button(name))
+					if (ImGui::ColorButton(name, FinalEncoders[i].ledcolor))
 					{
 						LedEncoderButtonLeft(FinalEncoders[i].id);
 					//	Teensy_EncoderRotate(i, -1);
 					}
 					ImGui::SetCursorScreenPos(ImVec2(pos.x + (FinalEncoders[i].x + 3.6)* xscalefac, (pos.y + 0.8) + FinalEncoders[i].y * yscalefac));
 					sprintf(name, "ENCR%d", i);
-					if (ImGui::Button(name))
+					if (ImGui::ColorButton(name, FinalEncoders[i].ledcolor))
 					{
 						LedEncoderButtonRight(FinalEncoders[i].id);
 						//	Teensy_EncoderRotate(i, 1);

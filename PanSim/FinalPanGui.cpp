@@ -6,8 +6,38 @@
 #include "FinalPanEnums.h"
 #include "PanPreset.h"
 
-PanPreset_t CurrentPreset;
-PanPreset_t RevertPreset;
+PanPreset_t gCurrentPreset;
+PanPreset_t gRevertPreset;
+PanState_t gPanState;
+
+int GetSideButtonID(FinalLedButtonEnum B);
+bool IsSideButton(FinalLedButtonEnum B);
+bool IsPatchButton(FinalLedButtonEnum B);
+
+
+typedef struct FinalPan_GuiResources_t
+{
+	ImTextureID MainBG;
+	ImTextureID RootBG;
+	ImTextureID LeftIndicator;
+	ImTextureID RightIndicator;
+	ImTextureID SpriteSheet;
+	ImTextureID OnOff[4];
+	ImFont *BigFont;
+	ImFont *SmallFont;
+	ImU32 Highlight;
+	ImU32 Normal;
+	ImU32 BGColor;
+	ImU32 FillColor;
+	int PageTime;
+	int encoderbarmargin;
+	int encoderheight;
+
+	ImTextureID BgImages[1];
+} FinalPan_GuiResources_t;
+
+static FinalPan_GuiResources_t res;
+
 
 enum ParamEnum
 {
@@ -84,37 +114,80 @@ typedef struct _modmatrix_t
 	_modmatrix_source_t sources[__modulation_source_count];
 } modmatrix_t;
 
-enum ledmodes
-{
-	ledmode_solid,
-	ledmode_blinkslow,
-	ledmode_blinkfast,
-	ledmode_off
-};
-
-typedef struct _led_t
-{
-	uint8_t mode;
-	uint8_t r;
-	uint8_t g;
-	uint8_t b;
-} led_t;
 
 class _control_t
 {
 public:
-	bool enabled;
-	char title[40];
-	bool activestate;
 
-	virtual void SketchRight(int delta)
+	_control_t *Parent;
+
+	_control_t()
 	{
-
+		enabled = true;
+		skipencodercycling = false;
 	}
+	bool enabled;
+	bool skipencodercycling;
+	char title[255];
+	bool activestate;
+	void SetTitle(char *t)
+	{
+		sprintf_s(title, 255, "%s", t);
+	}
+	
 
 	virtual void Render(bool active)
 	{
 
+	}
+	virtual void Action(int action) {}
+	virtual void SketchRightPressed() {}
+	virtual void SketchRightDelta(int delta) {}
+	virtual void Activate() {}
+	virtual void Deactivate() {}
+
+
+	void RenderBox(int x, int y, int val, int mode, bool active)
+	{
+		ImVec2 p = ImVec2(x, y + ImGui::GetTextLineHeight() );
+		p.x += 10;
+		ImVec2 tl = p;
+		ImVec2 br = tl;
+		br.x += ParamBoxWidth;
+		br.y += ImGui::GetTextLineHeight() - 2;
+		switch (mode)
+		{
+		case BOX_REGULAR:
+		{
+			ImVec2 br2 = br;
+			br2.x = tl.x + (val * 220) / 0xffff;
+			ImGui::GetWindowDrawList()->AddRectFilled(tl, br2, res.FillColor);
+		}
+		break;
+		case BOX_INV:
+		{
+			ImVec2 br2 = br;
+			ImVec2 tl2 = tl;
+			tl2.x = tl.x + (val * 220) / 0xffff;
+			br2.x = tl.x + 220;
+			ImGui::GetWindowDrawList()->AddRectFilled(tl, br2, res.FillColor);
+		}
+		break;
+		case BOX_MID:
+		{
+			ImVec2 br2 = br;
+			float x1 = tl.x + 110;
+			float x2 = tl.x + (val * 220) / 0xffff;
+			ImVec2 tl2 = tl;
+			tl2.x = __min(x1, x2);
+			br2.x = __max(x1, x2);
+			ImGui::GetWindowDrawList()->AddRectFilled(tl2, br2, res.FillColor);
+		}
+		break;
+		}
+		ImGui::GetWindowDrawList()->AddRect(tl, br, active ? res.Highlight : res.Normal, 0, 0, 2);
+		p.x += 12;
+		ImGui::SetCursorScreenPos(p);
 	}
 
 
@@ -128,25 +201,109 @@ enum alignment_t
 	__align_count
 };
 
+class _textcontrol_t: public _control_t
+{
+public:
+	_textcontrol_t()
+	{
+		Color = ImVec4(1, 1, 1, 1);
+		skipencodercycling = true;
+	}
+	float x, y;
+	float fontsize;
+	alignment_t Align;
+	ImVec4 Color;
+	virtual void Render(bool active)
+	{
+		float x2 = x;
+		switch (Align)
+		{
+		case align_right:
+				{
+				ImVec2 textsize = ImGui::CalcTextSize(title);
+				x2 -= textsize.x;
+				}
+			break;
+		case align_center:
+		{
+			ImVec2 textsize = ImGui::CalcTextSize(title);
+			x2 -= textsize.x/2;
+		}
+		break;
+		}
+		
+		ImGui::SetCursorPos(ImVec2(x2, y));
+		ImGui::TextColored(Color, title);
+	}
+
+};
+
 class sidebutton_t : public _control_t
 {
 public:
-	uint8_t ledmode;
+	ledmodes ledmode;
+
+	void UpdateLed(bool active)
+	{
+		if (enabled)
+		{
+			ledmode = active?ledmode_blinkslow:ledmode_solid;
+		}
+		else
+		{
+			ledmode = ledmode_off;
+		}
+	}
+
 	int x;
 	int y;
+	int style;
+	int target;
 	alignment_t Align;
+	virtual void SketchRightDelta(int delta)
+	{
+		switch (style)
+		{
+		case MenuEntry_Toggle: gCurrentPreset.PutSwitch((SwitchEnum)target, delta>0); break;
+
+		case MenuEntry_MidValue:
+		case MenuEntry_Percentage:
+		case MenuEntry_Pitch:
+		case MenuEntry_EffectParam1:
+		case MenuEntry_EffectParam2:
+		case MenuEntry_EffectParam3:
+		case MenuEntry_FilterMix:
+		case MenuEntry_RemapValue:
+		case MenuEntry_Value: gCurrentPreset.TweakParameter((OutputEnum)target, delta); break;
+		
+		}
+	}
+	virtual void Pressed()
+	{
+		switch (style)
+		{
+		case MenuEntry_Action: Parent->Action(target); break;
+		case MenuEntry_Toggle: gCurrentPreset.ToggleSwitch((SwitchEnum)target); break;
+		}
+	}
+	
+	virtual void SketchRightPressed() 
+	{
+		Pressed();
+	}
+
 	void SetupPosition(int id)
 	{
-		y = (id % 7) * 40;
-		x = 0;
+		y = (id % 7) * (600/8) + 600/16;
+		x = 10;
 		Align = align_left;
-		if (id > 7)
+		if (id > 6)
 		{
-			x = 1024;
+			x = 1024-10;
 			Align = align_right;
 		}
-
 	}
+
 	virtual void Render(bool active)
 	{
 		if (enabled)
@@ -167,6 +324,54 @@ public:
 				ImGui::Text(title);
 			}
 
+
+			switch (style)
+			{
+
+			case MenuEntry_MidValue:
+			case MenuEntry_Percentage:
+			case MenuEntry_Pitch:
+			case MenuEntry_EffectParam1:
+			case MenuEntry_EffectParam2:
+			case MenuEntry_EffectParam3:
+			case MenuEntry_FilterMix:
+			case MenuEntry_RemapValue:
+				case MenuEntry_Value:
+				{
+
+					if (Align == align_right)
+					{
+						RenderBox(x - 200 - ParamBoxWidth, y, gCurrentPreset.paramvalue[target], style == MenuEntry_MidValue ? BOX_MID : BOX_REGULAR, active);
+					}
+					else
+					{
+						RenderBox(x2 + 200, y, gCurrentPreset.paramvalue[target], style == MenuEntry_MidValue ? BOX_MID : BOX_REGULAR, active);
+					}
+					char txt[400];
+
+					gCurrentPreset.DescribeParam((OutputEnum)target, style, txt, 400);
+					ImGui::Text(txt);
+				}
+
+				break;
+			
+			case MenuEntry_Toggle: 
+
+				int id = gCurrentPreset.GetSwitch((SwitchEnum)target) ? 1 : 0;
+				
+				if (Align == align_right)
+				{
+					ImGui::SetCursorPos(ImVec2(x2 - 128 - 200, y));
+				}
+				else
+				{
+					ImGui::SetCursorPos(ImVec2(x2 + 200, y));
+
+				}
+				ImGui::Image(res.OnOff[id + (active?2:0)], ImVec2(128, 48));
+
+				break;
+			}
 		}
 
 	}
@@ -182,15 +387,17 @@ class  bottomencoder_t :public _control_t
 {
 public:
 	uint8_t displaymode;
+	
+	int ParameterID;	
 };
+
 
 class _screensetup_t : public _control_t
 {
 public:
 
 	std::vector<_screensetup_t *> SubScreens;
-	_screensetup_t *Parent;
-
+	
 	std::vector<_control_t *> ControlsInOrder;
 	int ActiveControl;
 	_screensetup_t *Modal;
@@ -204,11 +411,13 @@ public:
 		{
 			EnableButton(i, "", false, ledmode_off);
 			DisableButton(i);
+			buttons[i].Parent = this;
 			buttons[i].SetupPosition(i);
 		}
 
 		for (int i = 0; i < 11; i++)
 		{
+			encoders[i].Parent = this;
 			DisableEncoder(i);
 		}
 
@@ -243,6 +452,36 @@ public:
 
 		SetFirstEnabledControlActive();
 	}
+	
+	virtual void SetupLeds()
+	{
+		for (int i = 0; i < 14; i++)
+		{
+			buttons[i].UpdateLed(ControlsInOrder[ActiveControl] == &buttons[i]);
+		}
+
+		gPanState.SetButtonLed(ledbutton_L1, buttons[0].ledmode);
+		gPanState.SetButtonLed(ledbutton_L2, buttons[1].ledmode);
+		gPanState.SetButtonLed(ledbutton_L3, buttons[2].ledmode);
+		gPanState.SetButtonLed(ledbutton_L4, buttons[3].ledmode);
+		gPanState.SetButtonLed(ledbutton_L5, buttons[4].ledmode);
+		gPanState.SetButtonLed(ledbutton_L6, buttons[5].ledmode);
+		gPanState.SetButtonLed(ledbutton_L7, buttons[6].ledmode);
+		gPanState.SetButtonLed(ledbutton_R1, buttons[7].ledmode);
+		gPanState.SetButtonLed(ledbutton_R2, buttons[8].ledmode);
+		gPanState.SetButtonLed(ledbutton_R3, buttons[9].ledmode);
+		gPanState.SetButtonLed(ledbutton_R4, buttons[10].ledmode);
+		gPanState.SetButtonLed(ledbutton_R5, buttons[11].ledmode);
+		gPanState.SetButtonLed(ledbutton_R6, buttons[12].ledmode);
+		gPanState.SetButtonLed(ledbutton_R7, buttons[13].ledmode);
+
+		
+	}
+
+	virtual void Action(int action) 
+	{
+
+	}
 
 	void SetFirstEnabledControlActive()
 	{
@@ -256,6 +495,7 @@ public:
 		}
 		ActiveControl = 0;
 	}
+	
 	void DisableEncoder(int i)
 	{
 		encoders[i].enabled = 0;
@@ -282,6 +522,8 @@ public:
 			{
 				sprintf(buttons[i].title, text);
 				buttons[i].enabled = true;
+				buttons[i].style = style;
+				buttons[i].target = target;
 				buttons[i].ledmode = ledmode_solid;
 				return i;				
 			}
@@ -295,17 +537,22 @@ public:
 
 	sidebutton_t buttons[14];
 	bottomencoder_t encoders[11];
-
-	void SetTitle(char *t)
+	void AddText(float x, float y, char *t, alignment_t align = align_left)
 	{
-		sprintf_s(title, 40, "%s", t);
+		_textcontrol_t *T = new _textcontrol_t();
+		T->Align = align;
+		T->SetTitle(t);
+		T->x = x;
+		T->y = y;
+		ControlsInOrder.push_back(T);
 	}
+	
 	void ChangeActiveControl(int delta)
 	{
 		int Start = (ActiveControl + delta + ControlsInOrder.size()) % ControlsInOrder.size();
 		for (int i = 0; i < ControlsInOrder.size(); i++)
 		{
-			if (ControlsInOrder[Start]->enabled)
+			if (ControlsInOrder[Start]->enabled == true && ControlsInOrder[Start]->skipencodercycling == false)
 			{
 				ActiveControl = Start;
 				return;
@@ -327,21 +574,58 @@ public:
 
 	virtual void SketchRight(int delta)
 	{
-		ControlsInOrder[ActiveControl]->SketchRight(delta);
+		if (Modal)
+		{
+			Modal->SketchRight(delta);
+			return;
+		}
+		ControlsInOrder[ActiveControl]->SketchRightDelta(delta);
 	}
 
-	virtual void SketchLeftPress()
-	{
-	}
+	virtual void SketchLeftPress();
 
 	virtual void SketchRightPress()
 	{
+		ControlsInOrder[ActiveControl]->SketchRightPressed();
 	}
 
 	virtual void EncoderPress(FinalEncoderEnum button)
 	{
 	}
+	int GetControlIndex(_control_t *c)
+	{
+		for (int i = 0; i < ControlsInOrder.size(); i++)
+		{
+			if (c == ControlsInOrder[i]) return i;
+		}
+		return -1;
+	}
+	void SetActiveControl(_control_t *c)
+	{
+		int id = GetControlIndex(c);
+		if (id > -1)
+		{
+			if (ActiveControl != id) ControlsInOrder[ActiveControl]->Deactivate();
+			ActiveControl = id;
+			ControlsInOrder[ActiveControl]->Activate();
+		}
+	}
+	virtual void SideButton(FinalLedButtonEnum b) 
+	{
+		int SideButtonID = GetSideButtonID(b);
+		if (SideButtonID > -1)
+		{
+			if (buttons[SideButtonID].enabled)
+			{
+				SetActiveControl(&buttons[SideButtonID]);
+				buttons[SideButtonID].Pressed();
+			}
+		}
+	}
 
+	virtual void PatchButton(FinalLedButtonEnum b)
+	{
+	}
 
 	void Encoder(FinalEncoderEnum button, int delta)
 	{
@@ -351,7 +635,8 @@ public:
 	{
 		if (strlen(title) > 0)
 		{
-			ImGui::SetCursorPos(ImVec2(1024 / 2, 0));
+			auto R = ImGui::CalcTextSize(title);
+			ImGui::SetCursorPos(ImVec2(1024 / 2 - R.x/2, 0));
 			ImGui::Text(title);
 		}
 
@@ -389,28 +674,6 @@ void RenderModulationAssignBar(_modmatrix_source_t *source)
 	}
 }
 
-typedef struct FinalPan_GuiResources_t
-{
-	ImTextureID MainBG;
-	ImTextureID RootBG;
-	ImTextureID LeftIndicator;
-	ImTextureID RightIndicator;
-	ImTextureID SpriteSheet;
-	ImTextureID OnOff[4];
-	ImFont *BigFont;
-	ImFont *SmallFont;
-	ImU32 Highlight;
-	ImU32 Normal;
-	ImU32 BGColor;
-	ImU32 FillColor;
-	int PageTime;
-	int encoderbarmargin;
-	int encoderheight;
-
-	ImTextureID BgImages[1];
-} FinalPan_GuiResources_t;
-
-static FinalPan_GuiResources_t res;
 extern ImTextureID Raspberry_LoadTexture(const char *filename);
 static bool init = false;
 void FinalPan_LoadResources()
@@ -422,6 +685,7 @@ void FinalPan_LoadResources()
 	res.Highlight = IM_COL32(235, 200, 28, 255);
 	res.Normal = IM_COL32(255, 255, 255, 255);
 	res.BGColor = IM_COL32(0, 58, 66, 255);
+	res.BGColor = IM_COL32(0, 0, 0, 255);
 	res.FillColor = IM_COL32(0, 137, 127, 255);
 	res.OnOff[0] = Raspberry_LoadTexture("UI_ONOFF_OFF.png");
 	res.OnOff[1] = Raspberry_LoadTexture("UI_ONOFF_ON.png");
@@ -437,6 +701,65 @@ void FinalPan_LoadResources()
 
 }
 
+
+
+
+int GetSideButtonID(FinalLedButtonEnum B)
+{
+	switch (B)
+	{
+	case ledbutton_L1: return 0;
+	case ledbutton_L2:return 1;
+	case ledbutton_L3:return 2;
+	case ledbutton_L4:return 3;
+	case ledbutton_L5:return 4;
+	case ledbutton_L6:return 5;
+	case ledbutton_L7:return 6;
+
+	case ledbutton_R1:return 7;
+	case ledbutton_R2:return 8;
+	case ledbutton_R3:return 9;
+	case ledbutton_R4:return 10;
+	case ledbutton_R5:return 11;
+	case ledbutton_R6:return 12;
+	case ledbutton_R7:return 13;
+		
+	}
+
+	return -1;
+}
+bool IsSideButton(FinalLedButtonEnum B)
+{
+	if (GetSideButtonID(B) > -1) return true;
+	return false;
+}
+
+
+bool IsPatchButton(FinalLedButtonEnum B) 
+{
+	switch (B)
+	{
+	case ledbutton_B1:
+	case ledbutton_B2:
+	case ledbutton_B3:
+	case ledbutton_B4:
+	case ledbutton_B5:
+	case ledbutton_B6:
+	case ledbutton_B7:
+	case ledbutton_B8:
+	case ledbutton_B9:
+	case ledbutton_B10:
+	case ledbutton_B11:
+	case ledbutton_B12:
+	case ledbutton_B13:
+	case ledbutton_B14:
+	case ledbutton_B15:
+	case ledbutton_B16:
+		return true;
+	}
+
+	return false;
+}
 class Gui
 {
 public:
@@ -478,6 +801,35 @@ public:
 		CS()->Encoder(button, delta);
 	}
 
+	void ButtonPressed(FinalLedButtonEnum Button)
+	{
+
+		// insert what to do if selecting modulation source/target here? 
+		switch (Button)
+		{
+			case ledbutton_ArpEdit: GotoPage(SCREEN_ARP); break;
+			case ledbutton_BX:  GotoPage(SCREEN_X); break;
+			case ledbutton_BY:  GotoPage(SCREEN_Y); break;
+			case ledbutton_BZ:  GotoPage(SCREEN_Z); break;
+
+			case ledbutton_BEnv: GotoPage(SCREEN_ENVELOPE); break;
+			case ledbutton_BLFO: GotoPage(SCREEN_LFO); break;
+			case ledbutton_BCV: GotoPage(SCREEN_KEYBOARD); break;
+			case ledbutton_BTouch: GotoPage(SCREEN_TOUCH); break;
+
+		}
+
+		if (IsSideButton(Button))
+		{
+			CS()->SideButton(Button);
+		}
+		if (IsPatchButton(Button))
+		{
+			CS()->PatchButton(Button);
+		}
+
+	}
+
 	_screensetup_t *CS()
 
 	{
@@ -495,7 +847,13 @@ public:
 			if (Screens[i] == 0) Screens[i] = new _screensetup_t();
 		}
 		Screens[SCREEN_HOME]->SetTitle("Syntonovo Pan");
+		Screens[SCREEN_HOME]->AddText(512, 40, "Current preset: ", align_right);
+		Screens[SCREEN_HOME]->AddText(512, 40, "Some Sound");
 
+		Screens[SCREEN_HOME]->EnableButton(8, "Store");//(512, 40, "Some Sound");
+		Screens[SCREEN_HOME]->EnableButton(9, "Revert");
+		Screens[SCREEN_HOME]->EnableButton(10, "System");
+		Screens[SCREEN_HOME]->EnableButton(12, "Lights");
 
 		Screens[SCREEN_VCO1]->SetTitle("Oscillator 1");
 		Screens[SCREEN_VCO2]->SetTitle("Oscillator 2");
@@ -517,7 +875,7 @@ public:
 		int lastbutton = 0;
 #define MENU(a,b,c) current = Screens[SCREEN_##a];current->SetTitle(c);lastbutton = 0;
 #define ENTRY(a,b,c)  lastbutton = current->EnableAvailableButton( a,b,c);
-		
+#define CUSTOMENTRY(name, style, target) lastbutton = current->EnableAvailableButton(name ,style, target);
 		//ENTRY("Spectrum Mod", MenuEntry_Value, Output_VCF2_CROSSMOD) 
 #include "PanUiMap.h"
 #undef MENU
@@ -548,13 +906,25 @@ public:
 
 	}
 
+	void SetupLeds()
+	{
+		CS()->SetupLeds();
+	}
 	Screens_t CurrentScreen;
 };
 
 Gui gGui;
 
 
-
+void _screensetup_t::SketchLeftPress ()
+{
+	if (Modal)
+	{
+		Modal->SketchLeftPress();
+		return;
+	}
+	gGui.GotoPage(SCREEN_HOME);
+}
 
 void FinalPan_PushStyle()
 {
@@ -615,6 +985,55 @@ Screens_t GetPage(FinalEncoderEnum Button)
 	return SCREEN_HOME;
 }
 
+void RenderMain()
+{
+	if (!init)
+	{
+		FinalPan_LoadResources();
+	}
+	FinalPan_PushStyle();
+	ImVec2 pos = ImGui::GetCursorPos();
+	pos = ImGui::GetCursorScreenPos();
+	ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(pos.x, pos.y), ImVec2(1024 + pos.x, 600 + pos.y), res.BGColor);
+
+	gGui.Render();
+
+	FinalPan_PopStyle();
+}
+
+
+void FinalPan_SetupLeds()
+{
+	gGui.SetupLeds();
+}
+
+
+void FinalPan_WindowFrame()
+{
+
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0);
+	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
+
+	ImGui::Begin("screen", 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoTitleBar);
+
+	ImGui::SetWindowSize(ImVec2(1024, 600));
+
+	RenderMain();
+
+	ImGui::End();
+	ImGui::PopStyleVar();
+	ImGui::PopStyleVar();
+	ImGui::PopStyleVar();
+}
+
+
+// INTERFACE FUNCTIONS
+
+void LedButtonPressed(FinalLedButtonEnum Button)
+{
+	gGui.ButtonPressed(Button);
+}
 
 void LedEncoderButtonPress(FinalEncoderEnum Button)
 {
@@ -662,37 +1081,3 @@ void LedEncoderButtonRight(FinalEncoderEnum Button)
 
 }
 
-void RenderMain()
-{
-	if (!init)
-	{
-		FinalPan_LoadResources();
-	}
-	FinalPan_PushStyle();
-	ImVec2 pos = ImGui::GetCursorPos();
-
-	ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(pos.x, pos.y), ImVec2(pos.x + 1024, pos.y + 600), res.BGColor);
-
-	gGui.Render();
-
-	FinalPan_PopStyle();
-}
-
-void FinalPan_WindowFrame()
-{
-
-	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
-	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0);
-	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
-
-	ImGui::Begin("screen", 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoTitleBar);
-
-	ImGui::SetWindowSize(ImVec2(1024, 600));
-
-	RenderMain();
-
-	ImGui::End();
-	ImGui::PopStyleVar();
-	ImGui::PopStyleVar();
-	ImGui::PopStyleVar();
-}
