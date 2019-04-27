@@ -1258,7 +1258,6 @@ void FinalPan_SetupLeds()
 
 void FinalPan_WindowFrame()
 {
-
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0);
 	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
@@ -1332,8 +1331,6 @@ void LedEncoderButtonRight(FinalEncoderEnum Button)
 	case encoder_SketchLeft: gGui.SketchLeft(1); break;
 	case encoder_SketchRight: gGui.SketchRight(1); break;
 	default: gGui.Encoder(Button, 1); break;
-
 	}
-
 }
 
