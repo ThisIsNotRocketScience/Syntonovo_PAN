@@ -10,31 +10,55 @@
 #define PACK  __attribute__((packed))
 #endif
 
-
-typedef struct {
-	uint8_t param;
+#define MODTARGET_COUNT (11)
+typedef struct
+{
 	uint16_t depth;
-} PACK ModTarget_t;
+	uint8_t outputid;
+	uint8_t sourceid;
+} PACK ModTargetSpec_t;
 
-typedef struct {
-	ModTarget_t target[16];
+typedef struct
+{
+	ModTargetSpec_t targets[MODTARGET_COUNT];
+} PACK ModMatrixRow_t;
+
+typedef struct
+{
+	uint16_t flags; // including key range
 	uint16_t speed;
-	uint16_t shape;
-} PACK LfoModulation_t;
+	int16_t depth;
+	int16_t shape;
+	uint16_t reset_phase;
+	uint16_t ___reserved[3];
+} PACK LfoParam_t;
 
-typedef struct {
-	ModTarget_t target[16];
+typedef struct
+{
+	uint16_t flags; // including env type, key range
 	uint16_t a;
 	uint16_t d;
 	uint16_t s;
 	uint16_t r;
-} PACK AdsrModulation_t;
+	uint16_t curve;
+	uint16_t ___reserved[2];
+} PACK EnvParam_t;
 
-typedef struct {
-	ModTarget_t target[16];
-	uint16_t a;
-	uint16_t d;
-} PACK  AdModulation_t;
+typedef struct
+{
+	int16_t scale;
+	int16_t deadzone;
+	//int16_t shape;
+} PACK ControllerParam_t;
+
+typedef struct
+{
+	uint8_t modsource1;
+	uint8_t modsource2;
+	uint16_t op; // tbd plus, minus, mul, diff, sh, lag, etc.
+	uint16_t parameter; // parameter for selected op
+	uint16_t ___reserved;
+} PACK OperatorParam_t;
 
 enum ModSource_t : unsigned char {
 	Source_none,
@@ -65,12 +89,6 @@ enum PresetCategoryEnum
 	PresetCategory_Brass,
 	__PresetCategoryCount
 };
-
-
-typedef struct {
-	ModTarget_t target[16];
-	ModSource_t source;
-} ControlModulation_t;
 
 #define PRESET_NAME_LENGTH 16
 
@@ -161,9 +179,20 @@ public:
 	uint32_t switches[2];
 	uint16_t paramvalue[256];
 
-	LfoModulation_t lfomod[16];
-	AdsrModulation_t adsrmod[16];
-	AdModulation_t admod[16];
-	ControlModulation_t ctrlmod[16];
+#define SYNTH_MODSOURCE_COUNT (256)
+	ModMatrixRow_t modmatrix[SYNTH_MODSOURCE_COUNT];
+
+#define NUM_LFOS (16)
+	LfoParam_t lfo[NUM_LFOS];
+
+#define NUM_ENVS (16)
+	EnvParam_t env[NUM_ENVS];
+
+#define NUM_CONTROLLERS (11)
+	ControllerParam_t controller[NUM_CONTROLLERS];
+
+#define NUM_OPERATORS (16)
+	OperatorParam_t op[NUM_OPERATORS];
+
 	char Name[PRESET_NAME_LENGTH];
 } PACK ;

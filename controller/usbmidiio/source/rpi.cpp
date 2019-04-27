@@ -7,22 +7,22 @@
 
 #include <stdint.h>
 #include "rpi.h"
-#include "control.h"
+//#include "control.h"
 #include "peripherals.h"
 #include "fsl_flexcomm.h"
 
 #define WEAK __attribute__ ((weak))
 
-#define RING_SIZE	16
-static uint8_t fifo_rx_ring[RING_SIZE];
-static int fifo_rx_write = 0;
-static int fifo_rx_read = 0;
+#define RING_SIZE	32
+static volatile uint8_t fifo_rx_ring[RING_SIZE];
+static volatile int fifo_rx_write = 0;
+static volatile int fifo_rx_read = 0;
 
-static int fifo_rx_level = 1;
+static volatile int fifo_rx_level = 1;
 
-static uint8_t fifo_tx_ring[RING_SIZE];
-static int fifo_tx_write = 0;
-static int fifo_tx_read = 0;
+static volatile uint8_t fifo_tx_ring[RING_SIZE];
+static volatile int fifo_tx_write = 0;
+static volatile int fifo_tx_read = 0;
 
 static uart_t* rpi_uart;
 
@@ -90,17 +90,10 @@ static uint8_t fifo_tx_pop()
 	return b;
 }
 
-static void fifo_rx_process()
-{
-	if (fifo_rx_numbytes() >= fifo_rx_level) {
-		rpi_uart->config.read_complete(0, rpi_uart->config.read_complete_data);
-	}
-}
-
 static int receiveEnabled = 0;
 static int sendEnabled = 0;
 
-void FLEXCOMM2_IRQHandler(void)
+extern "C" void FLEXCOMM2_IRQHandler(void)
 {
     if (!receiveEnabled || (USART_RPI_PERIPHERAL->FIFOSTAT & USART_FIFOSTAT_RXERR_MASK))
     {
@@ -124,28 +117,31 @@ void FLEXCOMM2_IRQHandler(void)
             uint8_t b = USART_RPI_PERIPHERAL->FIFORD & 0xFF;
             fifo_rx_queue(b);
 
-            fifo_rx_process();
+        	if (fifo_rx_numbytes() >= fifo_rx_level) {
+        		rpi_uart->config.read_complete(0, rpi_uart->config.read_complete_data);
+        	}
         }
 
         if (sendEnabled)
 		{
-			if (fifo_tx_empty())
-			{
-				if (USART_RPI_PERIPHERAL->FIFOSTAT & USART_FIFOSTAT_TXEMPTY_MASK) {
-				    USART_RPI_PERIPHERAL->FIFOINTENCLR = USART_FIFOINTENSET_TXLVL_MASK;
-				}
-			}
-			else
-			{
-				if (USART_RPI_PERIPHERAL->FIFOSTAT & USART_FIFOSTAT_TXNOTFULL_MASK) {
-					repeat = 1;
+			if (!fifo_tx_empty() && USART_RPI_PERIPHERAL->FIFOSTAT & USART_FIFOSTAT_TXNOTFULL_MASK) {
+				repeat = 1;
 
-					volatile uint8_t b = fifo_tx_pop();
-					USART_RPI_PERIPHERAL->FIFOWR = b;
-				}
+				volatile uint8_t b = fifo_tx_pop();
+				USART_RPI_PERIPHERAL->FIFOWR = b;
 			}
         }
     }
+
+	if (fifo_tx_empty())
+	{
+		if (USART_RPI_PERIPHERAL->FIFOSTAT & USART_FIFOSTAT_TXEMPTY_MASK
+			&& USART_RPI_PERIPHERAL->FIFOINTENSET & USART_FIFOINTENSET_TXLVL_MASK) {
+
+		    USART_RPI_PERIPHERAL->FIFOINTENCLR = USART_FIFOINTENSET_TXLVL_MASK;
+			rpi_uart->config.write_complete(0, rpi_uart->config.write_complete_data);
+		}
+	}
 }
 
 static void rpi_waitfor(int level)
@@ -162,13 +158,14 @@ static void rpi_read(uint8_t* data, int count)
 
 static int rpi_write(uint8_t* data, int count)
 {
-	while (fifo_tx_numbytes() >= RING_SIZE - count) {}
+	if (fifo_tx_numbytes() >= RING_SIZE - count) {
+		return 0;
+	}
 
 	for (int i = 0; i < count; i++) {
 		fifo_tx_queue(data[i]);
 	}
 
-	rpi_uart->config.write_complete(0, rpi_uart->config.write_complete_data);
 	return count;
 }
 
@@ -184,8 +181,9 @@ void rpi_init(uart_t* uart)
 	sendEnabled = 1;
     //FLEXCOMM_SetIRQHandler(USART_1_FLEXCOMM_IRQN, (flexcomm_irq_handler_t)(uintptr_t)USART_TransferHandleIRQ, handle);
 
-	USART_RPI_PERIPHERAL->FIFOCFG &= ~(USART_FIFOCFG_EMPTYTX_MASK | USART_FIFOCFG_ENABLETX_MASK);
-	USART_RPI_PERIPHERAL->FIFOCFG |= USART_FIFOCFG_EMPTYRX_MASK | USART_FIFOCFG_ENABLERX_MASK | USART_FIFOCFG_ENABLETX_MASK;
+	//USART_RPI_PERIPHERAL->FIFOCFG &= ~(USART_FIFOCFG_EMPTYTX_MASK | USART_FIFOCFG_ENABLETX_MASK);
+	USART_RPI_PERIPHERAL->FIFOCFG |= USART_FIFOCFG_EMPTYRX_MASK | USART_FIFOCFG_ENABLERX_MASK;
+	USART_RPI_PERIPHERAL->FIFOCFG |= USART_FIFOCFG_EMPTYTX_MASK | USART_FIFOCFG_ENABLETX_MASK;
     /* setup trigger level */
     USART_RPI_PERIPHERAL->FIFOTRIG &= ~(USART_FIFOTRIG_RXLVL_MASK | USART_FIFOTRIG_TXLVL_MASK);
     USART_RPI_PERIPHERAL->FIFOTRIG |= USART_FIFOTRIG_RXLVL(0);

@@ -66,14 +66,15 @@ typedef struct _modtarget_spec_t
 {
 	uint16_t depth;
 	uint8_t outputid;
+	uint8_t sourceid;
 } modtarget_spec_t;
 
 typedef struct _modmatrix_row_t
 {
 	modtarget_spec_t targets[MODTARGET_COUNT];
 
-	uint16_t last;
-	uint16_t value;
+	//uint16_t last;
+	//uint16_t value;
 } modmatrix_row_t;
 
 #define SYNTH_MODSOURCE_COUNT (256)

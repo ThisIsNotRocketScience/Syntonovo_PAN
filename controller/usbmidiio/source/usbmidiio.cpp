@@ -49,10 +49,17 @@
 #include "paramlist.h"
 #include <math.h>
 #include <stdlib.h>
+#include "rpi.h"
+#include "../../pansim/PanPreset.h"
 
 /* TODO: insert other definitions and declarations here. */
 
 void preset_init();
+
+PanPreset_t preset;
+
+uart_t rpi_uart;
+sync_state_t rpi_sync;
 
 #define NOTEON(note, velocity) dsp_cmd(0xfc, 2, note | (velocity << 8))
 #define NOTEOFF(note) dsp_cmd(0xfc, 1, note)
@@ -312,10 +319,126 @@ void SendLeds()
 	L2LatchOff();
 }
 
+
+#define OOB_UI_PAUSE		(0x41)
+#define OOB_UI_CONTINUE		(0x42)
+#define OOB_BUTTON_DOWN		(0x50)
+#define OOB_BUTTON_UP		(0x51)
+#define OOB_ENCODER_CCW		(0x56)
+#define OOB_ENCODER_CW		(0x57)
+#define OOB_ENCODER_DOWN	(0x58)
+#define OOB_ENCODER_UP		(0x59)
+
+void SW1ClkOn()
+{
+	BOARD_INITPINS_SW1CLK_GPIO->W[BOARD_INITPINS_SW1CLK_PORT][BOARD_INITPINS_SW1CLK_PIN] = 1;
+}
+
+void SW1ClkOff()
+{
+	BOARD_INITPINS_SW1CLK_GPIO->W[BOARD_INITPINS_SW1CLK_PORT][BOARD_INITPINS_SW1CLK_PIN] = 0;
+}
+
+void SW2ClkOn()
+{
+	BOARD_INITPINS_SW2CLK_GPIO->W[BOARD_INITPINS_SW2CLK_PORT][BOARD_INITPINS_SW2CLK_PIN] = 1;
+}
+
+void SW2ClkOff()
+{
+	BOARD_INITPINS_SW2CLK_GPIO->W[BOARD_INITPINS_SW2CLK_PORT][BOARD_INITPINS_SW2CLK_PIN] = 0;
+}
+
+
+void SW1LatchOn()
+{
+	BOARD_INITPINS_SW1LATCH_GPIO->W[BOARD_INITPINS_SW1LATCH_PORT][BOARD_INITPINS_SW1LATCH_PIN] = 1;
+}
+
+void SW1LatchOff()
+{
+	BOARD_INITPINS_SW1LATCH_GPIO->W[BOARD_INITPINS_SW1LATCH_PORT][BOARD_INITPINS_SW1LATCH_PIN] = 0;
+}
+
+void SW2LatchOn()
+{
+	BOARD_INITPINS_SW2LATCH_GPIO->W[BOARD_INITPINS_SW2LATCH_PORT][BOARD_INITPINS_SW2LATCH_PIN] = 1;
+}
+
+void SW2LatchOff()
+{
+	BOARD_INITPINS_SW2LATCH_GPIO->W[BOARD_INITPINS_SW2LATCH_PORT][BOARD_INITPINS_SW2LATCH_PIN] = 0;
+}
+
+int SW1Data()
+{
+	return BOARD_INITPINS_SW1DATA_GPIO->B[BOARD_INITPINS_SW1DATA_PORT][BOARD_INITPINS_SW1DATA_PIN];
+}
+
+int SW2Data()
+{
+	return BOARD_INITPINS_SW2DATA_GPIO->B[BOARD_INITPINS_SW2DATA_PORT][BOARD_INITPINS_SW2DATA_PIN];
+}
+
 void ScanButtonsAndEncoders()
 {
+	uint8_t sw[80 * 2];
 
+	SW1LatchOn();
+	SW2LatchOn();
+
+	for (int i = 0; i < 80; i++) {
+		sw[i] = SW1Data();
+		sw[i + 80] = SW2Data();
+		SW1ClkOff();
+		SW2ClkOff();
+		SW1ClkOn();
+		SW2ClkOn();
+	}
+
+	SW1LatchOff();
+	SW2LatchOff();
+	//sync_oob_word(&rpi_sync, OOB_UI_CONTINUE, 0, 0);
+
+	uint8_t data[4] = {0};
+
+	for (int i = 0; i < switchCount; i++) {
+		int move = switch_process(i, sw[switch_sw[i]]);
+
+		if (move < 0) {
+			data[0] = i;
+			sync_oob_word(&rpi_sync, OOB_BUTTON_UP, data, 0);
+		}
+		else if (move > 0) {
+			data[0] = i;
+			sync_oob_word(&rpi_sync, OOB_BUTTON_DOWN, data, 0);
+		}
+	}
+
+	for (int i = 0; i < encoderCount; i++) {
+		int move = encoder_process(i, sw[encoder_a[i]], sw[encoder_c[i]]);
+
+		if (move < 0) {
+			data[0] = i;
+			sync_oob_word(&rpi_sync, OOB_ENCODER_CCW, data, 0);
+		}
+		else if (move > 0) {
+			data[0] = i;
+			sync_oob_word(&rpi_sync, OOB_ENCODER_CW, data, 0);
+		}
+
+		move = switch_process(i, sw[encoder_sw[i]]);
+		if (move < 0) {
+			data[0] = i;
+			sync_oob_word(&rpi_sync, OOB_ENCODER_UP, data, 0);
+		}
+		else if (move > 0) {
+			data[0] = i;
+			sync_oob_word(&rpi_sync, OOB_ENCODER_DOWN, data, 0);
+		}
+	}
 }
+
 void LedsOff()
 {
 	L1BlankOn();
@@ -464,122 +587,12 @@ void KeyboardTask(void* pvParameters)
 	}
 }
 
-///////////////////////////////////////////////////////////////////////
-#if 0
-struct rpi_transaction {
-	volatile int pos;
-	volatile int ready;
-	uint8_t data[260]; // 256 plus a little extra
-};
-
-rpi_transaction tr[2];
-int free_tr = 0;
-int tr_cancelled = 0;
-
-void rpi_ack()
-{
-	uint8_t ack_data[4] = { 0x1f, 0x2a, 0x06, 0x55 };
-	rpi_write(ack_data, 4);
-}
-
-void rpi_nack()
-{
-	rpi_reset();
-}
-
-void rpi_cb(uint8_t* data)
-{
-	uint32_t value = data[0] | (data[1] << 8) | (data[2] << 16) | (data[3] << 24);
-
-	const uint32_t START_CODE = 0x2A2A2A2A;
-	const uint32_t END_CODE = 0x5555AA55;
-
-	if (value == START_CODE) {
-		if (tr[free_tr].pos != 0) {
-			tr_cancelled = 1;
-		}
-
-		tr_cancelled = 0;
-		return;
-	}
-	else if (value == END_CODE) {
-		if (tr_cancelled) {
-			rpi_nack();
-			return;
-		}
-		transaction_ready(free_tr);
-/*		int other_tr = 1 - free_tr;
-		if (tr[other_tr].pos == 0) {
-			free_tr = other_tr;
-			ack();
-		}*/
-		// don't ack yet
-	}
-	// else {
-	// data
-	if (tr_cancelled) {
-		return;
-	}
-	rpi_transaction* t = &tr[free_tr];
-
-	if (t->pos >= 256) {
-		tr_cancelled = 1;
-		return;
-	}
-
-	uint8_t check = data[1] ^ data[2] ^ data[3];
-	check = check ^ (check >> 4);
-	if (data[0] & 0x0F != check) {
-		tr_cancelled = 1;
-		return;
-	}
-
-	memcpy(&t->data[t->pos], &data[1], 3);
-	t->pos += 3;
-}
-
-void RpiTask()
-{
-	uint32_t msg;
-
-	enum {
-		reset,
-		waiting_transaction,
-		sending_patch
-	} state = reset;
-
-	while(1)
-	{
-		switch (state) {
-		case reset:
-			rpi_reset();
-			state = sending_patch;
-			break;
-		case waiting_transaction:
-			if (xQueueReceive(rpi_queue, &msg, 10))
-			{
-
-			}
-			break;
-		case sending_patch:
-			break;
-		}
-	}
-}
-#endif
-
-void rpi_cb(uint8_t* data)
-{
-
-}
-///////////////////////////////////////////////////////////////////////
-
 #define FULLVALUE(param, subparam, value) dsp_cmd(param, subparam, value)
-#define MODSOURCE(source, subparam, value) dsp_cmd(source, subparam | 0x80, value)
-#define MODMATRIX(param, target, subparam, value) dsp_cmd(param, ((target << 1) + (subparam & 1)) | 0x40, value)
+#define MODSOURCE(source, subparam, value) dsp_cmd(source, (subparam) | 0x80, value)
+#define MODMATRIX(param, target, subparam, value) dsp_cmd(param, (((target) << 1) + ((subparam) & 1)) | 0x40, value)
 
-#define SWITCH_ON(sw) FULLVALUE(0xfe, 0xfd, 0x200 | sw);
-#define SWITCH_OFF(sw) FULLVALUE(0xfe, 0xfd, 0x100 | sw);
+#define SWITCH_ON(sw) FULLVALUE(0xfe, 0xfd, 0x200 | (sw));
+#define SWITCH_OFF(sw) FULLVALUE(0xfe, 0xfd, 0x100 | (sw));
 
 void preset_init()
 {
@@ -724,9 +737,6 @@ void USBTask(void* pvParameters)
 	}
 }
 
-uart_t rpi_uart;
-sync_state_t rpi_sync;
-
 void IdleTask(void* pvParameters)
 {
 	while(1) {
@@ -735,9 +745,74 @@ void IdleTask(void* pvParameters)
 	}
 }
 
+void sync_complete(int status)
+{
+	if (status != 0) {
+	    sync_block(&rpi_sync, (uint8_t*)&preset, 0, sizeof(preset), sync_complete);
+		return;
+	}
+
+	if (status == 0) {
+        sync_oob_word(&rpi_sync, OOB_UI_CONTINUE, 0, 0);
+        return;
+	}
+}
+
+//#define offsetof(TYPE, ELEMENT) ((size_t)&(((TYPE *)0)->ELEMENT))
+
+void sync_preset(uint32_t addr)
+{
+	if (addr >= offsetof(PanPreset_t, Name)) {
+		addr -= offsetof(PanPreset_t, Name);
+		// name
+	}
+	else if (addr >= offsetof(PanPreset_t, op)) {
+		addr -= offsetof(PanPreset_t, op);
+	}
+	else if (addr >= offsetof(PanPreset_t, controller)) {
+		addr -= offsetof(PanPreset_t, controller);
+	}
+	else if (addr >= offsetof(PanPreset_t, env)) {
+		addr -= offsetof(PanPreset_t, env);
+	}
+	else if (addr >= offsetof(PanPreset_t, lfo)) {
+		addr -= offsetof(PanPreset_t, lfo);
+	}
+	else if (addr >= offsetof(PanPreset_t, modmatrix)) {
+		addr -= offsetof(PanPreset_t, modmatrix);
+	}
+	else if (addr >= offsetof(PanPreset_t, paramvalue)) {
+		addr -= offsetof(PanPreset_t, paramvalue);
+
+		int paramid = addr * 2;
+		FULLVALUE(paramid, 0, preset.paramvalue[paramid]);
+		FULLVALUE(paramid+1, 0, preset.paramvalue[paramid+1]);
+	}
+	else if (addr >= offsetof(PanPreset_t, switches)) {
+		addr -= offsetof(PanPreset_t, switches);
+
+		for (int i = 0; i < 32; i++) {
+			if (preset.switches[addr] & (1 << i)) {
+				SWITCH_ON(addr * 32 + i);
+			}
+			else {
+				SWITCH_OFF(addr * 32 + i);
+			}
+		}
+	}
+}
+
 void sync_data_func(int addr, uint8_t* data)
 {
+	if (addr & 3) return;
 
+	if (addr >= 0 && addr < (int)sizeof(preset)) {
+
+		*(uint32_t*)&((uint8_t*)&preset)[addr] = *(uint32_t*)data;
+
+		sync_preset(addr);
+
+	}
 }
 
 int sync_oobdata_func(uint8_t cmd, uint32_t data)
@@ -791,6 +866,7 @@ int main(void) {
     CLOCK_EnableClock(kCLOCK_Gpio3);
 
     control_init();
+
     rpi_init(&rpi_uart);
     sync_init(&rpi_sync, &rpi_uart, sync_data_func, sync_oobdata_func);
     rpi_start();

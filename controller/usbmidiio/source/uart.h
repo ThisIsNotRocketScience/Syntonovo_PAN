@@ -67,39 +67,48 @@ struct oob_entry_t
   oob_transfer_complete_cb complete;
 };
 
+enum out_phase_t {
+	init = 0,
+	data = 1,
+	complete = 2
+};
+
 struct sync_state_t
 {
 	uart_t* uart;
 
 	// out
-	int out_reset;
-	int phase;
-	uint8_t* ptr;
-	uint32_t out_dst;
-	uint32_t size;
-	uint8_t out_running_checksum;
+	volatile int out_reset;
+	volatile int out_resync;
+	volatile out_phase_t phase;
+	uint8_t* volatile ptr;
+	volatile uint32_t out_dst;
+	volatile uint32_t size;
+	volatile uint8_t out_running_checksum;
 	sync_complete_cb complete;
-	int ack_send_pending;
-	int ack_send_value;
-	int ack_receive_pending;
-	int ack_receive_value;
+	volatile int ack_send_pending;
+	volatile int ack_send_value;
+	volatile int ack_receive_pending;
+	volatile int ack_receive_value;
 	oob_transfer_complete_cb ack_receive;
-	int transmit_active;
+	volatile int transmit_active;
 
-	int oob_queue_write;
-	int oob_queue_read;
-	oob_entry_t oob_queue[16];
+	volatile int oob_queue_write;
+	volatile int oob_queue_read;
+	volatile oob_entry_t oob_queue[16];
 
 	// in
-	int in_reset;
-	int timer;
-	int in_dst;
-	uint8_t in_running_checksum;
+	volatile int in_reset;
+	volatile int timer;
+	volatile int in_dst;
+	volatile uint8_t in_running_checksum;
 	sync_data_cb data;
 	oob_data_cb oob_data;
 };
 
 void sync_init(sync_state_t* state, uart_t* uart, sync_data_cb data, oob_data_cb oobdata);
+void sync_block(sync_state_t* state, uint8_t* block, int offset, int size, sync_complete_cb complete_cb);
+int sync_oob_word(sync_state_t* state, uint8_t cmd, uint32_t data, oob_transfer_complete_cb complete_cb);
 
 #ifdef __cplusplus
 };

@@ -2,8 +2,13 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "fsl_device_registers.h"
 
 #include "uart.h"
+
+#define ENTER_CRITICAL_SECTION() int __last_int_status = __get_PRIMASK(); __disable_irq();
+
+#define LEAVE_CRITICAL_SECTION() if (__last_int_status) { __enable_irq(); }
 
 //////////////////////////////////////////////////
 
@@ -86,88 +91,94 @@ void sync_out_write_ack(sync_state_t* state, uint8_t checksum);
 void sync_out_ack_received(sync_state_t* state, uint8_t checksum);
 
 void sync_reset(sync_state_t* state);
+void sync_resync(sync_state_t* state);
 
 //////////////////////////////////////////////////
 
 void sync_in_read_complete(int status, void* stateptr)
 {
-  uint8_t sync_read_buf[16];
+	uint8_t sync_read_buf[16];
 
-  sync_state_t* state = (sync_state_t*)stateptr;
-  state->timer = 0;
+	sync_state_t* state = (sync_state_t*)stateptr;
+	state->timer = 0;
 
-  if (state->in_reset) {
-    uint8_t data = state->uart->rx.peek();
-    if (data == 0xFF) {
-    	state->uart->rx.read(sync_read_buf, 1);
-      return;
-    }
-    state->in_running_checksum = 0;
-    state->in_reset = 0;
-    state->uart->rx.waitfor(6);
-    return;
-  }
+	if (state->in_reset) {
+		uint8_t data = state->uart->rx.peek();
+		if (data == 0xFF) {
+			state->uart->rx.read(sync_read_buf, 1);
+			return;
+		}
+		state->in_running_checksum = 0;
+		state->in_reset = 0;
+		state->uart->rx.waitfor(6);
+		return;
+	}
 
-  if (status != 0) {
-    sync_reset(state);
-    return;
-  }
+	if (status != 0) {
+		sync_reset(state);
+		return;
+	}
 
-  uint8_t* data = &sync_read_buf[3];
-  state->uart->rx.read(data, 6);
-  if (data[0] == 0xFF
-    && data[1] == 0xFF
-    && data[2] == 0xFF
-    && data[3] == 0xFF
-    && data[4] == 0xFF
-    && data[5] == 0xFF)
-  {
-    state->in_reset = 1;
-    sync_reset(state);
-    state->uart->rx.waitfor(1);
-    return;
-  }
+	uint8_t* data = &sync_read_buf[3];
+	state->uart->rx.read(data, 6);
+	if (data[0] == 0xFF
+			&& data[1] == 0xFF
+			&& data[2] == 0xFF
+			&& data[3] == 0xFF
+			&& data[4] == 0xFF
+			&& data[5] == 0xFF)
+	{
+		state->in_reset = 1;
+		state->ack_send_pending = 0;
+		state->uart->rx.waitfor(1);
+		//sync_reset(state);
+		return;
+	}
 
-  state->in_running_checksum = crc(state->in_running_checksum, data, 5);
-  if (state->in_running_checksum != data[5]) {
-    sync_reset(state);
-    return;
-  }
+	state->in_running_checksum = crc(state->in_running_checksum, data, 5);
+	if (state->in_running_checksum != data[5]) {
+		sync_reset(state);
+		return;
+	}
 
-  int cmd = data[0];
+	int cmd = data[0];
 
-  switch (cmd) {
-  case 1: // SET WRITE ADDRESS
-    // set write address
-    memcpy(&state->in_dst, &data[1], 4);
-    sync_out_write_ack(state, state->in_running_checksum);
-    break;
-  case 2: { // WRITE
-      int in_dst = state->in_dst;
-      state->in_dst += 4;
-      state->data(in_dst, &data[1]);
-      sync_out_write_ack(state, state->in_running_checksum);
-    }
-    break;
-  case 3: // ACK
-    // trigger next send
-    sync_out_ack_received(state, data[1]);
-    break;
-  default:
-    if (state->oob_data) {
-      uint32_t d =
-        data[1] | (data[2] << 8) | (data[3] << 16) | (data[4] << 24);
-      if (state->oob_data(cmd, d) == 0) {
-        sync_out_write_ack(state, state->in_running_checksum);
-        break;
-      }
-    }
-    printf("unexpected %d\n", cmd);
-    sync_reset(state);
-    return;
-  }
+	switch (cmd) {
+	case 1: // SET WRITE ADDRESS
+		// set write address
+		memcpy((void*)&state->in_dst, &data[1], 4);
+		sync_out_write_ack(state, state->in_running_checksum);
+		break;
+	case 2: { // WRITE
+			int in_dst = state->in_dst;
+			state->in_dst += 4;
+			state->data(in_dst, &data[1]);
+			sync_out_write_ack(state, state->in_running_checksum);
+		}
+		break;
+	case 3: // ACK
+		// trigger next send
+		sync_out_ack_received(state, data[1]);
+		break;
+	case 4: // RESYNC
+		sync_resync(state);
+		sync_out_write_ack(state, state->in_running_checksum);
+		break;
+	default:
+		if (state->oob_data) {
+			uint32_t d =
+				data[1] | (data[2] << 8) | (data[3] << 16) | (data[4] << 24);
+			if (state->oob_data(cmd, d) == 0) {
+				sync_out_write_ack(state, state->in_running_checksum);
+				break;
+			}
+		}
+		printf("unexpected %d\n", cmd);
+		sync_reset(state);
+		return;
+	}
 
-  state->uart->rx.waitfor(6);
+	state->uart->rx.waitfor(6);
 }
 
 //sync_state_t* sync_state;
@@ -175,6 +186,8 @@ void sync_in_read_complete(int status, void* stateptr)
 void sync_out_write_begin(sync_state_t* state, int cmd, uint8_t* data, int expectack)
 {
   uint8_t sync_write_buf[8];
+
+	state->timer = 0;
 
   sync_write_buf[0] = cmd;
   memcpy(&sync_write_buf[1], data, 4);
@@ -198,6 +211,7 @@ void sync_out_write_complete(int status, void* stateptr)
   sync_state_t* state = (sync_state_t*)stateptr;
 
   if (status != 0) {
+    state->transmit_active = 0;
     state->complete(1);
     return;
   }
@@ -211,7 +225,21 @@ void sync_out_write_complete(int status, void* stateptr)
       state->oob_queue_read = 0;
       state->oob_queue_write = 0;
       state->ack_receive = 0;
-      state->complete(1);
+      state->phase = complete;
+
+      if (!state->out_resync) {
+		uint8_t data[4];
+		data[0] = 0;
+		data[1] = 0;
+		data[2] = 0;
+		data[3] = 0;
+		sync_out_write_begin(state, 4, data, 1);
+      }
+      state->out_resync = 0;
+
+      if (state->complete) {
+    	  state->complete(1);
+      }
       return;
     }
     else {
@@ -251,27 +279,28 @@ void sync_out_write_complete(int status, void* stateptr)
     return;
   }
 
-  if (state->phase == 0) {
-    state->phase = 1;
+  if (state->phase == init) {
+    state->phase = data;
     state->transmit_active = 1;
     sync_out_write_begin(state, 1, (uint8_t*)&state->out_dst, 1);
     return;
   }
 
-  if (state->phase == 2) {
+  if (state->phase == complete) {
+	  state->transmit_active = 0;
     return;
   }
 
   if (state->size == 0) {
     state->transmit_active = 0;
-    state->phase = 2;
+    state->phase = complete;
     state->complete(0);
     return;
   }
 
-  // else if (sync_state->phase == 1) {
+  // else if (sync_state->phase == data) {
   
-  uint8_t* data = state->ptr;
+  uint8_t* volatile data = state->ptr;
 
   if (state->size > 4) {
     state->ptr += 4;
@@ -288,78 +317,113 @@ void sync_out_write_complete(int status, void* stateptr)
 
 void sync_reset(sync_state_t* state)
 {
-  printf("sync_reset()\n");
-  state->out_reset = 1;
-  if (!state->transmit_active) {
-    sync_out_write_complete(0, state);
-  }
+	if (state->out_reset != 0) {
+		return;
+	}
+
+	printf("sync_reset()\n");
+	state->out_reset = 1;
+	state->out_resync = 0;
+	if (!state->transmit_active) {
+		sync_out_write_complete(0, state);
+	}
+}
+
+void sync_resync(sync_state_t* state)
+{
+	if (state->out_reset != 0) {
+		return;
+	}
+
+	printf("sync_resync()\n");
+	state->out_reset = 1;
+	state->out_resync = 1;
+	if (!state->transmit_active) {
+		sync_out_write_complete(0, state);
+	}
 }
 
 void sync_out_write_ack(sync_state_t* state, uint8_t checksum)
 {
-  state->ack_send_value = checksum;
-  state->ack_send_pending = 1;
+	state->ack_send_value = checksum;
+	state->ack_send_pending = 1;
 
-  if (!state->transmit_active) {
-    sync_out_write_complete(0, state);
-  }
+	//if (!state->transmit_active) {
+		sync_out_write_complete(0, state);
+	//}
 }
 
 void sync_out_ack_received(sync_state_t* state, uint8_t checksum)
 {
-  if (!state->ack_receive_pending) {
-    sync_reset(state);
-    return;
-  }
+	if (!state->ack_receive_pending) {
+		sync_reset(state);
+		return;
+	}
 
-  if (state->ack_receive_value != checksum) {
-    sync_reset(state);
-    return;
-  }
+	if (state->ack_receive_value != checksum) {
+		sync_reset(state);
+		return;
+	}
 
-  if (state->ack_receive) {
-    state->ack_receive();
-    state->ack_receive = 0;
-  }
-  state->ack_receive_pending = 0;
-  // restart transmitting
-  sync_out_write_complete(0, state);
+	if (state->ack_receive) {
+		state->ack_receive();
+		state->ack_receive = 0;
+	}
+	state->ack_receive_pending = 0;
+	// restart transmitting
+	sync_out_write_complete(0, state);
 }
 
 void sync_timer_tick(void* stateptr)
 {
-  printf("tick\n");
-  sync_state_t* state = (sync_state_t*)stateptr;
-  state->timer++;
-  if (state->timer == 3) {
-    sync_reset(state);
-  }
+	ENTER_CRITICAL_SECTION();
+	//printf("tick\n");
+	sync_state_t* state = (sync_state_t*)stateptr;
+	state->timer++;
+	if (state->timer == 3) {
+		state->timer = 0;
+		sync_reset(state);
+	}
+	LEAVE_CRITICAL_SECTION();
 }
 
 void sync_block(sync_state_t* state, uint8_t* block, int offset, int size, sync_complete_cb complete_cb)
 {
-  state->phase = 0;
-  state->ptr = block + offset;
-  state->out_dst = offset;
-  state->size = size;
-  state->complete = complete_cb;
-  state->transmit_active = 1;
-  sync_out_write_complete(0, state);
+	ENTER_CRITICAL_SECTION();
+	if (state->phase != complete) {
+		// not ready
+		LEAVE_CRITICAL_SECTION();
+		return;
+	}
+
+	state->phase = init;
+	state->ptr = block + offset;
+	state->out_dst = offset;
+	state->size = size;
+	state->complete = complete_cb;
+	state->transmit_active = 1;
+	sync_out_write_complete(0, state);
+	LEAVE_CRITICAL_SECTION();
 }
 
 int sync_oob_word(sync_state_t* state, uint8_t cmd, uint32_t data, oob_transfer_complete_cb complete_cb)
 {
-  if (((state->oob_queue_read + 1) & 15) == state->oob_queue_read) {
-    return 1;
-  }
+	ENTER_CRITICAL_SECTION();
+	if (((state->oob_queue_write + 1) & 15) == state->oob_queue_read) {
+		LEAVE_CRITICAL_SECTION();
+		return 1;
+	}
 
-  state->oob_queue[state->oob_queue_write].cmd = cmd;
-  state->oob_queue[state->oob_queue_write].data = data;
-  state->oob_queue[state->oob_queue_write].complete = complete_cb;
+	state->oob_queue[state->oob_queue_write].cmd = cmd;
+	state->oob_queue[state->oob_queue_write].data = data;
+	state->oob_queue[state->oob_queue_write].complete = complete_cb;
 
-  state->oob_queue_write = (state->oob_queue_write + 1) & 15;
+	state->oob_queue_write = (state->oob_queue_write + 1) & 15;
 
-  return 0;
+	sync_out_write_complete(0, state);
+	LEAVE_CRITICAL_SECTION();
+
+	return 0;
 }
 
 //////////////////////////////////////////////////
@@ -429,6 +493,14 @@ void sync_init(sync_state_t* state, uart_t* uart, sync_data_cb data, oob_data_cb
 
 	state->uart = uart;
 	state->out_reset = 1;
+	state->phase = complete;
+
+	state->timer = 0;
+	state->data = data;
+	state->oob_data = oobdata;
+	state->oob_queue_write = 0;
+	state->oob_queue_read = 0;
+	state->uart->rx.waitfor(6);
 
 	uart_configure(&uart->config,
 		sync_out_write_complete,
@@ -437,13 +509,6 @@ void sync_init(sync_state_t* state, uart_t* uart, sync_data_cb data, oob_data_cb
 		state,
 		sync_timer_tick,
 		state);
-
-	state->timer = 0;
-	//state->data = datafunc;
-	//state->oob_data = oobfunc;
-	state->oob_queue_write = 0;
-	state->oob_queue_read = 0;
-	state->uart->rx.waitfor(6);
 }
 
 #if 0

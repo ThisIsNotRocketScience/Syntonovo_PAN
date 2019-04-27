@@ -676,13 +676,18 @@ void control_cb(int param, int subparam, uint16_t value)
 	else if (subparam & 0x40) {
 		subparam &= 0x3f;
 
+		int subsubparam = subparam & 3;
+		subparam >>= 2;
+
 		if (subparam >= MODTARGET_COUNT)
 			return;
 
-		if (subparam & 1)
-			modmatrix[param].targets[subparam >> 1].outputid = value;
+		if (subsubparam == 2)
+			modmatrix[param].targets[subparam].sourceid = value;
+		else if (subsubparam == 1)
+			modmatrix[param].targets[subparam].outputid = value;
 		else
-			modmatrix[param].targets[subparam >> 1].depth = value;
+			modmatrix[param].targets[subparam].depth = value;
 
 		return;
 	}
@@ -1560,6 +1565,7 @@ void synth_init()
 	for (int i = 0; i < SYNTH_MODSOURCE_COUNT; i++) {
 		for(int k = 0; k < MODTARGET_COUNT; k++) {
 			modmatrix[i].targets[k].outputid = 0xff;
+			modmatrix[i].targets[k].sourceid = 0;
 		}
 	}
 
