@@ -102,7 +102,7 @@ void ReadThread()
 	src.events = POLLIN;
 	src.revents = 0;
 
-	while (1)
+	while (running)
 	{
 		int check = poll(&src, 1, -1);
 	}

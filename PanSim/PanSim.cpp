@@ -677,13 +677,12 @@ void Teensy_BuildPresetName(int bank, int slot)
 
 
 std::string switchnames[] = {
-
 #define SWITCH(name,id, defaultvalue) #name ,
 #include "../interface/paramdef.h"
 #undef SWITCH
 	"last"
-}
-;
+};
+
 int HandleSerial(unsigned char c)
 {
 	return 1;
