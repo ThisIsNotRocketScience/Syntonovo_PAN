@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 #define ParamBoxWidth 220
+#define ParamVerticalBoxHeight 100
 
 enum Screens_t
 {
@@ -12,6 +13,10 @@ enum Screens_t
 	
 	SCREEN_ALLPARAMS,
 	SCREEN_ALLSWITCHES,
+
+	SCREEN_LIGHTS,
+	SCREEN_SYSTEM,
+
 
 	SCREEN_EDIT_PRESETNAME,
 	SCREEN_OVERWRITE_YES_NO,
@@ -85,6 +90,7 @@ enum
 {
 	MenuAction_Save,
 	MenuAction_Revert,
+	MenuAction_Store,
 	MenuAction_Yes,
 	MenuAction_No,
 	MenuAction_Cancel,
@@ -93,6 +99,8 @@ enum
 
 enum UIDisplayModes
 {
+	MenuEntry_NoStyle,
+	MenuEntry_Page,
 	MenuEntry_Text,
 	MenuEntry_Toggle,
 	MenuEntry_Action,
@@ -145,9 +153,9 @@ enum ledmodes
 typedef struct LedState_t
 {
 
-	uint8_t r;
-	uint8_t g;
-	uint8_t b;
+	int r;
+	int g;
+	int b;
 	ledmodes mode;
 } LedState_t;
 
@@ -165,6 +173,14 @@ public:
 	void SetButtonLed(FinalLedButtonEnum led, ledmodes mode)
 	{
 		ledbuttons[led].led.mode = mode;
+	}
+	void SetEncoderLed(FinalEncoderEnum encoder, ledmodes mode, int r, int g, int b)
+	{
+		encoders[encoder].led.mode = mode;
+		encoders[encoder].led.r = r;
+		encoders[encoder].led.g = g;
+		encoders[encoder].led.b = b;
+
 	}
 	ButtonState_t ledbuttons[__FINALLEDBUTTON_COUNT];
 	ButtonState_t encoders[__FINALENCODER_COUNT];

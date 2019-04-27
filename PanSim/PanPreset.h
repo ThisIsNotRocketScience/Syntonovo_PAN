@@ -149,12 +149,12 @@ public:
 	{
 		switch (style)
 		{
-			case MenuEntry_MidValue:  sprintf_s(targetbuffer, bufferlength, "%1.1f%%", (float)((int)paramvalue[param]) * (200.0f / (float)0xFFFF)-100); break;
-			case MenuEntry_Value:  sprintf_s(targetbuffer, bufferlength, "%1.1f%%", (float)((int)paramvalue[param]) * (100.0f / (float)0xFFFF)); break;
-			case MenuEntry_Percentage: 	sprintf_s(targetbuffer, bufferlength, "%1.1f%%", (float)((int)paramvalue[param]) * (100.0f / (float)0xFFFF));
+			case MenuEntry_MidValue:  snprintf(targetbuffer, bufferlength, "%1.1f%%", (float)((int)paramvalue[param]) * (200.0f / (float)0xFFFF)-100); break;
+			case MenuEntry_Value:  snprintf(targetbuffer, bufferlength, "%1.1f%%", (float)((int)paramvalue[param]) * (100.0f / (float)0xFFFF)); break;
+			case MenuEntry_Percentage: 	snprintf(targetbuffer, bufferlength, "%1.1f%%", (float)((int)paramvalue[param]) * (100.0f / (float)0xFFFF));
 			
 			
-			default: sprintf_s(targetbuffer, bufferlength, ""); break;
+			default: snprintf(targetbuffer, bufferlength, ""); break;
 		}
 	}
 

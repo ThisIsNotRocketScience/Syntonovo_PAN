@@ -2,7 +2,12 @@
 #pragma GCC diagnostic ignored "-Wwrite-strings"
 #include "FinalPanEnums.h"
 
-
+enum
+{
+	LED_ON,
+	LED_OFF,
+	LED_BLINK
+};
 #include "PanHeader.h"
 
 extern void WriteKnob(int id, uint32_t value);

@@ -15,11 +15,10 @@
 #include  "PanHeader.h"
 #include "FinalPanHeader.h"
 
-void FinalPan_SetupLeds();
-
 extern void FinalPan_WindowFrame();
 extern void FinalPan_LoadResources();
 extern void FinalPan_SetupLeds();
+extern void FinalPan_SetupDefaultPreset();
 
 extern PanState_t gPanState;
 class fLedButton
@@ -65,6 +64,7 @@ public:
 	float pos;
 	int delta;
 	ImVec4 ledcolor;
+	ledmodes ledmode;
 };
 
 fEncoder FinalEncoders[__FINALENCODER_COUNT] = {
@@ -740,7 +740,7 @@ void DoCommand(unsigned char comm, uint32_t data)
 		printf("0x91: %d\n", data);
 		break;
 	default:
-		DoDataCommands(comm, data);
+//		DoDataCommands(comm, data);
 		break;
 
 	}
@@ -881,7 +881,6 @@ int main(int argc, char** argv)
 
 #define RACINGGREEN IM_COL32(1, 58, 66, 255)
 
-
 	ImTextureID BG = 0;// loadTexture("FrontPanel.PNG");
 
 	bool done = false;
@@ -894,7 +893,6 @@ int main(int argc, char** argv)
 	int32_t ticklinecolor = ImColor::HSV(0.25, 1, 1, 0.5);;// IM_COL32(0, 128, 255, 255);
 	int32_t beatlinecolor = ImColor::HSV(0.5, 1, 1, 0.5);
 	int32_t looplinecolor = ImColor::HSV(0.75, 1, 1, 0.5);
-
 
 	int32_t gatecolor = ImColor::HSV(0, 0, 0.3);
 	int32_t accentcolor = ImColor::HSV(0, 0, 1);
@@ -925,15 +923,16 @@ int main(int argc, char** argv)
 		Teensy_Reset();
 		Teensy_InitPreset();
 	}
-	Raspberry_Init();
+	//Raspberry_Init();
+	FinalPan_SetupDefaultPreset();
 	FinalPan_LoadResources();
-	Raspberry_Reset();
+	//Raspberry_Reset();
 	
 	for (int i = 0; i < __KNOB_COUNT; i++)
 	{
 		int ParamID = KnobToParam(Knobs[i].id);
 		Knobs[i].value = gPreset.paramvalue[ParamID]/65535.0f;
-		Raspberry_OutputChangeValue(ParamID, gPreset.paramvalue[ParamID]);
+//		Raspberry_OutputChangeValue(ParamID, gPreset.paramvalue[ParamID]);
 	};
 
 	setpara_t para;
@@ -1110,6 +1109,9 @@ int main(int argc, char** argv)
 #endif
 				for (int i = 0; i < __FINALENCODER_COUNT; i++)
 				{
+					FinalEncoders[i].ledmode = gPanState.encoders[i].led.mode;
+					FinalEncoders[i].ledcolor = ImVec4(gPanState.encoders[i].led.r / 65535.0f, gPanState.encoders[i].led.g / 65535.0f, gPanState.encoders[i].led.b / 65535.0f, 1.0f);
+
 
 					auto R = ImGui::CalcTextSize(FinalEncoders[i].name);
 					ImGui::SetCursorScreenPos(ImVec2(pos.x + FinalEncoders[i].x * xscalefac -R.x/2, pos.y + 45 + FinalEncoders[i].y * yscalefac));

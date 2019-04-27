@@ -182,7 +182,6 @@
     <ClCompile Include="FinalPanGui.cpp" />
     <ClCompile Include="PanSim.cpp" />
     <ClCompile Include="PanStructs.cpp" />
-    <ClCompile Include="PAN_Raspberry.cpp" />
     <ClCompile Include="PAN_Raspberry_Interface.cpp" />
     <ClCompile Include="PAN_TeensyUI.cpp" />
   </ItemGroup>
@@ -192,6 +191,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FinalPanHeader.h" />
+    <ClInclude Include="Gui.h" />
     <ClInclude Include="ModMenus.h" />
     <ClInclude Include="PanControls.h" />
     <ClInclude Include="PanHeader.h" />

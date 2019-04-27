@@ -11,6 +11,9 @@
 #include "../libs/lodepng-master/lodepng.h"
 #include "FinalPanEnums.h"
 
+
+extern ImTextureID Raspberry_LoadTexture(const char *filename);
+
 #include "PanHeader.h"
 
 #define MENU(id,button,name) static int const MenuItemCount_##id = 0
@@ -99,43 +102,6 @@ void NextRow(guirow_state_t &rowstate)
 	rowstate.top = ImGui::GetCursorPos().y;
 }
 
-
-ImTextureID Raspberry_LoadTexture(const char *filename)
-{
-	std::vector<unsigned char> buffer, image;
-	lodepng::load_file(buffer, filename); //load the image file with given filename
-	unsigned w, h;
-	unsigned error = lodepng::decode(image, w, h, buffer); //decode the png
-
-	if (error)
-	{
-		printf("error reading %s\n", filename);
-		return 0;
-	}
-	GLuint tex;
-
-#ifdef WIN32
-	glEnable(GL_TEXTURE_2D);
-	glGenTextures(1, &tex);
-	glBindTexture(GL_TEXTURE_2D, tex);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); //GL_NEAREST = no smoothing
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, &image[0]);
-
-#else 
-	GLint last_texture;
-	glGetIntegerv(GL_TEXTURE_BINDING_2D, &last_texture);
-	glGenTextures(1, &tex);
-	glBindTexture(GL_TEXTURE_2D, tex);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, &image[0]);
-	glBindTexture(GL_TEXTURE_2D, last_texture);
-#endif
-
-	return (ImTextureID)tex;
-};
 
 
 

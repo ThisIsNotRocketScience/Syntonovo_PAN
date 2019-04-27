@@ -65,20 +65,17 @@
     <ClCompile Include="PanStructs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PAN_TeensyUI.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="PAN_Raspberry.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="PAN_Raspberry_Interface.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="FinalPanGui.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="FinalPanEnums.h">
       <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PAN_TeensyUI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PAN_Raspberry_Interface.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -102,6 +99,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PanPreset.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Gui.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

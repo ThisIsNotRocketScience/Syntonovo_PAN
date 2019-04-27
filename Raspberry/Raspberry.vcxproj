@@ -152,6 +152,7 @@
   <ItemGroup>
     <ClCompile Include="..\libs\gl3w-master\src\gl3w.c" />
     <ClCompile Include="Combine.cpp" />
+    <ClCompile Include="finalpanguimain.cpp" />
     <ClCompile Include="imgui_es2.cpp" />
     <ClCompile Include="Raspberry.cpp" />
     <ClCompile Include="SerialSearcher.cpp" />

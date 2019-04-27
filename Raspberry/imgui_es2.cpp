@@ -268,7 +268,7 @@ void ImGui_ImlES_NewFrame()
 	ImGuiIO& io = ImGui::GetIO();
 
 	// Setup display size (every frame to accommodate for window resizing)
-	int w=1024, h=1024;
+	int w=1024, h=600;
 	io.DisplaySize = ImVec2((float)w, (float)h);
 	io.DisplayFramebufferScale = ImVec2(w > 0 ? ((float)w / w) : 0, h > 0 ? ((float)h / h) : 0);
 
