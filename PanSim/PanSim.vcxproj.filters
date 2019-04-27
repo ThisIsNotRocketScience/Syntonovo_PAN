@@ -71,9 +71,6 @@
     <ClCompile Include="FinalPanEnums.h">
       <Filter>Header Files</Filter>
     </ClCompile>
-    <ClCompile Include="PAN_TeensyUI.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="PAN_Raspberry_Interface.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -83,9 +80,6 @@
     <Library Include="..\libs\SDL2-2.0.7\lib\x86\SDL2.lib" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="PanControls.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="PanHeader.h">
       <Filter>Header Files</Filter>
     </ClInclude>

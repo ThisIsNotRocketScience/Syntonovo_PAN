@@ -183,7 +183,6 @@
     <ClCompile Include="PanSim.cpp" />
     <ClCompile Include="PanStructs.cpp" />
     <ClCompile Include="PAN_Raspberry_Interface.cpp" />
-    <ClCompile Include="PAN_TeensyUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\libs\SDL2-2.0.7\lib\x86\SDL2.lib" />
@@ -193,7 +192,6 @@
     <ClInclude Include="FinalPanHeader.h" />
     <ClInclude Include="Gui.h" />
     <ClInclude Include="ModMenus.h" />
-    <ClInclude Include="PanControls.h" />
     <ClInclude Include="PanHeader.h" />
     <ClInclude Include="PanPreset.h" />
     <ClInclude Include="PanUiMap.h" />
