@@ -109,7 +109,7 @@ public:
 
 	alignment_t Align;
 	ledmodes ledmode;
-	int r, g, b;
+	uint16_t r, g, b;
 
 	int ParameterID;
 	int x, y;
