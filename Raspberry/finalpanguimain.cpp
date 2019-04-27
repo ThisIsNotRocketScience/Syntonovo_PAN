@@ -20,6 +20,9 @@ int uart0_filestream = -1;
 #include <fcntl.h>			//Used for UART
 #include <termios.h>		//Used for UART
 
+#include <pthread.h>
+
+
 void OpenSerial()
 {
 
@@ -68,6 +71,42 @@ void OpenSerial()
 	tcsetattr(uart0_filestream, TCSANOW, &options);
 }
 
+void serialtransmit()
+{
+	//----- TX BYTES -----
+	unsigned char tx_buffer[20];
+	unsigned char *p_tx_buffer;
+
+	p_tx_buffer = &tx_buffer[0];
+	*p_tx_buffer++ = 'H';
+	*p_tx_buffer++ = 'e';
+	*p_tx_buffer++ = 'l';
+	*p_tx_buffer++ = 'l';
+	*p_tx_buffer++ = 'o';
+
+	if (uart0_filestream != -1)
+	{
+		int count = write(uart0_filestream, &tx_buffer[0], (p_tx_buffer - &tx_buffer[0]));		//Filestream, bytes to write, number of bytes to write
+		if (count < 0)
+		{
+			printf("UART TX error\n");
+		}
+	}
+}
+
+void ReadThread()
+{
+	printf("Serial reading thread started\n");
+	struct pollfd src;
+	src.fd = serial_fd;
+	src.events = POLLIN;
+	src.revents = 0;
+
+	while (1)
+	{
+		int check = poll(&src, 1, -1);
+	}
+}
 
 void closerSerial()
 {
