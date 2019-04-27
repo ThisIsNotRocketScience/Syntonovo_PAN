@@ -380,6 +380,101 @@ int SW2Data()
 	return BOARD_INITPINS_SW2DATA_GPIO->B[BOARD_INITPINS_SW2DATA_PORT][BOARD_INITPINS_SW2DATA_PIN];
 }
 
+enum LedButton_t
+{
+#define LEDBUTTON(name,x,y,id,str,r,g,b)  _ledbutton_##name,
+#include "../../../PanSim/FinalPanHeader.h"
+#undef LEDBUTTON
+	__ledbutton_Count
+};
+
+enum Encoder_t
+{
+#define LEDENCODER(name,x,y,str)  _encoder_##name,
+#include "../../../PanSim/FinalPanHeader.h"
+#undef LEDENCODER
+	__encoder_Count
+};
+
+int switch_sw[__ledbutton_Count];
+int encoder_sw[__encoder_Count];
+int encoder_a[__encoder_Count];
+int encoder_c[__encoder_Count];
+
+void buttonmap_init()
+{
+#define DEFINESWITCH(PINID, dummy, NAME) switch_sw[_ledbutton_##NAME] = PINID;
+#include "switches.h"
+#undef DEFINESWITCH
+
+#define ENCODER_sw(PINID, NAME) encoder_sw[_encoder_##NAME] = PINID;
+#define ENCODER_a(PINID, NAME) encoder_a[_encoder_##NAME] = PINID;
+#define ENCODER_c(PINID, NAME) encoder_c[_encoder_##NAME] = PINID;
+#define DEFINEENCODER(PINID, PIN, NAME) ENCODER_##PIN(PINID, NAME)
+#include "switches.h"
+#undef ENCODER_sw
+#undef ENCODER_a
+#undef ENCODER_c
+#undef DEFINEENCODER
+}
+
+#define ENCODER_DEBOUNCE_COUNT 4
+
+uint8_t switch_state[__ledbutton_Count] = {0};
+uint8_t encoder_state[__encoder_Count * ENCODER_DEBOUNCE_COUNT] = {0};
+
+int switch_process(int swid, int swstate)
+{
+	int r = 0;
+
+	if (swstate == 0 && switch_state[swid]) r = -1;
+	if (swstate == 1 && !switch_state[swid]) r = 1;
+
+	switch_state[swid] = swstate;
+	return r;
+}
+
+int encoder_debounce(int encid, int input)
+{
+	int ok = 1;
+	for (int i = 0; i < ENCODER_DEBOUNCE_COUNT - 1; i++) {
+			if (input != encoder_state[encid * ENCODER_DEBOUNCE_COUNT + i]) {
+					ok = 0;
+			}
+			encoder_state[i] = encoder_state[i + 1];
+	}
+	if (input != encoder_state[encid * ENCODER_DEBOUNCE_COUNT + ENCODER_DEBOUNCE_COUNT - 1]) {
+			ok = 0;
+	}
+	encoder_state[encid * ENCODER_DEBOUNCE_COUNT + ENCODER_DEBOUNCE_COUNT - 1] = input;
+
+	return ok;
+}
+
+int encoder_process(int encid, int astate, int cstate)
+{
+	int encoder_shift[] = {
+			 0,  1, -1,  0,
+			-1,  0,  0,  1,
+			 1,  0,  0, -1,
+			 0, -1,  1,  0
+	};
+	int prev_encoder_state = encoder_state[encid * ENCODER_DEBOUNCE_COUNT + ENCODER_DEBOUNCE_COUNT - 1];
+	int new_encoder_state = (astate & 1) | ((cstate & 1) << 1);
+	if (!encoder_debounce(encid, new_encoder_state)) {
+		return 0;
+	}
+
+	if (new_encoder_state != prev_encoder_state) {
+			int dir = encoder_shift[(prev_encoder_state << 2) | new_encoder_state];
+			prev_encoder_state = new_encoder_state;
+
+			return dir;
+	}
+
+	return 0;
+}
+
 void ScanButtonsAndEncoders()
 {
 	uint8_t sw[80 * 2];
@@ -398,47 +493,44 @@ void ScanButtonsAndEncoders()
 
 	SW1LatchOff();
 	SW2LatchOff();
-	//sync_oob_word(&rpi_sync, OOB_UI_CONTINUE, 0, 0);
 
-#if 0
 	uint8_t data[4] = {0};
 
-	for (int i = 0; i < switchCount; i++) {
+	for (int i = 0; i < __ledbutton_Count; i++) {
 		int move = switch_process(i, sw[switch_sw[i]]);
 
 		if (move < 0) {
 			data[0] = i;
-			sync_oob_word(&rpi_sync, OOB_BUTTON_UP, data, 0);
+			sync_oob_word(&rpi_sync, OOB_BUTTON_UP, *(uint32_t*)data, 0);
 		}
 		else if (move > 0) {
 			data[0] = i;
-			sync_oob_word(&rpi_sync, OOB_BUTTON_DOWN, data, 0);
+			sync_oob_word(&rpi_sync, OOB_BUTTON_DOWN, *(uint32_t*)data, 0);
 		}
 	}
 
-	for (int i = 0; i < encoderCount; i++) {
+	for (int i = 0; i < __encoder_Count; i++) {
 		int move = encoder_process(i, sw[encoder_a[i]], sw[encoder_c[i]]);
 
 		if (move < 0) {
 			data[0] = i;
-			sync_oob_word(&rpi_sync, OOB_ENCODER_CCW, data, 0);
+			sync_oob_word(&rpi_sync, OOB_ENCODER_CCW, *(uint32_t*)data, 0);
 		}
 		else if (move > 0) {
 			data[0] = i;
-			sync_oob_word(&rpi_sync, OOB_ENCODER_CW, data, 0);
+			sync_oob_word(&rpi_sync, OOB_ENCODER_CW, *(uint32_t*)data, 0);
 		}
 
 		move = switch_process(i, sw[encoder_sw[i]]);
 		if (move < 0) {
 			data[0] = i;
-			sync_oob_word(&rpi_sync, OOB_ENCODER_UP, data, 0);
+			sync_oob_word(&rpi_sync, OOB_ENCODER_UP, *(uint32_t*)data, 0);
 		}
 		else if (move > 0) {
 			data[0] = i;
-			sync_oob_word(&rpi_sync, OOB_ENCODER_DOWN, data, 0);
+			sync_oob_word(&rpi_sync, OOB_ENCODER_DOWN, *(uint32_t*)data, 0);
 		}
 	}
-#endif
 }
 
 void LedsOff()

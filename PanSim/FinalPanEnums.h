@@ -11,12 +11,6 @@
 class hsv
 {
 public:
-	hsv()
-	{
-		h = 0;
-		s = 0xffff;
-		v = 0xffff;
-	}
 	uint16_t h, s, v;
 };
 enum
