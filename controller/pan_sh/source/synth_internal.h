@@ -69,7 +69,7 @@ param_t synth_param[SYNTH_PARAM_COUNT] =
 	const int PORT_##NAME = PORTID; \
 	const int PARAM_##ID = PORTID;
 
-#define SWITCH(NAME, ID) \
+#define SWITCH(NAME, ID, DEFAULT) \
 	const int NAME = ID;
 
 #define OUTPUT(NAME, PGROUP, PID, CTRLTYPE, CTRLID, MODE, INITVALUE) \
@@ -108,7 +108,7 @@ operator_param_t op_param[NUM_OPERATORS];
 	DO_OUTPUT_##MODE(NAME, CTRLID, PORTID(PGROUP, PID));
 #define OUTPUT_VIRT(NAME, PGROUP, PID, CTRLTYPE, CTRLID, MODE, INITVALUE) \
 	void virt_##NAME();
-#define SWITCH(NAME, ID)
+#define SWITCH(NAME, ID, DEFAULT)
 
 #include "../../interface/paramdef.h"
 
@@ -139,7 +139,7 @@ void synth_mapping_init()
 	synth_param[CTRLID].last = 0xfff0; \
 	synth_param[CTRLID].value = INITVALUE;
 
-#define SWITCH(NAME, ID)
+#define SWITCH(NAME, ID, DEFAULT)
 
 #include "../../interface/paramdef.h"
 
@@ -189,7 +189,7 @@ void synth_mapping_run()
 	virt_##NAME();
 
 #define OUTPUT(NAME, PGROUP, PID, CTRLTYPE, CTRLID, MODE, INITVALUE)
-#define SWITCH(NAME, ID)
+#define SWITCH(NAME, ID, DEFAULT)
 
 #include "../../interface/paramdef.h"
 

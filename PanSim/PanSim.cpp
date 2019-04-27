@@ -807,7 +807,7 @@ extern void ClearSwitch(SwitchEnum SwitchID);
 extern bool GetSwitch(SwitchEnum SwitchID);
 std::string switchnames[] = {
 
-#define SWITCH(name,id) #name ,
+#define SWITCH(name,id, defaultvalue) #name ,
 #include "../interface/paramdef.h"
 #undef SWITCH
 	"last"

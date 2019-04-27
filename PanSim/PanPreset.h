@@ -60,7 +60,8 @@ typedef struct
 	uint16_t ___reserved;
 } PACK OperatorParam_t;
 
-enum ModSource_t : unsigned char {
+enum ModSource_t : unsigned char
+{
 	Source_none,
 
 	Source_left_mod,
@@ -160,19 +161,19 @@ public:
 		int32_t val = OrigVal + delta * 1000;
 		if (val < 0) val = 0;
 		if (val > 0xffff) val = 0xffff;
-		paramvalue[param] = val;		
+		paramvalue[param] = val;
 	}
-	
+
 	void DescribeParam(OutputEnum param, int style, char *targetbuffer, int bufferlength)
 	{
 		switch (style)
 		{
-			case MenuEntry_MidValue:  snprintf(targetbuffer, bufferlength, "%1.1f%%", (float)((int)paramvalue[param]) * (200.0f / (float)0xFFFF)-100); break;
-			case MenuEntry_Value:  snprintf(targetbuffer, bufferlength, "%1.1f%%", (float)((int)paramvalue[param]) * (100.0f / (float)0xFFFF)); break;
-			case MenuEntry_Percentage: 	snprintf(targetbuffer, bufferlength, "%1.1f%%", (float)((int)paramvalue[param]) * (100.0f / (float)0xFFFF));
-			
-			
-			default: snprintf(targetbuffer, bufferlength, ""); break;
+		case MenuEntry_MidValue:  snprintf(targetbuffer, bufferlength, "%1.1f%%", (float)((int)paramvalue[param]) * (200.0f / (float)0xFFFF) - 100); break;
+		case MenuEntry_Value:  snprintf(targetbuffer, bufferlength, "%1.1f%%", (float)((int)paramvalue[param]) * (100.0f / (float)0xFFFF)); break;
+		case MenuEntry_Percentage: 	snprintf(targetbuffer, bufferlength, "%1.1f%%", (float)((int)paramvalue[param]) * (100.0f / (float)0xFFFF));
+
+
+		default: snprintf(targetbuffer, bufferlength, ""); break;
 		}
 	}
 
@@ -195,4 +196,59 @@ public:
 	OperatorParam_t op[NUM_OPERATORS];
 
 	char Name[PRESET_NAME_LENGTH];
-} PACK ;
+
+	uint16_t ledbrightness;
+	uint16_t ledblinkspeed;
+	uint16_t GetLedParameter(LedParameter par)
+	{
+
+		switch (par)
+		{
+		case Led_Low_Bright: return low.v;
+		case Led_Low_Sat: return low.s;
+		case Led_Low_Hue: return low.h;
+
+		case Led_High_Bright: return high.v;
+		case Led_High_Sat: return high.s;
+		case Led_High_Hue: return high.h;
+
+		case Led_Active_Bright: return active.v;
+		case Led_Active_Sat: return active.v;
+		case Led_Active_Hue: return active.h;
+
+		case Led_BlinkSpeed: return ledblinkspeed;
+		case Led_Brightness: return ledbrightness;
+		}
+
+		return 0;
+	}
+	void TweakLed(LedParameter par, int delta)
+	{
+		uint16_t *p = &ledbrightness;
+
+		switch (par)
+		{
+		case Led_Low_Bright: p = &low.v; break;
+		case Led_Low_Sat: p = &low.s; break;
+		case Led_Low_Hue: p = &low.h; break;
+
+		case Led_High_Bright: p = &high.v; break;
+		case Led_High_Sat: p = &high.s; break;
+		case Led_High_Hue: p = &high.h; break;
+
+		case Led_Active_Bright: p = &active.v; break;
+		case Led_Active_Sat: p = &active.v; break;
+		case Led_Active_Hue: p = &active.h; break;
+
+		case Led_BlinkSpeed: p = &ledblinkspeed; break;
+		case Led_Brightness: p = &ledbrightness; break;
+		}
+		int origp = *p;
+		int newp = origp + delta  * 1000;
+		if (newp > 0xffff) newp = 0xffff; else if (newp < 0) newp = 0;
+		*p = newp;
+	}
+	hsv low;
+	hsv high;
+	hsv active;
+} PACK;

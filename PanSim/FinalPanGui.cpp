@@ -11,16 +11,27 @@
 PanPreset_t gCurrentPreset;
 PanPreset_t gRevertPreset;
 PanState_t gPanState;
+
 Gui gGui;
 
 void FinalPan_SetupDefaultPreset()
 {
 
+#define SWITCH(name,id,defaultvalue) 	gCurrentPreset.PutSwitch(Switch_##name , defaultvalue>0?true:false);gRevertPreset.PutSwitch(Switch_##name , defaultvalue>0?true:false);   
 #define OUTPUT(name,codecport,codecpin, type,id, style,defaultvalue) 	gCurrentPreset.paramvalue[id] = gRevertPreset.paramvalue[id] = defaultvalue;
 #define OUTPUT_VIRT(name,codecport,codecpin, type,id, style,defaultvalue) gCurrentPreset.paramvalue[id] = gRevertPreset.paramvalue[id] = defaultvalue;
 #include "../interface/paramdef.h"
 #undef OUTPUT
 #undef OUTPUT_VIRT
+#undef SWITCH
+
+	gCurrentPreset.high.h = 0;
+	gCurrentPreset.active.h = 0x3000;
+	gCurrentPreset.low.h = 0x6000;
+
+	gPanState.SetLed(Led_Low, gCurrentPreset.low);
+	gPanState.SetLed(Led_High, gCurrentPreset.high);
+	gPanState.SetLed(Led_Active, gCurrentPreset.active);
 
 };
 
@@ -36,6 +47,7 @@ bool IsPatchButton(FinalLedButtonEnum B);
 #ifndef __max
 #define __max(a,b) ((a>b)?(a):(b))
 #endif
+
 typedef struct FinalPan_GuiResources_t
 {
 	ImTextureID MainBG;
@@ -58,7 +70,6 @@ typedef struct FinalPan_GuiResources_t
 } FinalPan_GuiResources_t;
 
 static FinalPan_GuiResources_t res;
-
 
 enum ParamEnum
 {
@@ -274,6 +285,12 @@ void _control_t::SketchRightDelta(int delta)
 	case MenuEntry_RemapValue:
 	case MenuEntry_Value: gCurrentPreset.TweakParameter((OutputEnum)target, delta); break;
 
+	case MenuEntry_LedValue:
+	{
+		gCurrentPreset.TweakLed((LedParameter)target, delta); break;
+		
+	}
+
 	}
 }
 
@@ -292,7 +309,14 @@ void bottomencoder_t::Turn(int delta)
 	case MenuEntry_FilterMix:
 	case MenuEntry_RemapValue:
 	case MenuEntry_Value: gCurrentPreset.TweakParameter((OutputEnum)target, delta); break;
+	
+	case MenuEntry_LedValue:
+	{
+		gCurrentPreset.TweakLed((LedParameter)target, delta); break;
 
+	}
+	default:
+		printf("unhandled!!\n");
 	}
 }
 void _control_t::Activate() {}
@@ -347,7 +371,7 @@ void _control_t::RenderBoxVertical(int x, int y, int val, int mode, bool active)
 	p.x += 10;
 	ImVec2 tl = p;
 	ImVec2 br = tl;
-	br.x += 0;// ImGui::GetTextLineHeight() - 2;
+	br.x += ImGui::GetTextLineHeight() - 2;
 	br.y += ParamVerticalBoxHeight;
 	switch (mode)
 	{
@@ -503,7 +527,7 @@ void sidebutton_t::Render(bool active)
 void bottomencoder_t::SetupPosition(int id)
 {
 	y = 600 - 100;
-	x = ((1024 - 200) / 11.0f) * id;
+	x = ((1024) / 12.0f) * id + 1024.0f/24.0f;
 	Align = align_left;
 
 }
@@ -531,6 +555,18 @@ void bottomencoder_t::Render(bool active)
 
 		switch (style)
 		{
+		case MenuEntry_LedValue:
+		{
+
+			RenderBoxVertical(x, y, gCurrentPreset.GetLedParameter((LedParameter) target), style == BOX_REGULAR, active);
+
+			char txt[400];
+
+			gCurrentPreset.DescribeParam((OutputEnum)target, style, txt, 400);
+			VerticalText(txt, align_right);
+		}
+
+		break;
 
 		case MenuEntry_MidValue:
 		case MenuEntry_Percentage:
@@ -574,14 +610,54 @@ void bottomencoder_t::Render(bool active)
 
 }
 
+uint16_t lerp(uint16_t i, uint16_t f, uint16_t t)
+{
+	int diff = t - f;
+	uint32_t R = (f << 16) + (diff * i);
+	return R >> 16;
+}
+
+void LedLerp(bool active, uint16_t value, uint16_t *r, uint16_t *g, uint16_t *b)
+{
+	if (active)
+	{
+		*r = lerp(value, gPanState.ledr, gPanState.bledr);
+		*g = lerp(value, gPanState.ledg, gPanState.bledg);
+		*b = lerp(value, gPanState.ledb, gPanState.bledb);
+
+		*r = lerp(0x8000, *r, gPanState.hledr);
+		*g = lerp(0x8000, *g, gPanState.hledg);
+		*b = lerp(0x8000, *b, gPanState.hledb);
+	
+	}
+	else
+	{
+		*r = lerp(value, gPanState.ledr, gPanState.bledr);
+		*g = lerp(value, gPanState.ledg, gPanState.bledg);
+		*b = lerp(value, gPanState.ledb, gPanState.bledb);
+	}
+}
+
 void bottomencoder_t::UpdateLed(bool active)
 {
 	if (enabled)
 	{
 		ledmode = active ? ledmode_blinkslow : ledmode_solid;
-		r = gCurrentPreset.paramvalue[Output_LEDR];
-		g = gCurrentPreset.paramvalue[Output_LEDG];
-		b = gCurrentPreset.paramvalue[Output_LEDB];
+		if (active)
+		{
+
+		}
+		uint16_t value = 0;
+		switch (style)
+		{
+		case MenuEntry_LedValue:
+			break;
+		default:
+			value = gCurrentPreset.paramvalue[target];
+		}
+		LedLerp(active, value, &r, &g, &b);
+
+
 	}
 	else
 	{
@@ -937,6 +1013,10 @@ void FinalPan_LoadResources()
 	res.BigFont = io.Fonts->AddFontFromFileTTF("Fontfabric - Panton ExtraBold.otf", 54.0f);
 	init = true;
 
+
+	int X = sizeof(PanPreset_t);
+	printf("Pan preset size: %d (%x) bytes\n", X, X);
+
 }
 
 
@@ -1089,20 +1169,26 @@ void Gui::BuildScreens()
 	Screens[SCREEN_HOME]->EnableButton(8, "Store", MenuEntry_Action, MenuAction_Store);//(512, 40, "Some Sound");
 	Screens[SCREEN_HOME]->EnableButton(9, "Revert", MenuEntry_Action, MenuAction_Revert);
 	Screens[SCREEN_HOME]->EnableButton(10, "System", MenuEntry_Page, SCREEN_SYSTEM);
-	Screens[SCREEN_HOME]->EnableButton(12, "Lights", MenuEntry_Page, SCREEN_LIGHTS);
+	Screens[SCREEN_HOME]->EnableButton(12, "Colors", MenuEntry_Page, SCREEN_COLORS);
 
 
-	Screens[SCREEN_LIGHTS]->SetTitle("Lights");
+	Screens[SCREEN_COLORS]->SetTitle("Colors");
 
-	Screens[SCREEN_LIGHTS]->EnableAvailableEncoder("R", MenuEntry_Value, Output_LEDR);
-	Screens[SCREEN_LIGHTS]->EnableAvailableEncoder("G", MenuEntry_Value, Output_LEDG);
-	Screens[SCREEN_LIGHTS]->EnableAvailableEncoder("B", MenuEntry_Value, Output_LEDB);
+	Screens[SCREEN_COLORS]->EnableAvailableEncoder("Hue", MenuEntry_LedValue, Led_Low_Hue);
+	Screens[SCREEN_COLORS]->EnableAvailableEncoder("Sat", MenuEntry_LedValue, Led_Low_Sat);
+	Screens[SCREEN_COLORS]->EnableAvailableEncoder("Bright", MenuEntry_LedValue, Led_Low_Bright);
 
-	Screens[SCREEN_LIGHTS]->EnableAvailableEncoder("R", MenuEntry_Value, Output_HLEDR);
-	Screens[SCREEN_LIGHTS]->EnableAvailableEncoder("G", MenuEntry_Value, Output_HLEDG);
-	Screens[SCREEN_LIGHTS]->EnableAvailableEncoder("B", MenuEntry_Value, Output_HLEDB);
+	Screens[SCREEN_COLORS]->EnableAvailableEncoder("BlinkSpeed", MenuEntry_LedValue, Led_BlinkSpeed);
 
-	Screens[SCREEN_LIGHTS]->EnableAvailableEncoder("Brightness", MenuEntry_Value, Output_LEDBRIGHT);
+	Screens[SCREEN_COLORS]->EnableAvailableEncoder("Hue", MenuEntry_LedValue, Led_High_Hue);
+	Screens[SCREEN_COLORS]->EnableAvailableEncoder("Sat", MenuEntry_LedValue, Led_High_Sat);
+	Screens[SCREEN_COLORS]->EnableAvailableEncoder("Bright", MenuEntry_LedValue, Led_High_Bright);
+
+	Screens[SCREEN_COLORS]->EnableAvailableEncoder("Brightness", MenuEntry_LedValue, Led_Brightness);
+
+	Screens[SCREEN_COLORS]->EnableAvailableEncoder("Hue", MenuEntry_LedValue, Led_Active_Hue);
+	Screens[SCREEN_COLORS]->EnableAvailableEncoder("Sat", MenuEntry_LedValue, Led_Active_Sat);
+	Screens[SCREEN_COLORS]->EnableAvailableEncoder("Bright", MenuEntry_LedValue, Led_Active_Bright);
 
 
 	Screens[SCREEN_VCO1]->SetTitle("Oscillator 1");
@@ -1159,6 +1245,10 @@ void Gui::GotoPage(Screens_t s)
 
 void Gui::SetupLeds()
 {
+	gPanState.SetLed(Led_Active, gCurrentPreset.active);
+	gPanState.SetLed(Led_High, gCurrentPreset.high);
+	gPanState.SetLed(Led_Low, gCurrentPreset.low);
+
 	CS()->SetupLeds();
 }
 

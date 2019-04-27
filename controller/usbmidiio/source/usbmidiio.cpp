@@ -400,6 +400,7 @@ void ScanButtonsAndEncoders()
 	SW2LatchOff();
 	//sync_oob_word(&rpi_sync, OOB_UI_CONTINUE, 0, 0);
 
+#if 0
 	uint8_t data[4] = {0};
 
 	for (int i = 0; i < switchCount; i++) {
@@ -437,6 +438,7 @@ void ScanButtonsAndEncoders()
 			sync_oob_word(&rpi_sync, OOB_ENCODER_DOWN, data, 0);
 		}
 	}
+#endif
 }
 
 void LedsOff()
