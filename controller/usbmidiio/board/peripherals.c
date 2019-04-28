@@ -49,7 +49,7 @@ instance:
   - interruptsCfg:
     - interrupts: 'kUSART_RxLevelInterruptEnable'
     - interrupt_vectors:
-      - enable_rx_tx_irq: 'true'
+      - enable_rx_tx_irq: 'false'
       - interrupt_rx_tx:
         - IRQn: 'FLEXCOMM2_IRQn'
         - enable_priority: 'false'
@@ -86,8 +86,6 @@ void USART_RPI_init(void) {
   RESET_PeripheralReset(kFC2_RST_SHIFT_RSTn);
   USART_Init(USART_RPI_PERIPHERAL, &USART_RPI_config, USART_RPI_CLOCK_SOURCE);
   USART_EnableInterrupts(USART_RPI_PERIPHERAL, kUSART_RxLevelInterruptEnable);
-  /* Enable interrupt FLEXCOMM2_IRQn request in the NVIC */
-  EnableIRQ(USART_RPI_FLEXCOMM_IRQN);
 }
 
 /***********************************************************************************************************************
@@ -114,7 +112,7 @@ instance:
   - usartConfig_t:
     - usartConfig:
       - clockSource: 'FXCOMFunctionClock'
-      - clockSourceFreq: 'GetFreq'
+      - clockSourceFreq: 'BOARD_BootClockRUN'
       - baudRate_Bps: '31250'
       - parityMode: 'kUSART_ParityDisabled'
       - stopBitCount: 'kUSART_OneStopBit'

@@ -441,11 +441,12 @@ int encoder_debounce(int encid, int input)
 			if (input != encoder_state[encid * ENCODER_DEBOUNCE_COUNT + i]) {
 					ok = 0;
 			}
-			encoder_state[i] = encoder_state[i + 1];
+			encoder_state[encid * ENCODER_DEBOUNCE_COUNT + i] = encoder_state[encid * ENCODER_DEBOUNCE_COUNT + i + 1];
 	}
 	if (input != encoder_state[encid * ENCODER_DEBOUNCE_COUNT + ENCODER_DEBOUNCE_COUNT - 1]) {
 			ok = 0;
 	}
+	if (!ok && encid < 5) printf("enc %d nok %d\n", encid, input);
 	encoder_state[encid * ENCODER_DEBOUNCE_COUNT + ENCODER_DEBOUNCE_COUNT - 1] = input;
 
 	return ok;
@@ -469,20 +470,27 @@ int encoder_process(int encid, int astate, int cstate)
 			int dir = encoder_shift[(prev_encoder_state << 2) | new_encoder_state];
 			prev_encoder_state = new_encoder_state;
 
+			if (dir) printf("%d -> %d\n", encid, dir);
+
 			return dir;
 	}
 
 	return 0;
 }
 
+uint8_t sw[80 * 2];
+
 void ScanButtonsAndEncoders()
 {
-	uint8_t sw[80 * 2];
+	SW1LatchOff();
+	SW2LatchOff();
+
+	memset(sw, 0, sizeof(sw));
 
 	SW1LatchOn();
 	SW2LatchOn();
 
-	for (int i = 0; i < 80; i++) {
+	for (int i = 0; i < 15; i++) {
 		sw[i] = SW1Data();
 		sw[i + 80] = SW2Data();
 		SW1ClkOff();
@@ -491,9 +499,6 @@ void ScanButtonsAndEncoders()
 		SW2ClkOn();
 	}
 
-	SW1LatchOff();
-	SW2LatchOff();
-
 	uint8_t data[4] = {0};
 
 	for (int i = 0; i < __ledbutton_Count; i++) {
@@ -501,11 +506,11 @@ void ScanButtonsAndEncoders()
 
 		if (move < 0) {
 			data[0] = i;
-			sync_oob_word(&rpi_sync, OOB_BUTTON_UP, *(uint32_t*)data, 0);
+			//sync_oob_word(&rpi_sync, OOB_BUTTON_UP, *(uint32_t*)data, 0);
 		}
 		else if (move > 0) {
 			data[0] = i;
-			sync_oob_word(&rpi_sync, OOB_BUTTON_DOWN, *(uint32_t*)data, 0);
+			//sync_oob_word(&rpi_sync, OOB_BUTTON_DOWN, *(uint32_t*)data, 0);
 		}
 	}
 
@@ -514,21 +519,21 @@ void ScanButtonsAndEncoders()
 
 		if (move < 0) {
 			data[0] = i;
-			sync_oob_word(&rpi_sync, OOB_ENCODER_CCW, *(uint32_t*)data, 0);
+			//sync_oob_word(&rpi_sync, OOB_ENCODER_CCW, *(uint32_t*)data, 0);
 		}
 		else if (move > 0) {
 			data[0] = i;
-			sync_oob_word(&rpi_sync, OOB_ENCODER_CW, *(uint32_t*)data, 0);
+			//sync_oob_word(&rpi_sync, OOB_ENCODER_CW, *(uint32_t*)data, 0);
 		}
 
 		move = switch_process(i, sw[encoder_sw[i]]);
 		if (move < 0) {
 			data[0] = i;
-			sync_oob_word(&rpi_sync, OOB_ENCODER_UP, *(uint32_t*)data, 0);
+			//sync_oob_word(&rpi_sync, OOB_ENCODER_UP, *(uint32_t*)data, 0);
 		}
 		else if (move > 0) {
 			data[0] = i;
-			sync_oob_word(&rpi_sync, OOB_ENCODER_DOWN, *(uint32_t*)data, 0);
+			//sync_oob_word(&rpi_sync, OOB_ENCODER_DOWN, *(uint32_t*)data, 0);
 		}
 	}
 }
@@ -592,6 +597,20 @@ extern "C" void SCT0_IRQHandler(void)
 
 	portEND_SWITCHING_ISR(higherPriorityTaskWoken);
 }
+
+void sync_complete(int status)
+{
+	if (status != 0) {
+	    sync_block(&rpi_sync, (uint8_t*)&preset, 0, sizeof(preset), sync_complete);
+		return;
+	}
+
+	if (status == 0) {
+        sync_oob_word(&rpi_sync, OOB_UI_CONTINUE, 0, 0);
+        return;
+	}
+}
+
 
 #define KEYSCAN_NUMKEYSETS (5)
 #define KEYSCAN_MAXINDEX (2*KEYSCAN_NUMKEYSETS)
@@ -670,6 +689,10 @@ void KeyboardTask(void* pvParameters)
 	dsp_reset();
 	preset_init();
 
+	rpi_start();
+
+    sync_block(&rpi_sync, (uint8_t*)&preset, 0, sizeof(preset), sync_complete);
+
 	NVIC_SetPriority(SCTIMER_1_IRQN, 2);
     SCTIMER_EnableInterrupts(SCTIMER_1_PERIPHERAL, 1);
 
@@ -678,6 +701,7 @@ void KeyboardTask(void* pvParameters)
         {
         	KeyScan();
         }
+		vTaskDelay(1);
 	}
 }
 
@@ -835,20 +859,7 @@ void IdleTask(void* pvParameters)
 {
 	while(1) {
 		rpi_uart.config.timer_tick(rpi_uart.config.timer_tick_data);
-		vTaskDelay(1);
-	}
-}
-
-void sync_complete(int status)
-{
-	if (status != 0) {
-	    sync_block(&rpi_sync, (uint8_t*)&preset, 0, sizeof(preset), sync_complete);
-		return;
-	}
-
-	if (status == 0) {
-        sync_oob_word(&rpi_sync, OOB_UI_CONTINUE, 0, 0);
-        return;
+		vTaskDelay(5);
 	}
 }
 
@@ -925,6 +936,7 @@ void LedTask( void * pvParameters )
 	for( ;; )
     {
         SendLeds();
+        ScanButtonsAndEncoders();
         vTaskDelay( xDelay );
     }
 
@@ -932,9 +944,11 @@ void LedTask( void * pvParameters )
 
 int main(void) {
   	/* Init board hardware. */
-       BOARD_InitBootPins();
+	BOARD_InitBootPins();
     BOARD_InitBootClocks();
     BOARD_InitBootPeripherals();
+
+    buttonmap_init();
 
     LedsOff();
     LedsOn();
@@ -963,18 +977,18 @@ int main(void) {
 
     rpi_init(&rpi_uart);
     sync_init(&rpi_sync, &rpi_uart, sync_data_func, sync_oobdata_func);
-    rpi_start();
 
    // while(1) SendLeds();
 
 
     xKeyTimerSemaphore = xSemaphoreCreateBinary();
 
-    xTaskCreate(KeyboardTask, "keys", 256, NULL, 2, NULL);
-    xTaskCreate(LedTask, "Leds", 256, NULL, 2, NULL);
+    volatile BaseType_t r = 0;
+    r = xTaskCreate(KeyboardTask, "keys", 256, NULL, 2, NULL);
+    r = xTaskCreate(LedTask, "Leds", 1024, NULL, 3, NULL);
     //xTaskCreate(RpiTask, "rpi", 256, NULL, 4, NULL);
     //xTaskCreate(USBTask, "usb", 512, NULL, 3, NULL);
-    xTaskCreate(IdleTask, "idle", 256, NULL, 7, NULL);
+    r = xTaskCreate(IdleTask, "idle", 512, NULL, 3, NULL);
 
     printf("Everything running\n");
 

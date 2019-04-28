@@ -34,7 +34,7 @@ extern "C" {
 /* Definition of peripheral ID */
 #define USART_MIDI_PERIPHERAL ((USART_Type *)FLEXCOMM1)
 /* Definition of the clock source frequency */
-#define USART_MIDI_CLOCK_SOURCE CLOCK_GetFreq(kCLOCK_Flexcomm1)
+#define USART_MIDI_CLOCK_SOURCE 48000000UL
 /* USART_MIDI interrupt vector ID (number). */
 #define USART_MIDI_FLEXCOMM_IRQN FLEXCOMM1_IRQn
 /* USART_MIDI interrupt handler identifier. */

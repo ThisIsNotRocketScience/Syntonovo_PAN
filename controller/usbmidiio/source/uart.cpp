@@ -5,10 +5,14 @@
 #include "fsl_device_registers.h"
 
 #include "uart.h"
+#include "FreeRTOS.h"
+#include "task.h"
 
-#define ENTER_CRITICAL_SECTION() int __last_int_status = __get_PRIMASK(); __disable_irq();
+//#define ENTER_CRITICAL_SECTION() int __last_int_status = __get_PRIMASK(); __disable_irq();
+//#define LEAVE_CRITICAL_SECTION() if (__last_int_status) { __enable_irq(); }
 
-#define LEAVE_CRITICAL_SECTION() if (__last_int_status) { __enable_irq(); }
+#define ENTER_CRITICAL_SECTION() taskENTER_CRITICAL()
+#define LEAVE_CRITICAL_SECTION() taskEXIT_CRITICAL()
 
 //////////////////////////////////////////////////
 
@@ -99,6 +103,8 @@ void sync_in_read_complete(int status, void* stateptr)
 {
 	uint8_t sync_read_buf[16];
 
+    ENTER_CRITICAL_SECTION();
+
 	sync_state_t* state = (sync_state_t*)stateptr;
 	state->timer = 0;
 
@@ -106,16 +112,21 @@ void sync_in_read_complete(int status, void* stateptr)
 		uint8_t data = state->uart->rx.peek();
 		if (data == 0xFF) {
 			state->uart->rx.read(sync_read_buf, 1);
+			state->uart->rx.waitfor(1);
+		    LEAVE_CRITICAL_SECTION();
 			return;
 		}
 		state->in_running_checksum = 0;
 		state->in_reset = 0;
 		state->uart->rx.waitfor(6);
+	    LEAVE_CRITICAL_SECTION();
 		return;
 	}
 
 	if (status != 0) {
 		sync_reset(state);
+		state->uart->rx.waitfor(6);
+	    LEAVE_CRITICAL_SECTION();
 		return;
 	}
 
@@ -132,12 +143,15 @@ void sync_in_read_complete(int status, void* stateptr)
 		state->ack_send_pending = 0;
 		state->uart->rx.waitfor(1);
 		//sync_reset(state);
+	    LEAVE_CRITICAL_SECTION();
 		return;
 	}
 
 	state->in_running_checksum = crc(state->in_running_checksum, data, 5);
 	if (state->in_running_checksum != data[5]) {
 		sync_reset(state);
+		state->uart->rx.waitfor(6);
+	    LEAVE_CRITICAL_SECTION();
 		return;
 	}
 
@@ -175,10 +189,13 @@ void sync_in_read_complete(int status, void* stateptr)
 		}
 		printf("unexpected %d\n", cmd);
 		sync_reset(state);
+		state->uart->rx.waitfor(6);
+	    LEAVE_CRITICAL_SECTION();
 		return;
 	}
 
 	state->uart->rx.waitfor(6);
+    LEAVE_CRITICAL_SECTION();
 }
 
 //sync_state_t* sync_state;
@@ -210,9 +227,12 @@ void sync_out_write_complete(int status, void* stateptr)
 {
   sync_state_t* state = (sync_state_t*)stateptr;
 
+	ENTER_CRITICAL_SECTION();
+
   if (status != 0) {
     state->transmit_active = 0;
     state->complete(1);
+    LEAVE_CRITICAL_SECTION();
     return;
   }
 
@@ -240,6 +260,7 @@ void sync_out_write_complete(int status, void* stateptr)
       if (state->complete) {
     	  state->complete(1);
       }
+      LEAVE_CRITICAL_SECTION();
       return;
     }
     else {
@@ -250,6 +271,7 @@ void sync_out_write_complete(int status, void* stateptr)
       data[3] = 0xFF;
       state->out_reset += 4;
       state->uart->tx.write(data, 4);
+      LEAVE_CRITICAL_SECTION();
       return;
     }
   }
@@ -262,11 +284,13 @@ void sync_out_write_complete(int status, void* stateptr)
     data[3] = 0;
     state->ack_send_pending = 0;
     sync_out_write_begin(state, 3, data, 0);
+    LEAVE_CRITICAL_SECTION();
     return;
   }
 
   if (state->ack_receive_pending) {
     state->transmit_active = 0;
+    LEAVE_CRITICAL_SECTION();
     return;
   }
 
@@ -276,6 +300,7 @@ void sync_out_write_complete(int status, void* stateptr)
     uint32_t data = state->oob_queue[state->oob_queue_read].data;
     state->oob_queue_read = (state->oob_queue_read + 1) & 15;
     sync_out_write_begin(state, cmd, (uint8_t*)&data, 1);
+    LEAVE_CRITICAL_SECTION();
     return;
   }
 
@@ -283,11 +308,13 @@ void sync_out_write_complete(int status, void* stateptr)
     state->phase = data;
     state->transmit_active = 1;
     sync_out_write_begin(state, 1, (uint8_t*)&state->out_dst, 1);
+    LEAVE_CRITICAL_SECTION();
     return;
   }
 
   if (state->phase == complete) {
 	  state->transmit_active = 0;
+	    LEAVE_CRITICAL_SECTION();
     return;
   }
 
@@ -295,6 +322,7 @@ void sync_out_write_complete(int status, void* stateptr)
     state->transmit_active = 0;
     state->phase = complete;
     state->complete(0);
+    LEAVE_CRITICAL_SECTION();
     return;
   }
 
@@ -313,6 +341,8 @@ void sync_out_write_complete(int status, void* stateptr)
 
   state->transmit_active = 1;
   sync_out_write_begin(state, 2, data, 1);
+
+  LEAVE_CRITICAL_SECTION();
 }
 
 void sync_reset(sync_state_t* state)
@@ -321,7 +351,7 @@ void sync_reset(sync_state_t* state)
 		return;
 	}
 
-	printf("sync_reset()\n");
+	//printf("sync_reset()\n");
 	state->out_reset = 1;
 	state->out_resync = 0;
 	if (!state->transmit_active) {
@@ -335,7 +365,7 @@ void sync_resync(sync_state_t* state)
 		return;
 	}
 
-	printf("sync_resync()\n");
+	//printf("sync_resync()\n");
 	state->out_reset = 1;
 	state->out_resync = 1;
 	if (!state->transmit_active) {

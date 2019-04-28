@@ -420,7 +420,7 @@
                         <data type="Boolean">true</data>
                      </feature>
                   </dependency>
-                  <dependency resourceType="ClockOutput" resourceId="FXCOM1_clock" description="FXCOM1 clock is inactive." problem_level="1" source="Peripherals:BOARD_InitPeripherals">
+                  <dependency resourceType="ClockOutput" resourceId="FXCOM1_clock" description="FXCOM1 clock is inactive." problem_level="2" source="Peripherals:BOARD_InitPeripherals">
                      <feature name="frequency" evaluation="greaterThan">
                         <data type="Frequency" unit="Hz">0</data>
                      </feature>
@@ -460,7 +460,7 @@
                            </selected>
                         </set>
                         <struct name="interrupt_vectors">
-                           <setting name="enable_rx_tx_irq" value="true"/>
+                           <setting name="enable_rx_tx_irq" value="false"/>
                            <struct name="interrupt_rx_tx">
                               <setting name="IRQn" value="FLEXCOMM2_IRQn"/>
                               <setting name="enable_priority" value="false"/>
@@ -503,7 +503,7 @@
                      <config_set name="usartConfig_t">
                         <struct name="usartConfig">
                            <setting name="clockSource" value="FXCOMFunctionClock"/>
-                           <setting name="clockSourceFreq" value="GetFreq"/>
+                           <setting name="clockSourceFreq" value="BOARD_BootClockRUN"/>
                            <setting name="baudRate_Bps" value="31250"/>
                            <setting name="parityMode" value="kUSART_ParityDisabled"/>
                            <setting name="stopBitCount" value="kUSART_OneStopBit"/>

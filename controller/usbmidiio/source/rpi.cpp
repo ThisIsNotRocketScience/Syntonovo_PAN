@@ -11,6 +11,9 @@
 #include "peripherals.h"
 #include "fsl_flexcomm.h"
 
+#include "FreeRTOS.h"
+#include "timers.h"
+
 #define WEAK __attribute__ ((weak))
 
 #define RING_SIZE	32
@@ -93,8 +96,20 @@ static uint8_t fifo_tx_pop()
 static int receiveEnabled = 0;
 static int sendEnabled = 0;
 
+void rpi_read_complete(void* pvParameter1, uint32_t ulParameter2)
+{
+	rpi_uart->config.read_complete(ulParameter2, pvParameter1);
+}
+
+void rpi_write_complete(void* pvParameter1, uint32_t ulParameter2)
+{
+	rpi_uart->config.write_complete(ulParameter2, pvParameter1);
+}
+
 extern "C" void FLEXCOMM2_IRQHandler(void)
 {
+	BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+
     if (!receiveEnabled || (USART_RPI_PERIPHERAL->FIFOSTAT & USART_FIFOSTAT_RXERR_MASK))
     {
         /* Clear rx error state. */
@@ -118,7 +133,13 @@ extern "C" void FLEXCOMM2_IRQHandler(void)
             fifo_rx_queue(b);
 
         	if (fifo_rx_numbytes() >= fifo_rx_level) {
-        		rpi_uart->config.read_complete(0, rpi_uart->config.read_complete_data);
+        		//rpi_uart->config.read_complete(0, rpi_uart->config.read_complete_data);
+    		    xTimerPendFunctionCallFromISR(
+    			   rpi_read_complete,
+    			   rpi_uart->config.read_complete_data,
+    			   0,
+    			   &xHigherPriorityTaskWoken );
+    		    fifo_rx_level = 64;
         	}
         }
 
@@ -139,9 +160,16 @@ extern "C" void FLEXCOMM2_IRQHandler(void)
 			&& USART_RPI_PERIPHERAL->FIFOINTENSET & USART_FIFOINTENSET_TXLVL_MASK) {
 
 		    USART_RPI_PERIPHERAL->FIFOINTENCLR = USART_FIFOINTENSET_TXLVL_MASK;
-			rpi_uart->config.write_complete(0, rpi_uart->config.write_complete_data);
+
+		    xTimerPendFunctionCallFromISR(
+			   rpi_write_complete,
+			   rpi_uart->config.write_complete_data,
+			   0,
+			   &xHigherPriorityTaskWoken );
 		}
 	}
+
+	portYIELD_FROM_ISR( xHigherPriorityTaskWoken );
 }
 
 static void rpi_waitfor(int level)
