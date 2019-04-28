@@ -58,7 +58,7 @@ instance:
     - usartConfig:
       - clockSource: 'FXCOMFunctionClock'
       - clockSourceFreq: 'BOARD_BootClockRUN'
-      - baudRate_Bps: '2000000'
+      - baudRate_Bps: '115200'
       - parityMode: 'kUSART_ParityDisabled'
       - stopBitCount: 'kUSART_OneStopBit'
       - bitCountPerChar: 'kUSART_8BitsPerChar'
@@ -70,7 +70,7 @@ instance:
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
 /* clang-format on */
 const usart_config_t USART_RPI_config = {
-  .baudRate_Bps = 2000000,
+  .baudRate_Bps = 115200,
   .parityMode = kUSART_ParityDisabled,
   .stopBitCount = kUSART_OneStopBit,
   .bitCountPerChar = kUSART_8BitsPerChar,
@@ -219,13 +219,13 @@ instance:
     - config:
       - clockMode: 'kSCTIMER_System_ClockMode'
       - clockSource: 'SynchronousFunctionClock'
-      - clockSourceFreq: 'GetFreq'
+      - clockSourceFreq: 'BOARD_BootClockRUN'
       - SCTInputClockSourceFreq: 'custom'
       - clockSelect: 'kSCTIMER_Clock_On_Rise_Input_0'
       - enableCounterUnify: 'true'
       - enableBidirection_l: 'false'
       - enableBidirection_h: 'false'
-      - prescale_l: '90'
+      - prescale_l: '180'
       - prescale_h: '1'
       - outInitState: 'SCTIMER_OUTPUT_0_MASK'
     - enableIRQ: 'true'
@@ -261,7 +261,7 @@ const sctimer_config_t SCTimer_1_initConfig = {
   .clockSelect = kSCTIMER_Clock_On_Rise_Input_0,
   .enableBidirection_l = false,
   .enableBidirection_h = false,
-  .prescale_l = 89,
+  .prescale_l = 179,
   .prescale_h = 0,
   .outInitState = SCTIMER_OUTPUT_0_MASK
 };

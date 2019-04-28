@@ -51,7 +51,7 @@ extern "C" {
 /* Definition of peripheral ID */
 #define SCTIMER_1_PERIPHERAL SCT0
 /* Definition of clock source frequency */
-#define SCTIMER_1_CLOCK_FREQ CLOCK_GetFreq(kCLOCK_BusClk)
+#define SCTIMER_1_CLOCK_FREQ 180000000UL
 /* SCTimer_1 interrupt vector ID (number). */
 #define SCTIMER_1_IRQN SCT0_IRQn
 /* SCTimer_1 interrupt handler identifier. */

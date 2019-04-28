@@ -16,7 +16,7 @@
 
 #define WEAK __attribute__ ((weak))
 
-#define RING_SIZE	32
+#define RING_SIZE	256
 static volatile uint8_t fifo_rx_ring[RING_SIZE];
 static volatile int fifo_rx_write = 0;
 static volatile int fifo_rx_read = 0;
@@ -29,8 +29,10 @@ static volatile int fifo_tx_read = 0;
 
 static uart_t* rpi_uart;
 
+#include <stdio.h>
 static void fifo_rx_queue(uint8_t byte)
 {
+	if (((fifo_rx_write + 1) & (RING_SIZE - 1)) == fifo_rx_read) { printf("overflow\n"); return; }
 	fifo_rx_ring[fifo_rx_write] = byte;
 	fifo_rx_write = (fifo_rx_write + 1) & (RING_SIZE-1);
 }
@@ -175,6 +177,13 @@ extern "C" void FLEXCOMM2_IRQHandler(void)
 static void rpi_waitfor(int level)
 {
 	fifo_rx_level = level;
+	if (fifo_rx_numbytes() >= fifo_rx_level) {
+	    xTimerPendFunctionCall(
+		   rpi_read_complete,
+		   rpi_uart->config.read_complete_data,
+		   0,
+		   0);
+	}
 }
 
 static void rpi_read(uint8_t* data, int count)

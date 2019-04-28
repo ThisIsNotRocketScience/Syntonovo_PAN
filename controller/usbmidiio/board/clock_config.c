@@ -65,7 +65,7 @@ outputs:
 - {id: FXCOM2_clock.outFreq, value: 48 MHz}
 - {id: FXCOM7_clock.outFreq, value: 48 MHz}
 - {id: MAIN_clock.outFreq, value: 180 MHz}
-- {id: SCT_clock.outFreq, value: 90 MHz}
+- {id: SCT_clock.outFreq, value: 180 MHz}
 - {id: SYSPLL_clock.outFreq, value: 180 MHz}
 - {id: System_clock.outFreq, value: 180 MHz}
 - {id: USB1_clock.outFreq, value: 48 MHz}
@@ -82,7 +82,7 @@ settings:
 - {id: SYSCON.M_MULT.scale, value: '30', locked: true}
 - {id: SYSCON.N_DIV.scale, value: '1', locked: true}
 - {id: SYSCON.PDEC.scale, value: '2', locked: true}
-- {id: SYSCON.SCTCLKDIV.scale, value: '2', locked: true}
+- {id: SYSCON.SCTCLKDIV.scale, value: '1', locked: true}
 - {id: SYSCON.SCTCLKSEL.sel, value: SYSCON.MAINCLKSELB}
 - {id: SYSCON.USB1CLKSEL.sel, value: SYSCON.USBDIRECT}
 - {id: SYSCON.USBPLL_PSEL.scale, value: '4', locked: true}
@@ -155,7 +155,7 @@ void BOARD_BootClockRUN(void)
     CLOCK_SetClkDiv(kCLOCK_DivUsb1Clk, 0U, true);                  /*!< Reset USB1CLKDIV divider counter and halt it */
     CLOCK_SetClkDiv(kCLOCK_DivUsb1Clk, 1U, false);                  /*!< Set USB1CLKDIV divider to value 1 */
     CLOCK_SetClkDiv(kCLOCK_DivSctClk, 0U, true);                  /*!< Reset SCTCLKDIV divider counter and halt it */
-    CLOCK_SetClkDiv(kCLOCK_DivSctClk, 2U, false);                  /*!< Set SCTCLKDIV divider to value 2 */
+    CLOCK_SetClkDiv(kCLOCK_DivSctClk, 1U, false);                  /*!< Set SCTCLKDIV divider to value 1 */
 
     /*!< Set up clock selectors - Attach clocks to the peripheries */
     CLOCK_AttachClk(kSYS_PLL_to_MAIN_CLK);                  /*!< Switch MAIN_CLK to SYS_PLL */
