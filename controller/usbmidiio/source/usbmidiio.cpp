@@ -50,7 +50,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include "rpi.h"
-#include "../../pansim/PanPreset.h"
+#include "../../Raspberry/PanPreset.h"
 
 /* TODO: insert other definitions and declarations here. */
 
@@ -202,9 +202,9 @@ void SetColor(int Led, int r, int g, int b)
 	int idx = (Led) % 16;
 	int set = (Led) / 16;
 	int *colorset = set>0?colorset2:colorset1;
-	colorset[idx * 3 + 0] = b;
-	colorset[idx * 3 + 1] = r ;
-	colorset[idx * 3 + 2] = g;
+	colorset[idx * 3 + 0] = b >> 4; // XXX TODO DIM LEDS
+	colorset[idx * 3 + 1] = r >> 4;
+	colorset[idx * 3 + 2] = g >> 4;
 
 
 }
@@ -328,6 +328,7 @@ void SendLeds()
 #define OOB_ENCODER_CW		(0x57)
 #define OOB_ENCODER_DOWN	(0x58)
 #define OOB_ENCODER_UP		(0x59)
+#define OOB_SWITCH_CHANGE	(0x5F)
 
 void SW1ClkOn()
 {
@@ -383,7 +384,7 @@ int SW2Data()
 enum LedButton_t
 {
 #define LEDBUTTON(name,x,y,id,str,r,g,b)  _ledbutton_##name,
-#include "../../../PanSim/FinalPanHeader.h"
+#include "../../../Raspberry/FinalPanHeader.h"
 #undef LEDBUTTON
 	__ledbutton_Count
 };
@@ -391,7 +392,7 @@ enum LedButton_t
 enum Encoder_t
 {
 #define LEDENCODER(name,x,y,str)  _encoder_##name,
-#include "../../../PanSim/FinalPanHeader.h"
+#include "../../../Raspberry/FinalPanHeader.h"
 #undef LEDENCODER
 	__encoder_Count
 };
@@ -401,15 +402,17 @@ int encoder_sw[__encoder_Count];
 int encoder_a[__encoder_Count];
 int encoder_c[__encoder_Count];
 
+#define PINMANGLE(PINID) (((PINID)/80)*80+(79-((PINID)%80)))
+
 void buttonmap_init()
 {
-#define DEFINESWITCH(PINID, dummy, NAME) switch_sw[_ledbutton_##NAME] = PINID;
+#define DEFINESWITCH(PINID, dummy, NAME) switch_sw[_ledbutton_##NAME] = PINMANGLE(PINID);
 #include "switches.h"
 #undef DEFINESWITCH
 
-#define ENCODER_sw(PINID, NAME) encoder_sw[_encoder_##NAME] = PINID;
-#define ENCODER_a(PINID, NAME) encoder_a[_encoder_##NAME] = PINID;
-#define ENCODER_c(PINID, NAME) encoder_c[_encoder_##NAME] = PINID;
+#define ENCODER_sw(PINID, NAME) encoder_sw[_encoder_##NAME] = PINMANGLE(PINID);
+#define ENCODER_a(PINID, NAME) encoder_a[_encoder_##NAME] = PINMANGLE(PINID);
+#define ENCODER_c(PINID, NAME) encoder_c[_encoder_##NAME] = PINMANGLE(PINID);
 #define DEFINEENCODER(PINID, PIN, NAME) ENCODER_##PIN(PINID, NAME)
 #include "switches.h"
 #undef ENCODER_sw
@@ -418,35 +421,38 @@ void buttonmap_init()
 #undef DEFINEENCODER
 }
 
-#define ENCODER_DEBOUNCE_COUNT 4
+#define ENCODER_DEBOUNCE_COUNT 2
 
 uint8_t switch_state[__ledbutton_Count] = {0};
-uint8_t encoder_state[__encoder_Count * ENCODER_DEBOUNCE_COUNT] = {0};
+uint8_t encoder_sw_state[__encoder_Count] = {0};
+uint8_t encoder_state[__encoder_Count] = {0};
+uint8_t encoder_debounce_state[__encoder_Count * ENCODER_DEBOUNCE_COUNT] = {0};
 
-int switch_process(int swid, int swstate)
+int switch_process(uint8_t* state, int swstate)
 {
 	int r = 0;
 
-	if (swstate == 0 && switch_state[swid]) r = -1;
-	if (swstate == 1 && !switch_state[swid]) r = 1;
+	if (swstate == 0 && *state) r = -1;
+	if (swstate == 1 && !*state) r = 1;
 
-	switch_state[swid] = swstate;
+	*state = swstate;
 	return r;
 }
 
 int encoder_debounce(int encid, int input)
 {
 	int ok = 1;
+	uint8_t* state = &encoder_debounce_state[encid * ENCODER_DEBOUNCE_COUNT];
 	for (int i = 0; i < ENCODER_DEBOUNCE_COUNT - 1; i++) {
-			if (input != encoder_state[encid * ENCODER_DEBOUNCE_COUNT + i]) {
+			if (input != state[i]) {
 					ok = 0;
 			}
-			encoder_state[i] = encoder_state[i + 1];
+			state[i] = state[i + 1];
 	}
-	if (input != encoder_state[encid * ENCODER_DEBOUNCE_COUNT + ENCODER_DEBOUNCE_COUNT - 1]) {
+	if (input != state[ENCODER_DEBOUNCE_COUNT - 1]) {
 			ok = 0;
 	}
-	encoder_state[encid * ENCODER_DEBOUNCE_COUNT + ENCODER_DEBOUNCE_COUNT - 1] = input;
+	state[ENCODER_DEBOUNCE_COUNT - 1] = input;
 
 	return ok;
 }
@@ -459,7 +465,9 @@ int encoder_process(int encid, int astate, int cstate)
 			 1,  0,  0, -1,
 			 0, -1,  1,  0
 	};
-	int prev_encoder_state = encoder_state[encid * ENCODER_DEBOUNCE_COUNT + ENCODER_DEBOUNCE_COUNT - 1];
+	int prev_encoder_state = encoder_state[encid] & 0x0f;
+	int prev_encoder_value = (encoder_state[encid] >> 4) & 3;
+	int cur_encoder_value = (encoder_state[encid] >> 6) & 3;
 	int new_encoder_state = (astate & 1) | ((cstate & 1) << 1);
 	if (!encoder_debounce(encid, new_encoder_state)) {
 		return 0;
@@ -467,7 +475,23 @@ int encoder_process(int encid, int astate, int cstate)
 
 	if (new_encoder_state != prev_encoder_state) {
 			int dir = encoder_shift[(prev_encoder_state << 2) | new_encoder_state];
-			prev_encoder_state = new_encoder_state;
+
+			cur_encoder_value = (cur_encoder_value + dir) & 3;
+
+			if (((cur_encoder_value - prev_encoder_value) & 3) == 2) {
+				prev_encoder_value = cur_encoder_value;
+
+				if (astate == 1) {
+					dir = 0;
+				}
+			}
+			else {
+				dir = 0;
+			}
+
+			encoder_state[encid] = new_encoder_state | (prev_encoder_value << 4) | (cur_encoder_value << 6);
+
+			//if (dir) printf("%d -> %d\n", encid, dir);
 
 			return dir;
 	}
@@ -475,9 +499,15 @@ int encoder_process(int encid, int astate, int cstate)
 	return 0;
 }
 
+uint8_t sw[80 * 2];
+uint8_t last_sw[80 * 2];
+
 void ScanButtonsAndEncoders()
 {
-	uint8_t sw[80 * 2];
+	SW1LatchOff();
+	SW2LatchOff();
+
+	memset(sw, 0, sizeof(sw));
 
 	SW1LatchOn();
 	SW2LatchOn();
@@ -487,23 +517,42 @@ void ScanButtonsAndEncoders()
 		sw[i + 80] = SW2Data();
 		SW1ClkOff();
 		SW2ClkOff();
+		__NOP();
+		__NOP();
+		__NOP();
+		__NOP();
+		__NOP();
 		SW1ClkOn();
 		SW2ClkOn();
+		__NOP();
+		__NOP();
+		__NOP();
+		__NOP();
+		__NOP();
 	}
-
-	SW1LatchOff();
-	SW2LatchOff();
 
 	uint8_t data[4] = {0};
 
-	for (int i = 0; i < __ledbutton_Count; i++) {
-		int move = switch_process(i, sw[switch_sw[i]]);
+	for (int i = 0; i < 160; i++) {
+		if (sw[i] != last_sw[i]) { //printf("sw %d\n", PINMANGLE(i));
+			data[0] = PINMANGLE(i);
+			sync_oob_word(&rpi_sync, OOB_SWITCH_CHANGE, *(uint32_t*)data, 0);
+		}
+	}
+	memcpy(last_sw, sw, 160);
 
-		if (move < 0) {
+	for (int i = 0; i < __ledbutton_Count; i++) {
+		if (switch_sw[i] == 0) {
+			// sw[0] is bound to an encoder so we can easily skip unbound buttons
+			continue;
+		}
+		int move = switch_process(&switch_state[i], sw[switch_sw[i]]);
+
+		if (move > 0) {
 			data[0] = i;
 			sync_oob_word(&rpi_sync, OOB_BUTTON_UP, *(uint32_t*)data, 0);
 		}
-		else if (move > 0) {
+		else if (move < 0) {
 			data[0] = i;
 			sync_oob_word(&rpi_sync, OOB_BUTTON_DOWN, *(uint32_t*)data, 0);
 		}
@@ -521,12 +570,12 @@ void ScanButtonsAndEncoders()
 			sync_oob_word(&rpi_sync, OOB_ENCODER_CW, *(uint32_t*)data, 0);
 		}
 
-		move = switch_process(i, sw[encoder_sw[i]]);
-		if (move < 0) {
+		move = switch_process(&encoder_sw_state[i], sw[encoder_sw[i]]);
+		if (move > 0) {
 			data[0] = i;
 			sync_oob_word(&rpi_sync, OOB_ENCODER_UP, *(uint32_t*)data, 0);
 		}
-		else if (move > 0) {
+		else if (move < 0) {
 			data[0] = i;
 			sync_oob_word(&rpi_sync, OOB_ENCODER_DOWN, *(uint32_t*)data, 0);
 		}
@@ -592,6 +641,21 @@ extern "C" void SCT0_IRQHandler(void)
 
 	portEND_SWITCHING_ISR(higherPriorityTaskWoken);
 }
+
+void sync_complete(int status)
+{
+	if (status != 0) {
+        sync_oob_word(&rpi_sync, OOB_UI_PAUSE, 0, 0);
+	    sync_block(&rpi_sync, (uint8_t*)&preset, 0, sizeof(preset), sync_complete);
+		return;
+	}
+
+	if (status == 0) {
+        sync_oob_word(&rpi_sync, OOB_UI_CONTINUE, 0, 0);
+        return;
+	}
+}
+
 
 #define KEYSCAN_NUMKEYSETS (5)
 #define KEYSCAN_MAXINDEX (2*KEYSCAN_NUMKEYSETS)
@@ -662,13 +726,17 @@ void KeyScan()
 	}*/
 
 	//synth_tick();
-	portEND_SWITCHING_ISR(higherPriorityTaskWoken);
+	//portEND_SWITCHING_ISR(higherPriorityTaskWoken);
 }
 
 void KeyboardTask(void* pvParameters)
 {
 	dsp_reset();
 	preset_init();
+
+	rpi_start();
+
+    sync_block(&rpi_sync, (uint8_t*)&preset, 0, sizeof(preset), sync_complete);
 
 	NVIC_SetPriority(SCTIMER_1_IRQN, 2);
     SCTIMER_EnableInterrupts(SCTIMER_1_PERIPHERAL, 1);
@@ -677,7 +745,9 @@ void KeyboardTask(void* pvParameters)
         if( xSemaphoreTake( xKeyTimerSemaphore, ( TickType_t ) 10 ) == pdTRUE )
         {
         	KeyScan();
+            ScanButtonsAndEncoders();
         }
+		//vTaskDelay(1);
 	}
 }
 
@@ -835,20 +905,7 @@ void IdleTask(void* pvParameters)
 {
 	while(1) {
 		rpi_uart.config.timer_tick(rpi_uart.config.timer_tick_data);
-		vTaskDelay(1);
-	}
-}
-
-void sync_complete(int status)
-{
-	if (status != 0) {
-	    sync_block(&rpi_sync, (uint8_t*)&preset, 0, sizeof(preset), sync_complete);
-		return;
-	}
-
-	if (status == 0) {
-        sync_oob_word(&rpi_sync, OOB_UI_CONTINUE, 0, 0);
-        return;
+		vTaskDelay(50);
 	}
 }
 
@@ -932,9 +989,11 @@ void LedTask( void * pvParameters )
 
 int main(void) {
   	/* Init board hardware. */
-       BOARD_InitBootPins();
+	BOARD_InitBootPins();
     BOARD_InitBootClocks();
     BOARD_InitBootPeripherals();
+
+    buttonmap_init();
 
     LedsOff();
     LedsOn();
@@ -963,18 +1022,18 @@ int main(void) {
 
     rpi_init(&rpi_uart);
     sync_init(&rpi_sync, &rpi_uart, sync_data_func, sync_oobdata_func);
-    rpi_start();
 
    // while(1) SendLeds();
 
 
     xKeyTimerSemaphore = xSemaphoreCreateBinary();
 
-    xTaskCreate(KeyboardTask, "keys", 256, NULL, 2, NULL);
-    xTaskCreate(LedTask, "Leds", 256, NULL, 2, NULL);
+    volatile BaseType_t r = 0;
+    r = xTaskCreate(KeyboardTask, "keys", 256, NULL, 2, NULL);
+    r = xTaskCreate(LedTask, "Leds", 1024, NULL, 3, NULL);
     //xTaskCreate(RpiTask, "rpi", 256, NULL, 4, NULL);
     //xTaskCreate(USBTask, "usb", 512, NULL, 3, NULL);
-    xTaskCreate(IdleTask, "idle", 256, NULL, 7, NULL);
+    r = xTaskCreate(IdleTask, "idle", 512, NULL, 3, NULL);
 
     printf("Everything running\n");
 

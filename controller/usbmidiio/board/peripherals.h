@@ -34,7 +34,7 @@ extern "C" {
 /* Definition of peripheral ID */
 #define USART_MIDI_PERIPHERAL ((USART_Type *)FLEXCOMM1)
 /* Definition of the clock source frequency */
-#define USART_MIDI_CLOCK_SOURCE CLOCK_GetFreq(kCLOCK_Flexcomm1)
+#define USART_MIDI_CLOCK_SOURCE 48000000UL
 /* USART_MIDI interrupt vector ID (number). */
 #define USART_MIDI_FLEXCOMM_IRQN FLEXCOMM1_IRQn
 /* USART_MIDI interrupt handler identifier. */
@@ -51,7 +51,7 @@ extern "C" {
 /* Definition of peripheral ID */
 #define SCTIMER_1_PERIPHERAL SCT0
 /* Definition of clock source frequency */
-#define SCTIMER_1_CLOCK_FREQ CLOCK_GetFreq(kCLOCK_BusClk)
+#define SCTIMER_1_CLOCK_FREQ 180000000UL
 /* SCTimer_1 interrupt vector ID (number). */
 #define SCTIMER_1_IRQN SCT0_IRQn
 /* SCTimer_1 interrupt handler identifier. */

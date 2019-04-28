@@ -10,18 +10,21 @@
 #include "peripherals.h"
 #include "fsl_flexcomm.h"
 
+#include "FreeRTOS.h"
+#include "timers.h"
+
 #define WEAK __attribute__ ((weak))
 
 #define RING_SIZE	16
-static uint8_t fifo_rx_ring[RING_SIZE];
-static int fifo_rx_write = 0;
-static int fifo_rx_read = 0;
-static int fifo_rx_reset_state = 1;
+static volatile uint8_t fifo_rx_ring[RING_SIZE];
+static volatile int fifo_rx_write = 0;
+static volatile int fifo_rx_read = 0;
+static volatile int fifo_rx_reset_state = 1;
 
-static uint8_t fifo_tx_ring[RING_SIZE];
-static int fifo_tx_write = 0;
-static int fifo_tx_read = 0;
-static int fifo_tx_reset_state = 1;
+static volatile uint8_t fifo_tx_ring[RING_SIZE];
+static volatile int fifo_tx_write = 0;
+static volatile int fifo_tx_read = 0;
+static volatile int fifo_tx_reset_state = 1;
 
 static void fifo_rx_queue(uint8_t byte)
 {
@@ -161,7 +164,7 @@ void control_init()
 
 	USART_DSP_PERIPHERAL->FIFOINTENSET |= USART_FIFOINTENSET_RXLVL_MASK | USART_FIFOINTENSET_RXERR_MASK | USART_FIFOINTENSET_TXLVL_MASK;
 
-    NVIC_SetPriority(USART_DSP_FLEXCOMM_IRQN, 3);
+    NVIC_SetPriority(USART_DSP_FLEXCOMM_IRQN, 1);
 	EnableIRQ(USART_DSP_FLEXCOMM_IRQN);
 }
 
@@ -211,6 +214,8 @@ void FLEXCOMM7_IRQHandler(void)
 			}
         }
     }
+
+    portYIELD_FROM_ISR( pdFALSE );
 }
 
 void control_write(uint8_t* data, int count)
