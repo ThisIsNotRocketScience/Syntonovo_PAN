@@ -40,7 +40,8 @@ void FinalPan_SetupDefaultPreset()
 	gPanState.SetLed(Led_Low, gCurrentPreset.low);
 	gPanState.SetLed(Led_High, gCurrentPreset.high);
 	gPanState.SetLed(Led_Active, gCurrentPreset.active);
-
+	gPanState.BankLeft = 0;
+	gPanState.BankRight = 1;
 	gRevertPreset.SetName("Fancy Beeping");
 	gCurrentPreset.SetName("Fancy Beeping");
 
@@ -69,6 +70,7 @@ typedef struct FinalPan_GuiResources_t
 	ImTextureID OnOff[4];
 	ImFont *BigFont;
 	ImFont *SmallFont;
+	ImFont *MediumFont;
 	ImU32 Highlight;
 	ImU32 Normal;
 	ImU32 BGColor;
@@ -811,7 +813,7 @@ void _screensetup_t::SetupLeds()
 void _screensetup_t::Action(int action)
 {
 
-}
+};
 
 void _screensetup_t::SetFirstEnabledControlActive()
 {
@@ -884,9 +886,54 @@ void _screensetup_t::ButtonStyle(int i, int style, int target)
 
 }
 
-void _screensetup_t::AddText(float x, float y, char *t, alignment_t align)
+void _textcontrol_t::Render(bool active)
 {
+	switch (fontsize)
+	{
+	case font_medium: ImGui::PushFont(res.MediumFont); break;
+	case font_large: ImGui::PushFont(res.BigFont); break;
+	default:
+	case font_small: ImGui::PushFont(res.SmallFont); break;
+	}
+	if (dynamic) SetTitle(src);
+	float x2 = x;
+	switch (Align)
+	{
+	case align_right:
+	{
+		ImVec2 textsize = ImGui::CalcTextSize(title);
+		x2 -= textsize.x;
+	}
+	break;
+	case align_center:
+	{
+		ImVec2 textsize = ImGui::CalcTextSize(title);
+		x2 -= textsize.x / 2;
+	}
+	break;
+	}
+
+	ImGui::SetCursorPos(ImVec2(x2, y));
+	ImGui::TextColored(Color, title);
+	ImGui::PopFont();
+}
+
+void _screensetup_t::AddDynamicText(float x, float y, char *t, int len, alignment_t align, font_size fontsize )
+{
+	_textcontrol_t *T = new _textcontrol_t(true, t);
+	T->Align = align;
+	T->fontsize = fontsize;
+	T->SetTitle(t);
+	T->x = x;
+	T->y = y;
+	ControlsInOrder.push_back(T);
+
+}
+void _screensetup_t::AddText(float x, float y, char *t, alignment_t align, font_size fontsize)
+{
+	
 	_textcontrol_t *T = new _textcontrol_t();
+	T->fontsize = fontsize;
 	T->Align = align;
 	T->SetTitle(t);
 	T->x = x;
@@ -970,8 +1017,10 @@ void _screensetup_t::SideButton(FinalLedButtonEnum b)
 	}
 }
 
-void LoadPatch(int n)
+
+void LoadSelectedPreset()
 {
+	int n = gPanState.CurrentPatch;
 	int bank = gPanState.BankLeft;
 	int idx = n;
 	if (n > 7)
@@ -979,9 +1028,17 @@ void LoadPatch(int n)
 		bank = gPanState.BankRight;
 		idx -= 8;
 	}
+
+	printf("Pan should load preset %d from bank %c.\n", idx, bank + 'A');
+
+}
+
+
+void LoadPatch(int n)
+{
 	gPanState.CurrentPatch = n;
 
-	
+	LoadSelectedPreset();
 	// do the stuff needed to load bank/patch
 	// Load(bank,idx); -> maybe loading anim?
 
@@ -1098,6 +1155,7 @@ void FinalPan_LoadResources()
 	res.LeftIndicator = Raspberry_LoadTexture("UI_LEFT.png");
 	res.RightIndicator = Raspberry_LoadTexture("UI_RIGHT.png");
 	res.SmallFont = io.Fonts->AddFontFromFileTTF("Fontfabric - Panton.otf", 30.0f);
+	res.MediumFont = io.Fonts->AddFontFromFileTTF("Fontfabric - Panton.otf", 38.0f);
 	res.BigFont = io.Fonts->AddFontFromFileTTF("Fontfabric - Panton ExtraBold.otf", 44.0f);
 	init = true;
 
@@ -1216,6 +1274,8 @@ void Gui::ButtonPressed(FinalLedButtonEnum Button)
 	// insert what to do if selecting modulation source/target here? 
 	switch (Button)
 	{
+	case ledbutton_BankLeft: GotoPage(SCREEN_SELECTBANKL); break;
+	case ledbutton_BankRight: GotoPage(SCREEN_SELECTBANKR); break;
 	case ledbutton_ArpEdit: GotoPage(SCREEN_ARP); break;
 	case ledbutton_BX:  GotoPage(SCREEN_X); break;
 	case ledbutton_BY:  GotoPage(SCREEN_Y); break;
@@ -1293,10 +1353,25 @@ class PresetScreen : public _screensetup_t
 {
 public:
 	std::vector<LetterControl*> Letters;
-	
+	virtual void Action(int action)
+	{
+		switch (action)
+		{
+		case MenuAction_No:
+			gGui.GotoPage(SCREEN_HOME);
+			break;
+		case MenuAction_Yes:
+
+			for (int i = 0; i < PRESET_NAME_LENGTH - 1; i++)
+			{
+				gCurrentPreset.Name[i] = Letters[i]->Current;
+			}
+			gGui.GotoPage(SCREEN_HOME);
+			break;
+		}
+	}
 	PresetScreen()
 	{
-		snprintf(Name, PRESET_NAME_LENGTH, "%s", gCurrentPreset.Name);
 
 		for (int i = 0; i < PRESET_NAME_LENGTH-1; i++)
 		{
@@ -1305,14 +1380,19 @@ public:
 
 		EnableButton(10, "Cancel", MenuEntry_Action, MenuAction_No);
 
-		EnableButton(11, "Save", MenuEntry_Action, MenuAction_Yes);	
+		EnableButton(11, "OK", MenuEntry_Action, MenuAction_Yes);	
 	}
 
 	virtual void Activate()
 	{
+		for (int i = 0; i < PRESET_NAME_LENGTH - 1; i++)
+		{
+			Letters[i]->Current = gCurrentPreset.Name[i];
+		}
+
 		SetActiveControl(Letters[0]);
 	}
-	char Name[PRESET_NAME_LENGTH];
+	
 	
 	void AddLetterControl(int x, int y, int id)
 	{
@@ -1331,12 +1411,70 @@ public:
 	}
 };
 
+class BankSelectScreen : public _screensetup_t
+{
+public:
+
+	virtual void Action(int action)
+	{
+		
+		if (Side == Left) gPanState.BankLeft = action; else gPanState.BankRight = action;
+		LoadSelectedPreset();
+		Activate();
+	}
+	LeftRight Side;
+	void SetLeftRight(LeftRight lr)
+	{
+
+	}
+	BankSelectScreen()
+	{
+
+	
+	}
+	virtual void Activate()
+	{
+		int *CurrentBank = &gPanState.BankLeft;
+		if (Side == Left)
+		{
+			SetTitle("Select Left Bank");
+		}
+		else
+		{
+			CurrentBank= &gPanState.BankRight;
+			SetTitle("Select Right Bank");
+		}
+		EnableButton(1, (*CurrentBank == 0) ? "A (current)" : "A", MenuEntry_Action, 0);
+		EnableButton(2, (*CurrentBank == 1) ? "B (current)" : "B", MenuEntry_Action, 1);
+		EnableButton(3, (*CurrentBank == 2) ? "C (current)" : "C", MenuEntry_Action, 2);
+		EnableButton(4, (*CurrentBank == 3) ? "D (current)" : "D", MenuEntry_Action, 3);
+		EnableButton(5, (*CurrentBank == 4) ? "E (current)" : "E", MenuEntry_Action, 4);
+		EnableButton(6, (*CurrentBank == 5) ? "F (current)" : "F", MenuEntry_Action, 5);
+		
+		EnableButton(8, (*CurrentBank == 6) ? "G (current)" : "G", MenuEntry_Action, 6);
+		EnableButton(9, (*CurrentBank == 7) ? "H (current)" : "H", MenuEntry_Action, 7);
+		EnableButton(10, (*CurrentBank == 8) ? "I (current)" : "I", MenuEntry_Action, 8);
+		EnableButton(11, (*CurrentBank == 9) ? "J (current)" : "J", MenuEntry_Action, 9);
+		EnableButton(12, (*CurrentBank == 10) ? "K (current)" : "K", MenuEntry_Action, 10);
+		EnableButton(13, (*CurrentBank == 11) ? "L (current)" : "L", MenuEntry_Action, 11);
+	}
+};
+
 void Gui::BuildScreens()
 {
 	for (int i = 0; i < SCREENS_COUNT; i++) Screens[i] = 0;
 
 	Screens[SCREEN_PRESET] = new PresetScreen();
-	
+	auto BL = new BankSelectScreen();
+	BL->Side = Left;
+	auto BR = new BankSelectScreen();
+	BR->Side = Right;
+	Screens[SCREEN_SELECTBANKL] = BL;
+	Screens[SCREEN_SELECTBANKR] = BR;
+
+	BL->LedButtonsThatOpenThisScreen.push_back(ledbutton_BankLeft);
+	BR->LedButtonsThatOpenThisScreen.push_back(ledbutton_BankRight);
+
 	Screens[SCREEN_X] = new ModSourceScreen();
 	Screens[SCREEN_Y] = new ModSourceScreen();
 	Screens[SCREEN_Z] = new ModSourceScreen();
@@ -1354,7 +1492,7 @@ void Gui::BuildScreens()
 
 	Screens[SCREEN_HOME]->SetTitle("Syntonovo Pan");
 	Screens[SCREEN_HOME]->AddText(512, 40, "Current preset: ", align_right);
-	Screens[SCREEN_HOME]->AddText(512, 40, "Some Sound");
+	Screens[SCREEN_HOME]->AddDynamicText(512, 40, gCurrentPreset.Name, PRESET_NAME_LENGTH);
 
 	Screens[SCREEN_HOME]->EncodersThatOpenThisScreen.push_back(encoder_SketchLeft);
 

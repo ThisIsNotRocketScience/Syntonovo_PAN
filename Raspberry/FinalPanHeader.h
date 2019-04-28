@@ -39,7 +39,7 @@ LEDENCODER(Cleanmix, 520, 65, "Cleanmix")
 LEDENCODER(Masterout, 553, 94, "Masterout")
 LEDENCODER(MasteroutHeadphone, 26, 94, "MasteroutHeadphone")
 
-LEDENCODER(SketchLeft, 100, 142, "SketchLeft")
+LEDENCODER(SketchLeft, 150, 142, "SketchLeft")
 LEDENCODER(SketchRight, 400, 142, "SketchRight")
 
 
@@ -101,8 +101,8 @@ LEDBUTTON(B14, 469,181,35, "14", 1, 0, 0)
 LEDBUTTON(B15, 484,181,36, "15", 1, 0, 0)
 LEDBUTTON(B16, 500,181,37, "16", 1, 0, 0)
 
-LEDBUTTON(BankLeft, 0, 0,38, "Bank", 1, 0.9f, 0)
-LEDBUTTON(BankRight, 0, 0,39, "Bank", 1, 0.9f, 0)
+LEDBUTTON(BankLeft, 150, 170,38, "Left Hand Bank", 1, 0.9f, 0)
+LEDBUTTON(BankRight, 400, 170,39, "Right Hand Bank", 1, 0.9f, 0)
 
 LEDBUTTON(OctUpLeft, 0, 0,40, "OctUp", 1, 0.9f, 0)
 LEDBUTTON(OctDownLeft, 0, 0,41, "OctDown", 1, 0.9f, 0)

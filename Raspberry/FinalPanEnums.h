@@ -76,9 +76,16 @@ enum Screens_t
 	SCREEN_ARP,
 	SCREEN_MIXER,
 	SCREEN_EFFECTS,
-
+	SCREEN_SELECTBANKL,
+	SCREEN_SELECTBANKR,
 	SCREEN_TEST,
 	SCREENS_COUNT
+};
+
+enum LeftRight
+{
+	Left,
+	Right
 };
 
 enum FinalLedEnum

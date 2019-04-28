@@ -33,6 +33,12 @@
     <ClCompile Include="finalpanguimain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="serialtest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="linux_serial.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui_impl_es2.h">

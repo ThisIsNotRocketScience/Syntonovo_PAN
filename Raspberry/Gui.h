@@ -1,5 +1,5 @@
 #pragma once
-
+#include <vector>
 
 enum alignment_t
 {
@@ -9,6 +9,12 @@ enum alignment_t
 	__align_count
 };
 
+enum font_size
+{
+	font_small,
+	font_medium,
+	font_large
+};
 
 class _control_t
 {
@@ -44,37 +50,20 @@ public:
 class _textcontrol_t : public _control_t
 {
 public:
-	_textcontrol_t()
+	bool dynamic;
+	char *src;
+	font_size fontsize;
+	_textcontrol_t(bool dyn = false, char *dynpointer = 0)
 	{
+		dynamic = dyn;
+		src = dynpointer;
 		Color = ImVec4(1, 1, 1, 1);
 		skipencodercycling = true;
 	}
 	float x, y;
-	float fontsize;
-	alignment_t Align;
+		alignment_t Align;
 	ImVec4 Color;
-	virtual void Render(bool active)
-	{
-		float x2 = x;
-		switch (Align)
-		{
-		case align_right:
-		{
-			ImVec2 textsize = ImGui::CalcTextSize(title);
-			x2 -= textsize.x;
-		}
-		break;
-		case align_center:
-		{
-			ImVec2 textsize = ImGui::CalcTextSize(title);
-			x2 -= textsize.x / 2;
-		}
-		break;
-		}
-
-		ImGui::SetCursorPos(ImVec2(x2, y));
-		ImGui::TextColored(Color, title);
-	}
+	virtual void Render(bool active);
 
 };
 
@@ -157,8 +146,9 @@ public:
 
 	sidebutton_t buttons[14];
 	bottomencoder_t encoders[11];
-	void AddText(float x, float y, char *t, alignment_t align = align_left);
-
+	void AddText(float x, float y, char *t, alignment_t align = align_left, font_size fontsize = font_small);
+	void AddDynamicText(float x, float y, char *t, int len, alignment_t align = align_left, font_size fontsize = font_small);
+	
 	void ChangeActiveControl(int delta);
 
 	virtual void SketchLeft(int delta);
