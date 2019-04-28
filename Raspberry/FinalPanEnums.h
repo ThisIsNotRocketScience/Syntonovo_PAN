@@ -7,12 +7,25 @@
 #define ParamBoxWidth 220
 #define ParamVerticalBoxHeight 90
 
+#pragma pack(1)
+
+#ifdef WIN32
+	#ifndef PACK 
+		#define PACK
+	#endif
+#else
+	#ifndef PACK 
+		#define PACK  __attribute__((packed))
+	#endif
+#endif
+
 
 class hsv
 {
 public:
 	uint16_t h, s, v;
-};
+} PACK;
+
 enum
 {
 	Led_Low,
@@ -39,6 +52,7 @@ enum Screens_t
 
 	SCREEN_KEYBOARD,
 	SCREEN_TOUCH,
+	SCREEN_VELOCITY,
 	SCREEN_X,
 	SCREEN_Y,
 	SCREEN_Z,
@@ -285,6 +299,22 @@ public:
 
 	ButtonState_t ledbuttons[__FINALLEDBUTTON_COUNT];
 	ButtonState_t encoders[__FINALENCODER_COUNT];
+	void ClearLeds()
+	{
+		for (int i = 0; i < __FINALLEDBUTTON_COUNT; i++)
+		{
+
+			ledbuttons[i].led.mode = ledmode_off;
+
+		}
+		for (int i = 0; i < __FINALENCODER_COUNT; i++)
+		{
+			encoders[i].led.mode = ledmode_off;
+		}
+	}
+	int BankLeft;
+	int BankRight;
+	int CurrentPatch;
 };
 
 #endif

@@ -133,6 +133,9 @@ public:
 	int ActiveControl;
 	_screensetup_t *Modal;
 
+	std::vector<int> EncodersThatOpenThisScreen;
+	std::vector<int> LedButtonsThatOpenThisScreen;
+
 	_screensetup_t(_screensetup_t *parent = NULL);
 
 
@@ -180,7 +183,7 @@ class Gui
 {
 public:
 	Gui();
-
+	void Init();
 	void SketchLeftPress();
 	void SketchRightPress();
 

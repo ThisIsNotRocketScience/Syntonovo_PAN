@@ -1,7 +1,7 @@
 #include <Windows.h>
 #pragma comment(lib, "winmm.lib")
 
-#include "FinalPanEnums.h"
+#include "../Raspberry/FinalPanEnums.h"
 
 
 #include "imgui.h"
@@ -14,10 +14,10 @@
 #include "../libs/lodepng-master/lodepng.h"
 
 //#include  "PanHeader.h"
-#include "FinalPanHeader.h"
-#include "PanPreset.h"
+#include "../Raspberry/FinalPanHeader.h"
+#include "../Raspberry/PanPreset.h"
 
-extern void FinalPan_WindowFrame();
+extern void FinalPan_WindowFrame(float DT);
 extern void FinalPan_LoadResources();
 extern void FinalPan_SetupLeds();
 extern void FinalPan_SetupDefaultPreset();
@@ -42,7 +42,7 @@ public:
 
 fLedButton FinalButtons[__FINALLEDBUTTON_COUNT] = {
 #define LEDBUTTON(iname,ix,iy,fpid,str,r,g,b) {str ,ix, iy,ledbutton_##iname, fpid,r,g,b},
-#include "FinalPanHeader.h"
+#include "../Raspberry/FinalPanHeader.h"
 #undef LEDBUTTON
 
 };
@@ -50,7 +50,7 @@ fLedButton FinalButtons[__FINALLEDBUTTON_COUNT] = {
 #if (__FINALLED_COUNT>0)
 Led FinalLeds[__FINALLED_COUNT] = {
 #define LED(iname,ix,iy) {#iname,ix, iy, led_##iname},
-#include "FinalPanHeader.h"
+#include "../Raspberry/FinalPanHeader.h"
 #undef LED
 
 };
@@ -72,7 +72,7 @@ public:
 
 fEncoder FinalEncoders[__FINALENCODER_COUNT] = {
 #define LEDENCODER(iname,ix,iy,str) {str,ix, iy, encoder_##iname,0,0,ImVec4(0,0,0,1)},
-#include "FinalPanHeader.h"
+#include "../Raspberry/FinalPanHeader.h"
 #undef LEDENCODER
 };
 
@@ -783,10 +783,9 @@ int main(int argc, char** argv)
 	ImGui::GetStyle().FramePadding = ImVec2(5, 5);
 	ImGui::GetStyle().Colors[ImGuiCol_WindowBg] = ImVec4(1.0f, 1.0f, 1.0f, .800f);
 
-	static bool parameters = false;
 	static bool finalpan = true;
 	static bool finalparameters = true;
-	static bool mainscreen = false;
+	//static bool mainscreen = false;
 	static bool keyboard = false;
 	static bool allswitches = false;
 
@@ -805,7 +804,7 @@ int main(int argc, char** argv)
 	para.paramid = 0xfcfe;
 	para.value = 3;
 	set(para);
-
+	auto t = SDL_GetTicks();
 #define __SERIALINBUFFERSIZE 100000
 	unsigned char buffer[__SERIALINBUFFERSIZE];
 	while (!done)
@@ -911,7 +910,10 @@ int main(int argc, char** argv)
 		if (finalpan)
 		{
 			ImGui::SetNextWindowPos(ImVec2(10, 30));
-			FinalPan_WindowFrame();
+			auto nt = SDL_GetTicks();
+			auto diff = nt - t;
+			t = nt;
+			FinalPan_WindowFrame(diff * 0.001);
 			FinalPan_SetupLeds();
 			blinktime++;
 			blinkon = ((blinktime % 30) > 15) ? 1 : 0;
@@ -924,10 +926,10 @@ int main(int argc, char** argv)
 			{
 				
 			}
-
+			ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(1, 1, 1, 0.1));
 			ImGui::PushFont(pFontBold);
 			{
-				ImGui::Begin("FinalPan Parameters", &parameters, ImGuiWindowFlags_AlwaysAutoResize);
+				ImGui::Begin("FinalPan Parameters", &finalparameters, ImGuiWindowFlags_AlwaysAutoResize);
 				ImGui::PushFont(pFont);
 
 				ImGui::SameLine();
@@ -959,8 +961,14 @@ int main(int argc, char** argv)
 				for (int i = 0; i < __FINALENCODER_COUNT; i++)
 				{
 					FinalEncoders[i].ledmode = gPanState.encoders[i].led.mode;
-					FinalEncoders[i].ledcolor = ImVec4(gPanState.encoders[i].led.r / 65535.0f, gPanState.encoders[i].led.g / 65535.0f, gPanState.encoders[i].led.b / 65535.0f, 1.0f);
-
+					if (FinalEncoders[i].ledmode == ledmode_solid || ((FinalEncoders[i].ledmode == ledmode_blinkfast || FinalEncoders[i].ledmode == ledmode_blinkslow) && blinkon > 0))
+					{
+						FinalEncoders[i].ledcolor = ImVec4(gPanState.encoders[i].led.r / 65535.0f, gPanState.encoders[i].led.g / 65535.0f, gPanState.encoders[i].led.b / 65535.0f, 1.0f);
+					}
+					else
+					{
+						FinalEncoders[i].ledcolor = ImVec4(0,0,0, 1.0f);
+					}
 
 					auto R = ImGui::CalcTextSize(FinalEncoders[i].name);
 					ImGui::SetCursorScreenPos(ImVec2(pos.x + FinalEncoders[i].x * xscalefac -R.x/2, pos.y + 45 + FinalEncoders[i].y * yscalefac));
@@ -997,6 +1005,7 @@ int main(int argc, char** argv)
 				ImGui::End();
 				ImGui::PopFont();
 			}
+			ImGui::PopStyleColor();
 		}
 
 
