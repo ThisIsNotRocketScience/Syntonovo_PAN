@@ -185,7 +185,7 @@ public:
 	uint32_t switches[2];
 	uint16_t paramvalue[256];
 
-#define SYNTH_MODSOURCE_COUNT (256)
+#define SYNTH_MODSOURCE_COUNT (64)
 	ModMatrixRow_t modmatrix[SYNTH_MODSOURCE_COUNT];
 
 #define NUM_LFOS (16)
