@@ -1,6 +1,8 @@
 #include <Windows.h>
 #pragma comment(lib, "winmm.lib")
 
+#include "../Raspberry/FinalPanEnums.h"
+
 
 #include "imgui.h"
 #include "imgui_impl_sdl_gl3.h"
@@ -10,15 +12,16 @@
 #include <SDL.h>
 
 #include "../libs/lodepng-master/lodepng.h"
-#include "FinalPanEnums.h"
 
-#include  "PanHeader.h"
-#include "FinalPanHeader.h"
+//#include  "PanHeader.h"
+#include "../Raspberry/FinalPanHeader.h"
+#include "../Raspberry/PanPreset.h"
 
-extern void FinalPan_WindowFrame();
+extern void FinalPan_WindowFrame(float DT);
 extern void FinalPan_LoadResources();
 extern void FinalPan_SetupLeds();
 extern void FinalPan_SetupDefaultPreset();
+extern PanPreset_t gCurrentPreset;
 
 extern PanState_t gPanState;
 class fLedButton
@@ -39,7 +42,7 @@ public:
 
 fLedButton FinalButtons[__FINALLEDBUTTON_COUNT] = {
 #define LEDBUTTON(iname,ix,iy,fpid,str,r,g,b) {str ,ix, iy,ledbutton_##iname, fpid,r,g,b},
-#include "FinalPanHeader.h"
+#include "../Raspberry/FinalPanHeader.h"
 #undef LEDBUTTON
 
 };
@@ -47,7 +50,7 @@ fLedButton FinalButtons[__FINALLEDBUTTON_COUNT] = {
 #if (__FINALLED_COUNT>0)
 Led FinalLeds[__FINALLED_COUNT] = {
 #define LED(iname,ix,iy) {#iname,ix, iy, led_##iname},
-#include "FinalPanHeader.h"
+#include "../Raspberry/FinalPanHeader.h"
 #undef LED
 
 };
@@ -69,7 +72,7 @@ public:
 
 fEncoder FinalEncoders[__FINALENCODER_COUNT] = {
 #define LEDENCODER(iname,ix,iy,str) {str,ix, iy, encoder_##iname,0,0,ImVec4(0,0,0,1)},
-#include "FinalPanHeader.h"
+#include "../Raspberry/FinalPanHeader.h"
 #undef LEDENCODER
 };
 
@@ -673,146 +676,18 @@ void Teensy_BuildPresetName(int bank, int slot)
 }
 
 
-void Teensy_LoadSDPreset(int bank, int slot)
-{
-	Teensy_BuildPresetName(bank, slot);
-	FILE *F = fopen(presetname, "rb+");
-	if (F)
-	{
-		PanPreset_t inc;
-		fread(&inc, sizeof(PanPreset_t), 1, F);
-		LoadPreset(inc);
-	}
-}
-void Teensy_SaveSDPreset(int bank, int slot)
-{
-	Teensy_BuildPresetName(bank, slot);
-}
-
-
-void DoCommand(unsigned char comm, uint32_t data)
-{
-	switch (comm)
-	{
-	case 0xe0:
-	{
-		int encoder = data >> 8;
-		int delta = data & 7;
-		if (delta == 2) delta = -1;
-		Teensy_EncoderRotate(encoder, delta);
-	}
-	break;
-	case 0x81:
-	{
-		uint16_t idx = data >> 8;
-		uint16_t val = data & 0xff;
-		int N = Teensy_FindButtonIDX(idx);
-		if (N > -1)
-		{
-			Buttons[N].value = ((val == 0) ? true : false);
-
-			Teensy_ButtonPressed(Buttons[N].id, Buttons[N].value);
-
-		}
-		printf("incoming button: %d, %d\n", idx, val);
-
-		//	UIWriteLed(idx, val);
-	}
-	break;
-	case 0x82:
-	{
-		uint16_t idx = data >> 16;
-		uint16_t val = data & 0xffff;
-		int TargetIDX = Teensy_FindKnobIDX(idx);
-		if (TargetIDX > -1)
-		{
-
-			Knobs[TargetIDX].value = val / 1023.0f;
-			Teensy_KnobChanged(Knobs[TargetIDX].id, uint32_t(floor((Knobs[TargetIDX].value*65535.0))));
-			//	printf("incoming pot: %d, %d\n", idx, val);
-		}
-	}
-	break;
-	case 0x90:
-		printf("0x90: %d\n", data);
-		break;
-	case 0x91:
-		printf("0x91: %d\n", data);
-		break;
-	default:
-//		DoDataCommands(comm, data);
-		break;
-
-	}
-}
-
-int HandleSerial(unsigned char inb)
-{
-	if ((inb & 0x80) == 0x80)
-	{
-		SerialStatus = inb;
-		SerialCounter = 4;
-		SerialData = 0;
-		return 1;
-	}
-	else
-	{
-		if (SerialCounter > 0)
-		{
-			SerialCounter--;
-			SerialData += inb << ((3 - SerialCounter) * 7);
-			if (SerialCounter == 0)
-			{
-				DoCommand(SerialStatus, SerialData);
-			}
-			return 1;
-		}
-
-	}
-	return 0;
-}
-
-void SendLocalCommand(unsigned char command, uint32_t data)
-{
-	uint8_t buffer[10];
-	uint32_t D = ConvertDat(data);
-	buffer[0] = command;
-	buffer[1] = (D & 127);
-	buffer[2] = (((D >> 8) & 127));
-	buffer[3] = (((D >> 16) & 127));
-	buffer[4] = (((D >> 24) & 127));
-	DoCommand(command, data);
-};
-
-void SendRaspberryState()
-{
-	unsigned char *b = (unsigned char *)&Raspberry_guidata;
-	uint32_t sent = 0;
-	unsigned char commandb = 0xd0;
-	while (sent < sizeof(Raspberry_GuiData_t))
-	{
-		byte b1 = *b++;
-		byte b2 = *b++;
-		byte b3 = *b++;
-		SendLocalCommand(commandb, b1 + (b2 << 8) + (b3 << 16));
-		sent += 3;
-		commandb = 0xd1;
-	}
-	SendLocalCommand(0xd2, 0);
-
-}
-extern PanPreset_t gPreset;
-extern void SetSwitch(SwitchEnum SwitchID);
-extern void ClearSwitch(SwitchEnum SwitchID);
-extern bool GetSwitch(SwitchEnum SwitchID);
 std::string switchnames[] = {
-
 #define SWITCH(name,id, defaultvalue) #name ,
 #include "../interface/paramdef.h"
 #undef SWITCH
 	"last"
+};
+
+int HandleSerial(unsigned char c)
+{
+	return 1;
 }
-;
+
 int main(int argc, char** argv)
 {
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) != 0)
@@ -820,7 +695,7 @@ int main(int argc, char** argv)
 		printf("Error: %s\n", SDL_GetError());
 		return -1;
 	}
-	printf("sizeof modsource: %d\n", sizeof(ModSource_t));
+
 	HMIDIIN hMidiDevice[255] = { 0 };
 	DWORD nMidiPort = 0;
 	MMRESULT rv;
@@ -908,10 +783,9 @@ int main(int argc, char** argv)
 	ImGui::GetStyle().FramePadding = ImVec2(5, 5);
 	ImGui::GetStyle().Colors[ImGuiCol_WindowBg] = ImVec4(1.0f, 1.0f, 1.0f, .800f);
 
-	static bool parameters = false;
 	static bool finalpan = true;
 	static bool finalparameters = true;
-	static bool mainscreen = false;
+	//static bool mainscreen = false;
 	static bool keyboard = false;
 	static bool allswitches = false;
 
@@ -920,39 +794,22 @@ int main(int argc, char** argv)
 	if (UISerial.IsOpen() == false)
 	{
 		//parameters = true;
-		Teensy_Reset();
-		Teensy_InitPreset();
 	}
 	//Raspberry_Init();
 	FinalPan_SetupDefaultPreset();
 	FinalPan_LoadResources();
 	//Raspberry_Reset();
 	
-	for (int i = 0; i < __KNOB_COUNT; i++)
-	{
-		int ParamID = KnobToParam(Knobs[i].id);
-		Knobs[i].value = gPreset.paramvalue[ParamID]/65535.0f;
-//		Raspberry_OutputChangeValue(ParamID, gPreset.paramvalue[ParamID]);
-	};
-
 	setpara_t para;
 	para.paramid = 0xfcfe;
 	para.value = 3;
 	set(para);
-
-	bool LastLedButtonStatus[__LEDBUTTON_COUNT];
+	auto t = SDL_GetTicks();
 #define __SERIALINBUFFERSIZE 100000
 	unsigned char buffer[__SERIALINBUFFERSIZE];
 	while (!done)
 	{
-		for (int i = 0; i < __LEDBUTTON_COUNT; i++)
-		{
-			if (Buttons[i].value != LastLedButtonStatus[i])
-			{
-				UIWriteLed(Buttons[i].fpid, Buttons[i].value ? 0 : 255);
-				LastLedButtonStatus[i] = Buttons[i].value;
-			}
-		}
+
 		int bytecount = 0;
 		int handledbytes = 0;
 		if (UISerial.IsOpen())
@@ -1002,12 +859,12 @@ int main(int argc, char** argv)
 				for (int i = 0; i < __SWITCH_COUNT; i++)
 				{
 					char txt[230];
-					if (GetSwitch((SwitchEnum)i))
+					if (gCurrentPreset.GetSwitch((SwitchEnum)i))
 					{
 						sprintf(txt, "Set %s", switchnames[ i].c_str());
 						if (ImGui::Button(txt))
 						{
-							SetSwitch((SwitchEnum)i);
+							gCurrentPreset.SetSwitch((SwitchEnum)i);
 							//on_short_message(0x90, i + 0x40, 127, 0);//
 						}												
 					}
@@ -1016,7 +873,7 @@ int main(int argc, char** argv)
 						sprintf(txt, "Clear %s", switchnames[i].c_str());
 						if (ImGui::Button(txt))
 						{
-							ClearSwitch((SwitchEnum)i);
+							gCurrentPreset.ClearSwitch((SwitchEnum)i);
 							//on_short_message(0x90, i + 0x40, 127, 0);//
 						}
 					}
@@ -1053,7 +910,10 @@ int main(int argc, char** argv)
 		if (finalpan)
 		{
 			ImGui::SetNextWindowPos(ImVec2(10, 30));
-			FinalPan_WindowFrame();
+			auto nt = SDL_GetTicks();
+			auto diff = nt - t;
+			t = nt;
+			FinalPan_WindowFrame(diff * 0.001);
 			FinalPan_SetupLeds();
 			blinktime++;
 			blinkon = ((blinktime % 30) > 15) ? 1 : 0;
@@ -1064,23 +924,14 @@ int main(int argc, char** argv)
 		{
 			if (UISerial.IsOpen() == false)
 			{
-				if (Raspberry_guidata.dirty)
-				{
-					Raspberry_guidata.dirty = false;
-					SendRaspberryState();
-				}
+				
 			}
-
+			ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(1, 1, 1, 0.1));
 			ImGui::PushFont(pFontBold);
 			{
-				ImGui::Begin("FinalPan Parameters", &parameters, ImGuiWindowFlags_AlwaysAutoResize);
+				ImGui::Begin("FinalPan Parameters", &finalparameters, ImGuiWindowFlags_AlwaysAutoResize);
 				ImGui::PushFont(pFont);
-				if (ImGui::Button("Resend All Data"))
-				{
-					if (UISerial.IsOpen() == false) Teensy_ReSendPreset();
-					UISendCommand(0x60, 0);
 
-				}
 				ImGui::SameLine();
 				ImVec2 pos = ImGui::GetCursorScreenPos();
 				ImGui::SetCursorScreenPos(pos);
@@ -1110,8 +961,14 @@ int main(int argc, char** argv)
 				for (int i = 0; i < __FINALENCODER_COUNT; i++)
 				{
 					FinalEncoders[i].ledmode = gPanState.encoders[i].led.mode;
-					FinalEncoders[i].ledcolor = ImVec4(gPanState.encoders[i].led.r / 65535.0f, gPanState.encoders[i].led.g / 65535.0f, gPanState.encoders[i].led.b / 65535.0f, 1.0f);
-
+					if (FinalEncoders[i].ledmode == ledmode_solid || ((FinalEncoders[i].ledmode == ledmode_blinkfast || FinalEncoders[i].ledmode == ledmode_blinkslow) && blinkon > 0))
+					{
+						FinalEncoders[i].ledcolor = ImVec4(gPanState.encoders[i].led.r / 65535.0f, gPanState.encoders[i].led.g / 65535.0f, gPanState.encoders[i].led.b / 65535.0f, 1.0f);
+					}
+					else
+					{
+						FinalEncoders[i].ledcolor = ImVec4(0,0,0, 1.0f);
+					}
 
 					auto R = ImGui::CalcTextSize(FinalEncoders[i].name);
 					ImGui::SetCursorScreenPos(ImVec2(pos.x + FinalEncoders[i].x * xscalefac -R.x/2, pos.y + 45 + FinalEncoders[i].y * yscalefac));
@@ -1148,6 +1005,7 @@ int main(int argc, char** argv)
 				ImGui::End();
 				ImGui::PopFont();
 			}
+			ImGui::PopStyleColor();
 		}
 
 

@@ -111,6 +111,11 @@ public:
 		if (v) SetSwitch(SwitchID); else ClearSwitch(SwitchID);
 	}
 
+	void SetName(char *name)
+	{
+		snprintf(Name, PRESET_NAME_LENGTH, "%s", name);
+	}
+
 	void ClearSwitch(SwitchEnum SwitchID)
 	{
 		int switchset = ((int)SwitchID) / 32;

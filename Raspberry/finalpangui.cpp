@@ -6,7 +6,7 @@
 #include "FinalPanEnums.h"
 #include "PanPreset.h"
 
-#include "Gui.h"
+#include "gui.h"
 
 PanPreset_t gCurrentPreset;
 PanPreset_t gRevertPreset;
@@ -25,13 +25,24 @@ void FinalPan_SetupDefaultPreset()
 #undef OUTPUT_VIRT
 #undef SWITCH
 
-	gCurrentPreset.high.h = 0;
+	gCurrentPreset.high.h = 0x1000;
+	gCurrentPreset.low.h = 0x4000;
 	gCurrentPreset.active.h = 0x3000;
-	gCurrentPreset.low.h = 0x6000;
+
+	gCurrentPreset.low.v = 0xffff;
+	gCurrentPreset.active.v = 0xffff;
+	gCurrentPreset.high.v = 0xffff;
+
+	gCurrentPreset.active.s = 0x1000;
+	gCurrentPreset.high.s = 0xffff;
+	gCurrentPreset.low.s = 0xffff;
 
 	gPanState.SetLed(Led_Low, gCurrentPreset.low);
 	gPanState.SetLed(Led_High, gCurrentPreset.high);
 	gPanState.SetLed(Led_Active, gCurrentPreset.active);
+
+	gRevertPreset.SetName("Fancy Beeping");
+	gCurrentPreset.SetName("Fancy Beeping");
 
 };
 
@@ -378,8 +389,9 @@ void _control_t::RenderBoxVertical(int x, int y, int val, int mode, bool active)
 	case BOX_REGULAR:
 	{
 		ImVec2 br2 = br;
-		br2.y = tl.y + (val * ParamVerticalBoxHeight) / 0xffff;
-		ImGui::GetWindowDrawList()->AddRectFilled(tl, br2, res.FillColor);
+		ImVec2 tl2 = tl;
+		tl2.y = br.y - (val * ParamVerticalBoxHeight) / 0xffff;
+		ImGui::GetWindowDrawList()->AddRectFilled(tl2, br2, res.FillColor);
 	}
 	break;
 	case BOX_INV:
@@ -651,9 +663,11 @@ void bottomencoder_t::UpdateLed(bool active)
 		switch (style)
 		{
 		case MenuEntry_LedValue:
+			value = gCurrentPreset.GetLedParameter((LedParameter)target);
 			break;
 		default:
 			value = gCurrentPreset.paramvalue[target];
+			break;
 		}
 		LedLerp(active, value, &r, &g, &b);
 
@@ -721,6 +735,8 @@ _screensetup_t::_screensetup_t(_screensetup_t *parent )
 
 void _screensetup_t::SetupLeds()
 {
+
+
 	for (int i = 0; i < 14; i++)
 	{
 		buttons[i].UpdateLed(ControlsInOrder[ActiveControl] == &buttons[i]);
@@ -757,6 +773,37 @@ void _screensetup_t::SetupLeds()
 	gPanState.SetButtonLed(ledbutton_R5, buttons[11].ledmode);
 	gPanState.SetButtonLed(ledbutton_R6, buttons[12].ledmode);
 	gPanState.SetButtonLed(ledbutton_R7, buttons[13].ledmode);
+
+
+	gPanState.SetButtonLed(ledbutton_B1, gPanState.CurrentPatch == 0 ? ledmode_solid : ledmode_off);
+	gPanState.SetButtonLed(ledbutton_B2, gPanState.CurrentPatch == 1 ? ledmode_solid : ledmode_off);
+	gPanState.SetButtonLed(ledbutton_B3, gPanState.CurrentPatch == 2 ? ledmode_solid : ledmode_off);
+	gPanState.SetButtonLed(ledbutton_B4, gPanState.CurrentPatch == 3 ? ledmode_solid : ledmode_off);
+	gPanState.SetButtonLed(ledbutton_B5, gPanState.CurrentPatch == 4 ? ledmode_solid : ledmode_off);
+	gPanState.SetButtonLed(ledbutton_B6, gPanState.CurrentPatch == 5 ? ledmode_solid : ledmode_off);
+	gPanState.SetButtonLed(ledbutton_B7, gPanState.CurrentPatch == 6 ? ledmode_solid : ledmode_off);
+	gPanState.SetButtonLed(ledbutton_B8, gPanState.CurrentPatch == 7 ? ledmode_solid : ledmode_off);
+	gPanState.SetButtonLed(ledbutton_B9, gPanState.CurrentPatch == 8 ? ledmode_solid : ledmode_off);
+	gPanState.SetButtonLed(ledbutton_B10, gPanState.CurrentPatch == 9 ? ledmode_solid : ledmode_off);
+	gPanState.SetButtonLed(ledbutton_B11, gPanState.CurrentPatch == 10 ? ledmode_solid : ledmode_off);
+	gPanState.SetButtonLed(ledbutton_B12, gPanState.CurrentPatch == 11 ? ledmode_solid : ledmode_off);
+	gPanState.SetButtonLed(ledbutton_B13, gPanState.CurrentPatch == 12 ? ledmode_solid : ledmode_off);
+	gPanState.SetButtonLed(ledbutton_B14, gPanState.CurrentPatch == 13 ? ledmode_solid : ledmode_off);
+	gPanState.SetButtonLed(ledbutton_B15, gPanState.CurrentPatch == 14 ? ledmode_solid : ledmode_off);
+	gPanState.SetButtonLed(ledbutton_B16, gPanState.CurrentPatch == 15 ? ledmode_solid : ledmode_off);
+
+
+
+	for (int i = 0; i < LedButtonsThatOpenThisScreen.size(); i++)
+	{
+		gPanState.SetButtonLed((FinalLedButtonEnum)LedButtonsThatOpenThisScreen[i], ledmode_solid);
+	}
+
+	for (int i = 0; i < EncodersThatOpenThisScreen.size(); i++)
+	{
+		gPanState.SetEncoderLed((FinalEncoderEnum)EncodersThatOpenThisScreen[i], ledmode_solid, gPanState.hledr, gPanState.hledg, gPanState.hledr);
+	}
+//	gPanState.SetEncoderLed()
 
 
 }
@@ -923,8 +970,46 @@ void _screensetup_t::SideButton(FinalLedButtonEnum b)
 	}
 }
 
+void LoadPatch(int n)
+{
+	int bank = gPanState.BankLeft;
+	int idx = n;
+	if (n > 7)
+	{
+		bank = gPanState.BankRight;
+		idx -= 8;
+	}
+	gPanState.CurrentPatch = n;
+
+	
+	// do the stuff needed to load bank/patch
+	// Load(bank,idx); -> maybe loading anim?
+
+}
+
 void _screensetup_t::PatchButton(FinalLedButtonEnum b)
 {
+	switch (b)
+	{
+	case ledbutton_B1:LoadPatch(0); break;
+	case ledbutton_B2:LoadPatch(1); break;
+	case ledbutton_B3:LoadPatch(2); break;
+	case ledbutton_B4:LoadPatch(3); break;
+	case ledbutton_B5:LoadPatch(4); break;
+	case ledbutton_B6:LoadPatch(5); break;
+	case ledbutton_B7:LoadPatch(6); break;
+	case ledbutton_B8:LoadPatch(7); break;
+	case ledbutton_B9:LoadPatch(8); break;
+	case ledbutton_B10:LoadPatch( 9); break;
+	case ledbutton_B11:LoadPatch( 10); break;
+	case ledbutton_B12:LoadPatch( 11); break;
+	case ledbutton_B13:LoadPatch( 12); break;
+	case ledbutton_B14:LoadPatch( 13); break;
+	case ledbutton_B15:LoadPatch( 14); break;
+	case ledbutton_B16:LoadPatch( 15); break;
+
+	}
+	
 }
 
 void _screensetup_t::Encoder(FinalEncoderEnum button, int delta)
@@ -949,9 +1034,11 @@ void _screensetup_t::Render()
 {
 	if (strlen(title) > 0)
 	{
+		ImGui::PushFont(res.BigFont);
 		auto R = ImGui::CalcTextSize(title);
 		ImGui::SetCursorPos(ImVec2(1024 / 2 - R.x / 2, 0));
 		ImGui::Text(title);
+		ImGui::PopFont();
 	}
 
 	for (int i = 0; i < ControlsInOrder.size(); i++)
@@ -990,6 +1077,7 @@ void RenderModulationAssignBar(_modmatrix_source_t *source)
 
 extern ImTextureID Raspberry_LoadTexture(const char *filename);
 static bool init = false;
+
 void FinalPan_LoadResources()
 {
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
@@ -999,7 +1087,7 @@ void FinalPan_LoadResources()
 	res.Highlight = IM_COL32(235, 200, 28, 255);
 	res.Normal = IM_COL32(255, 255, 255, 255);
 	res.BGColor = IM_COL32(0, 58, 66, 255);
-	res.BGColor = IM_COL32(0, 0, 0, 255);
+	//res.BGColor = IM_COL32(0, 0, 0, 255);
 	res.FillColor = IM_COL32(0, 137, 127, 255);
 	res.OnOff[0] = Raspberry_LoadTexture("UI_ONOFF_OFF.png");
 	res.OnOff[1] = Raspberry_LoadTexture("UI_ONOFF_ON.png");
@@ -1009,14 +1097,14 @@ void FinalPan_LoadResources()
 	res.RootBG = Raspberry_LoadTexture("UI_ROOTBG.png");
 	res.LeftIndicator = Raspberry_LoadTexture("UI_LEFT.png");
 	res.RightIndicator = Raspberry_LoadTexture("UI_RIGHT.png");
-	res.SmallFont = io.Fonts->AddFontFromFileTTF("Fontfabric - Panton.otf", 40.0f);
-	res.BigFont = io.Fonts->AddFontFromFileTTF("Fontfabric - Panton ExtraBold.otf", 54.0f);
+	res.SmallFont = io.Fonts->AddFontFromFileTTF("Fontfabric - Panton.otf", 30.0f);
+	res.BigFont = io.Fonts->AddFontFromFileTTF("Fontfabric - Panton ExtraBold.otf", 44.0f);
 	init = true;
 
 
 	int X = sizeof(PanPreset_t);
 	printf("Pan preset size: %d (%x) bytes\n", X, X);
-
+	gGui.Init();
 }
 
 
@@ -1080,6 +1168,11 @@ bool IsPatchButton(FinalLedButtonEnum B)
 }
 
 Gui::Gui()
+{
+
+}
+
+void Gui::Init()
 {
 	BuildScreens();
 	CurrentScreen = SCREEN_HOME;
@@ -1151,11 +1244,108 @@ _screensetup_t *Gui::CS()
 {
 	return Screens[CurrentScreen];
 }
+#define LetterBoxW 40
+#define LetterBoxH 40
+
+class LetterControl : public _control_t
+{
+	public:
+		int id;
+		int x;
+		int y;
+		virtual void SketchRightDelta(int delta)
+		{
+			Current = ((Current + delta - 32 + 96) % 96) + 32;						
+		}
+		
+		virtual void SketchRightPressed()
+		{
+			Current = ((Current + 32 - 64 + 64) % 64) + 64;
+			
+		}
+
+		LetterControl(int _x, int _y, int _id)
+		{
+			
+			x = _x;
+			y = _y;
+			id = _id;
+			Current = gCurrentPreset.Name[id];
+			if (!(Current >= ' ' || Current <= '~'))
+			{
+				Current = ' ';
+			}
+		}
+		char Current;
+
+		virtual void Render(bool active)
+		{
+			ImVec2 tl(x, y);
+			ImVec2 br(x + LetterBoxW, y + LetterBoxH);
+			ImGui::GetWindowDrawList()->AddRect(tl, br, active ? res.Highlight : res.Normal, 0, 0, 2);
+			auto s = ImGui::CalcTextSize(&Current, &Current + 1);
+			ImGui::SetCursorPos(ImVec2(x+LetterBoxW/2 - s.x, y + LetterBoxH/2 - s.y/2- ImGui::GetTextLineHeight()));
+			ImGui::Text("%c", Current);
+		}
+};
+
+class PresetScreen : public _screensetup_t
+{
+public:
+	std::vector<LetterControl*> Letters;
+	
+	PresetScreen()
+	{
+		snprintf(Name, PRESET_NAME_LENGTH, "%s", gCurrentPreset.Name);
+
+		for (int i = 0; i < PRESET_NAME_LENGTH-1; i++)
+		{
+			AddLetterControl(1024/2 - (LetterBoxW+5)*((PRESET_NAME_LENGTH-1.5)/2) + i * (LetterBoxW+5), 300-LetterBoxH/2, i);
+		}
+
+		EnableButton(10, "Cancel", MenuEntry_Action, MenuAction_No);
+
+		EnableButton(11, "Save", MenuEntry_Action, MenuAction_Yes);	
+	}
+
+	virtual void Activate()
+	{
+		SetActiveControl(Letters[0]);
+	}
+	char Name[PRESET_NAME_LENGTH];
+	
+	void AddLetterControl(int x, int y, int id)
+	{
+		auto L = new LetterControl(x, y, id);
+		Letters.push_back(L);
+		ControlsInOrder.push_back(L);
+	}
+};
+
+class ModSourceScreen : public _screensetup_t
+{
+public:
+	ModSourceScreen()
+	{
+
+	}
+};
 
 void Gui::BuildScreens()
 {
 	for (int i = 0; i < SCREENS_COUNT; i++) Screens[i] = 0;
 
+	Screens[SCREEN_PRESET] = new PresetScreen();
+	
+	Screens[SCREEN_X] = new ModSourceScreen();
+	Screens[SCREEN_Y] = new ModSourceScreen();
+	Screens[SCREEN_Z] = new ModSourceScreen();
+	Screens[SCREEN_TOUCH] = new ModSourceScreen();
+	Screens[SCREEN_VELOCITY] = new ModSourceScreen();
+	Screens[SCREEN_KEYBOARD] = new ModSourceScreen();
+
+	Screens[SCREEN_LFO] = new ModSourceScreen();
+	Screens[SCREEN_ENVELOPE] = new ModSourceScreen();
 
 	for (int i = 0; i < SCREENS_COUNT; i++)
 	{
@@ -1166,40 +1356,73 @@ void Gui::BuildScreens()
 	Screens[SCREEN_HOME]->AddText(512, 40, "Current preset: ", align_right);
 	Screens[SCREEN_HOME]->AddText(512, 40, "Some Sound");
 
-	Screens[SCREEN_HOME]->EnableButton(8, "Store", MenuEntry_Action, MenuAction_Store);//(512, 40, "Some Sound");
+	Screens[SCREEN_HOME]->EncodersThatOpenThisScreen.push_back(encoder_SketchLeft);
+
+
+	Screens[SCREEN_HOME]->EnableButton(8, "Store", MenuEntry_Page, SCREEN_PRESET);//(512, 40, "Some Sound");
 	Screens[SCREEN_HOME]->EnableButton(9, "Revert", MenuEntry_Action, MenuAction_Revert);
 	Screens[SCREEN_HOME]->EnableButton(10, "System", MenuEntry_Page, SCREEN_SYSTEM);
 	Screens[SCREEN_HOME]->EnableButton(12, "Colors", MenuEntry_Page, SCREEN_COLORS);
 
+	Screens[SCREEN_PRESET]->SetTitle("Edit Name/Category");
 
 	Screens[SCREEN_COLORS]->SetTitle("Colors");
 
-	Screens[SCREEN_COLORS]->EnableAvailableEncoder("Hue", MenuEntry_LedValue, Led_Low_Hue);
-	Screens[SCREEN_COLORS]->EnableAvailableEncoder("Sat", MenuEntry_LedValue, Led_Low_Sat);
-	Screens[SCREEN_COLORS]->EnableAvailableEncoder("Bright", MenuEntry_LedValue, Led_Low_Bright);
+	Screens[SCREEN_COLORS]->EnableAvailableEncoder("Low: Hue", MenuEntry_LedValue, Led_Low_Hue);
+	Screens[SCREEN_COLORS]->EnableAvailableEncoder("Low: Sat", MenuEntry_LedValue, Led_Low_Sat);
+	Screens[SCREEN_COLORS]->EnableAvailableEncoder("Low: Bright", MenuEntry_LedValue, Led_Low_Bright);
 
 	Screens[SCREEN_COLORS]->EnableAvailableEncoder("BlinkSpeed", MenuEntry_LedValue, Led_BlinkSpeed);
 
-	Screens[SCREEN_COLORS]->EnableAvailableEncoder("Hue", MenuEntry_LedValue, Led_High_Hue);
-	Screens[SCREEN_COLORS]->EnableAvailableEncoder("Sat", MenuEntry_LedValue, Led_High_Sat);
-	Screens[SCREEN_COLORS]->EnableAvailableEncoder("Bright", MenuEntry_LedValue, Led_High_Bright);
+	Screens[SCREEN_COLORS]->EnableAvailableEncoder("High: Hue", MenuEntry_LedValue, Led_High_Hue);
+	Screens[SCREEN_COLORS]->EnableAvailableEncoder("High: Sat", MenuEntry_LedValue, Led_High_Sat);
+	Screens[SCREEN_COLORS]->EnableAvailableEncoder("High: Bright", MenuEntry_LedValue, Led_High_Bright);
 
 	Screens[SCREEN_COLORS]->EnableAvailableEncoder("Brightness", MenuEntry_LedValue, Led_Brightness);
 
-	Screens[SCREEN_COLORS]->EnableAvailableEncoder("Hue", MenuEntry_LedValue, Led_Active_Hue);
-	Screens[SCREEN_COLORS]->EnableAvailableEncoder("Sat", MenuEntry_LedValue, Led_Active_Sat);
-	Screens[SCREEN_COLORS]->EnableAvailableEncoder("Bright", MenuEntry_LedValue, Led_Active_Bright);
+	Screens[SCREEN_COLORS]->EnableAvailableEncoder("Active: Hue", MenuEntry_LedValue, Led_Active_Hue);
+	Screens[SCREEN_COLORS]->EnableAvailableEncoder("Active: Sat", MenuEntry_LedValue, Led_Active_Sat);
+	Screens[SCREEN_COLORS]->EnableAvailableEncoder("Active: Bright", MenuEntry_LedValue, Led_Active_Bright);
+
+	Screens[SCREEN_X]->SetTitle("Keyboard X");
+	Screens[SCREEN_Y]->SetTitle("Keyboard Y");
+	Screens[SCREEN_Z]->SetTitle("Keyboard Z");
+	Screens[SCREEN_TOUCH]->SetTitle("Keyboard Touch");
+	Screens[SCREEN_VELOCITY]->SetTitle("Keyboard Velocity");
+	Screens[SCREEN_KEYBOARD]->SetTitle("CV Keytrack");
+
+
+	Screens[SCREEN_ENVELOPE]->SetTitle("Envelopes");
+	Screens[SCREEN_ENVELOPE]->LedButtonsThatOpenThisScreen.push_back(ledbutton_BEnv);
+
+	Screens[SCREEN_LFO]->SetTitle("LFO's");
+	Screens[SCREEN_LFO]->LedButtonsThatOpenThisScreen.push_back(ledbutton_BLFO);
+
+	Screens[SCREEN_ARP]->SetTitle("Arpeggiator");
+	Screens[SCREEN_ARP]->LedButtonsThatOpenThisScreen.push_back(ledbutton_ArpEdit);
 
 
 	Screens[SCREEN_VCO1]->SetTitle("Oscillator 1");
+	Screens[SCREEN_VCO1]->EncodersThatOpenThisScreen.push_back(encoder_VCO1);
+
 	Screens[SCREEN_VCO2]->SetTitle("Oscillator 2");
+	Screens[SCREEN_VCO2]->EncodersThatOpenThisScreen.push_back(encoder_VCO2);
+
 	Screens[SCREEN_VCO3]->SetTitle("Oscillator 3");
+	Screens[SCREEN_VCO3]->EncodersThatOpenThisScreen.push_back(encoder_VCO3);
+
 	Screens[SCREEN_VCF1]->SetTitle("Filter 1");
+	Screens[SCREEN_VCF1]->EncodersThatOpenThisScreen.push_back(encoder_VCF1Freq);
+
 
 	Screens[SCREEN_VCF2a]->SetTitle("Filter 2: A");
+	Screens[SCREEN_VCF2a]->EncodersThatOpenThisScreen.push_back(encoder_VCF2a);
 	Screens[SCREEN_VCF2b]->SetTitle("Filter 2: B");
+	Screens[SCREEN_VCF2b]->EncodersThatOpenThisScreen.push_back(encoder_VCF2b);
 	Screens[SCREEN_VCF2c]->SetTitle("Filter 2: C");
+	Screens[SCREEN_VCF2c]->EncodersThatOpenThisScreen.push_back(encoder_VCF2c);
 	Screens[SCREEN_VCF2d]->SetTitle("Filter 2: D");
+	Screens[SCREEN_VCF2d]->EncodersThatOpenThisScreen.push_back(encoder_VCF2d);
 
 
 	Screens[SCREEN_TEST]->SetTitle("Test scherm");
@@ -1238,7 +1461,9 @@ void Gui::GotoPage(Screens_t s)
 	}
 	else
 	{
+		CS()->Deactivate();
 		CurrentScreen = s;
+		CS()->Activate();
 	}
 
 }
@@ -1248,7 +1473,7 @@ void Gui::SetupLeds()
 	gPanState.SetLed(Led_Active, gCurrentPreset.active);
 	gPanState.SetLed(Led_High, gCurrentPreset.high);
 	gPanState.SetLed(Led_Low, gCurrentPreset.low);
-
+	gPanState.ClearLeds();
 	CS()->SetupLeds();
 }
 
@@ -1346,7 +1571,7 @@ void FinalPan_SetupLeds()
 }
 
 
-void FinalPan_WindowFrame()
+void FinalPan_WindowFrame(float DT)
 {
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0);

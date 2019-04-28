@@ -178,30 +178,26 @@
     <ClCompile Include="..\libs\imgui-master\imgui.cpp" />
     <ClCompile Include="..\libs\imgui-master\imgui_draw.cpp" />
     <ClCompile Include="..\libs\lodepng-master\lodepng.cpp" />
-    <ClCompile Include="FinalPanEnums.h" />
-    <ClCompile Include="FinalPanGui.cpp" />
+    <ClCompile Include="..\Raspberry\finalpangui.cpp" />
+    <ClCompile Include="..\Raspberry\panstructs.cpp" />
     <ClCompile Include="PanSim.cpp" />
-    <ClCompile Include="PanStructs.cpp" />
-    <ClCompile Include="PAN_Raspberry_Interface.cpp" />
-    <ClCompile Include="PAN_TeensyUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\libs\SDL2-2.0.7\lib\x86\SDL2.lib" />
     <Library Include="..\libs\SDL2-2.0.7\lib\x86\SDL2main.lib" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="FinalPanHeader.h" />
-    <ClInclude Include="Gui.h" />
-    <ClInclude Include="ModMenus.h" />
-    <ClInclude Include="PanControls.h" />
-    <ClInclude Include="PanHeader.h" />
-    <ClInclude Include="PanPreset.h" />
-    <ClInclude Include="PanUiMap.h" />
-  </ItemGroup>
-  <ItemGroup>
     <Font Include="ProggyTiny.ttf">
       <DeploymentContent>true</DeploymentContent>
     </Font>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Raspberry\FinalPanEnums.h" />
+    <ClInclude Include="..\Raspberry\FinalPanHeader.h" />
+    <ClInclude Include="..\Raspberry\Gui.h" />
+    <ClInclude Include="..\Raspberry\PanHeader.h" />
+    <ClInclude Include="..\Raspberry\PanPreset.h" />
+    <ClInclude Include="..\Raspberry\PanUiMap.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
