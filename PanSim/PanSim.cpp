@@ -942,7 +942,7 @@ int main(int argc, char** argv)
 
 				for (int i = 0; i < __FINALLEDBUTTON_COUNT; i++)
 				{
-					FinalButtons[i].ledmode = gPanState.ledbuttons[i].led.mode;
+					FinalButtons[i].ledmode = gPanState.s.ledbuttons[i].mode;
 					ImGui::SetCursorScreenPos(ImVec2(pos.x + FinalButtons[i].x * xscalefac, pos.y + FinalButtons[i].y * yscalefac));
 					bool b = FinalButtons[i].value;
 					if (LedButton(FinalButtons[i].name, FinalButtons[i].ledmode, FinalButtons[i].r, FinalButtons[i].g, FinalButtons[i].b))
@@ -960,10 +960,10 @@ int main(int argc, char** argv)
 #endif
 				for (int i = 0; i < __FINALENCODER_COUNT; i++)
 				{
-					FinalEncoders[i].ledmode = gPanState.encoders[i].led.mode;
+					FinalEncoders[i].ledmode = gPanState.s.encoders[i].mode;
 					if (FinalEncoders[i].ledmode == ledmode_solid || ((FinalEncoders[i].ledmode == ledmode_blinkfast || FinalEncoders[i].ledmode == ledmode_blinkslow) && blinkon > 0))
 					{
-						FinalEncoders[i].ledcolor = ImVec4(gPanState.encoders[i].led.r / 65535.0f, gPanState.encoders[i].led.g / 65535.0f, gPanState.encoders[i].led.b / 65535.0f, 1.0f);
+						FinalEncoders[i].ledcolor = ImVec4(gPanState.s.encoders[i].r / 65535.0f, gPanState.s.encoders[i].g / 65535.0f, gPanState.s.encoders[i].b / 65535.0f, 1.0f);
 					}
 					else
 					{

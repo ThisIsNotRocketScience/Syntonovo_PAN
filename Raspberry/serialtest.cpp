@@ -103,6 +103,8 @@ void sync_data_func(int addr, uint8_t* data)
 #define OOB_ENCODER_UP		(0x59)
 #define OOB_SWITCH_CHANGE	(0x5F)
 
+int show_switchchanges = 0;
+
 int sync_oobdata_func(uint8_t cmd, uint32_t data)
 {
 	switch (cmd) {
@@ -131,7 +133,9 @@ int sync_oobdata_func(uint8_t cmd, uint32_t data)
 		printf("encoder up %d\n", data);
 		break;
 	case OOB_SWITCH_CHANGE:
-		//printf("switch change %d\n", data);
+		if (show_switchchanges) {
+			printf("switch change %d\n", data);
+		}
 		break;
 	default:	
 		printf("sync_oobdata(%d, %x)\n", cmd, data);
@@ -144,8 +148,11 @@ void sync_complete(int status)
 {
 }
 
-int main(void)
+int main(int argc, char *argv[])
 {
+	if (argc > 1) {
+		show_switchchanges = 1;
+	}
 	uart.rx.waitfor = serial_waitfor;
 	uart.rx.peek = serial_peek;
 	uart.rx.read = serial_read;
