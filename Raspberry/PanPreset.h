@@ -218,7 +218,7 @@ public:
 		case Led_High_Hue: return high.h;
 
 		case Led_Active_Bright: return active.v;
-		case Led_Active_Sat: return active.v;
+		case Led_Active_Sat: return active.s;
 		case Led_Active_Hue: return active.h;
 
 		case Led_BlinkSpeed: return ledblinkspeed;
@@ -242,7 +242,7 @@ public:
 		case Led_High_Hue: p = &high.h; break;
 
 		case Led_Active_Bright: p = &active.v; break;
-		case Led_Active_Sat: p = &active.v; break;
+		case Led_Active_Sat: p = &active.s; break;
 		case Led_Active_Hue: p = &active.h; break;
 
 		case Led_BlinkSpeed: p = &ledblinkspeed; break;
