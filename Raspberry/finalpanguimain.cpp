@@ -10,8 +10,8 @@
 #include <stdio.h>
 #include <assert.h>
 
-#include "../PanSim/FinalPanEnums.h"
-#include "../PanSim/FinalPanHeader.h"
+#include "FinalPanEnums.h"
+#include "FinalPanHeader.h"
 
 #include "../libs/imgui-master/imgui.h"
 #include "imgui_impl_es2.h"
@@ -28,6 +28,7 @@ extern void FinalPan_WindowFrame(float DT);
 extern void FinalPan_LoadResources();
 extern void FinalPan_SetupLeds();
 
+extern PanState_t gPanState;
 
 typedef struct
 {
@@ -264,6 +265,7 @@ void* SerialThread(void*)
 	while (1) {
 		uint8_t b = S.Blocking_get();
 		SERIAL_ENTER_CRITICAL_SECTION();
+		//printf("%x ", b);
 		in_queue.push_back(b);
 		SERIAL_LEAVE_CRITICAL_SECTION();
 		checkqueue();
@@ -295,6 +297,61 @@ void sync_data_func(int addr, uint8_t* data)
 //void LedEncoderButtonRight(FinalEncoderEnum Button);
 //void LedButtonPressed(FinalLedButtonEnum button);
 
+int sync_phase = 0;
+void sync_complete(int status);
+
+template <typename T>
+class DiffSyncer
+{
+public:
+	DiffSyncer(T* data, uint32_t address) : _data(data), _address(address), _resend_full(true)
+	{
+		_dummy = 0;
+	}
+
+	void reset()
+	{
+		_resend_full = true;
+	}
+
+	int run()
+	{
+		if (_resend_full) {
+			_resend_full = false;
+			memcpy(&_prev, _data, sizeof(T));
+			sync_block(&rpi_sync, (uint8_t*)&_prev, _address, sizeof(T), sync_complete);
+			return 0;
+		}
+
+		for (int i = 0; i < sizeof(T); i += 4) {
+			if ( *(uint32_t*)&((uint8_t*)_data)[i] != *(uint32_t*)&((uint8_t*)&_prev)[i] )
+			{
+				int j = i + 4;
+				for (; j < sizeof(T); j += 4) {
+					if ( *(uint32_t*)&((uint8_t*)_data)[j] == *(uint32_t*)&((uint8_t*)&_prev)[j] ) {
+						break;
+					}
+				}
+		//printf("%x - %x (max %x)\n", i, j, sizeof(T));
+				memcpy(&((uint8_t*)&_prev)[i], &((uint8_t*)_data)[i], j - i);
+				sync_block(&rpi_sync, &((uint8_t*)&_prev)[i], _address + i, j - i, sync_complete);
+				return 0;
+			}
+		}
+
+		return 1;
+	}
+private:
+	T _prev;
+	uint32_t _dummy; // don't move it, it's for padding end of _prev
+	T* _data;
+	uint32_t _address;
+	bool _resend_full;
+};
+
+volatile int sync_running = 1;
+DiffSyncer<PanLedState_t> ledsync(&gPanState.s, 0x1000000);
+
 int sync_oobdata_func(uint8_t cmd, uint32_t data)
 {
 	switch (cmd) {
@@ -303,6 +360,8 @@ int sync_oobdata_func(uint8_t cmd, uint32_t data)
 		break;
 	case OOB_UI_CONTINUE:
 		printf("OOB_UI_CONTINUE\n");
+		ledsync.reset();
+		sync_running = 0;
 		break;
 	case OOB_BUTTON_DOWN:
 		printf("button down %d\n", data);
@@ -336,8 +395,31 @@ int sync_oobdata_func(uint8_t cmd, uint32_t data)
 	return 0;
 }
 
+
 void sync_complete(int status)
 {
+	sync_running = 1;
+	if (status == 1) {
+		sync_phase = 0;
+		// sending is resumed by OOB_UI_CONTINUE
+		return;
+	}
+
+	for (int i = 0; i < 2; i++) {
+		
+		switch (sync_phase) {
+		case 0:
+			if (ledsync.run() == 0) {
+				return;
+			}
+			break;
+		}
+		
+		sync_phase++;
+		if (sync_phase == 1) sync_phase = 0;
+	}
+
+	sync_running = 0;
 }
 
 int setupSerial(void)
@@ -348,11 +430,11 @@ int setupSerial(void)
 	uart.tx.write = serial_write;
 	sync_init(&rpi_sync, &uart, sync_data_func, sync_oobdata_func);
 
-	S.Connect("/dev/ttyAMA0", 115200);
+	S.Connect("/dev/ttyAMA0", 500000);
 
 	pthread_create(&serial_thread, NULL, SerialThread, 0);
 
-	int tmp = 0;
+	static int tmp = 0;
 	sync_block(&rpi_sync, (uint8_t*)&tmp, 1, 1, sync_complete);
 
 
@@ -406,10 +488,14 @@ int main()
 	
 
 	auto t = current_timestamp();
+	auto lasttick = t;
 	while (!terminate)
 	{
-		uart.config.timer_tick(uart.config.timer_tick_data);
-
+		if (t - lasttick > 100) {
+			uart.config.timer_tick(uart.config.timer_tick_data);
+			lasttick = t;
+			if (!sync_running) sync_complete(0);
+		}
 		
 		glViewport(0, 0, 1024,600);
 		glClear(GL_COLOR_BUFFER_BIT);
@@ -421,7 +507,7 @@ int main()
 		auto diff = nt - t;
 		t = nt;
 
-		FinalPan_WindowFrame(diff * 0.0001);
+		FinalPan_WindowFrame(diff * 0.001);
 		FinalPan_SetupLeds();
 		ImGui::Render();
 		ImGui_ImlES_RenderDrawLists(ImGui::GetDrawData());

@@ -2,13 +2,34 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "fsl_device_registers.h"
 
 #include "uart.h"
 
-#define ENTER_CRITICAL_SECTION() int __last_int_status = __get_PRIMASK(); __disable_irq();
+#ifdef FSL_RTOS_FREE_RTOS
 
+#include "FreeRTOS.h"
+#include "task.h"
+
+#define ENTER_CRITICAL_SECTION() taskENTER_CRITICAL()
+#define LEAVE_CRITICAL_SECTION() taskEXIT_CRITICAL()
+
+#elif __linux__
+
+#include <pthread.h>
+
+static pthread_mutex_t critical_section_mutex;
+
+#define ENTER_CRITICAL_SECTION() pthread_mutex_lock(&critical_section_mutex);
+#define LEAVE_CRITICAL_SECTION() pthread_mutex_unlock(&critical_section_mutex);
+
+#elif __arm__
+
+#include "fsl_device_registers.h"
+
+#define ENTER_CRITICAL_SECTION() int __last_int_status = __get_PRIMASK(); __disable_irq();
 #define LEAVE_CRITICAL_SECTION() if (__last_int_status) { __enable_irq(); }
+
+#endif
 
 //////////////////////////////////////////////////
 
@@ -99,23 +120,31 @@ void sync_in_read_complete(int status, void* stateptr)
 {
 	uint8_t sync_read_buf[16];
 
+    ENTER_CRITICAL_SECTION();
+
 	sync_state_t* state = (sync_state_t*)stateptr;
-	state->timer = 0;
 
 	if (state->in_reset) {
+		state->timer = 0;
 		uint8_t data = state->uart->rx.peek();
 		if (data == 0xFF) {
 			state->uart->rx.read(sync_read_buf, 1);
+			state->uart->rx.waitfor(1);
+		    LEAVE_CRITICAL_SECTION();
 			return;
 		}
 		state->in_running_checksum = 0;
 		state->in_reset = 0;
 		state->uart->rx.waitfor(6);
+	    LEAVE_CRITICAL_SECTION();
 		return;
 	}
 
 	if (status != 0) {
+		//printf("invalid receive\n");
 		sync_reset(state);
+		state->uart->rx.waitfor(6);
+	    LEAVE_CRITICAL_SECTION();
 		return;
 	}
 
@@ -128,19 +157,26 @@ void sync_in_read_complete(int status, void* stateptr)
 			&& data[4] == 0xFF
 			&& data[5] == 0xFF)
 	{
+		state->timer = 0;
 		state->in_reset = 1;
 		state->ack_send_pending = 0;
 		state->uart->rx.waitfor(1);
 		//sync_reset(state);
+	    LEAVE_CRITICAL_SECTION();
 		return;
 	}
 
 	state->in_running_checksum = crc(state->in_running_checksum, data, 5);
 	if (state->in_running_checksum != data[5]) {
-		sync_reset(state);
+		printf("input checksum mismatch %x, expected %x\n", state->in_running_checksum, data[5]);
+		printf("%x %x %x %x %x %x\n", data[0], data[1], data[2], data[3], data[4], data[5]);
+		//sync_reset(state);
+		state->uart->rx.waitfor(6);
+	    LEAVE_CRITICAL_SECTION();
 		return;
 	}
 
+	state->timer = 0;
 	int cmd = data[0];
 
 	switch (cmd) {
@@ -164,6 +200,9 @@ void sync_in_read_complete(int status, void* stateptr)
 		sync_resync(state);
 		sync_out_write_ack(state, state->in_running_checksum);
 		break;
+	case 5: // IDLE
+		sync_out_write_ack(state, state->in_running_checksum);
+		break;
 	default:
 		if (state->oob_data) {
 			uint32_t d =
@@ -175,10 +214,13 @@ void sync_in_read_complete(int status, void* stateptr)
 		}
 		printf("unexpected %d\n", cmd);
 		sync_reset(state);
+		state->uart->rx.waitfor(6);
+	    LEAVE_CRITICAL_SECTION();
 		return;
 	}
 
 	state->uart->rx.waitfor(6);
+    LEAVE_CRITICAL_SECTION();
 }
 
 //sync_state_t* sync_state;
@@ -187,7 +229,7 @@ void sync_out_write_begin(sync_state_t* state, int cmd, uint8_t* data, int expec
 {
   uint8_t sync_write_buf[8];
 
-	state->timer = 0;
+//	state->timer = 0;
 
   sync_write_buf[0] = cmd;
   memcpy(&sync_write_buf[1], data, 4);
@@ -202,7 +244,8 @@ void sync_out_write_begin(sync_state_t* state, int cmd, uint8_t* data, int expec
   int size = 6;
   int write_count = state->uart->tx.write(sync_write_buf, size);
   if (write_count < size) {
-    sync_reset(state);
+    //printf("write failed\n");
+	  sync_reset(state);
   }
 }
 
@@ -210,9 +253,12 @@ void sync_out_write_complete(int status, void* stateptr)
 {
   sync_state_t* state = (sync_state_t*)stateptr;
 
+	ENTER_CRITICAL_SECTION();
+
   if (status != 0) {
     state->transmit_active = 0;
     state->complete(1);
+    LEAVE_CRITICAL_SECTION();
     return;
   }
 
@@ -240,6 +286,7 @@ void sync_out_write_complete(int status, void* stateptr)
       if (state->complete) {
     	  state->complete(1);
       }
+      LEAVE_CRITICAL_SECTION();
       return;
     }
     else {
@@ -250,6 +297,7 @@ void sync_out_write_complete(int status, void* stateptr)
       data[3] = 0xFF;
       state->out_reset += 4;
       state->uart->tx.write(data, 4);
+      LEAVE_CRITICAL_SECTION();
       return;
     }
   }
@@ -262,11 +310,13 @@ void sync_out_write_complete(int status, void* stateptr)
     data[3] = 0;
     state->ack_send_pending = 0;
     sync_out_write_begin(state, 3, data, 0);
+    LEAVE_CRITICAL_SECTION();
     return;
   }
 
   if (state->ack_receive_pending) {
     state->transmit_active = 0;
+    LEAVE_CRITICAL_SECTION();
     return;
   }
 
@@ -276,18 +326,22 @@ void sync_out_write_complete(int status, void* stateptr)
     uint32_t data = state->oob_queue[state->oob_queue_read].data;
     state->oob_queue_read = (state->oob_queue_read + 1) & 15;
     sync_out_write_begin(state, cmd, (uint8_t*)&data, 1);
+    LEAVE_CRITICAL_SECTION();
     return;
   }
 
   if (state->phase == init) {
+		//printf("send address\n");
     state->phase = data;
     state->transmit_active = 1;
     sync_out_write_begin(state, 1, (uint8_t*)&state->out_dst, 1);
+    LEAVE_CRITICAL_SECTION();
     return;
   }
 
   if (state->phase == complete) {
 	  state->transmit_active = 0;
+	    LEAVE_CRITICAL_SECTION();
     return;
   }
 
@@ -295,11 +349,14 @@ void sync_out_write_complete(int status, void* stateptr)
     state->transmit_active = 0;
     state->phase = complete;
     state->complete(0);
+    LEAVE_CRITICAL_SECTION();
     return;
   }
 
   // else if (sync_state->phase == data) {
-  
+
+	//printf("send data\n");
+
   uint8_t* volatile data = state->ptr;
 
   if (state->size > 4) {
@@ -313,6 +370,8 @@ void sync_out_write_complete(int status, void* stateptr)
 
   state->transmit_active = 1;
   sync_out_write_begin(state, 2, data, 1);
+
+  LEAVE_CRITICAL_SECTION();
 }
 
 void sync_reset(sync_state_t* state)
@@ -321,7 +380,7 @@ void sync_reset(sync_state_t* state)
 		return;
 	}
 
-	printf("sync_reset()\n");
+	//printf("sync_reset()\n");
 	state->out_reset = 1;
 	state->out_resync = 0;
 	if (!state->transmit_active) {
@@ -335,7 +394,7 @@ void sync_resync(sync_state_t* state)
 		return;
 	}
 
-	printf("sync_resync()\n");
+	//printf("sync_resync()\n");
 	state->out_reset = 1;
 	state->out_resync = 1;
 	if (!state->transmit_active) {
@@ -356,14 +415,18 @@ void sync_out_write_ack(sync_state_t* state, uint8_t checksum)
 void sync_out_ack_received(sync_state_t* state, uint8_t checksum)
 {
 	if (!state->ack_receive_pending) {
+		//printf("got ack, not expected\n");
 		sync_reset(state);
 		return;
 	}
 
 	if (state->ack_receive_value != checksum) {
+		//printf("got ack, invalid checksum %x expected %x\n", checksum, state->ack_receive_value);
 		sync_reset(state);
 		return;
 	}
+
+	//printf("got ack %x\n", checksum);
 
 	if (state->ack_receive) {
 		state->ack_receive();
@@ -381,8 +444,13 @@ void sync_timer_tick(void* stateptr)
 	sync_state_t* state = (sync_state_t*)stateptr;
 	state->timer++;
 	if (state->timer == 3) {
+		printf("timeout\n");
 		state->timer = 0;
 		sync_reset(state);
+	}
+	else {
+		uint8_t data[4] = {0};
+		sync_oob_word(state, 5, *(uint32_t*)data, 0);
 	}
 	LEAVE_CRITICAL_SECTION();
 }
@@ -397,7 +465,7 @@ void sync_block(sync_state_t* state, uint8_t* block, int offset, int size, sync_
 	}
 
 	state->phase = init;
-	state->ptr = block + offset;
+	state->ptr = block;
 	state->out_dst = offset;
 	state->size = size;
 	state->complete = complete_cb;
@@ -490,6 +558,14 @@ typedef int (*oob_data_cb)(uint8_t cmd, uint32_t data);
 void sync_init(sync_state_t* state, uart_t* uart, sync_data_cb data, oob_data_cb oobdata)
 {
 	crc_init();
+
+#ifdef __linux__
+	pthread_mutexattr_t mta;
+	pthread_mutexattr_init(&mta);
+	/* or PTHREAD_MUTEX_RECURSIVE_NP */
+	pthread_mutexattr_settype(&mta, PTHREAD_MUTEX_RECURSIVE);
+	pthread_mutex_init(&critical_section_mutex, &mta);
+#endif
 
 	state->uart = uart;
 	state->out_reset = 1;

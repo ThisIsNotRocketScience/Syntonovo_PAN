@@ -1530,7 +1530,7 @@ void Gui::BuildScreens()
 	Screens[SCREEN_KEYBOARD]->SetTitle("CV Keytrack");
 
 
-	Screens[SCREEN_ENVELOPE]->SetTitle("Envelopes");
+	Screens[SCREEN_ENVELOPE]->SetTitle("Envelopes");	
 	Screens[SCREEN_ENVELOPE]->LedButtonsThatOpenThisScreen.push_back(ledbutton_BEnv);
 
 	Screens[SCREEN_LFO]->SetTitle("LFO's");

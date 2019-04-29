@@ -201,39 +201,43 @@ enum ledmodes
 	ledmode_blinkslow,
 	ledmode_blinkfast,
 	ledmode_off
-};
+} PACK;
 
 typedef struct LedState_t
 {
 
-	int r;
-	int g;
-	int b;
+	uint16_t r;
+	uint16_t g;
+	uint16_t b;
 	ledmodes mode;
-} LedState_t;
+} PACK LedState_t;
 
 
 typedef struct ButtonState_t
 {
-	LedState_t led;
 	bool down;
 } ButtonState_t;
 
+typedef struct
+{
+	LedState_t ledbuttons[__FINALLEDBUTTON_COUNT];
+	LedState_t encoders[__FINALENCODER_COUNT];
+} PACK PanLedState_t;
 
 class PanState_t
 {
 public:
 	void SetButtonLed(FinalLedButtonEnum led, ledmodes mode)
 	{
-		ledbuttons[led].led.mode = mode;
+		s.ledbuttons[led].mode = mode;
 	}
 
 	void SetEncoderLed(FinalEncoderEnum encoder, ledmodes mode, int r, int g, int b)
 	{
-		encoders[encoder].led.mode = mode;
-		encoders[encoder].led.r = r;
-		encoders[encoder].led.g = g;
-		encoders[encoder].led.b = b;
+		s.encoders[encoder].mode = mode;
+		s.encoders[encoder].r = r;
+		s.encoders[encoder].g = g;
+		s.encoders[encoder].b = b;
 	}
 
 	uint16_t ledr, ledg, ledb, bledr, bledg, bledb, hledr, hledg, hledb;
@@ -304,24 +308,26 @@ public:
 	}
 
 
-	ButtonState_t ledbuttons[__FINALLEDBUTTON_COUNT];
-	ButtonState_t encoders[__FINALENCODER_COUNT];
 	void ClearLeds()
 	{
 		for (int i = 0; i < __FINALLEDBUTTON_COUNT; i++)
 		{
 
-			ledbuttons[i].led.mode = ledmode_off;
+			s.ledbuttons[i].mode = ledmode_off;
 
 		}
 		for (int i = 0; i < __FINALENCODER_COUNT; i++)
 		{
-			encoders[i].led.mode = ledmode_off;
+			s.encoders[i].mode = ledmode_off;
 		}
 	}
 	int BankLeft;
 	int BankRight;
 	int CurrentPatch;
+	ButtonState_t ledbuttons[__FINALLEDBUTTON_COUNT];
+	ButtonState_t encoders[__FINALENCODER_COUNT];
+
+	PanLedState_t s;
 };
 
 #endif
