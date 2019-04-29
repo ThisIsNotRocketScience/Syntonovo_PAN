@@ -236,6 +236,11 @@ void Led2bits(int inp)
 	{
 		L2DatOn();
 		L2ClkOn();
+		__NOP();
+		__NOP();
+		__NOP();
+		__NOP();
+		__NOP();
 		L2ClkOff();
 	}
 }
@@ -512,6 +517,12 @@ void ScanButtonsAndEncoders()
 	SW1LatchOn();
 	SW2LatchOn();
 
+	__NOP();
+	__NOP();
+	__NOP();
+	__NOP();
+	__NOP();
+
 	for (int i = 0; i < 80; i++) {
 		sw[i] = SW1Data();
 		sw[i + 80] = SW2Data();
@@ -522,8 +533,18 @@ void ScanButtonsAndEncoders()
 		__NOP();
 		__NOP();
 		__NOP();
+		__NOP();
+		__NOP();
+		__NOP();
+		__NOP();
+		__NOP();
 		SW1ClkOn();
 		SW2ClkOn();
+		__NOP();
+		__NOP();
+		__NOP();
+		__NOP();
+		__NOP();
 		__NOP();
 		__NOP();
 		__NOP();
