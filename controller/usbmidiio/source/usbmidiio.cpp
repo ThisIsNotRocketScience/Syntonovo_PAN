@@ -51,12 +51,14 @@
 #include <stdlib.h>
 #include "rpi.h"
 #include "../../Raspberry/PanPreset.h"
+#include "../../Raspberry/FinalPanEnums.h"
 
 /* TODO: insert other definitions and declarations here. */
 
 void preset_init();
 
 PanPreset_t preset;
+PanLedState_t ledstate;
 
 uart_t rpi_uart;
 sync_state_t rpi_sync;
@@ -213,7 +215,7 @@ void PWM2Set(int off)
 {
 	for (int c = 0;c<24;c++)
 		{
-			// 24 channels per TLC5974
+			// 24 channels per TLC5947
 			// 12 bits per channel, send MSB first
 			for (int8_t b = 11; b >= 0; b--) {
 				L2ClkOff();
@@ -281,6 +283,176 @@ void Led1bits(int inp)
 	L1ClkOff();
 }
 
+uint8_t leddata1[(24*12 + 16 + 24*12 + 16) / 8] = {0};
+uint8_t leddata2[(24*12 + 16 + 24*12 + 16) / 8] = {0};
+
+int encoderindex[__FINALENCODER_COUNT] = {0};
+int buttonindex[__FINALLEDBUTTON_COUNT] = {0};
+
+void Set12b(int bitindex, int value)
+{
+	uint8_t* ptr;
+	if (bitindex >= 608) {
+		bitindex -= 608;
+		ptr = &leddata2[bitindex / 8];
+	}
+	else {
+		ptr = &leddata1[bitindex / 8];
+	}
+	if (bitindex & 4) {
+		//*ptr = (*ptr & 0xF0) | ((value >> 8) & 0x0F);
+		//ptr++;
+		//*ptr = value & 0xFF;
+		*ptr = (*ptr & 0x0F) | ((value << 4) & 0xF0);
+		ptr++;
+		*ptr = (value >> 4) & 0xFF;
+	}
+	else {
+		//*ptr = (value >> 4) & 0xFF;
+		//ptr++;
+		//*ptr = (*ptr & 0x0F) | ((value >> 4) & 0xF0);
+		*ptr = value & 0xFF;
+		ptr++;
+		*ptr = (*ptr & 0xF0) | ((value >> 8) & 0x0F);
+	}
+}
+
+void Set1b(int bitindex, int value)
+{
+	uint8_t* ptr;
+	if (bitindex >= 608) {
+		bitindex -= 608;
+		ptr = &leddata2[bitindex / 8];
+	}
+	else {
+		ptr = &leddata1[bitindex / 8];
+	}
+	int off = bitindex & 7;
+	if (value) {
+		*ptr |= 1 << off;
+	} else {
+		*ptr &= ~(1 << off);
+	}
+}
+
+#define ENCODER(BUS, NAME) if (BUS == 0) { encoderindex[encoder_##NAME] = index1; index1 += 12*3; } else { encoderindex[encoder_##NAME] = index2; index2 += 12*3; }
+#define LEDBUTTON(BUS, NAME) if (BUS == 0) { buttonindex[ledbutton_##NAME] = index1; index1 += 1; } else { buttonindex[ledbutton_##NAME] = index2; index2 += 1; }
+#define UNUSEDENCODER(BUS) if (BUS == 0) { index1 += 12*3; } else { index2 += 12*3; }
+#define UNUSED(BUS) if (BUS == 0) { index1++; } else { index2++; }
+void setupleds()
+{
+	int index1 = 608;
+	int index2 = 0;
+
+	ENCODER(0, VCO4);
+	ENCODER(0, VCO5);
+	ENCODER(0, VCO6);
+	ENCODER(0, VCO7);
+	ENCODER(0, VCO8); // dn
+	ENCODER(0, VCO3);
+	ENCODER(0, VCO2);
+	ENCODER(0, VCO1);
+
+	UNUSED(0);
+	LEDBUTTON(0, L1);
+	LEDBUTTON(0, L2);
+	LEDBUTTON(0, L3);
+	LEDBUTTON(0, L4);
+	LEDBUTTON(0, L5);
+	LEDBUTTON(0, L6);
+	LEDBUTTON(0, L7);
+	LEDBUTTON(0, R7);
+	LEDBUTTON(0, R6);
+	LEDBUTTON(0, R5);
+	LEDBUTTON(0, R4);
+	LEDBUTTON(0, R3);
+	LEDBUTTON(0, R2);
+	LEDBUTTON(0, R1);
+	UNUSED(0);
+	LEDBUTTON(0, B11);
+	LEDBUTTON(0, B12);
+	LEDBUTTON(0, B13);
+	LEDBUTTON(0, B14);
+	LEDBUTTON(0, B15);
+	LEDBUTTON(0, B16);
+	LEDBUTTON(0, OctDownRight);
+	LEDBUTTON(0, OctUpRight);
+	LEDBUTTON(0, BankRight);
+	LEDBUTTON(0, PortamentoRight);
+	UNUSED(0);//LEDBUTTON(0, RSus);
+	UNUSED(0);//LEDBUTTON(0, RUna);
+	UNUSED(0);//LEDBUTTON(0, RMod);
+	LEDBUTTON(0, ArpEnable);
+	LEDBUTTON(0, ArpFreeze);
+	LEDBUTTON(0, ArpEdit);
+
+	ENCODER(0, VCF1Freq);
+	ENCODER(0, VCF1Mix);
+	ENCODER(0, VCF2Mix);
+	ENCODER(0, Cleanmix);
+	ENCODER(0, VCF2d);
+	ENCODER(0, VCF2c);
+	ENCODER(0, VCF2b);
+	ENCODER(0, VCF2a);
+
+	UNUSED(1);//LEDBUTTON(1, LHome);
+	UNUSED(1);//LEDBUTTON(1, Lseq2);
+	UNUSED(1);//LEDBUTTON(1, Lseq1);
+	UNUSED(1);//LEDBUTTON(1, LSus);
+	UNUSED(1);//LEDBUTTON(1, LUna);
+	UNUSED(1);//LEDBUTTON(1, LMod);
+	LEDBUTTON(1, PortamentoLeft);
+	LEDBUTTON(1, OctDownLeft);
+	LEDBUTTON(1, B6);
+	LEDBUTTON(1, B5);
+	LEDBUTTON(1, B4);
+	LEDBUTTON(1, B3);
+	LEDBUTTON(1, B2);
+	LEDBUTTON(1, B1);
+	LEDBUTTON(1, BankLeft);
+	LEDBUTTON(1, OctUpLeft);
+
+	ENCODER(1, SketchLeft);
+	ENCODER(1, MasteroutHeadphone);
+	ENCODER(1, F2);
+	ENCODER(1, F4);
+	ENCODER(1, F6);
+	ENCODER(1, F5);
+	ENCODER(1, F3);
+	ENCODER(1, F1);
+
+	LEDBUTTON(1, B7);
+	LEDBUTTON(1, B8);
+	LEDBUTTON(1, BX);
+	LEDBUTTON(1, BY);
+	LEDBUTTON(1, BZ);
+	LEDBUTTON(1, BVelocity);
+	UNUSED(1);
+	UNUSED(1);
+	UNUSED(1);
+	UNUSED(1);
+	LEDBUTTON(1, B9);
+	LEDBUTTON(1, B10);
+	LEDBUTTON(1, BEnv);
+	LEDBUTTON(1, BLFO);
+	LEDBUTTON(1, BCV);
+	LEDBUTTON(1, BTouch);
+
+	ENCODER(1, F9);
+	ENCODER(1, F7);
+	ENCODER(1, F8);
+	ENCODER(1, F10);
+	UNUSEDENCODER(1); //ENCODER(1, FExt);
+	ENCODER(1, Masterout);
+	ENCODER(1, SketchRight);
+	ENCODER(1, F11);
+
+	//printf("indexes %d  %d\n", index1, index2);
+}
+
+#undef ENCODER
+#undef LEDBUTTON
+
 void SendLeds()
 {
 
@@ -288,40 +460,92 @@ void SendLeds()
 
 	// ON PWM ON PWM
 
+	memset(&leddata1, 0, sizeof(leddata2));
+	memset(&leddata2, 0, sizeof(leddata2));
 
-	Cur++;
-	for (int i = 0;i<32;i++)
-	{
+	//Set12b(encoderindex[3] + 12, 0x800);
+	//Set12b(encoderindex[4] + 12, 0x800);
 
-
-		SetColor(i,
-
-				sinf(i*6.283/32.0f + Cur *0.1)*2047+2048,
-				sinf(i*6.283/33.0f + Cur *0.13)*2047+2048,
-				sinf(i*6.283/34.0f + Cur *0.11)*2047+2048
-
-
-				);
+	for (int i = 0; i < __FINALENCODER_COUNT; i++) {
+		Set12b(encoderindex[i], ledstate.encoders[i].b >> 4);
+		Set12b(encoderindex[i] + 12, ledstate.encoders[i].r >> 4);
+		Set12b(encoderindex[i] + 24, ledstate.encoders[i].g >> 4);
 	}
-	// 1 chip 11 + 12 * 3 * 8  = 299
-	int pwmchip = 299;
 
-	int drv = 16;
-	PWM1Set(0);
-	Led1bits(0xffff);
-	PWM1Set(24);
-	Led1bits(0xffff);
+	for (int i = 0; i < __FINALLEDBUTTON_COUNT; i++) {
+		Set1b(buttonindex[i], ledstate.ledbuttons[i].mode != ledmode_off);
+	}
 
-	L1LatchOn();
+	for (int i = sizeof(leddata1) - 1; i >= 0; i--) {
+		for (int b = 7; b >= 0; b--) {
+			L1ClkOff();
+			L2ClkOff();
+			__NOP();
+			__NOP();
+			__NOP();
+			__NOP();
+			__NOP();
+			__NOP();
+			__NOP();
+			__NOP();
+			__NOP();
+			__NOP();
+			if (leddata1[i] & (1 << b)) {
+				L1DatOn();
+			}
+			else {
+				L1DatOff();
+			}
+			if (leddata2[i] & (1 << b)) {
+				L2DatOn();
+			}
+			else {
+				L2DatOff();
+			}
+			__NOP();
+			__NOP();
+			__NOP();
+			__NOP();
+			__NOP();
+			__NOP();
+			__NOP();
+			__NOP();
+			__NOP();
+			__NOP();
+			L1ClkOn();
+			L2ClkOn();
+			__NOP();
+			__NOP();
+			__NOP();
+			__NOP();
+			__NOP();
+			__NOP();
+			__NOP();
+			__NOP();
+			__NOP();
+			__NOP();
+		}
+	}
+
 	L1LatchOff();
-
-	PWM2Set(0);
-	Led2bits(0xffff);
-	Led2bits(0xffff);
-	PWM2Set(24);
-
-	L2LatchOn();
 	L2LatchOff();
+	__NOP();
+	__NOP();
+	__NOP();
+	__NOP();
+	__NOP();
+	__NOP();
+	__NOP();
+	__NOP();
+	__NOP();
+	__NOP();
+	__NOP();
+	__NOP();
+	__NOP();
+	__NOP();
+	__NOP();
+	L1LatchOn();
+	L2LatchOn();
 }
 
 
@@ -974,6 +1198,30 @@ void sync_preset(uint32_t addr)
 	}
 }
 
+void sync_ledstate_encoder(int index)
+{
+}
+
+void sync_ledstate_button(int index)
+{
+
+}
+
+void sync_ledstate(int addr)
+{
+	if (addr >= offsetof(PanLedState_t, encoders)) {
+		addr -= offsetof(PanLedState_t, encoders);
+
+		int index = addr / sizeof(LedState_t);
+		sync_ledstate_encoder(index);
+	}
+	else {
+		int index = addr / sizeof(LedState_t);
+
+		sync_ledstate_button(index);
+	}
+}
+
 void sync_data_func(int addr, uint8_t* data)
 {
 	if (addr & 3) return;
@@ -984,6 +1232,12 @@ void sync_data_func(int addr, uint8_t* data)
 
 		sync_preset(addr);
 
+	}
+
+	if (addr >= 0x1000000 && addr < ((int)sizeof(ledstate) | 0x1000000)) {
+		addr -= 0x1000000;
+		*(uint32_t*)&((uint8_t*)&ledstate)[addr] = *(uint32_t*)data;
+		sync_ledstate(addr);
 	}
 }
 
@@ -1015,6 +1269,7 @@ int main(void) {
     BOARD_InitBootPeripherals();
 
     buttonmap_init();
+    setupleds();
 
     LedsOff();
     LedsOn();

@@ -465,7 +465,7 @@ void sync_block(sync_state_t* state, uint8_t* block, int offset, int size, sync_
 	}
 
 	state->phase = init;
-	state->ptr = block + offset;
+	state->ptr = block;
 	state->out_dst = offset;
 	state->size = size;
 	state->complete = complete_cb;
