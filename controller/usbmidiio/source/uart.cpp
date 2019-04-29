@@ -200,6 +200,9 @@ void sync_in_read_complete(int status, void* stateptr)
 		sync_resync(state);
 		sync_out_write_ack(state, state->in_running_checksum);
 		break;
+	case 5: // IDLE
+		sync_out_write_ack(state, state->in_running_checksum);
+		break;
 	default:
 		if (state->oob_data) {
 			uint32_t d =
@@ -209,7 +212,7 @@ void sync_in_read_complete(int status, void* stateptr)
 				break;
 			}
 		}
-		//printf("unexpected %d\n", cmd);
+		printf("unexpected %d\n", cmd);
 		sync_reset(state);
 		state->uart->rx.waitfor(6);
 	    LEAVE_CRITICAL_SECTION();
@@ -226,7 +229,7 @@ void sync_out_write_begin(sync_state_t* state, int cmd, uint8_t* data, int expec
 {
   uint8_t sync_write_buf[8];
 
-	state->timer = 0;
+//	state->timer = 0;
 
   sync_write_buf[0] = cmd;
   memcpy(&sync_write_buf[1], data, 4);
@@ -412,13 +415,13 @@ void sync_out_write_ack(sync_state_t* state, uint8_t checksum)
 void sync_out_ack_received(sync_state_t* state, uint8_t checksum)
 {
 	if (!state->ack_receive_pending) {
-		printf("got ack, not expected\n");
+		//printf("got ack, not expected\n");
 		sync_reset(state);
 		return;
 	}
 
 	if (state->ack_receive_value != checksum) {
-		printf("got ack, invalid checksum %x expected %x\n", checksum, state->ack_receive_value);
+		//printf("got ack, invalid checksum %x expected %x\n", checksum, state->ack_receive_value);
 		sync_reset(state);
 		return;
 	}
@@ -441,9 +444,13 @@ void sync_timer_tick(void* stateptr)
 	sync_state_t* state = (sync_state_t*)stateptr;
 	state->timer++;
 	if (state->timer == 3) {
-		//printf("timeout\n");
+		printf("timeout\n");
 		state->timer = 0;
 		sync_reset(state);
+	}
+	else {
+		uint8_t data[4] = {0};
+		sync_oob_word(state, 5, *(uint32_t*)data, 0);
 	}
 	LEAVE_CRITICAL_SECTION();
 }
