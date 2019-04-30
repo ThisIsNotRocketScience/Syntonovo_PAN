@@ -21,6 +21,8 @@ class _control_t
 public:
 
 	virtual void SketchRightDelta(int delta);
+	virtual uint16_t GetParameterValue(int param) { return 0; };
+	virtual void TweakParameterValue(int param, int delta) { };
 
 	int style;
 	int target;
@@ -33,7 +35,7 @@ public:
 	bool skipencodercycling;
 	char title[255];
 	bool activestate;
-	void SetTitle(char *t);
+	void SetTitle(const char *t);
 
 	virtual void Render(bool active);
 	virtual void Action(int action);
@@ -45,7 +47,6 @@ public:
 	void RenderBox(int x, int y, int val, int mode, bool active);
 	void RenderBoxVertical(int x, int y, int val, int mode, bool active);
 };
-
 
 class _textcontrol_t : public _control_t
 {
@@ -126,6 +127,9 @@ public:
 	std::vector<int> LedButtonsThatOpenThisScreen;
 
 	_screensetup_t(_screensetup_t *parent = NULL);
+	virtual uint16_t GetParameterValue(int param);
+	virtual void TweakParameterValue(int param, int delta) ;
+
 
 
 	virtual void SetupLeds();
@@ -136,7 +140,7 @@ public:
 
 	void DisableButton(int i);
 
-	bool EnableButton(int i, char *text, int style = MenuEntry_NoStyle, int target = -1, bool active = true, ledmodes l = ledmode_solid);
+	bool EnableButton(int i, const char *text, int style = MenuEntry_NoStyle, int target = -1, bool active = true, ledmodes l = ledmode_solid);
 
 	int EnableAvailableEncoder(char *text, int style, int target);
 
@@ -149,6 +153,8 @@ public:
 	void AddText(float x, float y, char *t, alignment_t align = align_left, font_size fontsize = font_small);
 	void AddDynamicText(float x, float y, char *t, int len, alignment_t align = align_left, font_size fontsize = font_small);
 	
+	void AddLedControl(const char *name, int x, int y, LedTheme whichled);
+
 	void ChangeActiveControl(int delta);
 
 	virtual void SketchLeft(int delta);

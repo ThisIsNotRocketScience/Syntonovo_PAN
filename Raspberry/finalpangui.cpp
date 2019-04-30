@@ -14,6 +14,60 @@ PanState_t gPanState;
 
 Gui gGui;
 
+bool IsCenterEncoder(FinalEncoderEnum button)
+{
+	switch (button)
+	{
+	case encoder_F1:
+	case encoder_F2:
+	case encoder_F3:
+	case encoder_F4:
+	case encoder_F5:
+	case encoder_F6:
+	case encoder_F7:
+	case encoder_F8:
+	case encoder_F9:
+	case encoder_F10:
+	case encoder_F11:
+		return true;
+	}
+	return false;
+}
+int GetAssociatedParameter(FinalEncoderEnum button)
+{
+	switch (button)
+	{
+
+	case encoder_Masterout: return Output_MASTER_LEVEL;
+	case encoder_MasteroutHeadphone: return -1; // TODO -> headphone level?
+
+												// 8 on left side
+	case encoder_VCO1: return Output_VCO1_PITCH;
+	case encoder_VCO2: return Output_VCO2_PITCH;
+	case encoder_VCO3: return Output_VCO3_PITCH;
+	case encoder_VCO4: return Output_VCO4_PITCH;
+	case encoder_VCO5: return Output_VCO5_PITCH;
+	case encoder_VCO6: return Output_VCO6_PITCH;
+	case encoder_VCO7: return Output_VCO7_PITCH;
+	case encoder_VCO8: return Output_NOISE_COLOR; // TODO -> correct? 
+
+												  // 8 on right side
+	case encoder_VCF1Freq: return Output_VCF1_CV;
+	case encoder_VCF2a: return Output_VCF2_L_CV;
+	case encoder_VCF2b: return Output_VCF2_M1_CV;
+	case encoder_VCF2c: return Output_VCF2_M2_CV;
+	case encoder_VCF2d: return Output_VCF2_H_CV;
+	case encoder_Cleanmix: return Output_CLEANF_LEVEL;
+	case encoder_VCF2Mix: return Output_VCF2_LEVEL;
+	case encoder_VCF1Mix: return Output_VCF1_LEVEL;
+
+
+
+	}
+	return -1;
+}
+
+
 void FinalPan_SetupDefaultPreset()
 {
 
@@ -269,7 +323,7 @@ _control_t::_control_t()
 	skipencodercycling = false;
 }
 
-void _control_t::SetTitle(char *t)
+void _control_t::SetTitle(const char *t)
 {
 	snprintf(title, 255, "%s", t);
 }
@@ -321,15 +375,15 @@ void bottomencoder_t::Turn(int delta)
 	case MenuEntry_EffectParam3:
 	case MenuEntry_FilterMix:
 	case MenuEntry_RemapValue:
-	case MenuEntry_Value: gCurrentPreset.TweakParameter((OutputEnum)target, delta); break;
-	
+	case MenuEntry_Value: Parent->TweakParameterValue((OutputEnum)target, delta); break;
+	default: Parent->TweakParameterValue((OutputEnum)target, delta); break;
+
 	case MenuEntry_LedValue:
 	{
 		gCurrentPreset.TweakLed((LedParameter)target, delta); break;
 
 	}
-	default:
-		printf("unhandled!!\n");
+	
 	}
 }
 void _control_t::Activate() {}
@@ -451,9 +505,14 @@ void sidebutton_t::SketchRightPressed()
 	Pressed();
 }
 
+int ButtonHeight(int idx)
+{
+	return  (idx % 7) * (600 / 8) + 600 / 16;
+}
+
 void sidebutton_t::SetupPosition(int id)
 {
-	y = (id % 7) * (600 / 8) + 600 / 16;
+	y = ButtonHeight(id);
 	x = 10;
 	Align = align_left;
 	if (id > 6)
@@ -569,15 +628,25 @@ void bottomencoder_t::Render(bool active)
 
 		switch (style)
 		{
+
+		case MenuEntry_EnvelopeValue: 
+		case MenuEntry_LFOValue:
+		{
+			RenderBoxVertical(x, y, Parent->GetParameterValue(target), style == BOX_REGULAR, active);
+		//	char txt[400];
+	//		gCurrentPreset.DescribeParam((OutputEnum)target, style, txt, 400);
+	//		VerticalText(txt, align_right);
+		}
+
+		break;
+
 		case MenuEntry_LedValue:
 		{
 
 			RenderBoxVertical(x, y, gCurrentPreset.GetLedParameter((LedParameter) target), style == BOX_REGULAR, active);
-
 			char txt[400];
-
-			gCurrentPreset.DescribeParam((OutputEnum)target, style, txt, 400);
-			VerticalText(txt, align_right);
+			//gCurrentPreset.DescribeParam((OutputEnum)target, style, txt, 400);
+			//VerticalText(txt, align_right);
 		}
 
 		break;
@@ -635,20 +704,20 @@ void LedLerp(bool active, uint16_t value, uint16_t *r, uint16_t *g, uint16_t *b)
 {
 	if (active)
 	{
-		*r = lerp(value, gPanState.ledr, gPanState.bledr);
-		*g = lerp(value, gPanState.ledg, gPanState.bledg);
-		*b = lerp(value, gPanState.ledb, gPanState.bledb);
+		*r = lerp(value, gPanState.low_led_r, gPanState.high_led_r);
+		*g = lerp(value, gPanState.low_led_g, gPanState.high_led_g);
+		*b = lerp(value, gPanState.low_led_b, gPanState.high_led_b);
 
-		*r = lerp(0x8000, *r, gPanState.hledr);
-		*g = lerp(0x8000, *g, gPanState.hledg);
-		*b = lerp(0x8000, *b, gPanState.hledb);
+		*r = lerp(0x8000, *r, gPanState.active_led_r);
+		*g = lerp(0x8000, *g, gPanState.active_led_g);
+		*b = lerp(0x8000, *b, gPanState.active_led_b);
 	
 	}
 	else
 	{
-		*r = lerp(value, gPanState.ledr, gPanState.bledr);
-		*g = lerp(value, gPanState.ledg, gPanState.bledg);
-		*b = lerp(value, gPanState.ledb, gPanState.bledb);
+		*r = lerp(value, gPanState.low_led_r, gPanState.high_led_r);
+		*g = lerp(value, gPanState.low_led_g, gPanState.high_led_g);
+		*b = lerp(value, gPanState.low_led_b, gPanState.high_led_b);
 	}
 }
 
@@ -735,6 +804,18 @@ _screensetup_t::_screensetup_t(_screensetup_t *parent )
 	SetFirstEnabledControlActive();
 }
 
+
+
+uint16_t _screensetup_t::GetParameterValue(int param)
+{
+	return gCurrentPreset.paramvalue[param];
+}
+
+void _screensetup_t::TweakParameterValue(int param, int delta)
+{
+	gCurrentPreset.TweakParameter((OutputEnum)param, delta);
+}
+
 void _screensetup_t::SetupLeds()
 {
 
@@ -800,10 +881,44 @@ void _screensetup_t::SetupLeds()
 	{
 		gPanState.SetButtonLed((FinalLedButtonEnum)LedButtonsThatOpenThisScreen[i], ledmode_solid);
 	}
+	for (int i = 0; i < __FINALENCODER_COUNT; i++)
+	{
+		FinalEncoderEnum enc = (FinalEncoderEnum)i;
+		if (IsCenterEncoder(enc) == false)
+		{
+			uint16_t V,r,g,b;
+			V = 0;
+			int idx = GetAssociatedParameter(enc);
+			bool active = false;
+			for (int i = 0; i < EncodersThatOpenThisScreen.size(); i++) if (EncodersThatOpenThisScreen[i] == i) active = true;
+			
+			if (idx > -1)
+			{
+				V = gCurrentPreset.paramvalue[idx];
+				LedLerp(active, V, &r, &g, &b);
+				gPanState.SetEncoderLed(enc, ledmode_solid, r, g, b);
+			}
+			else
+			{
+				if (active)
+				{
+					gPanState.SetEncoderLed(enc, ledmode_solid, gPanState.active_led_r, gPanState.active_led_g, gPanState.active_led_r);
+				}
+				else
+				{
+					gPanState.SetEncoderLed(enc, ledmode_off, 0,0,0);
+
+				}
+			}
+
+
+
+		}
+	}
 
 	for (int i = 0; i < EncodersThatOpenThisScreen.size(); i++)
 	{
-		gPanState.SetEncoderLed((FinalEncoderEnum)EncodersThatOpenThisScreen[i], ledmode_solid, gPanState.hledr, gPanState.hledg, gPanState.hledr);
+		gPanState.SetEncoderLed((FinalEncoderEnum)EncodersThatOpenThisScreen[i], ledmode_solid, gPanState.active_led_r, gPanState.active_led_g, gPanState.active_led_r);
 	}
 //	gPanState.SetEncoderLed()
 
@@ -838,7 +953,7 @@ void _screensetup_t::DisableButton(int i)
 	buttons[i].enabled = false;
 }
 
-bool _screensetup_t::EnableButton(int i, char *text, int style , int target, bool active , ledmodes l )
+bool _screensetup_t::EnableButton(int i, const char *text, int style , int target, bool active , ledmodes l )
 {
 	buttons[i].SetTitle(text);
 	buttons[i].style = style;
@@ -1116,6 +1231,36 @@ void _screensetup_t::Render()
 
 
 
+class LedControl : public _control_t
+{
+public:
+	LedTheme myLed;
+	int x, y;
+	LedControl(LedTheme w,int _x, int _y, const char* name)
+	{
+		SetTitle(name);
+		x = _x;
+		y = _y;
+
+		myLed = w;
+		skipencodercycling = true;
+	}
+
+	virtual void Render(bool active)
+	{
+		ImGui::SetCursorPos(ImVec2(x, y - ImGui::GetTextLineHeight()));
+		uint16_t r, g, b;
+		gPanState.GetThemeLed(myLed, &r, &g, &b);
+		ImGui::Text(title);		
+		ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(x,y), ImVec2(x + 40, y + 40), IM_COL32(r>>8, g >>8, b >>8, 255));
+	}
+};
+
+void _screensetup_t::AddLedControl(const char *name, int x, int y, LedTheme whichled)
+{
+	ControlsInOrder.push_back(new LedControl(whichled, x, y, name));
+}
+
 void RenderModulationAssign(int id, _modmatrix_source_t *source, _modmatrix_target_t *target)
 {
 
@@ -1262,10 +1407,21 @@ void Gui::SketchRight(int delta)
 	CS()->SketchRight(delta);
 }
 
+
 void Gui::Encoder(FinalEncoderEnum button, int delta)
 {
-
-	CS()->Encoder(button, delta);
+	if (IsCenterEncoder(button))
+	{
+		CS()->Encoder(button, delta);
+	}
+	else
+	{
+		int param = GetAssociatedParameter(button);
+		if (param > -1)
+		{
+			gCurrentPreset.TweakParameter((OutputEnum)param, delta);
+		}
+	}
 }
 
 void Gui::ButtonPressed(FinalLedButtonEnum Button)
@@ -1307,6 +1463,17 @@ _screensetup_t *Gui::CS()
 #define LetterBoxW 40
 #define LetterBoxH 40
 
+
+void RenderLettersInABox(int x, int y, bool active, const char *text, int w, int h)
+{
+	ImVec2 tl(x, y);
+	ImVec2 br(x + w, y + h);
+	ImGui::GetWindowDrawList()->AddRect(tl, br, active ? res.Highlight : res.Normal, 0, 0, 2);
+	auto s = ImGui::CalcTextSize(text);
+	ImGui::SetCursorPos(ImVec2(x + w / 2 - s.x, y + h / 2 - s.y / 2 - ImGui::GetTextLineHeight()));
+	ImGui::Text(text);
+
+}
 class LetterControl : public _control_t
 {
 	public:
@@ -1405,7 +1572,76 @@ public:
 class ModSourceScreen : public _screensetup_t
 {
 public:
-	ModSourceScreen()
+	Screens_t myScreen;
+	int ActiveInstance ;
+	int MaxInstances;
+	bool HasActiveInstanceDisplay;
+	virtual uint16_t GetParameterValue(int param) 
+	{
+		return gCurrentPreset.GetModParameterValue((ModParameters)param, ActiveInstance);
+	};
+	virtual void TweakParameterValue(int param, int delta)
+	{
+		gCurrentPreset.TweakModulation((ModParameters)param, ActiveInstance, delta);
+	}
+
+	ModSourceScreen(Screens_t screen)
+	{
+		MaxInstances = 16;
+		ActiveInstance = 0;
+		myScreen = screen;
+		switch (myScreen)
+		{
+		case SCREEN_ENVELOPE:
+			HasActiveInstanceDisplay = true;
+
+			EnableAvailableEncoder("Attack", MenuEntry_EnvelopeValue, Envelope_Attack);
+			EnableAvailableEncoder("Decay", MenuEntry_EnvelopeValue, Envelope_Decay);
+			EnableAvailableEncoder("Sustain", MenuEntry_EnvelopeValue, Envelope_Sustain);
+			EnableAvailableEncoder("Release", MenuEntry_EnvelopeValue, Envelope_Release);
+			EnableAvailableEncoder("Curve", MenuEntry_EnvelopeValue, Envelope_Curve);
+
+			break;
+		case SCREEN_LFO:
+
+			EnableAvailableEncoder("Speed", MenuEntry_EnvelopeValue, LFO_Speed);
+			EnableAvailableEncoder("Shape", MenuEntry_EnvelopeValue, LFO_Shape);
+			EnableAvailableEncoder("Reset Phase", MenuEntry_EnvelopeValue, LFO_ResetPhase);
+			EnableAvailableEncoder("Depth", MenuEntry_EnvelopeValue, LFO_Depth);
+			HasActiveInstanceDisplay = true;
+			break;
+		}
+		if (HasActiveInstanceDisplay)
+		{
+			EnableButton(1, "Previous", MenuEntry_Action,MenuAction_Prev);
+			EnableButton(8, "Next", MenuEntry_Action, MenuAction_Next);
+		}
+		
+	}
+
+	virtual void Action(int a)
+	{
+		switch (a)
+		{
+		case MenuAction_Next: ActiveInstance = (ActiveInstance + 1) % MaxInstances; break;
+		case MenuAction_Prev: ActiveInstance = (ActiveInstance + MaxInstances - 1) % MaxInstances; break;
+		}
+		
+	}
+	virtual void Render()
+	{
+		_screensetup_t::Render();
+		if (HasActiveInstanceDisplay)
+		{
+			for (int i = 0; i < MaxInstances; i++)
+			{
+				char txt[10];
+				sprintf(txt, "%d", i);
+				RenderLettersInABox(i * 40 + 200, ButtonHeight(1), i == ActiveInstance, txt, 35, 35);
+			}
+		}
+	}
+	virtual void Activate()
 	{
 
 	}
@@ -1475,15 +1711,15 @@ void Gui::BuildScreens()
 	BL->LedButtonsThatOpenThisScreen.push_back(ledbutton_BankLeft);
 	BR->LedButtonsThatOpenThisScreen.push_back(ledbutton_BankRight);
 
-	Screens[SCREEN_X] = new ModSourceScreen();
-	Screens[SCREEN_Y] = new ModSourceScreen();
-	Screens[SCREEN_Z] = new ModSourceScreen();
-	Screens[SCREEN_TOUCH] = new ModSourceScreen();
-	Screens[SCREEN_VELOCITY] = new ModSourceScreen();
-	Screens[SCREEN_KEYBOARD] = new ModSourceScreen();
+	Screens[SCREEN_X] = new ModSourceScreen(SCREEN_X);
+	Screens[SCREEN_Y] = new ModSourceScreen(SCREEN_Y);
+	Screens[SCREEN_Z] = new ModSourceScreen(SCREEN_Z);
+	Screens[SCREEN_TOUCH] = new ModSourceScreen(SCREEN_TOUCH);
+	Screens[SCREEN_VELOCITY] = new ModSourceScreen(SCREEN_VELOCITY);
+	Screens[SCREEN_KEYBOARD] = new ModSourceScreen(SCREEN_KEYBOARD);
 
-	Screens[SCREEN_LFO] = new ModSourceScreen();
-	Screens[SCREEN_ENVELOPE] = new ModSourceScreen();
+	Screens[SCREEN_LFO] = new ModSourceScreen(SCREEN_LFO);
+	Screens[SCREEN_ENVELOPE] = new ModSourceScreen(SCREEN_ENVELOPE);
 
 	for (int i = 0; i < SCREENS_COUNT; i++)
 	{
@@ -1505,6 +1741,11 @@ void Gui::BuildScreens()
 	Screens[SCREEN_PRESET]->SetTitle("Edit Name/Category");
 
 	Screens[SCREEN_COLORS]->SetTitle("Colors");
+
+
+	Screens[SCREEN_COLORS]->AddLedControl("Low",100,200,  Led_Low);
+	Screens[SCREEN_COLORS]->AddLedControl("High", 200, 200, Led_High);
+	Screens[SCREEN_COLORS]->AddLedControl("Active", 300, 200, Led_Active);
 
 	Screens[SCREEN_COLORS]->EnableAvailableEncoder("Low: Hue", MenuEntry_LedValue, Led_Low_Hue);
 	Screens[SCREEN_COLORS]->EnableAvailableEncoder("Low: Sat", MenuEntry_LedValue, Led_Low_Sat);
@@ -1667,13 +1908,11 @@ Screens_t GetPage(FinalEncoderEnum Button)
 {
 	switch (Button)
 	{
-	case encoder_VCF1Freq: return SCREEN_VCF1;
-	case encoder_VCF1Mix: return SCREEN_VCF1;
-	case encoder_VCF2a: return SCREEN_VCF2a;
-	case encoder_VCF2b: return SCREEN_VCF2a;
-	case encoder_VCF2c: return SCREEN_VCF2a;
-	case encoder_VCF2d: return SCREEN_VCF2a;
+		// 2 sticking out 
 	case encoder_Masterout: return SCREEN_MASTER;
+	case encoder_MasteroutHeadphone: return SCREEN_MASTER;
+
+		// 8 on left side
 	case encoder_VCO1: return SCREEN_VCO1;
 	case encoder_VCO2: return SCREEN_VCO2;
 	case encoder_VCO3: return SCREEN_VCO3;
@@ -1682,6 +1921,18 @@ Screens_t GetPage(FinalEncoderEnum Button)
 	case encoder_VCO6: return SCREEN_VCO4567;
 	case encoder_VCO7: return SCREEN_VCO4567;
 	case encoder_VCO8: return SCREEN_VCO8;
+
+		// 8 on right side
+	case encoder_VCF1Freq: return SCREEN_VCF1;
+	case encoder_VCF2a: return SCREEN_VCF2a;
+	case encoder_VCF2b: return SCREEN_VCF2a;
+	case encoder_VCF2c: return SCREEN_VCF2a;
+	case encoder_VCF2d: return SCREEN_VCF2a;
+	case encoder_Cleanmix: return SCREEN_CLEANMIX;
+	case encoder_VCF2Mix: return SCREEN_VCF2MIX;
+	case encoder_VCF1Mix: return SCREEN_VCF1MIX;
+
+	
 	}
 	return SCREEN_HOME;
 }

@@ -47,5 +47,13 @@
     <ClInclude Include="uart.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="gui.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Makefile">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
