@@ -28,7 +28,7 @@ int uart0_filestream = -1;
 extern void FinalPan_WindowFrame(float DT);
 extern void FinalPan_LoadResources();
 extern void FinalPan_SetupLeds();
-void FinalPan_SetupDefaultPreset();
+//void FinalPan_SetupDefaultPreset();
 
 extern PanPreset_t gCurrentPreset;
 extern PanState_t gPanState;
@@ -284,6 +284,7 @@ void sync_data_func(int addr, uint8_t* data)
 	if (addr & 3) return;
 	if (addr >= 0 && addr < (int)sizeof(gCurrentPreset)) {
 		*(uint32_t*)&((uint8_t*)&gCurrentPreset)[addr] = *(uint32_t*)data;
+		printf("TEST: %x @%x\n", gCurrentPreset.modmatrix[0].targets[0].depth, (int)&gCurrentPreset.modmatrix[0].targets[0].depth - (int)&gCurrentPreset);
 	}
 }
 
@@ -378,7 +379,7 @@ int sync_oobdata_func(uint8_t cmd, uint32_t data)
 //#ifdef SHOWSYNCPRINTF
 		printf("OOB_UI_CONTINUE\n");
 //#endif
-		FinalPan_SetupDefaultPreset();
+		//FinalPan_SetupDefaultPreset();
 		ledsync.reset();
 		presetsync.reset();
 		sync_running = 0;
