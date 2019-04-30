@@ -412,6 +412,7 @@ int sync_oobdata_func(uint8_t cmd, uint32_t data)
 #ifdef SHOWSYNCPRINTF
 		printf("sync_oobdata(%d, %x)\n", cmd, data);
 #endif
+		break;
 	}
 
 	return 0;
