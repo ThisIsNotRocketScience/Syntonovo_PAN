@@ -375,15 +375,15 @@ void bottomencoder_t::Turn(int delta)
 	case MenuEntry_EffectParam3:
 	case MenuEntry_FilterMix:
 	case MenuEntry_RemapValue:
-	case MenuEntry_Value: gCurrentPreset.TweakParameter((OutputEnum)target, delta); break;
-	
+	case MenuEntry_Value: Parent->TweakParameterValue((OutputEnum)target, delta); break;
+	default: Parent->TweakParameterValue((OutputEnum)target, delta); break;
+
 	case MenuEntry_LedValue:
 	{
 		gCurrentPreset.TweakLed((LedParameter)target, delta); break;
 
 	}
-	default:
-		printf("unhandled!!\n");
+	
 	}
 }
 void _control_t::Activate() {}
@@ -505,9 +505,14 @@ void sidebutton_t::SketchRightPressed()
 	Pressed();
 }
 
+int ButtonHeight(int idx)
+{
+	return  (idx % 7) * (600 / 8) + 600 / 16;
+}
+
 void sidebutton_t::SetupPosition(int id)
 {
-	y = (id % 7) * (600 / 8) + 600 / 16;
+	y = ButtonHeight(id);
 	x = 10;
 	Align = align_left;
 	if (id > 6)
@@ -623,15 +628,25 @@ void bottomencoder_t::Render(bool active)
 
 		switch (style)
 		{
+
+		case MenuEntry_EnvelopeValue: 
+		case MenuEntry_LFOValue:
+		{
+			RenderBoxVertical(x, y, Parent->GetParameterValue(target), style == BOX_REGULAR, active);
+		//	char txt[400];
+	//		gCurrentPreset.DescribeParam((OutputEnum)target, style, txt, 400);
+	//		VerticalText(txt, align_right);
+		}
+
+		break;
+
 		case MenuEntry_LedValue:
 		{
 
 			RenderBoxVertical(x, y, gCurrentPreset.GetLedParameter((LedParameter) target), style == BOX_REGULAR, active);
-
 			char txt[400];
-
-			gCurrentPreset.DescribeParam((OutputEnum)target, style, txt, 400);
-			VerticalText(txt, align_right);
+			//gCurrentPreset.DescribeParam((OutputEnum)target, style, txt, 400);
+			//VerticalText(txt, align_right);
 		}
 
 		break;
@@ -787,6 +802,18 @@ _screensetup_t::_screensetup_t(_screensetup_t *parent )
 
 
 	SetFirstEnabledControlActive();
+}
+
+
+
+uint16_t _screensetup_t::GetParameterValue(int param)
+{
+	return gCurrentPreset.paramvalue[param];
+}
+
+void _screensetup_t::TweakParameterValue(int param, int delta)
+{
+	gCurrentPreset.TweakParameter((OutputEnum)param, delta);
 }
 
 void _screensetup_t::SetupLeds()
@@ -1436,6 +1463,17 @@ _screensetup_t *Gui::CS()
 #define LetterBoxW 40
 #define LetterBoxH 40
 
+
+void RenderLettersInABox(int x, int y, bool active, const char *text, int w, int h)
+{
+	ImVec2 tl(x, y);
+	ImVec2 br(x + w, y + h);
+	ImGui::GetWindowDrawList()->AddRect(tl, br, active ? res.Highlight : res.Normal, 0, 0, 2);
+	auto s = ImGui::CalcTextSize(text);
+	ImGui::SetCursorPos(ImVec2(x + w / 2 - s.x, y + h / 2 - s.y / 2 - ImGui::GetTextLineHeight()));
+	ImGui::Text(text);
+
+}
 class LetterControl : public _control_t
 {
 	public:
@@ -1535,14 +1573,73 @@ class ModSourceScreen : public _screensetup_t
 {
 public:
 	Screens_t myScreen;
+	int ActiveInstance ;
+	int MaxInstances;
+	bool HasActiveInstanceDisplay;
+	virtual uint16_t GetParameterValue(int param) 
+	{
+		return gCurrentPreset.GetModParameterValue((ModParameters)param, ActiveInstance);
+	};
+	virtual void TweakParameterValue(int param, int delta)
+	{
+		gCurrentPreset.TweakModulation((ModParameters)param, ActiveInstance, delta);
+	}
+
 	ModSourceScreen(Screens_t screen)
 	{
+		MaxInstances = 16;
+		ActiveInstance = 0;
 		myScreen = screen;
+		switch (myScreen)
+		{
+		case SCREEN_ENVELOPE:
+			HasActiveInstanceDisplay = true;
+
+			EnableAvailableEncoder("Attack", MenuEntry_EnvelopeValue, Envelope_Attack);
+			EnableAvailableEncoder("Decay", MenuEntry_EnvelopeValue, Envelope_Decay);
+			EnableAvailableEncoder("Sustain", MenuEntry_EnvelopeValue, Envelope_Sustain);
+			EnableAvailableEncoder("Release", MenuEntry_EnvelopeValue, Envelope_Release);
+			EnableAvailableEncoder("Curve", MenuEntry_EnvelopeValue, Envelope_Curve);
+
+			break;
+		case SCREEN_LFO:
+
+			EnableAvailableEncoder("Speed", MenuEntry_EnvelopeValue, LFO_Speed);
+			EnableAvailableEncoder("Shape", MenuEntry_EnvelopeValue, LFO_Shape);
+			EnableAvailableEncoder("Reset Phase", MenuEntry_EnvelopeValue, LFO_ResetPhase);
+			EnableAvailableEncoder("Depth", MenuEntry_EnvelopeValue, LFO_Depth);
+			HasActiveInstanceDisplay = true;
+			break;
+		}
+		if (HasActiveInstanceDisplay)
+		{
+			EnableButton(1, "Previous", MenuEntry_Action,MenuAction_Prev);
+			EnableButton(8, "Next", MenuEntry_Action, MenuAction_Next);
+		}
 		
 	}
-	virtual void Render(float dt)
-	{
 
+	virtual void Action(int a)
+	{
+		switch (a)
+		{
+		case MenuAction_Next: ActiveInstance = (ActiveInstance + 1) % MaxInstances; break;
+		case MenuAction_Prev: ActiveInstance = (ActiveInstance + MaxInstances - 1) % MaxInstances; break;
+		}
+		
+	}
+	virtual void Render()
+	{
+		_screensetup_t::Render();
+		if (HasActiveInstanceDisplay)
+		{
+			for (int i = 0; i < MaxInstances; i++)
+			{
+				char txt[10];
+				sprintf(txt, "%d", i);
+				RenderLettersInABox(i * 40 + 200, ButtonHeight(1), i == ActiveInstance, txt, 35, 35);
+			}
+		}
 	}
 	virtual void Activate()
 	{

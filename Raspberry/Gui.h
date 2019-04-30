@@ -21,6 +21,8 @@ class _control_t
 public:
 
 	virtual void SketchRightDelta(int delta);
+	virtual uint16_t GetParameterValue(int param) { return 0; };
+	virtual void TweakParameterValue(int param, int delta) { };
 
 	int style;
 	int target;
@@ -45,7 +47,6 @@ public:
 	void RenderBox(int x, int y, int val, int mode, bool active);
 	void RenderBoxVertical(int x, int y, int val, int mode, bool active);
 };
-
 
 class _textcontrol_t : public _control_t
 {
@@ -126,6 +127,9 @@ public:
 	std::vector<int> LedButtonsThatOpenThisScreen;
 
 	_screensetup_t(_screensetup_t *parent = NULL);
+	virtual uint16_t GetParameterValue(int param);
+	virtual void TweakParameterValue(int param, int delta) ;
+
 
 
 	virtual void SetupLeds();

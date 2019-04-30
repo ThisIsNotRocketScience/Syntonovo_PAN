@@ -131,6 +131,8 @@ enum
 	MenuAction_Store,
 	MenuAction_Yes,
 	MenuAction_No,
+	MenuAction_Next,
+	MenuAction_Prev,
 	MenuAction_Cancel,
 	__MenuAction_Count
 };
@@ -154,12 +156,30 @@ enum LedParameter
 
 };
 
+enum ModParameters
+{
+	Envelope_Attack,
+	Envelope_Decay,
+	Envelope_Sustain,
+	Envelope_Release,
+	Envelope_Curve,
+
+	LFO_Speed,
+	LFO_Depth,
+	LFO_Shape,
+	LFO_ResetPhase,
+
+	__Mod_Parameter_Count
+};
+
 
 enum UIDisplayModes
 {
 	MenuEntry_NoStyle,
 	MenuEntry_Page,
 	MenuEntry_LedValue,
+	MenuEntry_EnvelopeValue,
+	MenuEntry_LFOValue,
 	MenuEntry_Text,
 	MenuEntry_Toggle,
 	MenuEntry_Action,

@@ -157,6 +157,48 @@ public:
 		{
 			SetSwitch(SwitchID);
 		}
+	
+	}
+	uint16_t *GetModParamPointer(ModParameters param, int instance )
+	{
+		switch (param)
+		{
+		case Envelope_Attack: return &env[instance].a;
+		case Envelope_Decay: return &env[instance].d;
+		case Envelope_Sustain: return &env[instance].s;
+		case Envelope_Release: return &env[instance].r;
+		case Envelope_Curve: return &env[instance].curve;
+
+		case LFO_Speed: return &lfo[instance].speed;
+		case LFO_Depth: return (uint16_t*)&lfo[instance].depth;
+		case LFO_Shape: return (uint16_t*)&lfo[instance].shape;
+		case LFO_ResetPhase: return &lfo[instance].reset_phase;
+
+
+		}
+		return 0;
+	}
+
+	void TweakModulation(ModParameters param, int instance, int delta)
+	{
+		uint16_t *p = GetModParamPointer(param, instance);
+		if (p) {
+			int OrigVal = *p;
+			int32_t val = OrigVal + delta * 1000;
+			if (val < 0) val = 0;
+			if (val > 0xffff) val = 0xffff;
+			*p = val;
+		}
+		
+	}
+
+	uint16_t GetModParameterValue(ModParameters param, int instance)
+	{
+		uint16_t *p = GetModParamPointer(param, instance);
+		if (p) return *p;
+		
+
+		return 0;
 
 	}
 
