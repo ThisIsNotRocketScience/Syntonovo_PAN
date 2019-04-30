@@ -88,16 +88,38 @@ ENDMENU()
 
 
 MENU(VCF1MIX, ledbutton_VCF1_FrequencyBut, "VCF1 Mix")
-ENTRY("Osc1", MenuEntry_Value, Output_VCO1_MIX1)
-ENTRY("Osc2", MenuEntry_Value, Output_VCO2_MIX1)
-ENTRY("Osc3", MenuEntry_Value, Output_VCO2_MIX1)
+ENTRY("Level", MenuEntry_Value, Output_VCF1_LEVEL)
+ENTRY("VCO1", MenuEntry_Value, Output_VCO1_MIX1)
+ENTRY("VCO2", MenuEntry_Value, Output_VCO2_MIX1)
+ENTRY("VCO3", MenuEntry_Value, Output_VCO3_MIX1)
+
+ENTRY("FX left", MenuEntry_Value, Output_VCF1_FX_12)
+ENTRY("FX right", MenuEntry_Value, Output_VCF1_FX_24)
+
 //CUSTOMENTRY("VCF parallel", MenuEntry_Toggle, Switch_SELVCF2POST)
 ENDMENU()
 
 MENU(VCF2MIX, ledbutton_VCF1_FrequencyBut, "VCF2 Mix")
-ENTRY("Osc1", MenuEntry_Value, Output_VCO1_MIX2)
-ENTRY("Osc2", MenuEntry_Value, Output_VCO2_MIX2)
-ENTRY("Osc3", MenuEntry_Value, Output_VCO2_MIX2)
+ENTRY("Level", MenuEntry_Value, Output_VCF2_LEVEL)
+ENTRY("VCO1", MenuEntry_Value, Output_VCO1_MIX2)
+ENTRY("VCO2", MenuEntry_Value, Output_VCO2_MIX2)
+ENTRY("VCO3", MenuEntry_Value, Output_VCO3_MIX2)
+
+ENTRY("FX left", MenuEntry_Value, Output_VCF2_FX_L)
+ENTRY("FX right", MenuEntry_Value, Output_VCF2_FX_L)
+
+//CUSTOMENTRY("VCF parallel", MenuEntry_Toggle, Switch_SELVCF2POST)
+ENDMENU()
+
+MENU(CLEANMIX, ledbutton_VCF1_FrequencyBut, "Cleanfeed Mix")
+ENTRY("Level", MenuEntry_Value, Output_CLEANF_LEVEL)
+ENTRY("VCO4", MenuEntry_Value, Output_VCO4_DRY_MIX)
+ENTRY("VCO5", MenuEntry_Value, Output_VCO5_DRY_MIX)
+ENTRY("VCO6", MenuEntry_Value, Output_VCO6_DRY_MIX)
+ENTRY("VCO7", MenuEntry_Value, Output_VCO7_DRY_MIX)
+
+ENTRY("FX left", MenuEntry_Value, Output_CLEANF_FX_L)
+ENTRY("FX right", MenuEntry_Value, Output_CLEANF_FX_L)
 //CUSTOMENTRY("VCF parallel", MenuEntry_Toggle, Switch_SELVCF2POST)
 ENDMENU()
 
