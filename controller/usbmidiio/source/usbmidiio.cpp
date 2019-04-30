@@ -972,7 +972,7 @@ void KeyboardTask(void* pvParameters)
 
 #define FULLVALUE(param, subparam, value) dsp_cmd(param, subparam, value)
 #define SETMODSOURCE(source, subparam, value) dsp_cmd(source, (subparam) | 0x80, value)
-#define MODMATRIX(param, target, subparam, value) dsp_cmd(param, ((((target) << 2) & 0xF) + ((subparam) & 3)) | 0x40, value)
+#define MODMATRIX(param, target, subparam, value) dsp_cmd(param, ((((target & 0xF) << 2)) + ((subparam) & 3)) | 0x40, value)
 
 #define SWITCH_ON(sw) FULLVALUE(0xfe, 0xfd, 0x200 | (sw));
 #define SWITCH_OFF(sw) FULLVALUE(0xfe, 0xfd, 0x100 | (sw));
@@ -995,10 +995,14 @@ void preset_init()
 	for (int param = 0; param < 11; param++) {
 		SETMODSOURCE(param + 0x20, 0, 0x4000);
 		SETMODSOURCE(param + 0x20, 1, 0x0100);
+		preset.controller[param].scale = 0x4000;
+		preset.controller[param].deadzone = 0x0100;
 	}
 	// operators
 	for (int param = 0; param < 16; param++) {
 		SETMODSOURCE(param + 0x30, 0, 0xff);
+		preset.op[param].modsource1 = 0xff;
+		preset.op[param].modsource2 = 0xff;
 		SETMODSOURCE(param + 0x30, 1, 0xff);
 		SETMODSOURCE(param + 0x30, 2, 0);
 		SETMODSOURCE(param + 0x30, 3, 0);
@@ -1007,8 +1011,9 @@ void preset_init()
 	// modmatrix
 	for (int param = 0; param < 0x40; param++) {
 		for (int target = 0; target < 11; target++) {
+				preset.modmatrix[param].targets[target].outputid = 0xff;
 				MODMATRIX(param, target, 0, 0);
-				MODMATRIX(param, target, 1, 0);
+				MODMATRIX(param, target, 1, 0xff);
 				MODMATRIX(param, target, 2, 0);
 			}
 	}
@@ -1020,8 +1025,8 @@ void preset_init()
 		FULLVALUE(param, 2, 0);
 	}
 
-#define OUTPUT(NAME, x, y, z, w, k, VALUE) FULLVALUE(output_##NAME, 0, VALUE);
-#define OUTPUT_VIRT(NAME, x, y, z, w, k, VALUE) FULLVALUE(output_##NAME, 0, VALUE);
+#define OUTPUT(NAME, x, y, z, w, k, VALUE) FULLVALUE(output_##NAME, 0, VALUE); preset.paramvalue[output_##NAME] = VALUE;
+#define OUTPUT_VIRT(NAME, x, y, z, w, k, VALUE) FULLVALUE(output_##NAME, 0, VALUE); preset.paramvalue[output_##NAME] = VALUE;
 
 #include "../../../interface/paramdef.h"
 
@@ -1036,22 +1041,47 @@ void preset_init()
 	FULLVALUE(output_VCO6_PITCH, 1, 0x4000);
 	FULLVALUE(output_VCO7_PITCH, 1, 0x4000);
 
+	preset.switches[0] = 0;
+	preset.switches[1] = 0;
 	for (int i = 0; i < 64; i++) {
 	    SWITCH_OFF(i);
 	}
     SWITCH_ON(switch_SEL1SQR);
+	preset.switches[1] |= 1 << (switch_SEL1SQR - 32);
     SWITCH_ON(switch_SEL2SQR);
+	preset.switches[1] |= 1 << (switch_SEL2SQR - 32);
     SWITCH_ON(switch_SEL3SQR);
+	preset.switches[1] |= 1 << (switch_SEL3SQR - 32);
 
     for (int i = 0; i < 16; i++) {
 		SETMODSOURCE(i + modsource_ENV0, 1, 0x10);
+		preset.env[i].a = 0x10;
 		SETMODSOURCE(i + modsource_ENV0, 2, 0x2000);
+		preset.env[i].d = 0x2000;
 		SETMODSOURCE(i + modsource_ENV0, 3, 0x2000);
+		preset.env[i].s = 0x2000;
 		SETMODSOURCE(i + modsource_ENV0, 4, 0x5000);
+		preset.env[i].r = 0x5000;
     }
 
     MODMATRIX(modsource_ENV0, 0, 0, 0x3fff);
+	preset.modmatrix[modsource_ENV0].targets[0].depth = 0x3fff;
     MODMATRIX(modsource_ENV0, 0, 1, output_VCF1_LIN);
+	preset.modmatrix[modsource_ENV0].targets[0].outputid = output_VCF1_LIN;
+
+	preset.high.h = 0x1000;
+	preset.low.h = 0x4000;
+	preset.active.h = 0x3000;
+
+	preset.low.v = 0xffff;
+	preset.active.v = 0xffff;
+	preset.high.v = 0xffff;
+
+	preset.active.s = 0x1000;
+	preset.high.s = 0xffff;
+	preset.low.s = 0xffff;
+
+	preset.SetName("Bleepy");
 }
 ///////////////////////////////////////////////////////////////////////
 
@@ -1090,25 +1120,85 @@ void sync_preset(uint32_t addr)
 	}
 	else if (addr >= offsetof(PanPreset_t, controller)) {
 		addr -= offsetof(PanPreset_t, controller);
+
+		int ctrlid = addr / sizeof(ControllerParam_t);
+		int subaddr = addr - ctrlid * sizeof(ControllerParam_t);
+
+		switch (subaddr) {
+		case 0:
+			SETMODSOURCE(ctrlid + modsource_X, 0, preset.controller[ctrlid].scale);
+			SETMODSOURCE(ctrlid + modsource_X, 1, preset.controller[ctrlid].deadzone);
+			break;
+		}
 	}
 	else if (addr >= offsetof(PanPreset_t, env)) {
 		addr -= offsetof(PanPreset_t, env);
+
+		int envid = addr / sizeof(EnvParam_t);
+		int subaddr = addr - envid * sizeof(EnvParam_t);
+		switch (subaddr) {
+		case 0:
+			//printf("env %d a=%x\n", envid, preset.env[envid].a);
+			SETMODSOURCE(envid + modsource_ENV0, 1, preset.env[envid].a);
+			break;
+		case 4:
+			//printf("env %d d=%x\n", envid, preset.env[envid].d);
+			//printf("env %d s=%x\n", envid, preset.env[envid].s);
+			SETMODSOURCE(envid + modsource_ENV0, 2, preset.env[envid].d);
+			SETMODSOURCE(envid + modsource_ENV0, 3, preset.env[envid].s);
+			break;
+		case 8:
+			//printf("env %d r=%x\n", envid, preset.env[envid].r);
+			SETMODSOURCE(envid + modsource_ENV0, 4, preset.env[envid].r);
+			break;
+		case 12:
+			break;
+		}
 	}
 	else if (addr >= offsetof(PanPreset_t, lfo)) {
 		addr -= offsetof(PanPreset_t, lfo);
+
+		int lfoid = addr / sizeof(LfoParam_t);
+		int subaddr = addr - lfoid * sizeof(LfoParam_t);
+		switch (subaddr) {
+		case 0:
+			SETMODSOURCE(lfoid + modsource_LFO0, 1, preset.lfo[lfoid].speed);
+			break;
+		case 4:
+			SETMODSOURCE(lfoid + modsource_LFO0, 2, preset.lfo[lfoid].depth);
+			SETMODSOURCE(lfoid + modsource_LFO0, 3, preset.lfo[lfoid].shape);
+			break;
+		case 8:
+			SETMODSOURCE(lfoid + modsource_LFO0, 4, preset.lfo[lfoid].reset_phase);
+			break;
+		}
 	}
 	else if (addr >= offsetof(PanPreset_t, modmatrix)) {
 		addr -= offsetof(PanPreset_t, modmatrix);
+
+		int matrixrow = addr / sizeof(ModMatrixRow_t);
+		int entry = (addr - matrixrow*sizeof(ModMatrixRow_t)) / sizeof(ModTargetSpec_t);
+		int subaddr = addr - matrixrow*sizeof(ModMatrixRow_t) - entry*sizeof(ModTargetSpec_t);
+
+		switch (subaddr) {
+		case 0:
+			//printf("mod %d/%d d=%x oid=%d\n", matrixrow, entry, preset.modmatrix[matrixrow].targets[entry].depth, preset.modmatrix[matrixrow].targets[entry].outputid);
+		    MODMATRIX(matrixrow, entry, 0, preset.modmatrix[matrixrow].targets[entry].depth);
+		    MODMATRIX(matrixrow, entry, 1, preset.modmatrix[matrixrow].targets[entry].outputid);
+		    MODMATRIX(matrixrow, entry, 2, preset.modmatrix[matrixrow].targets[entry].sourceid);
+			break;
+		}
 	}
 	else if (addr >= offsetof(PanPreset_t, paramvalue)) {
 		addr -= offsetof(PanPreset_t, paramvalue);
 
-		int paramid = addr * 2;
+		int paramid = addr / 2;
 		FULLVALUE(paramid, 0, preset.paramvalue[paramid]);
 		FULLVALUE(paramid+1, 0, preset.paramvalue[paramid+1]);
 	}
 	else if (addr >= offsetof(PanPreset_t, switches)) {
 		addr -= offsetof(PanPreset_t, switches);
+		addr /= 4;
 
 		for (int i = 0; i < 32; i++) {
 			if (preset.switches[addr] & (1 << i)) {
