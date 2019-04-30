@@ -352,44 +352,66 @@ private:
 volatile int sync_running = 1;
 DiffSyncer<PanLedState_t> ledsync(&gPanState.s, 0x1000000);
 
+#undef SHOWSYNCPRINTF
+
 int sync_oobdata_func(uint8_t cmd, uint32_t data)
 {
 	switch (cmd) {
 	case OOB_UI_PAUSE:
+#ifdef SHOWSYNCPRINTF
 		printf("OOB_UI_PAUSE\n");
+#endif
 		break;
 	case OOB_UI_CONTINUE:
+#ifdef SHOWSYNCPRINTF
 		printf("OOB_UI_CONTINUE\n");
+#endif
 		ledsync.reset();
 		sync_running = 0;
 		break;
 	case OOB_BUTTON_DOWN:
+#ifdef SHOWSYNCPRINTF
 		printf("button down %d\n", data);
+#endif
 		LedButtonPressed((FinalLedButtonEnum)data);
 		break;
 	case OOB_BUTTON_UP:
+#ifdef SHOWSYNCPRINTF
 		printf("button up %d\n", data);
+#endif
 		break;
 	case OOB_ENCODER_CCW:
+#ifdef SHOWSYNCPRINTF
 		printf("encoder dec %d\n", data);
+#endif
 		LedEncoderButtonLeft((FinalEncoderEnum)data);
 		break;
 	case OOB_ENCODER_CW:
+#ifdef SHOWSYNCPRINTF
 		printf("encoder inc %d\n", data);
+#endif
 		LedEncoderButtonRight((FinalEncoderEnum)data);
 		break;
 	case OOB_ENCODER_DOWN:
+#ifdef SHOWSYNCPRINTF
 		printf("encoder down %d\n", data);
+#endif
 		LedEncoderButtonPress((FinalEncoderEnum)data);
 		break;
 	case OOB_ENCODER_UP:
+#ifdef SHOWSYNCPRINTF
 		printf("encoder up %d\n", data);
+#endif
 		break;
 	case OOB_SWITCH_CHANGE:
+#ifdef SHOWSYNCPRINTF
 		//printf("switch change %d\n", data);
+#endif
 		break;
 	default:
+#ifdef SHOWSYNCPRINTF
 		printf("sync_oobdata(%d, %x)\n", cmd, data);
+#endif
 	}
 
 	return 0;

@@ -49,3 +49,4 @@ PanSim/imgui.ini
 
 *.idb
 Raspberry/Debug/vc141.idb
+*.idb

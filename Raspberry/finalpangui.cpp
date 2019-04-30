@@ -323,7 +323,7 @@ _control_t::_control_t()
 	skipencodercycling = false;
 }
 
-void _control_t::SetTitle(char *t)
+void _control_t::SetTitle(const char *t)
 {
 	snprintf(title, 255, "%s", t);
 }
@@ -926,7 +926,7 @@ void _screensetup_t::DisableButton(int i)
 	buttons[i].enabled = false;
 }
 
-bool _screensetup_t::EnableButton(int i, char *text, int style , int target, bool active , ledmodes l )
+bool _screensetup_t::EnableButton(int i, const char *text, int style , int target, bool active , ledmodes l )
 {
 	buttons[i].SetTitle(text);
 	buttons[i].style = style;

@@ -160,6 +160,7 @@
     <ClCompile Include="serialtest.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="gui.h" />
     <ClInclude Include="imgui_impl_es2.h" />
     <ClInclude Include="uart.hpp" />
   </ItemGroup>
