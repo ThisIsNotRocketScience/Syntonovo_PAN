@@ -289,7 +289,62 @@ public:
 		
 	}
 
+
 	void hsv2rgb(uint16_t h, uint16_t s, uint16_t v, uint16_t *r, uint16_t *g, uint16_t *b)
+	{
+#define HSV_SECTION_6 (0x20)
+#define HSV_SECTION_3 (0x40)
+
+		uint8_t hue = h >> 8;
+		uint8_t value = v >> 8;
+		uint8_t saturation = s >> 8;
+
+		// The brightness floor is minimum number that all of
+		// R, G, and B will be set to.
+		uint8_t invsat = 255 - saturation;
+		uint8_t brightness_floor = (value * invsat) / 256;
+
+		uint8_t color_amplitude = value - brightness_floor;
+
+		uint8_t section = hue / HSV_SECTION_3; // 0..2
+		uint8_t offset = hue % HSV_SECTION_3;  // 0..63
+
+		uint8_t rampup = offset; // 0..63
+		uint8_t rampdown = (HSV_SECTION_3 - 1) - offset; // 63..0
+
+														
+		uint8_t rampup_amp_adj = (rampup   * color_amplitude) / (256 / 4);
+		uint8_t rampdown_amp_adj = (rampdown * color_amplitude) / (256 / 4);
+
+		// add brightness_floor offset to everything
+		uint8_t rampup_adj_with_floor = rampup_amp_adj + brightness_floor;
+		uint8_t rampdown_adj_with_floor = rampdown_amp_adj + brightness_floor;
+
+
+		if (section) {
+			if (section == 1) {
+				// section 1: 0x40..0x7F
+				*r = brightness_floor <<8 ;
+				*g = rampdown_adj_with_floor << 8 ;
+				*b = rampup_adj_with_floor <<8;
+			}
+			else {
+				// section 2; 0x80..0xBF
+				*r = rampup_adj_with_floor <<8;
+				*g = brightness_floor <<8;
+				*b = rampdown_adj_with_floor <<8 ;
+			}
+		}
+		else {
+			// section 0: 0x00..0x3F
+			*r = rampdown_adj_with_floor << 8;
+			*g = rampup_adj_with_floor << 8;
+			*b = brightness_floor << 8;
+		}
+	}
+
+
+	void brokenhsv2rgb(uint16_t h, uint16_t s, uint16_t v, uint16_t *r, uint16_t *g, uint16_t *b)
 	{
 		uint16_t region, remainder, p, q, t;
 
