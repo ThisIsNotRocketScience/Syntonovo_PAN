@@ -527,11 +527,13 @@ int autotune(int osc)
 	startf = readhz(16);
 
 	if (startf >= 15.0) {
+		//printf("low freq out of range: %f >= 15.0\n", startf);
 		return 1;
 	}
 
 	for (int bin = 0; bin < BINCOUNT; bin++) {
 		float target_freq = binfreq(bin);
+		//printf("target: %f\n", target_freq);
 		caldata[osc].calpitch[bin] = target_freq;
 		if (bin == 0) {
 			caldata[osc].inv_offset_error[bin] = 0.0f;
@@ -581,6 +583,7 @@ int autotune(int osc)
 
 			Voutraw(osc, ivalue);
 			float pitch = readhz(binsamples(bin));
+			//printf("pitch: %f\n", pitch);
 
 			if (abs((int32_t)ivalue - (int32_t)low) < 4) {
 				log_meas(osc, bin, i, ivalue, binsamples(bin), target_freq, pitch, caldata[osc].dacerror[bin], low_pitch, low, high_pitch, high, 11);
@@ -705,11 +708,12 @@ void autotune_start()
 
 	autotune_phase = 8;
 
-	r = autotune(6);
-	if (r) {
-		autotune_phase |= 0x100;
-		return;
-	}
+	//r = autotune(6);
+	//if (r) {
+	//	printf("failed\n");
+	//	autotune_phase |= 0x100;
+	//	return;
+	//}
 
 	autotune_phase = 9;
 

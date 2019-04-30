@@ -294,26 +294,28 @@ void Set12b(int bitindex, int value)
 	uint8_t* ptr;
 	if (bitindex >= 608) {
 		bitindex -= 608;
-		ptr = &leddata2[bitindex / 8];
+		int arrayindex = 75 - bitindex / 8 - 1;
+		ptr = &leddata2[arrayindex];
 	}
 	else {
-		ptr = &leddata1[bitindex / 8];
+		int arrayindex = 75 - bitindex / 8 - 1;
+		ptr = &leddata1[arrayindex];
 	}
 	if (bitindex & 4) {
 		//*ptr = (*ptr & 0xF0) | ((value >> 8) & 0x0F);
 		//ptr++;
 		//*ptr = value & 0xFF;
-		*ptr = (*ptr & 0x0F) | ((value << 4) & 0xF0);
-		ptr++;
 		*ptr = (value >> 4) & 0xFF;
+		ptr++;
+		*ptr = (*ptr & 0x0F) | ((value << 4) & 0xF0);
 	}
 	else {
 		//*ptr = (value >> 4) & 0xFF;
 		//ptr++;
 		//*ptr = (*ptr & 0x0F) | ((value >> 4) & 0xF0);
-		*ptr = value & 0xFF;
-		ptr++;
 		*ptr = (*ptr & 0xF0) | ((value >> 8) & 0x0F);
+		ptr++;
+		*ptr = value & 0xFF;
 	}
 }
 
@@ -322,10 +324,12 @@ void Set1b(int bitindex, int value)
 	uint8_t* ptr;
 	if (bitindex >= 608) {
 		bitindex -= 608;
-		ptr = &leddata2[bitindex / 8];
+		int arrayindex = 75 - bitindex / 8;
+		ptr = &leddata2[arrayindex];
 	}
 	else {
-		ptr = &leddata1[bitindex / 8];
+		int arrayindex = 75 - bitindex / 8;
+		ptr = &leddata1[arrayindex];
 	}
 	int off = bitindex & 7;
 	if (value) {
@@ -455,36 +459,26 @@ void setupleds()
 
 void SendLeds()
 {
-
-	// PWM ON ON PWM
-
-	// ON PWM ON PWM
-
-	memset(&leddata1, 0, sizeof(leddata2));
-	memset(&leddata2, 0, sizeof(leddata2));
+	//memset(&leddata1, 0, sizeof(leddata1));
+	//memset(&leddata2, 0, sizeof(leddata2));
 
 	//Set12b(encoderindex[3] + 12, 0x800);
 	//Set12b(encoderindex[4] + 12, 0x800);
 
 	for (int i = 0; i < __FINALENCODER_COUNT; i++) {
 		Set12b(encoderindex[i], ledstate.encoders[i].b >> 4);
-		Set12b(encoderindex[i] + 12, ledstate.encoders[i].r >> 4);
-		Set12b(encoderindex[i] + 24, ledstate.encoders[i].g >> 4);
+		Set12b(encoderindex[i] + 12, ledstate.encoders[i].g >> 4);
+		Set12b(encoderindex[i] + 24, ledstate.encoders[i].r >> 4);
 	}
 
 	for (int i = 0; i < __FINALLEDBUTTON_COUNT; i++) {
 		Set1b(buttonindex[i], ledstate.ledbuttons[i].mode != ledmode_off);
 	}
 
-	for (int i = sizeof(leddata1) - 1; i >= 0; i--) {
+	for (int i = 0; i < sizeof(leddata1); i++) {
 		for (int b = 7; b >= 0; b--) {
 			L1ClkOff();
 			L2ClkOff();
-			__NOP();
-			__NOP();
-			__NOP();
-			__NOP();
-			__NOP();
 			__NOP();
 			__NOP();
 			__NOP();
@@ -507,18 +501,8 @@ void SendLeds()
 			__NOP();
 			__NOP();
 			__NOP();
-			__NOP();
-			__NOP();
-			__NOP();
-			__NOP();
-			__NOP();
 			L1ClkOn();
 			L2ClkOn();
-			__NOP();
-			__NOP();
-			__NOP();
-			__NOP();
-			__NOP();
 			__NOP();
 			__NOP();
 			__NOP();
@@ -529,16 +513,6 @@ void SendLeds()
 
 	L1LatchOff();
 	L2LatchOff();
-	__NOP();
-	__NOP();
-	__NOP();
-	__NOP();
-	__NOP();
-	__NOP();
-	__NOP();
-	__NOP();
-	__NOP();
-	__NOP();
 	__NOP();
 	__NOP();
 	__NOP();
@@ -997,8 +971,8 @@ void KeyboardTask(void* pvParameters)
 }
 
 #define FULLVALUE(param, subparam, value) dsp_cmd(param, subparam, value)
-#define MODSOURCE(source, subparam, value) dsp_cmd(source, (subparam) | 0x80, value)
-#define MODMATRIX(param, target, subparam, value) dsp_cmd(param, (((target) << 1) + ((subparam) & 1)) | 0x40, value)
+#define SETMODSOURCE(source, subparam, value) dsp_cmd(source, (subparam) | 0x80, value)
+#define MODMATRIX(param, target, subparam, value) dsp_cmd(param, ((((target) << 2) & 0xF) + ((subparam) & 3)) | 0x40, value)
 
 #define SWITCH_ON(sw) FULLVALUE(0xfe, 0xfd, 0x200 | (sw));
 #define SWITCH_OFF(sw) FULLVALUE(0xfe, 0xfd, 0x100 | (sw));
@@ -1008,33 +982,34 @@ void preset_init()
 	// lfos
 	for (int param = 0; param < 16; param++) {
 		for (int i = 0; i < 5; i++) {
-			MODSOURCE(param + 0x10, i, 0);
+			SETMODSOURCE(param + 0x00, i, 0);
 		}
 	}
 	// envelopes
 	for (int param = 0; param < 16; param++) {
 		for (int i = 0; i < 5; i++) {
-			MODSOURCE(param + 0x30, i, 0);
+			SETMODSOURCE(param + 0x10, i, 0);
 		}
 	}
 	// controllers
 	for (int param = 0; param < 11; param++) {
-		MODSOURCE(param + 0x60, 0, 0x4000);
-		MODSOURCE(param + 0x60, 1, 0x0100);
+		SETMODSOURCE(param + 0x20, 0, 0x4000);
+		SETMODSOURCE(param + 0x20, 1, 0x0100);
 	}
 	// operators
 	for (int param = 0; param < 16; param++) {
-		MODSOURCE(param + 0x80, 0, 0xff);
-		MODSOURCE(param + 0x80, 1, 0xff);
-		MODSOURCE(param + 0x80, 2, 0);
-		MODSOURCE(param + 0x80, 3, 0);
+		SETMODSOURCE(param + 0x30, 0, 0xff);
+		SETMODSOURCE(param + 0x30, 1, 0xff);
+		SETMODSOURCE(param + 0x30, 2, 0);
+		SETMODSOURCE(param + 0x30, 3, 0);
 	}
 
 	// modmatrix
-	for (int param = 0; param < 0x100; param++) {
+	for (int param = 0; param < 0x40; param++) {
 		for (int target = 0; target < 11; target++) {
 				MODMATRIX(param, target, 0, 0);
 				MODMATRIX(param, target, 1, 0);
+				MODMATRIX(param, target, 2, 0);
 			}
 	}
 
@@ -1045,6 +1020,14 @@ void preset_init()
 		FULLVALUE(param, 2, 0);
 	}
 
+#define OUTPUT(NAME, x, y, z, w, k, VALUE) FULLVALUE(output_##NAME, 0, VALUE);
+#define OUTPUT_VIRT(NAME, x, y, z, w, k, VALUE) FULLVALUE(output_##NAME, 0, VALUE);
+
+#include "../../../interface/paramdef.h"
+
+#undef OUTPUT
+#undef OUTPUT_VIRT
+
 	FULLVALUE(output_VCO1_PITCH, 1, 0x4000);
 	FULLVALUE(output_VCO2_PITCH, 1, 0x4000);
 	FULLVALUE(output_VCO3_PITCH, 1, 0x4000);
@@ -1052,55 +1035,6 @@ void preset_init()
 	FULLVALUE(output_VCO5_PITCH, 1, 0x4000);
 	FULLVALUE(output_VCO6_PITCH, 1, 0x4000);
 	FULLVALUE(output_VCO7_PITCH, 1, 0x4000);
-
-	FULLVALUE(output_VCO1_PW, 0, 0x7fff);
-	FULLVALUE(output_VCO2_PW, 0, 0x7fff);
-	FULLVALUE(output_VCO3_PW, 0, 0x7fff);
-	FULLVALUE(output_VCO4_PW, 0, 0x7fff);
-	FULLVALUE(output_VCO5_PW, 0, 0x7fff);
-	FULLVALUE(output_VCO6_PW, 0, 0x7fff);
-	FULLVALUE(output_VCO7_PW, 0, 0x7fff);
-
-	FULLVALUE(output_VCF1_CV, 0, 0xffff);
-	FULLVALUE(output_VCF1_RES, 0, 0);
-
-	FULLVALUE(output_VCA_FINAL, 0, 0xffff);
-
-	FULLVALUE(output_VCF2_L_CV, 0, 0x7fff);
-	FULLVALUE(output_VCF2_M1_CV, 0, 0x7fff);
-	FULLVALUE(output_VCF2_M2_CV, 0, 0x7fff);
-	FULLVALUE(output_VCF2_H_CV, 0, 0x7fff);
-
-	FULLVALUE(output_VCF1_LIN, 0, 0);
-	FULLVALUE(output_VCF1_LEVEL, 0, 0xffff);
-	FULLVALUE(output_VCF1_PAN, 0, 0x7fff);
-	FULLVALUE(output_VCF2_PAN, 0, 0x7fff);
-	FULLVALUE(output_CLEANF_PAN, 0, 0x7fff);
-
-	FULLVALUE(output_MASTER_LEVEL, 0, 0xffff);
-	FULLVALUE(output_ZPRIME_SPEED, 0, 0x2000);
-
-	//FULLVALUE(output_VCO1_MIX1, 0, 0x7fff);
-	//FULLVALUE(output_VCO2_MIX1, 0, 0x7fff);
-	//FULLVALUE(output_VCO3_MIX1, 0, 0x7fff);
-	FULLVALUE(output_VCO1_LEVEL, 0, 0xffff);
-	FULLVALUE(output_VCO2_LEVEL, 0, 0xffff);
-	FULLVALUE(output_VCO3_LEVEL, 0, 0xffff);
-
-	FULLVALUE(output_VCO1_VCFMIX, 0, 0x8000);
-	FULLVALUE(output_VCO2_VCFMIX, 0, 0x8000);
-	FULLVALUE(output_VCO3_VCFMIX, 0, 0x8000);
-
-	FULLVALUE(output_VCO1_PITCH, 0, 0x8000);
-	FULLVALUE(output_VCO2_PITCH, 0, 0x8000);
-	FULLVALUE(output_VCO3_PITCH, 0, 0x8000);
-	FULLVALUE(output_VCO4_PITCH, 0, 0x8000);
-	FULLVALUE(output_VCO5_PITCH, 0, 0x8000);
-	FULLVALUE(output_VCO6_PITCH, 0, 0x8000);
-	FULLVALUE(output_VCO7_PITCH, 0, 0x8000);
-
-	FULLVALUE(output_MASTER_PITCH, 0, 0x8000);
-	FULLVALUE(output_MASTER_PITCH2, 0, 0x8000);
 
 	for (int i = 0; i < 64; i++) {
 	    SWITCH_OFF(i);
@@ -1110,25 +1044,14 @@ void preset_init()
     SWITCH_ON(switch_SEL3SQR);
 
     for (int i = 0; i < 16; i++) {
-		MODSOURCE(i + modsource_ENV0, 1, 0x10);
-		MODSOURCE(i + modsource_ENV0, 2, 0x2000);
-		MODSOURCE(i + modsource_ENV0, 3, 0x2000);
-		MODSOURCE(i + modsource_ENV0, 4, 0x5000);
+		SETMODSOURCE(i + modsource_ENV0, 1, 0x10);
+		SETMODSOURCE(i + modsource_ENV0, 2, 0x2000);
+		SETMODSOURCE(i + modsource_ENV0, 3, 0x2000);
+		SETMODSOURCE(i + modsource_ENV0, 4, 0x5000);
     }
 
     MODMATRIX(modsource_ENV0, 0, 0, 0x3fff);
     MODMATRIX(modsource_ENV0, 0, 1, output_VCF1_LIN);
-
-    int target[] = { output_VCO1_PW, output_VCO2_PW, output_VCO3_PW, output_VCO4_PW, output_VCO5_PW, output_VCO6_PW, output_VCO7_PW };
-    for (int i = 1; i < 16; i++) {
-		MODMATRIX(i + modsource_ENV0, 0, 0, 0x300);
-		MODMATRIX(i + modsource_ENV0, 0, 1, target[i % 7]);
-    }
-
-//    MODSOURCE(modsource_LFO0, 1, 0x200);
-
-//    MODMATRIX(modsource_LFO0, 0, 0, 0x7fff);
-//    MODMATRIX(modsource_LFO0, 0, 1, output_VCF1_LIN);
 }
 ///////////////////////////////////////////////////////////////////////
 
@@ -1227,11 +1150,8 @@ void sync_data_func(int addr, uint8_t* data)
 	if (addr & 3) return;
 
 	if (addr >= 0 && addr < (int)sizeof(preset)) {
-
 		*(uint32_t*)&((uint8_t*)&preset)[addr] = *(uint32_t*)data;
-
 		sync_preset(addr);
-
 	}
 
 	if (addr >= 0x1000000 && addr < ((int)sizeof(ledstate) | 0x1000000)) {
