@@ -76,6 +76,8 @@ enum ModSource_t : unsigned char
 	Source_right_sus,
 	Source_left_unac,
 	Source_right_unac,
+	Source_Envelope,
+	Source_LFO,
 	__ModSource_COUNT
 };
 
@@ -230,6 +232,19 @@ public:
 #define SYNTH_MODSOURCE_COUNT (64)
 	ModMatrixRow_t modmatrix[SYNTH_MODSOURCE_COUNT];
 
+
+	ModMatrixRow_t *GetModSourceRow(ModSource_t mod, int instance)
+	{
+		switch (mod)
+		{
+		case Source_LFO: return &modmatrix[0 + instance];
+		case Source_Envelope: return &modmatrix[0x10 + instance];
+		case Source_x: return &modmatrix[0x20];
+		case Source_y: return &modmatrix[0x21];
+		case Source_z: return &modmatrix[0x21];
+		}
+			return 0;
+	}
 #define NUM_LFOS (16)
 	LfoParam_t lfo[NUM_LFOS];
 

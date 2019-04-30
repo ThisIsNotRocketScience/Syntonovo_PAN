@@ -111,7 +111,7 @@ public:
 	
 	virtual void Render(bool active);
 };
-
+#define MAXENCODERSETS 2
 
 class _screensetup_t : public _control_t
 {
@@ -149,7 +149,12 @@ public:
 	void ButtonStyle(int i, int style, int target);
 
 	sidebutton_t buttons[14];
-	bottomencoder_t encoders[11];
+
+	int encodersets;
+	int currentencoderset;
+	bottomencoder_t encoders[MAXENCODERSETS][11];
+	virtual void SetupEncoderSet(int n) {};
+
 	void AddText(float x, float y, char *t, alignment_t align = align_left, font_size fontsize = font_small);
 	void AddDynamicText(float x, float y, char *t, int len, alignment_t align = align_left, font_size fontsize = font_small);
 	

@@ -754,6 +754,8 @@ void bottomencoder_t::UpdateLed(bool active)
 
 _screensetup_t::_screensetup_t(_screensetup_t *parent )
 {
+	currentencoderset = 0;
+	encodersets = 1;
 	Parent = parent;
 	Modal = NULL;
 	SetTitle("");
@@ -765,11 +767,15 @@ _screensetup_t::_screensetup_t(_screensetup_t *parent )
 		buttons[i].SetupPosition(i);
 	}
 
-	for (int i = 0; i < 11; i++)
+	for (int j = 0; j < MAXENCODERSETS; j++)
 	{
-		encoders[i].Parent = this;
-		encoders[i].SetupPosition(i);
-		DisableEncoder(i);
+		for (int i = 0; i < 11; i++)
+		{
+			encoders[j][i].SetTitle("");
+			encoders[j][i].Parent = this;
+			encoders[j][i].SetupPosition(i);
+			DisableEncoder(i);
+		}
 	}
 
 	ControlsInOrder.push_back(&buttons[0]);
@@ -780,17 +786,13 @@ _screensetup_t::_screensetup_t(_screensetup_t *parent )
 	ControlsInOrder.push_back(&buttons[5]);
 	ControlsInOrder.push_back(&buttons[6]);
 
-	ControlsInOrder.push_back(&encoders[0]);
-	ControlsInOrder.push_back(&encoders[1]);
-	ControlsInOrder.push_back(&encoders[2]);
-	ControlsInOrder.push_back(&encoders[3]);
-	ControlsInOrder.push_back(&encoders[4]);
-	ControlsInOrder.push_back(&encoders[5]);
-	ControlsInOrder.push_back(&encoders[6]);
-	ControlsInOrder.push_back(&encoders[7]);
-	ControlsInOrder.push_back(&encoders[8]);
-	ControlsInOrder.push_back(&encoders[9]);
-	ControlsInOrder.push_back(&encoders[10]);
+	for (int i = 0; i < MAXENCODERSETS; i++)
+	{
+		for (int j = 0; j < 11; j++)
+		{
+			ControlsInOrder.push_back(&encoders[i][j]);
+		}
+	}
 
 	ControlsInOrder.push_back(&buttons[13]);
 	ControlsInOrder.push_back(&buttons[12]);
@@ -827,20 +829,20 @@ void _screensetup_t::SetupLeds()
 
 	for (int i = 0; i < 11; i++)
 	{
-		encoders[i].UpdateLed(ControlsInOrder[ActiveControl] == &encoders[i]);
+		encoders[currentencoderset][i].UpdateLed(ControlsInOrder[ActiveControl] == &encoders[currentencoderset][i]);
 	}
 
-	gPanState.SetEncoderLed(encoder_F1, encoders[0].ledmode,   encoders[ 0].r, encoders[0].g, encoders[0].b);
-	gPanState.SetEncoderLed(encoder_F2, encoders[1].ledmode, encoders[1].r, encoders[1].g, encoders[1].b);
-	gPanState.SetEncoderLed(encoder_F3, encoders[2].ledmode, encoders[2].r, encoders[2].g, encoders[2].b);
-	gPanState.SetEncoderLed(encoder_F4, encoders[3].ledmode, encoders[3].r, encoders[3].g, encoders[3].b);
-	gPanState.SetEncoderLed(encoder_F5, encoders[4].ledmode, encoders[4].r, encoders[4].g, encoders[4].b);
-	gPanState.SetEncoderLed(encoder_F6, encoders[5].ledmode, encoders[5].r, encoders[5].g, encoders[5].b);
-	gPanState.SetEncoderLed(encoder_F7, encoders[6].ledmode, encoders[6].r, encoders[6].g, encoders[6].b);
-	gPanState.SetEncoderLed(encoder_F8, encoders[7].ledmode, encoders[7].r, encoders[7].g, encoders[7].b);
-	gPanState.SetEncoderLed(encoder_F9, encoders[8].ledmode, encoders[8].r, encoders[8].g, encoders[8].b);
-	gPanState.SetEncoderLed(encoder_F10, encoders[9].ledmode, encoders[9].r, encoders[9].g, encoders[9].b);
-	gPanState.SetEncoderLed(encoder_F11, encoders[10].ledmode, encoders[10].r, encoders[10].g, encoders[10].b);
+	gPanState.SetEncoderLed(encoder_F1, encoders[currentencoderset][0].ledmode,   encoders[currentencoderset][ 0].r, encoders[currentencoderset][0].g, encoders[currentencoderset][0].b);
+	gPanState.SetEncoderLed(encoder_F2, encoders[currentencoderset][1].ledmode, encoders[currentencoderset][1].r, encoders[currentencoderset][1].g, encoders[currentencoderset][1].b);
+	gPanState.SetEncoderLed(encoder_F3, encoders[currentencoderset][2].ledmode, encoders[currentencoderset][2].r, encoders[currentencoderset][2].g, encoders[currentencoderset][2].b);
+	gPanState.SetEncoderLed(encoder_F4, encoders[currentencoderset][3].ledmode, encoders[currentencoderset][3].r, encoders[currentencoderset][3].g, encoders[currentencoderset][3].b);
+	gPanState.SetEncoderLed(encoder_F5, encoders[currentencoderset][4].ledmode, encoders[currentencoderset][4].r, encoders[currentencoderset][4].g, encoders[currentencoderset][4].b);
+	gPanState.SetEncoderLed(encoder_F6, encoders[currentencoderset][5].ledmode, encoders[currentencoderset][5].r, encoders[currentencoderset][5].g, encoders[currentencoderset][5].b);
+	gPanState.SetEncoderLed(encoder_F7, encoders[currentencoderset][6].ledmode, encoders[currentencoderset][6].r, encoders[currentencoderset][6].g, encoders[currentencoderset][6].b);
+	gPanState.SetEncoderLed(encoder_F8, encoders[currentencoderset][7].ledmode, encoders[currentencoderset][7].r, encoders[currentencoderset][7].g, encoders[currentencoderset][7].b);
+	gPanState.SetEncoderLed(encoder_F9, encoders[currentencoderset][8].ledmode, encoders[currentencoderset][8].r, encoders[currentencoderset][8].g, encoders[currentencoderset][8].b);
+	gPanState.SetEncoderLed(encoder_F10, encoders[currentencoderset][9].ledmode, encoders[currentencoderset][9].r, encoders[currentencoderset][9].g, encoders[currentencoderset][9].b);
+	gPanState.SetEncoderLed(encoder_F11, encoders[currentencoderset][10].ledmode, encoders[currentencoderset][10].r, encoders[currentencoderset][10].g, encoders[currentencoderset][10].b);
 
 	gPanState.SetButtonLed(ledbutton_L1, buttons[0].ledmode);
 	gPanState.SetButtonLed(ledbutton_L2, buttons[1].ledmode);
@@ -945,7 +947,7 @@ void _screensetup_t::SetFirstEnabledControlActive()
 
 void _screensetup_t::DisableEncoder(int i)
 {
-	encoders[i].enabled = 0;
+	encoders[currentencoderset][i].enabled = 0;
 }
 
 void _screensetup_t::DisableButton(int i)
@@ -968,13 +970,13 @@ int _screensetup_t::EnableAvailableEncoder(char *text, int style, int target)
 {
 	for (int i = 0; i < 11; i++)
 	{
-		if (encoders[i].enabled == false)
+		if (encoders[currentencoderset][i].enabled == false)
 		{
-			encoders[i].SetTitle(text);
-			encoders[i].enabled = true;
-			encoders[i].style = style;
-			encoders[i].target = target;
-			encoders[i].ledmode = ledmode_solid;
+			encoders[currentencoderset][i].SetTitle(text);
+			encoders[currentencoderset][i].enabled = true;
+			encoders[currentencoderset][i].style = style;
+			encoders[currentencoderset][i].target = target;
+			encoders[currentencoderset][i].ledmode = ledmode_solid;
 			return i;
 		}
 	}
@@ -1188,17 +1190,17 @@ void _screensetup_t::Encoder(FinalEncoderEnum button, int delta)
 {
 	switch (button)
 	{
-	case encoder_F1: encoders[0].Turn(delta); break;
-	case encoder_F2: encoders[1].Turn(delta); break;
-	case encoder_F3: encoders[2].Turn(delta); break;
-	case encoder_F4: encoders[3].Turn(delta); break;
-	case encoder_F5: encoders[4].Turn(delta); break;
-	case encoder_F6: encoders[5].Turn(delta); break;
-	case encoder_F7: encoders[6].Turn(delta); break;
-	case encoder_F8: encoders[7].Turn(delta); break;
-	case encoder_F9: encoders[8].Turn(delta); break;
-	case encoder_F10: encoders[9].Turn(delta); break;
-	case encoder_F11: encoders[10].Turn(delta); break;
+	case encoder_F1: encoders[currentencoderset][0].Turn(delta); break;
+	case encoder_F2: encoders[currentencoderset][1].Turn(delta); break;
+	case encoder_F3: encoders[currentencoderset][2].Turn(delta); break;
+	case encoder_F4: encoders[currentencoderset][3].Turn(delta); break;
+	case encoder_F5: encoders[currentencoderset][4].Turn(delta); break;
+	case encoder_F6: encoders[currentencoderset][5].Turn(delta); break;
+	case encoder_F7: encoders[currentencoderset][6].Turn(delta); break;
+	case encoder_F8: encoders[currentencoderset][7].Turn(delta); break;
+	case encoder_F9: encoders[currentencoderset][8].Turn(delta); break;
+	case encoder_F10: encoders[currentencoderset][9].Turn(delta); break;
+	case encoder_F11: encoders[currentencoderset][10].Turn(delta); break;
 	}
 }
 
@@ -1575,6 +1577,8 @@ public:
 	Screens_t myScreen;
 	int ActiveInstance ;
 	int MaxInstances;
+	
+	ModSource_t modType;
 	bool HasActiveInstanceDisplay;
 	virtual uint16_t GetParameterValue(int param) 
 	{
@@ -1584,12 +1588,34 @@ public:
 	{
 		gCurrentPreset.TweakModulation((ModParameters)param, ActiveInstance, delta);
 	}
+	ModSource_t ModTypeFromScreen(Screens_t screen)
+	{
+		switch (screen)
+		{
+		case SCREEN_LFO: return Source_LFO;
+		case SCREEN_ENVELOPE: return Source_Envelope;
+		
+		case SCREEN_X: return Source_x;
+		case SCREEN_Y: return Source_y;
+		case SCREEN_Z: return Source_y;
+		
+		case SCREEN_TOUCH: return Source_zprime;		
+		case SCREEN_KEYBOARD: return Source_note;
 
+
+		case SCREEN_VELOCITY: return Source_vel;
+		
+
+		}
+
+		return Source_none;
+	}
 	ModSourceScreen(Screens_t screen)
 	{
 		MaxInstances = 16;
 		ActiveInstance = 0;
 		myScreen = screen;
+		modType = ModTypeFromScreen(screen);
 		switch (myScreen)
 		{
 		case SCREEN_ENVELOPE:
@@ -1643,7 +1669,7 @@ public:
 			}
 		}
 
-		//auto row = gCurrentPreset.modmatrix[gCurrentGetModSourceRow(myScreen, ActiveInstance)];
+		auto row = gCurrentPreset.GetModSourceRow(modType, ActiveInstance);
 
 	}
 	virtual void Activate()
