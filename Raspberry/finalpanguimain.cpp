@@ -12,6 +12,7 @@
 
 #include "FinalPanEnums.h"
 #include "FinalPanHeader.h"
+#include "PanPreset.h"
 
 #include "../libs/imgui-master/imgui.h"
 #include "imgui_impl_es2.h"
@@ -27,7 +28,9 @@ int uart0_filestream = -1;
 extern void FinalPan_WindowFrame(float DT);
 extern void FinalPan_LoadResources();
 extern void FinalPan_SetupLeds();
+void FinalPan_SetupDefaultPreset();
 
+extern PanPreset_t gCurrentPreset;
 extern PanState_t gPanState;
 
 typedef struct
@@ -277,7 +280,11 @@ void* SerialThread(void*)
 
 void sync_data_func(int addr, uint8_t* data)
 {
-	//printf("sync_data(%x, %x %x %x %x)\n", addr, data[0], data[1], data[2], data[3]);
+	printf("sync_data(%x, %x %x %x %x)\n", addr, data[0], data[1], data[2], data[3]);
+	if (addr & 3) return;
+	if (addr >= 0 && addr < (int)sizeof(gCurrentPreset)) {
+		*(uint32_t*)&((uint8_t*)&gCurrentPreset)[addr] = *(uint32_t*)data;
+	}
 }
 
 #define OOB_UI_PAUSE		(0x41)
@@ -317,6 +324,7 @@ public:
 	int run()
 	{
 		if (_resend_full) {
+		printf("%x - %x @ %x\n", 0, sizeof(T), _address);
 			_resend_full = false;
 			memcpy(&_prev, _data, sizeof(T));
 			sync_block(&rpi_sync, (uint8_t*)&_prev, _address, sizeof(T), sync_complete);
@@ -332,7 +340,7 @@ public:
 						break;
 					}
 				}
-		//printf("%x - %x (max %x)\n", i, j, sizeof(T));
+		printf("%x - %x (max %x) @ %x\n", i, j, sizeof(T), _address);
 				memcpy(&((uint8_t*)&_prev)[i], &((uint8_t*)_data)[i], j - i);
 				sync_block(&rpi_sync, &((uint8_t*)&_prev)[i], _address + i, j - i, sync_complete);
 				return 0;
@@ -351,6 +359,7 @@ private:
 
 volatile int sync_running = 1;
 DiffSyncer<PanLedState_t> ledsync(&gPanState.s, 0x1000000);
+DiffSyncer<PanPreset_t> presetsync(&gCurrentPreset, 0x0);
 
 #undef SHOWSYNCPRINTF
 
@@ -358,15 +367,20 @@ int sync_oobdata_func(uint8_t cmd, uint32_t data)
 {
 	switch (cmd) {
 	case OOB_UI_PAUSE:
-#ifdef SHOWSYNCPRINTF
+//#ifdef SHOWSYNCPRINTF
 		printf("OOB_UI_PAUSE\n");
-#endif
+//#endif
+		ledsync.reset();
+		presetsync.reset();
+		sync_running = 1;
 		break;
 	case OOB_UI_CONTINUE:
-#ifdef SHOWSYNCPRINTF
+//#ifdef SHOWSYNCPRINTF
 		printf("OOB_UI_CONTINUE\n");
-#endif
+//#endif
+		FinalPan_SetupDefaultPreset();
 		ledsync.reset();
+		presetsync.reset();
 		sync_running = 0;
 		break;
 	case OOB_BUTTON_DOWN:
@@ -424,7 +438,7 @@ void sync_complete(int status)
 	sync_running = 1;
 	if (status == 1) {
 		sync_phase = 0;
-		// sending is resumed by OOB_UI_CONTINUE
+		// sending is resumed by timer
 		return;
 	}
 
@@ -436,10 +450,15 @@ void sync_complete(int status)
 				return;
 			}
 			break;
+		case 1:
+			if (presetsync.run() == 0) {
+				return;
+			}
+			break;
 		}
 		
 		sync_phase++;
-		if (sync_phase == 1) sync_phase = 0;
+		if (sync_phase == 2) sync_phase = 0;
 	}
 
 	sync_running = 0;
