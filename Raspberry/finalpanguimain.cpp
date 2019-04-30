@@ -153,6 +153,8 @@ static void init_ogl()
 
 	check();
 
+	printf("OpenGL set up a window size %dx%d\n", state->screen_width, &state->screen_height);
+
 
 }
 
@@ -540,7 +542,7 @@ int main()
 			if (!sync_running) sync_complete(0);
 		}
 		
-		glViewport(0, 0, 1024,600);
+		glViewport(0, 0, 1023,599);
 		glClear(GL_COLOR_BUFFER_BIT);
 
 
