@@ -1619,6 +1619,8 @@ public:
 		
 	}
 
+
+
 	virtual void Action(int a)
 	{
 		switch (a)
@@ -1640,6 +1642,9 @@ public:
 				RenderLettersInABox(i * 40 + 200, ButtonHeight(1), i == ActiveInstance, txt, 35, 35);
 			}
 		}
+
+		//auto row = gCurrentPreset.modmatrix[gCurrentGetModSourceRow(myScreen, ActiveInstance)];
+
 	}
 	virtual void Activate()
 	{
