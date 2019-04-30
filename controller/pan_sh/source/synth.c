@@ -298,7 +298,7 @@ void synth_mapping_defaultpatch()
     for (int i = 0; i < 16; i++) {
 		adsr_set_a(i, 0x10);
 		adsr_set_d(i, 0x2000);
-		adsr_set_s(i, 0x2000);
+		adsr_set_s(i, 0x2000 << 16);
 		adsr_set_r(i, 0x5000);
     }
 
@@ -651,7 +651,7 @@ void control_cb(int param, int subparam, uint16_t value)
 				break;
 			case 3:
 				env_param[param - 0x10].s = value;
-				adsr_set_s(param - 0x10, value);
+				adsr_set_s(param - 0x10, value << 16);
 				break;
 			case 4:
 				env_param[param - 0x10].r = value;
