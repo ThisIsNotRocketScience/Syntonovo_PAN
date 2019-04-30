@@ -26,7 +26,7 @@ public:
 	uint16_t h, s, v;
 } PACK;
 
-enum
+enum LedTheme
 {
 	Led_Low,
 	Led_High,
@@ -245,22 +245,42 @@ public:
 		s.encoders[encoder].b = b;
 	}
 
-	uint16_t led_low_r, led_low_g, led_low_b, high_led_r, high_led_g, high_led_b, active_led_r, active_led_g, active_led_b;
-
-	void SetLed(int led, hsv &H)
+	uint16_t low_led_r, low_led_g, low_led_b, high_led_r, high_led_g, high_led_b, active_led_r, active_led_g, active_led_b;
+	void GetThemeLed(LedTheme led, uint16_t *r, uint16_t *g, uint16_t *b)
 	{
-		uint16_t *r = &led_low_r;
-		uint16_t *g = &led_low_g;
-		uint16_t *b = &led_low_b;
+		switch (led)
+		{
+		case Led_Low:
+			*r = low_led_r;
+			*g = low_led_g;
+			*b = low_led_b;
+			break;
+		case Led_High:
+			*r = high_led_r;
+			*g = high_led_g;
+			*b = high_led_b;
+			break;
+		case Led_Active:
+			*r = active_led_r;
+			*g = active_led_g;
+			*b = active_led_b;
+			break;
+		}
+	}
+	void SetLed(LedTheme led, hsv &H)
+	{
+		uint16_t *r = &low_led_r;
+		uint16_t *g = &low_led_g;
+		uint16_t *b = &low_led_b;
 
 		switch (led)
 		{
-		case 0:
+		case Led_Low:
 			break;
-		case 1:
+		case Led_High:
 			r = &high_led_r; g = &high_led_g; b = &high_led_b;
 			break;
-		case 2:
+		case Led_Active:
 			r = &active_led_r; g = &active_led_g; b = &active_led_b;
 			break;
 		}

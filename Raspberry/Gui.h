@@ -149,6 +149,8 @@ public:
 	void AddText(float x, float y, char *t, alignment_t align = align_left, font_size fontsize = font_small);
 	void AddDynamicText(float x, float y, char *t, int len, alignment_t align = align_left, font_size fontsize = font_small);
 	
+	void AddLedControl(const char *name, int x, int y, LedTheme whichled);
+
 	void ChangeActiveControl(int delta);
 
 	virtual void SketchLeft(int delta);

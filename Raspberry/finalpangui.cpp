@@ -689,9 +689,9 @@ void LedLerp(bool active, uint16_t value, uint16_t *r, uint16_t *g, uint16_t *b)
 {
 	if (active)
 	{
-		*r = lerp(value, gPanState.led_low_r, gPanState.high_led_r);
-		*g = lerp(value, gPanState.led_low_g, gPanState.high_led_g);
-		*b = lerp(value, gPanState.led_low_b, gPanState.high_led_b);
+		*r = lerp(value, gPanState.low_led_r, gPanState.high_led_r);
+		*g = lerp(value, gPanState.low_led_g, gPanState.high_led_g);
+		*b = lerp(value, gPanState.low_led_b, gPanState.high_led_b);
 
 		*r = lerp(0x8000, *r, gPanState.active_led_r);
 		*g = lerp(0x8000, *g, gPanState.active_led_g);
@@ -700,9 +700,9 @@ void LedLerp(bool active, uint16_t value, uint16_t *r, uint16_t *g, uint16_t *b)
 	}
 	else
 	{
-		*r = lerp(value, gPanState.led_low_r, gPanState.high_led_r);
-		*g = lerp(value, gPanState.led_low_g, gPanState.high_led_g);
-		*b = lerp(value, gPanState.led_low_b, gPanState.high_led_b);
+		*r = lerp(value, gPanState.low_led_r, gPanState.high_led_r);
+		*g = lerp(value, gPanState.low_led_g, gPanState.high_led_g);
+		*b = lerp(value, gPanState.low_led_b, gPanState.high_led_b);
 	}
 }
 
@@ -1204,6 +1204,36 @@ void _screensetup_t::Render()
 
 
 
+class LedControl : public _control_t
+{
+public:
+	LedTheme myLed;
+	int x, y;
+	LedControl(LedTheme w,int _x, int _y, const char* name)
+	{
+		SetTitle(name);
+		x = _x;
+		y = _y;
+
+		myLed = w;
+		skipencodercycling = true;
+	}
+
+	virtual void Render(bool active)
+	{
+		ImGui::SetCursorPos(ImVec2(x, y - ImGui::GetTextLineHeight()));
+		uint16_t r, g, b;
+		gPanState.GetThemeLed(myLed, &r, &g, &b);
+		ImGui::Text(title);		
+		ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(x,y), ImVec2(x + 40, y + 40), IM_COL32(r>>8, g >>8, b >>8, 255));
+	}
+};
+
+void _screensetup_t::AddLedControl(const char *name, int x, int y, LedTheme whichled)
+{
+	ControlsInOrder.push_back(new LedControl(whichled, x, y, name));
+}
+
 void RenderModulationAssign(int id, _modmatrix_source_t *source, _modmatrix_target_t *target)
 {
 
@@ -1614,6 +1644,11 @@ void Gui::BuildScreens()
 	Screens[SCREEN_PRESET]->SetTitle("Edit Name/Category");
 
 	Screens[SCREEN_COLORS]->SetTitle("Colors");
+
+
+	Screens[SCREEN_COLORS]->AddLedControl("Low",100,200,  Led_Low);
+	Screens[SCREEN_COLORS]->AddLedControl("High", 200, 200, Led_High);
+	Screens[SCREEN_COLORS]->AddLedControl("Active", 300, 200, Led_Active);
 
 	Screens[SCREEN_COLORS]->EnableAvailableEncoder("Low: Hue", MenuEntry_LedValue, Led_Low_Hue);
 	Screens[SCREEN_COLORS]->EnableAvailableEncoder("Low: Sat", MenuEntry_LedValue, Led_Low_Sat);
