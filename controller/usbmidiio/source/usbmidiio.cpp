@@ -294,26 +294,28 @@ void Set12b(int bitindex, int value)
 	uint8_t* ptr;
 	if (bitindex >= 608) {
 		bitindex -= 608;
-		ptr = &leddata2[bitindex / 8];
+		int arrayindex = 75 - bitindex / 8 - 1;
+		ptr = &leddata2[arrayindex];
 	}
 	else {
-		ptr = &leddata1[bitindex / 8];
+		int arrayindex = 75 - bitindex / 8 - 1;
+		ptr = &leddata1[arrayindex];
 	}
 	if (bitindex & 4) {
 		//*ptr = (*ptr & 0xF0) | ((value >> 8) & 0x0F);
 		//ptr++;
 		//*ptr = value & 0xFF;
-		*ptr = (*ptr & 0x0F) | ((value << 4) & 0xF0);
-		ptr++;
 		*ptr = (value >> 4) & 0xFF;
+		ptr++;
+		*ptr = (*ptr & 0x0F) | ((value << 4) & 0xF0);
 	}
 	else {
 		//*ptr = (value >> 4) & 0xFF;
 		//ptr++;
 		//*ptr = (*ptr & 0x0F) | ((value >> 4) & 0xF0);
-		*ptr = value & 0xFF;
-		ptr++;
 		*ptr = (*ptr & 0xF0) | ((value >> 8) & 0x0F);
+		ptr++;
+		*ptr = value & 0xFF;
 	}
 }
 
@@ -322,10 +324,12 @@ void Set1b(int bitindex, int value)
 	uint8_t* ptr;
 	if (bitindex >= 608) {
 		bitindex -= 608;
-		ptr = &leddata2[bitindex / 8];
+		int arrayindex = 75 - bitindex / 8;
+		ptr = &leddata2[arrayindex];
 	}
 	else {
-		ptr = &leddata1[bitindex / 8];
+		int arrayindex = 75 - bitindex / 8;
+		ptr = &leddata1[arrayindex];
 	}
 	int off = bitindex & 7;
 	if (value) {
@@ -455,36 +459,26 @@ void setupleds()
 
 void SendLeds()
 {
-
-	// PWM ON ON PWM
-
-	// ON PWM ON PWM
-
-	memset(&leddata1, 0, sizeof(leddata2));
-	memset(&leddata2, 0, sizeof(leddata2));
+	//memset(&leddata1, 0, sizeof(leddata1));
+	//memset(&leddata2, 0, sizeof(leddata2));
 
 	//Set12b(encoderindex[3] + 12, 0x800);
 	//Set12b(encoderindex[4] + 12, 0x800);
 
 	for (int i = 0; i < __FINALENCODER_COUNT; i++) {
 		Set12b(encoderindex[i], ledstate.encoders[i].b >> 4);
-		Set12b(encoderindex[i] + 12, ledstate.encoders[i].r >> 4);
-		Set12b(encoderindex[i] + 24, ledstate.encoders[i].g >> 4);
+		Set12b(encoderindex[i] + 12, ledstate.encoders[i].g >> 4);
+		Set12b(encoderindex[i] + 24, ledstate.encoders[i].r >> 4);
 	}
 
 	for (int i = 0; i < __FINALLEDBUTTON_COUNT; i++) {
 		Set1b(buttonindex[i], ledstate.ledbuttons[i].mode != ledmode_off);
 	}
 
-	for (int i = sizeof(leddata1) - 1; i >= 0; i--) {
+	for (int i = 0; i < sizeof(leddata1); i++) {
 		for (int b = 7; b >= 0; b--) {
 			L1ClkOff();
 			L2ClkOff();
-			__NOP();
-			__NOP();
-			__NOP();
-			__NOP();
-			__NOP();
 			__NOP();
 			__NOP();
 			__NOP();
@@ -507,18 +501,8 @@ void SendLeds()
 			__NOP();
 			__NOP();
 			__NOP();
-			__NOP();
-			__NOP();
-			__NOP();
-			__NOP();
-			__NOP();
 			L1ClkOn();
 			L2ClkOn();
-			__NOP();
-			__NOP();
-			__NOP();
-			__NOP();
-			__NOP();
 			__NOP();
 			__NOP();
 			__NOP();
@@ -529,16 +513,6 @@ void SendLeds()
 
 	L1LatchOff();
 	L2LatchOff();
-	__NOP();
-	__NOP();
-	__NOP();
-	__NOP();
-	__NOP();
-	__NOP();
-	__NOP();
-	__NOP();
-	__NOP();
-	__NOP();
 	__NOP();
 	__NOP();
 	__NOP();
