@@ -14,6 +14,60 @@ PanState_t gPanState;
 
 Gui gGui;
 
+bool IsCenterEncoder(FinalEncoderEnum button)
+{
+	switch (button)
+	{
+	case encoder_F1:
+	case encoder_F2:
+	case encoder_F3:
+	case encoder_F4:
+	case encoder_F5:
+	case encoder_F6:
+	case encoder_F7:
+	case encoder_F8:
+	case encoder_F9:
+	case encoder_F10:
+	case encoder_F11:
+		return true;
+	}
+	return false;
+}
+int GetAssociatedParameter(FinalEncoderEnum button)
+{
+	switch (button)
+	{
+
+	case encoder_Masterout: return Output_MASTER_LEVEL;
+	case encoder_MasteroutHeadphone: return -1; // TODO -> headphone level?
+
+												// 8 on left side
+	case encoder_VCO1: return Output_VCO1_PITCH;
+	case encoder_VCO2: return Output_VCO2_PITCH;
+	case encoder_VCO3: return Output_VCO3_PITCH;
+	case encoder_VCO4: return Output_VCO4_PITCH;
+	case encoder_VCO5: return Output_VCO5_PITCH;
+	case encoder_VCO6: return Output_VCO6_PITCH;
+	case encoder_VCO7: return Output_VCO7_PITCH;
+	case encoder_VCO8: return Output_NOISE_COLOR; // TODO -> correct? 
+
+												  // 8 on right side
+	case encoder_VCF1Freq: return Output_VCF1_CV;
+	case encoder_VCF2a: return Output_VCF2_L_CV;
+	case encoder_VCF2b: return Output_VCF2_M1_CV;
+	case encoder_VCF2c: return Output_VCF2_M2_CV;
+	case encoder_VCF2d: return Output_VCF2_H_CV;
+	case encoder_Cleanmix: return Output_CLEANF_LEVEL;
+	case encoder_VCF2Mix: return Output_VCF2_LEVEL;
+	case encoder_VCF1Mix: return Output_VCF1_LEVEL;
+
+
+
+	}
+	return -1;
+}
+
+
 void FinalPan_SetupDefaultPreset()
 {
 
@@ -635,20 +689,20 @@ void LedLerp(bool active, uint16_t value, uint16_t *r, uint16_t *g, uint16_t *b)
 {
 	if (active)
 	{
-		*r = lerp(value, gPanState.ledr, gPanState.bledr);
-		*g = lerp(value, gPanState.ledg, gPanState.bledg);
-		*b = lerp(value, gPanState.ledb, gPanState.bledb);
+		*r = lerp(value, gPanState.led_low_r, gPanState.high_led_r);
+		*g = lerp(value, gPanState.led_low_g, gPanState.high_led_g);
+		*b = lerp(value, gPanState.led_low_b, gPanState.high_led_b);
 
-		*r = lerp(0x8000, *r, gPanState.hledr);
-		*g = lerp(0x8000, *g, gPanState.hledg);
-		*b = lerp(0x8000, *b, gPanState.hledb);
+		*r = lerp(0x8000, *r, gPanState.active_led_r);
+		*g = lerp(0x8000, *g, gPanState.active_led_g);
+		*b = lerp(0x8000, *b, gPanState.active_led_b);
 	
 	}
 	else
 	{
-		*r = lerp(value, gPanState.ledr, gPanState.bledr);
-		*g = lerp(value, gPanState.ledg, gPanState.bledg);
-		*b = lerp(value, gPanState.ledb, gPanState.bledb);
+		*r = lerp(value, gPanState.led_low_r, gPanState.high_led_r);
+		*g = lerp(value, gPanState.led_low_g, gPanState.high_led_g);
+		*b = lerp(value, gPanState.led_low_b, gPanState.high_led_b);
 	}
 }
 
@@ -800,10 +854,44 @@ void _screensetup_t::SetupLeds()
 	{
 		gPanState.SetButtonLed((FinalLedButtonEnum)LedButtonsThatOpenThisScreen[i], ledmode_solid);
 	}
+	for (int i = 0; i < __FINALENCODER_COUNT; i++)
+	{
+		FinalEncoderEnum enc = (FinalEncoderEnum)i;
+		if (IsCenterEncoder(enc) == false)
+		{
+			uint16_t V,r,g,b;
+			V = 0;
+			int idx = GetAssociatedParameter(enc);
+			bool active = false;
+			for (int i = 0; i < EncodersThatOpenThisScreen.size(); i++) if (EncodersThatOpenThisScreen[i] == i) active = true;
+			
+			if (idx > -1)
+			{
+				V = gCurrentPreset.paramvalue[idx];
+				LedLerp(active, V, &r, &g, &b);
+				gPanState.SetEncoderLed(enc, ledmode_solid, r, g, b);
+			}
+			else
+			{
+				if (active)
+				{
+					gPanState.SetEncoderLed(enc, ledmode_solid, gPanState.active_led_r, gPanState.active_led_g, gPanState.active_led_r);
+				}
+				else
+				{
+					gPanState.SetEncoderLed(enc, ledmode_off, 0,0,0);
+
+				}
+			}
+
+
+
+		}
+	}
 
 	for (int i = 0; i < EncodersThatOpenThisScreen.size(); i++)
 	{
-		gPanState.SetEncoderLed((FinalEncoderEnum)EncodersThatOpenThisScreen[i], ledmode_solid, gPanState.hledr, gPanState.hledg, gPanState.hledr);
+		gPanState.SetEncoderLed((FinalEncoderEnum)EncodersThatOpenThisScreen[i], ledmode_solid, gPanState.active_led_r, gPanState.active_led_g, gPanState.active_led_r);
 	}
 //	gPanState.SetEncoderLed()
 
@@ -1262,10 +1350,21 @@ void Gui::SketchRight(int delta)
 	CS()->SketchRight(delta);
 }
 
+
 void Gui::Encoder(FinalEncoderEnum button, int delta)
 {
-
-	CS()->Encoder(button, delta);
+	if (IsCenterEncoder(button))
+	{
+		CS()->Encoder(button, delta);
+	}
+	else
+	{
+		int param = GetAssociatedParameter(button);
+		if (param > -1)
+		{
+			gCurrentPreset.TweakParameter((OutputEnum)param, delta);
+		}
+	}
 }
 
 void Gui::ButtonPressed(FinalLedButtonEnum Button)
@@ -1405,7 +1504,17 @@ public:
 class ModSourceScreen : public _screensetup_t
 {
 public:
-	ModSourceScreen()
+	Screens_t myScreen;
+	ModSourceScreen(Screens_t screen)
+	{
+		myScreen = screen;
+		
+	}
+	virtual void Render(float dt)
+	{
+
+	}
+	virtual void Activate()
 	{
 
 	}
@@ -1475,15 +1584,15 @@ void Gui::BuildScreens()
 	BL->LedButtonsThatOpenThisScreen.push_back(ledbutton_BankLeft);
 	BR->LedButtonsThatOpenThisScreen.push_back(ledbutton_BankRight);
 
-	Screens[SCREEN_X] = new ModSourceScreen();
-	Screens[SCREEN_Y] = new ModSourceScreen();
-	Screens[SCREEN_Z] = new ModSourceScreen();
-	Screens[SCREEN_TOUCH] = new ModSourceScreen();
-	Screens[SCREEN_VELOCITY] = new ModSourceScreen();
-	Screens[SCREEN_KEYBOARD] = new ModSourceScreen();
+	Screens[SCREEN_X] = new ModSourceScreen(SCREEN_X);
+	Screens[SCREEN_Y] = new ModSourceScreen(SCREEN_Y);
+	Screens[SCREEN_Z] = new ModSourceScreen(SCREEN_Z);
+	Screens[SCREEN_TOUCH] = new ModSourceScreen(SCREEN_TOUCH);
+	Screens[SCREEN_VELOCITY] = new ModSourceScreen(SCREEN_VELOCITY);
+	Screens[SCREEN_KEYBOARD] = new ModSourceScreen(SCREEN_KEYBOARD);
 
-	Screens[SCREEN_LFO] = new ModSourceScreen();
-	Screens[SCREEN_ENVELOPE] = new ModSourceScreen();
+	Screens[SCREEN_LFO] = new ModSourceScreen(SCREEN_LFO);
+	Screens[SCREEN_ENVELOPE] = new ModSourceScreen(SCREEN_ENVELOPE);
 
 	for (int i = 0; i < SCREENS_COUNT; i++)
 	{
@@ -1667,13 +1776,11 @@ Screens_t GetPage(FinalEncoderEnum Button)
 {
 	switch (Button)
 	{
-	case encoder_VCF1Freq: return SCREEN_VCF1;
-	case encoder_VCF1Mix: return SCREEN_VCF1;
-	case encoder_VCF2a: return SCREEN_VCF2a;
-	case encoder_VCF2b: return SCREEN_VCF2a;
-	case encoder_VCF2c: return SCREEN_VCF2a;
-	case encoder_VCF2d: return SCREEN_VCF2a;
+		// 2 sticking out 
 	case encoder_Masterout: return SCREEN_MASTER;
+	case encoder_MasteroutHeadphone: return SCREEN_MASTER;
+
+		// 8 on left side
 	case encoder_VCO1: return SCREEN_VCO1;
 	case encoder_VCO2: return SCREEN_VCO2;
 	case encoder_VCO3: return SCREEN_VCO3;
@@ -1682,6 +1789,18 @@ Screens_t GetPage(FinalEncoderEnum Button)
 	case encoder_VCO6: return SCREEN_VCO4567;
 	case encoder_VCO7: return SCREEN_VCO4567;
 	case encoder_VCO8: return SCREEN_VCO8;
+
+		// 8 on right side
+	case encoder_VCF1Freq: return SCREEN_VCF1;
+	case encoder_VCF2a: return SCREEN_VCF2a;
+	case encoder_VCF2b: return SCREEN_VCF2a;
+	case encoder_VCF2c: return SCREEN_VCF2a;
+	case encoder_VCF2d: return SCREEN_VCF2a;
+	case encoder_Cleanmix: return SCREEN_CLEANMIX;
+	case encoder_VCF2Mix: return SCREEN_VCF2MIX;
+	case encoder_VCF1Mix: return SCREEN_VCF1MIX;
+
+	
 	}
 	return SCREEN_HOME;
 }
