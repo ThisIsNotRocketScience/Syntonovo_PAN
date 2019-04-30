@@ -188,8 +188,11 @@ void sync_in_read_complete(int status, void* stateptr)
 	case 2: { // WRITE
 			int in_dst = state->in_dst;
 			state->in_dst += 4;
-			state->data(in_dst, &data[1]);
 			sync_out_write_ack(state, state->in_running_checksum);
+			state->uart->rx.waitfor(6);
+		    LEAVE_CRITICAL_SECTION();
+			state->data(in_dst, &data[1]);
+			return;
 		}
 		break;
 	case 3: // ACK

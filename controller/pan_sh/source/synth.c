@@ -291,6 +291,21 @@ void synth_mapping_defaultpatch()
 	synth_param[VCO6_PITCH].note = 0x4000;
 	synth_param[VCO7_PITCH].note = 0x4000;
 
+	shiftctrl_set(SEL1SQR);
+	shiftctrl_set(SEL2SQR);
+	shiftctrl_set(SEL3SQR);
+
+    for (int i = 0; i < 16; i++) {
+		adsr_set_a(i, 0x10);
+		adsr_set_d(i, 0x2000);
+		adsr_set_s(i, 0x2000);
+		adsr_set_r(i, 0x5000);
+    }
+
+	modmatrix[0x10].targets[0].outputid = VCF1_LIN;
+	modmatrix[0x10].targets[0].sourceid = 0;
+	modmatrix[0x10].targets[0].depth = 0x3fff;
+
 #if FIXME
 	synth_param[VCO1_MIX1].adsr_depth = 0x7fff;
 #endif
@@ -601,72 +616,72 @@ void control_cb(int param, int subparam, uint16_t value)
 		// modsource
 		subparam &= 0x7f;
 
-		if (param >= 0x10 && param < 0x10 + NUM_LFOS) {
+		if (param >= 0x00 && param < 0x00 + NUM_LFOS) {
 			switch (subparam) {
 			case 0:
-				lfo_param[param - 0x10].flags = value;
+				lfo_param[param - 0x00].flags = value;
 				break;
 			case 1:
-				lfo_param[param - 0x10].speed = value;
-				lfo_set_speed(param - 0x10, value);
+				lfo_param[param - 0x00].speed = value;
+				lfo_set_speed(param - 0x00, value);
 				break;
 			case 2:
-				lfo_param[param - 0x10].depth = value;
+				lfo_param[param - 0x00].depth = value;
 				break;
 			case 3:
-				lfo_param[param - 0x10].shape = value;
+				lfo_param[param - 0x00].shape = value;
 				break;
 			case 4:
-				lfo_param[param - 0x10].reset_phase = value;
+				lfo_param[param - 0x00].reset_phase = value;
 				break;
 			}
 		}
-		else if (param >= 0x30 && param < 0x30 + NUM_ENVS) {
+		else if (param >= 0x10 && param < 0x10 + NUM_ENVS) {
 			switch (subparam) {
 			case 0:
-				env_param[param - 0x30].flags = value;
+				env_param[param - 0x10].flags = value;
 				break;
 			case 1:
-				env_param[param - 0x30].a = value;
-				adsr_set_a(param - 0x30, value);
+				env_param[param - 0x10].a = value;
+				adsr_set_a(param - 0x10, value);
 				break;
 			case 2:
-				env_param[param - 0x30].d = value;
-				adsr_set_d(param - 0x30, value);
+				env_param[param - 0x10].d = value;
+				adsr_set_d(param - 0x10, value);
 				break;
 			case 3:
-				env_param[param - 0x30].s = value;
-				adsr_set_s(param - 0x30, value);
+				env_param[param - 0x10].s = value;
+				adsr_set_s(param - 0x10, value);
 				break;
 			case 4:
-				env_param[param - 0x30].r = value;
-				adsr_set_r(param - 0x30, value);
+				env_param[param - 0x10].r = value;
+				adsr_set_r(param - 0x10, value);
 				break;
 			}
 		}
-		else if (param >= 0x60 && param < 0x60 + NUM_CONTROLLERS) {
+		else if (param >= 0x20 && param < 0x20 + NUM_CONTROLLERS) {
 			switch (subparam) {
 			case 0:
-				controller_param[param - 0x60].scale = value;
+				controller_param[param - 0x20].scale = value;
 				break;
 			case 1:
-				controller_param[param - 0x60].deadzone = value;
+				controller_param[param - 0x20].deadzone = value;
 				break;
 			}
 		}
-		else if (param >= 0x80 && param < 0x80 + NUM_OPERATORS) {
+		else if (param >= 0x30 && param < 0x30 + NUM_OPERATORS) {
 			switch (subparam) {
 			case 0:
-				op_param[param - 0x80].modsource1 = value;
+				op_param[param - 0x30].modsource1 = value;
 				break;
 			case 1:
-				op_param[param - 0x80].modsource2 = value;
+				op_param[param - 0x30].modsource2 = value;
 				break;
 			case 2:
-				op_param[param - 0x80].op = value;
+				op_param[param - 0x30].op = value;
 				break;
 			case 3:
-				op_param[param - 0x80].parameter = value;
+				op_param[param - 0x30].parameter = value;
 				break;
 			}
 		}
@@ -1566,6 +1581,7 @@ void synth_init()
 		for(int k = 0; k < MODTARGET_COUNT; k++) {
 			modmatrix[i].targets[k].outputid = 0xff;
 			modmatrix[i].targets[k].sourceid = 0;
+			modmatrix[i].targets[k].depth = 0;
 		}
 	}
 
@@ -1734,12 +1750,12 @@ int32_t controller_update(int ctrlid)
 void synth_modulation_run()
 {
 	for (int i = 0; i < NUM_LFOS; i++) {
-		int modid = 0x10 + i;
+		int modid = 0x00 + i;
 		int32_t lfo = (int32_t)lfo_update(i) - 0x8000;
 		add_mod_targets(modid, lfo);
 	}
 	for (int i = 0; i < NUM_ENVS; i++) {
-		int modid = 0x30 + i;
+		int modid = 0x10 + i;
 
 		adsr_set_gate(i, synth_param[GATE].value, env_param[i].flags & SubParamFlags_AdsrRetrigger);
 		//ad_set_gate(ctrlid, synth_param[GATE].value, synth_param[ctrlid].flags & SubParamFlags_AdRetrigger);
@@ -1749,12 +1765,12 @@ void synth_modulation_run()
 		//uint16_t ad = ad_update(ctrlid, una_corda_release);
 	}
 	for (int i = 0; i < NUM_CONTROLLERS; i++) {
-		int modid = 0x60 + i;
+		int modid = 0x20 + i;
 		int32_t value = controller_update(i);
 		add_mod_targets(modid, value);
 	}
 	for (int i = 0; i < NUM_OPERATORS; i++) {
-		int modid = 0x80 + i;
+		int modid = 0x30 + i;
 	}
 }
 

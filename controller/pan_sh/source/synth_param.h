@@ -77,7 +77,7 @@ typedef struct _modmatrix_row_t
 	//uint16_t value;
 } modmatrix_row_t;
 
-#define SYNTH_MODSOURCE_COUNT (256)
+#define SYNTH_MODSOURCE_COUNT (64)
 
 extern modmatrix_row_t modmatrix[SYNTH_MODSOURCE_COUNT];
 
