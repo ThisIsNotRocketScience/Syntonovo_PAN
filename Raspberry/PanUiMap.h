@@ -86,6 +86,21 @@ ENTRY("Resonance", MenuEntry_Value, Output_VCF1_RES)
 //CUSTOMENTRY("VCF parallel", MenuEntry_Toggle, Switch_SELVCF2POST)
 ENDMENU()
 
+
+MENU(VCF1MIX, ledbutton_VCF1_FrequencyBut, "VCF1 Mix")
+ENTRY("Osc1", MenuEntry_Value, Output_VCO1_MIX1)
+ENTRY("Osc2", MenuEntry_Value, Output_VCO2_MIX1)
+ENTRY("Osc3", MenuEntry_Value, Output_VCO2_MIX1)
+//CUSTOMENTRY("VCF parallel", MenuEntry_Toggle, Switch_SELVCF2POST)
+ENDMENU()
+
+MENU(VCF2MIX, ledbutton_VCF1_FrequencyBut, "VCF2 Mix")
+ENTRY("Osc1", MenuEntry_Value, Output_VCO1_MIX2)
+ENTRY("Osc2", MenuEntry_Value, Output_VCO2_MIX2)
+ENTRY("Osc3", MenuEntry_Value, Output_VCO2_MIX2)
+//CUSTOMENTRY("VCF parallel", MenuEntry_Toggle, Switch_SELVCF2POST)
+ENDMENU()
+
 EXTRABUTTON(VCF2a, ledbutton_Mid1Button)
 EXTRABUTTON(VCF2a, ledbutton_Mid2Button)
 EXTRABUTTON(VCF2a, ledbutton_HighButton)
