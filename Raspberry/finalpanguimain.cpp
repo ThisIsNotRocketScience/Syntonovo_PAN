@@ -282,11 +282,10 @@ void* SerialThread(void*)
 
 void sync_data_func(int addr, uint8_t* data)
 {
-	printf("sync_data(%x, %x %x %x %x)\n", addr, data[0], data[1], data[2], data[3]);
+	//printf("sync_data(%x, %x %x %x %x)\n", addr, data[0], data[1], data[2], data[3]);
 	if (addr & 3) return;
 	if (addr >= 0 && addr < (int)sizeof(gCurrentPreset)) {
 		*(uint32_t*)&((uint8_t*)&gCurrentPreset)[addr] = *(uint32_t*)data;
-		printf("TEST: %x @%x\n", gCurrentPreset.modmatrix[0].targets[0].depth, (int)&gCurrentPreset.modmatrix[0].targets[0].depth - (int)&gCurrentPreset);
 	}
 }
 
@@ -327,7 +326,7 @@ public:
 	int run()
 	{
 		if (_resend_full) {
-		printf("%x - %x @ %x\n", 0, sizeof(T), _address);
+		//printf("%x - %x @ %x\n", 0, sizeof(T), _address);
 			_resend_full = false;
 			memcpy(&_prev, _data, sizeof(T));
 			sync_block(&rpi_sync, (uint8_t*)&_prev, _address, sizeof(T), sync_complete);
@@ -343,7 +342,7 @@ public:
 						break;
 					}
 				}
-		printf("%x - %x (max %x) @ %x\n", i, j, sizeof(T), _address);
+		//printf("%x - %x (max %x) @ %x\n", i, j, sizeof(T), _address);
 				memcpy(&((uint8_t*)&_prev)[i], &((uint8_t*)_data)[i], j - i);
 				sync_block(&rpi_sync, &((uint8_t*)&_prev)[i], _address + i, j - i, sync_complete);
 				return 0;
@@ -370,17 +369,17 @@ int sync_oobdata_func(uint8_t cmd, uint32_t data)
 {
 	switch (cmd) {
 	case OOB_UI_PAUSE:
-//#ifdef SHOWSYNCPRINTF
+#ifdef SHOWSYNCPRINTF
 		printf("OOB_UI_PAUSE\n");
-//#endif
+#endif
 		ledsync.reset();
 		presetsync.reset();
 		sync_running = 1;
 		break;
 	case OOB_UI_CONTINUE:
-//#ifdef SHOWSYNCPRINTF
+#ifdef SHOWSYNCPRINTF
 		printf("OOB_UI_CONTINUE\n");
-//#endif
+#endif
 		//FinalPan_SetupDefaultPreset();
 		ledsync.reset();
 		presetsync.reset();
@@ -441,7 +440,7 @@ void sync_complete(int status)
 	sync_running = 1;
 	if (status == 1) {
 		sync_phase = 0;
-		// sending is resumed by timer
+		// sending is resumed by OOB_UI_CONTINUE triggering the timer
 		return;
 	}
 
