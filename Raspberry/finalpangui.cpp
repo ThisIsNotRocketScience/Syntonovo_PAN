@@ -1686,7 +1686,7 @@ void Gui::GotoPage(Screens_t s)
 void hsv2rgb(uint16_t h, uint16_t s, uint16_t v, uint16_t *r, uint16_t *g, uint16_t *b)
 {
 	float rr, gg, bb;
-	ImGui::ColorConvertHSVtoRGB((h * 360.0f) / 65535.0, s / 65535.0f, v / 65535.0f, rr, gg, bb);
+	ImGui::ColorConvertHSVtoRGB((h) / 65535.0, s / 65535.0f, v / 65535.0f, rr, gg, bb);
 	*r = (int)(rr * 65535.0f);
 	*g = (int)(gg * 65535.0f);
 	*b = (int)(bb * 65535.0f);
