@@ -527,6 +527,7 @@ int main()
 
 
 		ImGui_ImlES_NewFrame();
+		
 		ImGui::SetNextWindowPos(ImVec2(0, 0));
 		auto nt = current_timestamp();
 		auto diff = nt - t;
