@@ -113,6 +113,11 @@ ENTRY("Sub", MenuEntry_Value, Output_VCO1_SUB1)
 //CUSTOMENTRY("VCF parallel", MenuEntry_Toggle, Switch_SELVCF2POST)
 ENDMENU()
 
+MENU(PORTAMENTO, ledbutton_PortamentoLeft,"Portamento" )
+ENTRY("Time", MenuEntry_Value, Output_PORTAMENTO_TIME)
+CUSTOMENTRY("Enable", MenuEntry_FeatureToggle, Toggle_Portamento)
+ENDMENU()
+
 MENU(VCF2MIX, ledbutton_VCF1_FrequencyBut, "VCF2 Mix")
 ENTRY("Level", MenuEntry_Value, Output_VCF2_LEVEL)
 ENTRY("VCO1", MenuEntry_Value, Output_VCO1_MIX2)

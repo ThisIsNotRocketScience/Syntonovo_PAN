@@ -248,6 +248,7 @@ public:
 		case Source_left_unac: return &modmatrix[0x25];
 		case Source_right_unac: return &modmatrix[0x26];
 		case Source_note: return &modmatrix[0x2E];
+		case Source_vel:  return &modmatrix[0x2E];
 			//		case Source_pedal: return &modmatrix[0x22];
 		}
 		return 0;

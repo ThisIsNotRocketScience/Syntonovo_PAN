@@ -26,7 +26,7 @@ ModSource_t ModSourceScreen::ModTypeFromScreen(Screens_t screen)
 
 	case SCREEN_TOUCH: return Source_zprime;
 	case SCREEN_KEYBOARD: return Source_note;
-
+	
 
 	case SCREEN_VELOCITY: return Source_vel;
 
@@ -90,7 +90,6 @@ void ModSourceScreen::Action(int a)
 	case MenuAction_Next: ActiveInstance = (ActiveInstance + 1) % MaxInstances; break;
 	case MenuAction_Prev: ActiveInstance = (ActiveInstance + MaxInstances - 1) % MaxInstances; break;
 	}
-
 }
 
 void ModSourceScreen::Render(float DT)
@@ -105,7 +104,6 @@ void ModSourceScreen::Render(float DT)
 			RenderLettersInABox(i * 40 + 200, ButtonHeight(1), i == ActiveInstance, txt, 35, 35);
 		}
 	}
-
 	auto row = gCurrentPreset.GetModSourceRow(modType, ActiveInstance);
 }
 
@@ -113,7 +111,6 @@ void ModSourceScreen::Activate()
 {
 	_control_t::Activate();
 }
-
 
 uint16_t ModSourceScreen::GetModValue(int target)
 {

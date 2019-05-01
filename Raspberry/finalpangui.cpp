@@ -1427,11 +1427,26 @@ void RenderLettersInABox(int x, int y, bool active, const char *text, int w, int
 	ImVec2 tl(x, y);
 	ImVec2 br(x + w, y + h);
 	ImGui::GetWindowDrawList()->AddRect(tl, br, active ? gGuiResources.Highlight : gGuiResources.Normal, 0, 0, 2);
+	
 	auto s = ImGui::CalcTextSize(text);
-	ImGui::SetCursorPos(ImVec2(x + w / 2 - s.x, y + h / 2 - s.y / 2 - ImGui::GetTextLineHeight()));
+
+	ImGui::SetCursorPos(ImVec2(x + LetterBoxW / 2 - s.x / 2, y + LetterBoxH / 2 - s.y / 2));
 	ImGui::Text(text);
 
 }
+
+ImU32 Dimmed(int dim, ImU32 col)
+{
+	ImColor C(col);
+	ImVec4 cc = (ImVec4)C;
+	cc.x /= (1.0+dim);
+	cc.y /= (1.0 + dim);
+	cc.z /= (1.0 + dim);
+
+
+	return ImColor(cc);
+};
+
 class LetterControl : public _control_t
 {
 public:
@@ -1440,9 +1455,13 @@ public:
 	int y;
 	virtual void SketchRightDelta(int delta)
 	{
-		Current = ((Current + delta - 32 + 96) % 96) + 32;
+		Current = GetDeltaChar(Current, delta);// ((Current + delta - 32 + 96) % 96) + 32;
 	}
 
+	char GetDeltaChar(char base, int delta)
+	{
+		return ((base + delta - 32 + 96) % 96) + 32;
+	}
 	virtual void SketchRightPressed()
 	{
 		Current = ((Current + 32 - 64 + 64) % 64) + 64;
@@ -1465,11 +1484,26 @@ public:
 
 	virtual void Render(bool active, float DT)
 	{
+		if (active)
+		{
+			for (int i = -2; i < 3; i++)
+			{
+				if (i != 0)
+				{
+					ImVec2 tl(x, y + i * (LetterBoxH + ParamMasterMargin));
+					ImVec2 br(x + LetterBoxW, y + LetterBoxH + i * (LetterBoxH + ParamMasterMargin));
+					ImGui::GetWindowDrawList()->AddRect(tl, br, Dimmed(abs(i),active ? gGuiResources.Highlight : gGuiResources.Normal), 0, 0, 2);
+					auto s = ImGui::CalcTextSize(&Current, &Current + 1);
+					ImGui::SetCursorPos(ImVec2(x + LetterBoxW / 2 - s.x / 2, y + LetterBoxH / 2 - s.y / 2 + i * (LetterBoxH + ParamMasterMargin)));
+					ImGui::TextColored(ImVec4(ImColor(Dimmed(abs(i), active ? gGuiResources.Highlight : gGuiResources.Normal))), "%c", GetDeltaChar(Current, i));
+				}
+			}
+		}
 		ImVec2 tl(x, y);
 		ImVec2 br(x + LetterBoxW, y + LetterBoxH);
 		ImGui::GetWindowDrawList()->AddRect(tl, br, active ? gGuiResources.Highlight : gGuiResources.Normal, 0, 0, 2);
 		auto s = ImGui::CalcTextSize(&Current, &Current + 1);
-		ImGui::SetCursorPos(ImVec2(x + LetterBoxW / 2 - s.x, y + LetterBoxH / 2 - s.y / 2 - ImGui::GetTextLineHeight()));
+		ImGui::SetCursorPos(ImVec2(x + LetterBoxW / 2 - s.x/2, y + LetterBoxH / 2 - s.y / 2 ));
 		ImGui::Text("%c", Current);
 	}
 };
@@ -1621,8 +1655,8 @@ void Gui::BuildScreens()
 	Screens[SCREEN_TOUCH] = new ModSourceScreen(SCREEN_TOUCH);
 	Screens[SCREEN_VELOCITY] = new ModSourceScreen(SCREEN_VELOCITY);
 	Screens[SCREEN_KEYBOARD] = new ModSourceScreen(SCREEN_KEYBOARD);
-
 	Screens[SCREEN_LFO] = new ModSourceScreen(SCREEN_LFO);
+	
 	Screens[SCREEN_ENVELOPE] = new ModSourceScreen(SCREEN_ENVELOPE);
 
 	for (int i = 0; i < SCREENS_COUNT; i++)
@@ -1633,7 +1667,6 @@ void Gui::BuildScreens()
 	Screens[SCREEN_HOME]->SetTitle("Syntonovo Pan");
 	Screens[SCREEN_HOME]->AddText(512, 140, "Current preset: ", align_right);
 	Screens[SCREEN_HOME]->AddDynamicText(512, 140, gCurrentPreset.Name, PRESET_NAME_LENGTH);
-
 	Screens[SCREEN_HOME]->EncodersThatOpenThisScreen.push_back(encoder_SketchLeft);
 	
 	Screens[SCREEN_SYSTEM]->SetTitle("System Settings");
@@ -1649,6 +1682,7 @@ void Gui::BuildScreens()
 
 	Screens[SCREEN_COLORS]->SetTitle("Colors");
 
+	Screens[SCREEN_PORTAMENTO]->SetTitle("Portamento");
 
 	Screens[SCREEN_COLORS]->AddLedControl("Low", 100, 200, Led_Low);
 	Screens[SCREEN_COLORS]->AddLedControl("High", 200, 200, Led_High);

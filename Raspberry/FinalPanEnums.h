@@ -197,8 +197,14 @@ enum UIDisplayModes
 	MenuEntry_EffectParam2,
 	MenuEntry_EffectParam3,
 	MenuEntry_EncoderSet,
-	MenuEntry_ModMatrixValue
+	MenuEntry_ModMatrixValue,
+	MenuEntry_FeatureToggle
+};
 
+enum StateToggles
+{
+	Toggle_Portamento,
+	__ToggleCount
 };
 
 enum
