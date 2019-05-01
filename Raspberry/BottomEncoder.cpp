@@ -1,8 +1,10 @@
+#include <stdio.h>
 #include "FinalPanEnums.h"
 #include "FinalPanHeader.h"
 #include "PanPreset.h"
 #include "gui.h"
 #include "ModSourceScreen.h"
+
 
 void bottomencoder_t::Turn(int delta)
 {

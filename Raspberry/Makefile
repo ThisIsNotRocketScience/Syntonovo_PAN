@@ -9,7 +9,7 @@ default: finalpanguimain
 
 all: default
 
-pangui: finalpanguimain.o Combine.o imgui_es2.o SerialSearcher.o finalpangui.o panstructs.o linux_serial.o
+pangui: finalpanguimain.o Combine.o imgui_es2.o SerialSearcher.o finalpangui.o panstructs.o linux_serial.o BottomEncoder.o ModSourceScreen.o
 	$(CC) -o finalpanguimain *.o $(LDFLAGS)
 
 %.o: %.cpp $(DEPS)

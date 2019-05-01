@@ -9,6 +9,8 @@
 #include <math.h>
 #include <stdlib.h>
 
+#include "peripherals.h"
+
 #include "fsl_eeprom.h"
 #include "fsl_inputmux.h"
 //#include "fsl_pint.h"
@@ -268,7 +270,8 @@ void autotune_init()
 	EEPROM_GetDefaultConfig(&config);
 	EEPROM_Init(EEPROM, &config, BOARD_BOOTCLOCKRUN_CORE_CLOCK);
 
-	if (loadcal()) {
+	if (loadcal())
+	{
 		GPIO->B[BOARD_INITPINS_LED_PORT][BOARD_INITPINS_LED_PIN] = 0;
 		autotune_start();
 		GPIO->B[BOARD_INITPINS_LED_PORT][BOARD_INITPINS_LED_PIN] = 1;
@@ -515,6 +518,8 @@ volatile float startf;
 
 int autotune(int osc)
 {
+	DisableIRQ(USART_DSP_FLEXCOMM_IRQN);
+
 	__disable_irq();
 	sctimer_counter = 0;
 	__enable_irq();
@@ -528,6 +533,8 @@ int autotune(int osc)
 
 	if (startf >= 15.0) {
 		//printf("low freq out of range: %f >= 15.0\n", startf);
+		EnableIRQ(USART_DSP_FLEXCOMM_IRQN);
+
 		return 1;
 	}
 
@@ -645,6 +652,8 @@ int autotune(int osc)
 		}
 	}
 
+	EnableIRQ(USART_DSP_FLEXCOMM_IRQN);
+
 	return 0;
 }
 
@@ -708,16 +717,19 @@ void autotune_start()
 
 	autotune_phase = 8;
 
-	//r = autotune(6);
-	//if (r) {
-	//	printf("failed\n");
-	//	autotune_phase |= 0x100;
-	//	return;
-	//}
+	r = autotune(6);
+	if (r) {
+		autotune_phase |= 0x100;
+		return;
+	}
 
 	autotune_phase = 9;
 
+	//printf("writecal\n");
+
 	writecal();
+
+	//printf("done\n");
 
 	autotune_phase = 10;
 
