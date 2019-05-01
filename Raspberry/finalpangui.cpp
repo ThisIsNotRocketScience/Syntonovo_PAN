@@ -1175,6 +1175,7 @@ void FinalPan_LoadResources()
 	gGuiResources.LogoScreen = Raspberry_LoadTexture("PAN_LOGO.png");
 	gGuiResources.RootBG = Raspberry_LoadTexture("UI_ROOTBG.png");
 	gGuiResources.MainBG = Raspberry_LoadTexture("PAN_MAINBG.png");
+	gGuiResources.TestBG = Raspberry_LoadTexture("PAN_TEST.png");
 
 	gGuiResources.LeftIndicator = Raspberry_LoadTexture("UI_LEFT.png");
 	gGuiResources.RightIndicator = Raspberry_LoadTexture("UI_RIGHT.png");
@@ -1501,19 +1502,20 @@ public:
 	}
 };
 
-
-class LogoScreen : public _screensetup_t
+class ImageScreen : public _screensetup_t
 {
 public:
-	LogoScreen()
+	ImTextureID theImg;
+	ImageScreen(ImTextureID img)
 	{
-
+		theImg = img;
 	}
 	virtual void Render(float dt)
 	{
-		ImGui::Image(gGuiResources.LogoScreen, ImVec2(1024, 600));
+		ImGui::Image(theImg, ImVec2(1024, 600));
 	}
 };
+
 void Gui::BuildScreens()
 {
 	for (int i = 0; i < SCREENS_COUNT; i++) Screens[i] = 0;
@@ -1525,7 +1527,8 @@ void Gui::BuildScreens()
 	BR->Side = Right;
 	Screens[SCREEN_SELECTBANKL] = BL;
 	Screens[SCREEN_SELECTBANKR] = BR;
-	Screens[SCREEN_LOGO] = new LogoScreen();
+	Screens[SCREEN_TEST] = new ImageScreen(gGuiResources.TestBG);
+	Screens[SCREEN_LOGO] = new ImageScreen(gGuiResources.LogoScreen);
 	BL->LedButtonsThatOpenThisScreen.push_back(ledbutton_BankLeft);
 	BR->LedButtonsThatOpenThisScreen.push_back(ledbutton_BankRight);
 
@@ -1555,6 +1558,7 @@ void Gui::BuildScreens()
 	Screens[SCREEN_HOME]->EnableButton(9, "Revert", MenuEntry_Action, MenuAction_Revert);
 	Screens[SCREEN_HOME]->EnableButton(10, "System", MenuEntry_Page, SCREEN_SYSTEM);
 	Screens[SCREEN_HOME]->EnableButton(12, "Colors", MenuEntry_Page, SCREEN_COLORS);
+	Screens[SCREEN_HOME]->EnableButton(13, "Test-image", MenuEntry_Page, SCREEN_TEST);
 
 	Screens[SCREEN_PRESET]->SetTitle("Edit Name/Category");
 
