@@ -187,102 +187,6 @@ void L2BlankOn()
 	BOARD_INITPINS_LD2BLANK_GPIO->W[BOARD_INITPINS_LD2BLANK_PORT][BOARD_INITPINS_LD2BLANK_PIN] = 1;
 }
 
-int Cur = 0;
-
-
-
-//int colorset1[24]= {255,255,0,  255,0,255,  0,255,255,  255,0,0,   0,255,0 ,  0,0,255,    255,255,255,  255,255,255};
-//int colorset1[24]= {255,255,0,  255,0,255,  0,255,255,  255,0,0,   0,255,0 ,  0,0,255,    255,255,255,  255,255,255};
-
-//                    brg      brg       brg
-int colorset1[24*2]= {0,40,0,  0,60,0,  0,80,0,  0,100,0,   0,110,0,   0,255,0,   0,400,0,  0,500,0};
-
-int colorset2[24*2]= {0,0,40,  0,0,60,  0,0,80,  0,0,100,   0,0,110 ,  0,0,255,    0,0,400,  0,0,500};
-
-void SetColor(int Led, int r, int g, int b)
-{
-	int idx = (Led) % 16;
-	int set = (Led) / 16;
-	int *colorset = set>0?colorset2:colorset1;
-	colorset[idx * 3 + 0] = b >> 4; // XXX TODO DIM LEDS
-	colorset[idx * 3 + 1] = r >> 4;
-	colorset[idx * 3 + 2] = g >> 4;
-
-
-}
-
-void PWM2Set(int off)
-{
-	for (int c = 0;c<24;c++)
-		{
-			// 24 channels per TLC5947
-			// 12 bits per channel, send MSB first
-			for (int8_t b = 11; b >= 0; b--) {
-				L2ClkOff();
-
-				if (colorset2[c + off] & (1 << b))
-				{ L2DatOn();}
-				else
-				{L2DatOff();}
-
-				L2ClkOn();
-			}
-		}
-		L2ClkOff();
-
-}
-
-void Led2bits(int inp)
-{
-	for(int i =0 ;i<16;i++)
-	{
-		L2DatOn();
-		L2ClkOn();
-		__NOP();
-		__NOP();
-		__NOP();
-		__NOP();
-		__NOP();
-		L2ClkOff();
-	}
-}
-
-
-
-
-void PWM1Set(int off)
-{
-	for (int c = 0;c<24;c++)
-	{
-		// 24 channels per TLC5974
-		// 12 bits per channel, send MSB first
-		for (int8_t b = 11; b >= 0; b--) {
-			L1ClkOff();
-
-			if (colorset1[c + off] & (1 << b))
-			{ L1DatOn();}
-			else
-			{L1DatOff();}
-
-			L1ClkOn();
-		}
-	}
-	L1ClkOff();
-
-
-}
-
-void Led1bits(int inp)
-{
-	for(int i =0 ;i<16;i++)
-	{
-		L1ClkOff();
-		L1DatOn();
-		L1ClkOn();
-	}
-	L1ClkOff();
-}
-
 uint8_t leddata1[(24*12 + 16 + 24*12 + 16) / 8] = {0};
 uint8_t leddata2[(24*12 + 16 + 24*12 + 16) / 8] = {0};
 
@@ -302,17 +206,11 @@ void Set12b(int bitindex, int value)
 		ptr = &leddata1[arrayindex];
 	}
 	if (bitindex & 4) {
-		//*ptr = (*ptr & 0xF0) | ((value >> 8) & 0x0F);
-		//ptr++;
-		//*ptr = value & 0xFF;
 		*ptr = (value >> 4) & 0xFF;
 		ptr++;
 		*ptr = (*ptr & 0x0F) | ((value << 4) & 0xF0);
 	}
 	else {
-		//*ptr = (value >> 4) & 0xFF;
-		//ptr++;
-		//*ptr = (*ptr & 0x0F) | ((value >> 4) & 0xF0);
 		*ptr = (*ptr & 0xF0) | ((value >> 8) & 0x0F);
 		ptr++;
 		*ptr = value & 0xFF;
@@ -450,8 +348,6 @@ void setupleds()
 	ENCODER(1, Masterout);
 	ENCODER(1, SketchRight);
 	ENCODER(1, F11);
-
-	//printf("indexes %d  %d\n", index1, index2);
 }
 
 #undef ENCODER
@@ -459,12 +355,6 @@ void setupleds()
 
 void SendLeds()
 {
-	//memset(&leddata1, 0, sizeof(leddata1));
-	//memset(&leddata2, 0, sizeof(leddata2));
-
-	//Set12b(encoderindex[3] + 12, 0x800);
-	//Set12b(encoderindex[4] + 12, 0x800);
-
 	for (int i = 0; i < __FINALENCODER_COUNT; i++) {
 		Set12b(encoderindex[i], ledstate.encoders[i].b >> 4);
 		Set12b(encoderindex[i] + 12, ledstate.encoders[i].g >> 4);
@@ -900,7 +790,7 @@ void KeyScan()
 	                        && (prevT & (1 << i)) != 0) {
 	                        // key is newly pressed
 	                        int keyindex = (keyscanindex >> 1) * 8 + i;
-		                    printf("%d make\n", keyindex);
+		                    //printf("%d make\n", keyindex);
 	                        uint32_t timediff = timervalue - keyscantimer[keyindex];
 	                        higherPriorityTaskWoken |= keys_press(keyindex, timediff);
 	                        //notestack_push(keyindex + 36);
@@ -910,7 +800,7 @@ void KeyScan()
 	                                && (prevT & (1 << i)) == 0) {
 	                        // released
 	                        int keyindex = (keyscanindex >> 1) * 8 + i;
-		                    printf("%d release\n", keyindex);
+		                    //printf("%d release\n", keyindex);
 	                        higherPriorityTaskWoken |= keys_release(keyindex);
 	                        //notestack_pop(keyindex + 36);
 	                        //midikeypress = 1;
@@ -922,7 +812,7 @@ void KeyScan()
 	        for (int i = 0; i < 8; i++) {
 	                if ((T & (1 << i)) == 0
 	                        && (prevT & (1 << i)) != 0) {
-	                    printf("%d break\n", (keyscanindex >> 1) * 8 + i);
+	                    //printf("%d break\n", (keyscanindex >> 1) * 8 + i);
 	                        // key is newly pressed
 	                        keyscantimer[(keyscanindex >> 1) * 8 + i] = timervalue;
 	                }
