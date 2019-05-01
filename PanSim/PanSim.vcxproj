@@ -178,7 +178,9 @@
     <ClCompile Include="..\libs\imgui-master\imgui.cpp" />
     <ClCompile Include="..\libs\imgui-master\imgui_draw.cpp" />
     <ClCompile Include="..\libs\lodepng-master\lodepng.cpp" />
+    <ClCompile Include="..\Raspberry\BottomEncoder.cpp" />
     <ClCompile Include="..\Raspberry\finalpangui.cpp" />
+    <ClCompile Include="..\Raspberry\ModSourceScreen.cpp" />
     <ClCompile Include="..\Raspberry\panstructs.cpp" />
     <ClCompile Include="PanSim.cpp" />
   </ItemGroup>

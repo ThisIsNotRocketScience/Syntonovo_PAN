@@ -1,5 +1,7 @@
 #pragma once
 #include <vector>
+#include "../libs/imgui-master/imgui.h"
+
 
 enum alignment_t
 {
@@ -11,10 +13,45 @@ enum alignment_t
 
 enum font_size
 {
+	font_tiny,
 	font_small,
 	font_medium,
 	font_large
 };
+
+extern int ButtonHeight(int idx);
+extern void RenderLettersInABox(int x, int y, bool active, const char *text, int w, int h);
+
+extern uint16_t lerp(uint16_t i, uint16_t f, uint16_t t);
+extern void LedLerp(bool active, uint16_t value, uint16_t *r, uint16_t *g, uint16_t *b);
+extern void VerticalText(char *text, alignment_t align = align_left, ImU32 text_color = 0xffffffff);
+
+typedef struct FinalPan_GuiResources_t
+{
+	ImTextureID MainBG;
+	ImTextureID RootBG;
+	ImTextureID TestBG;
+	ImTextureID LogoScreen;
+	ImTextureID LeftIndicator;
+	ImTextureID RightIndicator;
+	ImTextureID SpriteSheet;
+	ImTextureID OnOff[4];
+	ImFont *BigFont;
+	ImFont *TinyFont;
+	ImFont *SmallFont;
+	ImFont *MediumFont;
+	ImU32 Highlight;
+	ImU32 Normal;
+	ImU32 BGColor;
+	ImU32 FillColor;
+	int PageTime;
+	int encoderbarmargin;
+	int encoderheight;
+
+	ImTextureID BgImages[1];
+} FinalPan_GuiResources_t;
+
+extern FinalPan_GuiResources_t gGuiResources; 
 
 class _control_t
 {
@@ -37,7 +74,11 @@ public:
 	bool activestate;
 	void SetTitle(const char *t);
 
-	virtual void Render(bool active);
+	int encodersets;
+	int currentencoderset;
+	virtual void SetupEncoderSet(int n) { currentencoderset = n; };
+
+	virtual void Render(bool active, float DT);
 	virtual void Action(int action);
 	virtual void SketchRightPressed();
 
@@ -64,7 +105,7 @@ public:
 	float x, y;
 		alignment_t Align;
 	ImVec4 Color;
-	virtual void Render(bool active);
+	virtual void Render(bool active, float DT);
 
 };
 
@@ -88,7 +129,7 @@ public:
 
 	void SetupPosition(int id);
 
-	virtual void Render(bool active);
+	virtual void Render(bool active, float DT);
 };
 
 
@@ -96,11 +137,16 @@ public:
 class  bottomencoder_t :public _control_t
 {
 public:
-
+	bottomencoder_t()
+	{
+		Set = 0;
+	}
 	alignment_t Align;
 	ledmodes ledmode;
 	uint16_t r, g, b;
-
+	
+	int Set;
+	
 	int ParameterID;
 	int x, y;
 
@@ -109,7 +155,7 @@ public:
 	
 	void UpdateLed(bool active);
 	
-	virtual void Render(bool active);
+	virtual void Render(bool active, float DT);
 };
 #define MAXENCODERSETS 2
 
@@ -129,6 +175,7 @@ public:
 	_screensetup_t(_screensetup_t *parent = NULL);
 	virtual uint16_t GetParameterValue(int param);
 	virtual void TweakParameterValue(int param, int delta) ;
+	virtual void SetupEncoderSet(int n);
 
 
 
@@ -150,10 +197,7 @@ public:
 
 	sidebutton_t buttons[14];
 
-	int encodersets;
-	int currentencoderset;
 	bottomencoder_t encoders[MAXENCODERSETS][11];
-	virtual void SetupEncoderSet(int n) {};
 
 	void AddText(float x, float y, char *t, alignment_t align = align_left, font_size fontsize = font_small);
 	void AddDynamicText(float x, float y, char *t, int len, alignment_t align = align_left, font_size fontsize = font_small);
@@ -177,7 +221,7 @@ public:
 	virtual void SideButton(FinalLedButtonEnum b);
 	virtual void PatchButton(FinalLedButtonEnum b);
 	void Encoder(FinalEncoderEnum button, int delta);
-	virtual void Render();
+	virtual void Render(float DT);
 };
 
 class Gui
@@ -204,7 +248,7 @@ public:
 
 	void BuildScreens();
 
-	virtual	void Render();
+	virtual	void Render(float DT);
 
 	void GotoPage(Screens_t s);
 

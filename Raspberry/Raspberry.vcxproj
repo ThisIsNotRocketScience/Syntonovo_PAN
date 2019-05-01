@@ -151,10 +151,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\libs\gl3w-master\src\gl3w.c" />
+    <ClCompile Include="BottomEncoder.cpp" />
     <ClCompile Include="Combine.cpp" />
     <ClCompile Include="finalpanguimain.cpp" />
     <ClCompile Include="imgui_es2.cpp" />
     <ClCompile Include="linux_serial.cpp" />
+    <ClCompile Include="ModSourceScreen.cpp" />
     <ClCompile Include="Raspberry.cpp" />
     <ClCompile Include="SerialSearcher.cpp" />
     <ClCompile Include="serialtest.cpp" />
@@ -162,6 +164,7 @@
   <ItemGroup>
     <ClInclude Include="gui.h" />
     <ClInclude Include="imgui_impl_es2.h" />
+    <ClInclude Include="ModSourceScreen.h" />
     <ClInclude Include="uart.hpp" />
   </ItemGroup>
   <ItemGroup>

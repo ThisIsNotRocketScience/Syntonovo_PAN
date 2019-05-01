@@ -159,9 +159,9 @@ public:
 		{
 			SetSwitch(SwitchID);
 		}
-	
+
 	}
-	uint16_t *GetModParamPointer(ModParameters param, int instance )
+	uint16_t *GetModParamPointer(ModParameters param, int instance)
 	{
 		switch (param)
 		{
@@ -191,14 +191,14 @@ public:
 			if (val > 0xffff) val = 0xffff;
 			*p = val;
 		}
-		
+
 	}
 
 	uint16_t GetModParameterValue(ModParameters param, int instance)
 	{
 		uint16_t *p = GetModParamPointer(param, instance);
 		if (p) return *p;
-		
+
 
 		return 0;
 
@@ -241,10 +241,18 @@ public:
 		case Source_Envelope: return &modmatrix[0x10 + instance];
 		case Source_x: return &modmatrix[0x20];
 		case Source_y: return &modmatrix[0x21];
-		case Source_z: return &modmatrix[0x21];
+		case Source_z: return &modmatrix[0x21];	
+		case Source_zprime: return &modmatrix[0x22];
+		case Source_left_mod: return &modmatrix[0x23];
+		case Source_right_mod: return &modmatrix[0x24];
+		case Source_left_unac: return &modmatrix[0x25];
+		case Source_right_unac: return &modmatrix[0x26];
+		case Source_note: return &modmatrix[0x2E];
+			//		case Source_pedal: return &modmatrix[0x22];
 		}
-			return 0;
+		return 0;
 	}
+
 #define NUM_LFOS (16)
 	LfoParam_t lfo[NUM_LFOS];
 
@@ -284,6 +292,7 @@ public:
 
 		return 0;
 	}
+
 	void TweakLed(LedParameter par, int delta)
 	{
 		uint16_t *p = &ledbrightness;
@@ -306,11 +315,13 @@ public:
 		case Led_Brightness: p = &ledbrightness; break;
 		}
 		int origp = *p;
-		int newp = origp + delta  * 200;
-		if (newp > 0xffff) newp = 0xffff; else if (newp < 0) newp = 0;
-		*p = newp;
+		int newp = origp + delta * 200;
+		if (newp > 0xffff) *p = 0xffff; else if (newp < 0) *p = 0; else *p = newp;
+		
 	}
 	hsv low;
 	hsv high;
 	hsv active;
 } PACK;
+
+extern PanPreset_t gCurrentPreset;

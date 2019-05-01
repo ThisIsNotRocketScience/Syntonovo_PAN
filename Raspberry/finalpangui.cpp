@@ -8,6 +8,9 @@
 
 #include "gui.h"
 
+#include "ModSourceScreen.h"
+
+
 PanPreset_t gCurrentPreset;
 PanPreset_t gRevertPreset;
 PanState_t gPanState;
@@ -66,6 +69,10 @@ int GetAssociatedParameter(FinalEncoderEnum button)
 	}
 	return -1;
 }
+int ButtonHeight(int idx)
+{
+	return  (int)((idx % 7 + 0.5f) * (600.0f / 7.0f));
+}
 
 
 void FinalPan_SetupDefaultPreset()
@@ -79,15 +86,15 @@ void FinalPan_SetupDefaultPreset()
 #undef OUTPUT_VIRT
 #undef SWITCH
 
-	gCurrentPreset.high.h = 0x1000;
-	gCurrentPreset.low.h = 0x4000;
-	gCurrentPreset.active.h = 0x3000;
+	gCurrentPreset.high.h = 0;
+	gCurrentPreset.low.h = 0;
+	gCurrentPreset.active.h = 0;
 
-	gCurrentPreset.low.v = 0xffff;
-	gCurrentPreset.active.v = 0xffff;
-	gCurrentPreset.high.v = 0xffff;
+	gCurrentPreset.low.v = 0x8000;
+	gCurrentPreset.active.v = 0x8000;
+	gCurrentPreset.high.v = 0x8000;
 
-	gCurrentPreset.active.s = 0x1000;
+	gCurrentPreset.active.s = 0xffff;
 	gCurrentPreset.high.s = 0xffff;
 	gCurrentPreset.low.s = 0xffff;
 
@@ -114,29 +121,9 @@ bool IsPatchButton(FinalLedButtonEnum B);
 #define __max(a,b) ((a>b)?(a):(b))
 #endif
 
-typedef struct FinalPan_GuiResources_t
-{
-	ImTextureID MainBG;
-	ImTextureID RootBG;
-	ImTextureID LeftIndicator;
-	ImTextureID RightIndicator;
-	ImTextureID SpriteSheet;
-	ImTextureID OnOff[4];
-	ImFont *BigFont;
-	ImFont *SmallFont;
-	ImFont *MediumFont;
-	ImU32 Highlight;
-	ImU32 Normal;
-	ImU32 BGColor;
-	ImU32 FillColor;
-	int PageTime;
-	int encoderbarmargin;
-	int encoderheight;
 
-	ImTextureID BgImages[1];
-} FinalPan_GuiResources_t;
 
-static FinalPan_GuiResources_t res;
+FinalPan_GuiResources_t gGuiResources;
 
 enum ParamEnum
 {
@@ -268,7 +255,7 @@ typedef struct _modmatrix_t
 
 
 
-void VerticalText(char *text, alignment_t align = align_left, ImU32 text_color = 0xffffffff)
+void VerticalText(char *text, alignment_t align , ImU32 text_color )
 {
 	ImFont *font = ImGui::GetFont();
 	char c;
@@ -286,9 +273,9 @@ void VerticalText(char *text, alignment_t align = align_left, ImU32 text_color =
 	if (align == align_right)
 	{
 		pos.y += text_size.x;
-			
+
 	}
-	
+
 
 	while ((c = *text++))
 	{
@@ -329,7 +316,7 @@ void _control_t::SetTitle(const char *t)
 }
 
 
-void _control_t::Render(bool active)
+void _control_t::Render(bool active, float DT)
 {
 
 }
@@ -355,39 +342,23 @@ void _control_t::SketchRightDelta(int delta)
 	case MenuEntry_LedValue:
 	{
 		gCurrentPreset.TweakLed((LedParameter)target, delta); break;
-		
-	}
 
 	}
-}
 
-void bottomencoder_t::Turn(int delta)
-{
-	switch (style)
-	{
-	case MenuEntry_Toggle: gCurrentPreset.PutSwitch((SwitchEnum)target, delta > 0); break;
-
-	case MenuEntry_MidValue:
-	case MenuEntry_Percentage:
-	case MenuEntry_Pitch:
-	case MenuEntry_EffectParam1:
-	case MenuEntry_EffectParam2:
-	case MenuEntry_EffectParam3:
-	case MenuEntry_FilterMix:
-	case MenuEntry_RemapValue:
-	case MenuEntry_Value: Parent->TweakParameterValue((OutputEnum)target, delta); break;
-	default: Parent->TweakParameterValue((OutputEnum)target, delta); break;
-
-	case MenuEntry_LedValue:
-	{
-		gCurrentPreset.TweakLed((LedParameter)target, delta); break;
-
-	}
-	
 	}
 }
-void _control_t::Activate() {}
+
+void _control_t::Activate() {
+	SetupEncoderSet(currentencoderset);
+}
 void _control_t::Deactivate() {}
+
+ImU32 CalcFillColor(uint16_t value, bool active)
+{
+	uint16_t r, g, b;
+	LedLerp(active, value, &r, &g, &b);
+	return ImColor(r >> 8, g >> 8, b >> 8);
+}
 
 void _control_t::RenderBox(int x, int y, int val, int mode, bool active)
 {
@@ -403,7 +374,8 @@ void _control_t::RenderBox(int x, int y, int val, int mode, bool active)
 	{
 		ImVec2 br2 = br;
 		br2.x = tl.x + (val * 220) / 0xffff;
-		ImGui::GetWindowDrawList()->AddRectFilled(tl, br2, res.FillColor);
+		ImGui::GetWindowDrawList()->AddRectFilled(tl, br2, CalcFillColor(val, active));
+		ImGui::GetWindowDrawList()->AddRect(tl, br2, active ? gGuiResources.Highlight : gGuiResources.Normal, 0, 0, 2);
 	}
 	break;
 	case BOX_INV:
@@ -412,7 +384,8 @@ void _control_t::RenderBox(int x, int y, int val, int mode, bool active)
 		ImVec2 tl2 = tl;
 		tl2.x = tl.x + (val * 220) / 0xffff;
 		br2.x = tl.x + 220;
-		ImGui::GetWindowDrawList()->AddRectFilled(tl, br2, res.FillColor);
+		ImGui::GetWindowDrawList()->AddRectFilled(tl, br2, CalcFillColor(val, active));
+		ImGui::GetWindowDrawList()->AddRect(tl, br2, active ? gGuiResources.Highlight : gGuiResources.Normal, 0, 0, 2);
 	}
 	break;
 	case BOX_MID:
@@ -423,11 +396,12 @@ void _control_t::RenderBox(int x, int y, int val, int mode, bool active)
 		ImVec2 tl2 = tl;
 		tl2.x = __min(x1, x2);
 		br2.x = __max(x1, x2);
-		ImGui::GetWindowDrawList()->AddRectFilled(tl2, br2, res.FillColor);
+		ImGui::GetWindowDrawList()->AddRectFilled(tl2, br2, CalcFillColor(val, active));
+		ImGui::GetWindowDrawList()->AddRect(tl2, br2, active ? gGuiResources.Highlight : gGuiResources.Normal, 0, 0, 2);
 	}
 	break;
 	}
-	ImGui::GetWindowDrawList()->AddRect(tl, br, active ? res.Highlight : res.Normal, 0, 0, 2);
+	ImGui::GetWindowDrawList()->AddRect(tl, br, active ? gGuiResources.Highlight : gGuiResources.Normal, 0, 0, 2);
 	p.x += 12;
 	ImGui::SetCursorScreenPos(p);
 }
@@ -438,7 +412,7 @@ void _control_t::RenderBoxVertical(int x, int y, int val, int mode, bool active)
 	p.x += 10;
 	ImVec2 tl = p;
 	ImVec2 br = tl;
-	br.x += ImGui::GetTextLineHeight() - 2;
+	br.x += ParamBoxDim;
 	br.y += ParamVerticalBoxHeight;
 	switch (mode)
 	{
@@ -447,7 +421,8 @@ void _control_t::RenderBoxVertical(int x, int y, int val, int mode, bool active)
 		ImVec2 br2 = br;
 		ImVec2 tl2 = tl;
 		tl2.y = br.y - (val * ParamVerticalBoxHeight) / 0xffff;
-		ImGui::GetWindowDrawList()->AddRectFilled(tl2, br2, res.FillColor);
+		ImGui::GetWindowDrawList()->AddRectFilled(tl2, br2, CalcFillColor(val, active));
+		ImGui::GetWindowDrawList()->AddRect(tl2, br2, active ? gGuiResources.Highlight : gGuiResources.Normal, 0, 0, 2);
 	}
 	break;
 	case BOX_INV:
@@ -455,23 +430,25 @@ void _control_t::RenderBoxVertical(int x, int y, int val, int mode, bool active)
 		ImVec2 br2 = br;
 		ImVec2 tl2 = tl;
 		tl2.y = tl.y + (val * ParamVerticalBoxHeight) / 0xffff;
-		br2.y = tl.y + 220;
-		ImGui::GetWindowDrawList()->AddRectFilled(tl, br2, res.FillColor);
+		br2.y = tl.y + ParamVerticalBoxHeight/2;
+		ImGui::GetWindowDrawList()->AddRectFilled(tl, br2, CalcFillColor(val, active));
+		ImGui::GetWindowDrawList()->AddRect(tl, br2, active ? gGuiResources.Highlight : gGuiResources.Normal, 0, 0, 2);
 	}
 	break;
 	case BOX_MID:
 	{
 		ImVec2 br2 = br;
-		float y1 = tl.y + 110;
+		float y1 = tl.y + ParamVerticalBoxHeight/2;
 		float y2 = tl.y + (val * ParamVerticalBoxHeight) / 0xffff;
 		ImVec2 tl2 = tl;
 		tl2.y = __min(y1, y2);
 		br2.y = __max(y1, y2);
-		ImGui::GetWindowDrawList()->AddRectFilled(tl2, br2, res.FillColor);
+		ImGui::GetWindowDrawList()->AddRectFilled(tl2, br2, CalcFillColor(val, active));
+		ImGui::GetWindowDrawList()->AddRect(tl2, br2, active ? gGuiResources.Highlight : gGuiResources.Normal, 0, 0, 2);
 	}
 	break;
 	}
-	ImGui::GetWindowDrawList()->AddRect(tl, br, active ? res.Highlight : res.Normal, 0, 0, 2);
+	ImGui::GetWindowDrawList()->AddRect(tl, br, active ? gGuiResources.Highlight : gGuiResources.Normal, 0, 0, 2);
 	p.x += 12;
 	ImGui::SetCursorScreenPos(p);
 }
@@ -496,6 +473,7 @@ void sidebutton_t::Pressed()
 	{
 	case MenuEntry_Page: gGui.GotoPage((Screens_t)target); break;
 	case MenuEntry_Action: Parent->Action(target); break;
+	case MenuEntry_EncoderSet: Parent->SetupEncoderSet(target); break;
 	case MenuEntry_Toggle: gCurrentPreset.ToggleSwitch((SwitchEnum)target); break;
 	}
 }
@@ -505,10 +483,6 @@ void sidebutton_t::SketchRightPressed()
 	Pressed();
 }
 
-int ButtonHeight(int idx)
-{
-	return  (idx % 7) * (600 / 8) + 600 / 16;
-}
 
 void sidebutton_t::SetupPosition(int id)
 {
@@ -522,7 +496,7 @@ void sidebutton_t::SetupPosition(int id)
 	}
 }
 
-void sidebutton_t::Render(bool active)
+void sidebutton_t::Render(bool active, float DT)
 {
 	if (enabled)
 	{
@@ -535,7 +509,7 @@ void sidebutton_t::Render(bool active)
 		ImGui::SetCursorPos(ImVec2(x2, y));
 		if (active)
 		{
-			ImGui::TextColored(ImVec4(1, 1, 0, 1), title);
+			ImGui::TextColored(ImColor( gGuiResources.Highlight), title);
 		}
 		else
 		{
@@ -586,112 +560,25 @@ void sidebutton_t::Render(bool active)
 				ImGui::SetCursorPos(ImVec2(x2 + 200, y));
 
 			}
-			ImGui::Image(res.OnOff[id + (active ? 2 : 0)], ImVec2(128, 48));
-
-			break;
-		}
-	}
-
-}
-
-
-
-
-void bottomencoder_t::SetupPosition(int id)
-{
-	y = 600 - 100;
-	x = ((1024) / 12.0f) * id + 1024.0f/24.0f;
-	Align = align_left;
-
-}
-
-void bottomencoder_t::Render(bool active)
-{
-	if (enabled)
-	{
-		int x2 = x;
-		if (Align == align_right)
-		{
-			ImVec2 textsize = ImGui::CalcTextSize(title);
-			x2 -= textsize.x;
-		}
-		ImGui::SetCursorPos(ImVec2(x2, y));
-		if (active)
-		{
-			VerticalText(title, align_left, res.Highlight);
-		}
-		else
-		{
-			VerticalText(title, align_left);
-		}
-
-
-		switch (style)
-		{
-
-		case MenuEntry_EnvelopeValue: 
-		case MenuEntry_LFOValue:
-		{
-			RenderBoxVertical(x, y, Parent->GetParameterValue(target), style == BOX_REGULAR, active);
-		//	char txt[400];
-	//		gCurrentPreset.DescribeParam((OutputEnum)target, style, txt, 400);
-	//		VerticalText(txt, align_right);
-		}
-
-		break;
-
-		case MenuEntry_LedValue:
-		{
-
-			RenderBoxVertical(x, y, gCurrentPreset.GetLedParameter((LedParameter) target), style == BOX_REGULAR, active);
-			char txt[400];
-			//gCurrentPreset.DescribeParam((OutputEnum)target, style, txt, 400);
-			//VerticalText(txt, align_right);
-		}
-
-		break;
-
-		case MenuEntry_MidValue:
-		case MenuEntry_Percentage:
-		case MenuEntry_Pitch:
-		case MenuEntry_EffectParam1:
-		case MenuEntry_EffectParam2:
-		case MenuEntry_EffectParam3:
-		case MenuEntry_FilterMix:
-		case MenuEntry_RemapValue:
-		case MenuEntry_Value:
-		{
-
-			RenderBoxVertical(x , y, gCurrentPreset.paramvalue[target], style == MenuEntry_MidValue ? BOX_MID : BOX_REGULAR, active);
-			
-			char txt[400];
-
-			gCurrentPreset.DescribeParam((OutputEnum)target, style, txt, 400);
-			VerticalText(txt, align_right);
-		}
-
-		break;
-
-		case MenuEntry_Toggle:
-
-			int id = gCurrentPreset.GetSwitch((SwitchEnum)target) ? 1 : 0;
-
-			if (Align == align_right)
+			if (active)
 			{
-				ImGui::SetCursorPos(ImVec2(x2 - 128 - 200, y));
+				ImColor ic(gGuiResources.Highlight);
+				ImGui::Image(gGuiResources.OnOff[id ], ImVec2(128, 48), ImVec2(0, 0), ImVec2(1, 1), (ImVec4)ic);
 			}
 			else
 			{
-				ImGui::SetCursorPos(ImVec2(x2 + 200, y));
+				ImGui::Image(gGuiResources.OnOff[id ], ImVec2(128, 48));
 
 			}
-			ImGui::Image(res.OnOff[id + (active ? 2 : 0)], ImVec2(128, 48));
-
 			break;
 		}
 	}
 
 }
+
+
+
+
 
 uint16_t lerp(uint16_t i, uint16_t f, uint16_t t)
 {
@@ -711,7 +598,7 @@ void LedLerp(bool active, uint16_t value, uint16_t *r, uint16_t *g, uint16_t *b)
 		*r = lerp(0x8000, *r, gPanState.active_led_r);
 		*g = lerp(0x8000, *g, gPanState.active_led_g);
 		*b = lerp(0x8000, *b, gPanState.active_led_b);
-	
+
 	}
 	else
 	{
@@ -721,38 +608,10 @@ void LedLerp(bool active, uint16_t value, uint16_t *r, uint16_t *g, uint16_t *b)
 	}
 }
 
-void bottomencoder_t::UpdateLed(bool active)
-{
-	if (enabled)
-	{
-		ledmode = active ? ledmode_blinkslow : ledmode_solid;
-		if (active)
-		{
-
-		}
-		uint16_t value = 0;
-		switch (style)
-		{
-		case MenuEntry_LedValue:
-			value = gCurrentPreset.GetLedParameter((LedParameter)target);
-			break;
-		default:
-			value = gCurrentPreset.paramvalue[target];
-			break;
-		}
-		LedLerp(active, value, &r, &g, &b);
-
-
-	}
-	else
-	{
-		ledmode = ledmode_off;
-	}
-}
 
 
 
-_screensetup_t::_screensetup_t(_screensetup_t *parent )
+_screensetup_t::_screensetup_t(_screensetup_t *parent)
 {
 	currentencoderset = 0;
 	encodersets = 1;
@@ -772,6 +631,7 @@ _screensetup_t::_screensetup_t(_screensetup_t *parent )
 		for (int i = 0; i < 11; i++)
 		{
 			encoders[j][i].SetTitle("");
+			encoders[j][i].Set = j;
 			encoders[j][i].Parent = this;
 			encoders[j][i].SetupPosition(i);
 			DisableEncoder(i);
@@ -820,7 +680,7 @@ void _screensetup_t::TweakParameterValue(int param, int delta)
 
 void _screensetup_t::SetupLeds()
 {
-
+	gGuiResources.Highlight = ImColor(gPanState.active_led_r >> 8, gPanState.active_led_g >> 8, gPanState.active_led_b >> 8);
 
 	for (int i = 0; i < 14; i++)
 	{
@@ -832,7 +692,7 @@ void _screensetup_t::SetupLeds()
 		encoders[currentencoderset][i].UpdateLed(ControlsInOrder[ActiveControl] == &encoders[currentencoderset][i]);
 	}
 
-	gPanState.SetEncoderLed(encoder_F1, encoders[currentencoderset][0].ledmode,   encoders[currentencoderset][ 0].r, encoders[currentencoderset][0].g, encoders[currentencoderset][0].b);
+	gPanState.SetEncoderLed(encoder_F1, encoders[currentencoderset][0].ledmode, encoders[currentencoderset][0].r, encoders[currentencoderset][0].g, encoders[currentencoderset][0].b);
 	gPanState.SetEncoderLed(encoder_F2, encoders[currentencoderset][1].ledmode, encoders[currentencoderset][1].r, encoders[currentencoderset][1].g, encoders[currentencoderset][1].b);
 	gPanState.SetEncoderLed(encoder_F3, encoders[currentencoderset][2].ledmode, encoders[currentencoderset][2].r, encoders[currentencoderset][2].g, encoders[currentencoderset][2].b);
 	gPanState.SetEncoderLed(encoder_F4, encoders[currentencoderset][3].ledmode, encoders[currentencoderset][3].r, encoders[currentencoderset][3].g, encoders[currentencoderset][3].b);
@@ -888,12 +748,12 @@ void _screensetup_t::SetupLeds()
 		FinalEncoderEnum enc = (FinalEncoderEnum)i;
 		if (IsCenterEncoder(enc) == false)
 		{
-			uint16_t V,r,g,b;
+			uint16_t V, r, g, b;
 			V = 0;
 			int idx = GetAssociatedParameter(enc);
 			bool active = false;
 			for (int i = 0; i < EncodersThatOpenThisScreen.size(); i++) if (EncodersThatOpenThisScreen[i] == i) active = true;
-			
+
 			if (idx > -1)
 			{
 				V = gCurrentPreset.paramvalue[idx];
@@ -908,7 +768,7 @@ void _screensetup_t::SetupLeds()
 				}
 				else
 				{
-					gPanState.SetEncoderLed(enc, ledmode_off, 0,0,0);
+					gPanState.SetEncoderLed(enc, ledmode_off, 0, 0, 0);
 
 				}
 			}
@@ -922,7 +782,7 @@ void _screensetup_t::SetupLeds()
 	{
 		gPanState.SetEncoderLed((FinalEncoderEnum)EncodersThatOpenThisScreen[i], ledmode_solid, gPanState.active_led_r, gPanState.active_led_g, gPanState.active_led_r);
 	}
-//	gPanState.SetEncoderLed()
+	//	gPanState.SetEncoderLed()
 
 
 }
@@ -955,7 +815,7 @@ void _screensetup_t::DisableButton(int i)
 	buttons[i].enabled = false;
 }
 
-bool _screensetup_t::EnableButton(int i, const char *text, int style , int target, bool active , ledmodes l )
+bool _screensetup_t::EnableButton(int i, const char *text, int style, int target, bool active, ledmodes l)
 {
 	buttons[i].SetTitle(text);
 	buttons[i].style = style;
@@ -1003,14 +863,14 @@ void _screensetup_t::ButtonStyle(int i, int style, int target)
 
 }
 
-void _textcontrol_t::Render(bool active)
+void _textcontrol_t::Render(bool active, float DT)
 {
 	switch (fontsize)
 	{
-	case font_medium: ImGui::PushFont(res.MediumFont); break;
-	case font_large: ImGui::PushFont(res.BigFont); break;
+	case font_medium: ImGui::PushFont(gGuiResources.MediumFont); break;
+	case font_large: ImGui::PushFont(gGuiResources.BigFont); break;
 	default:
-	case font_small: ImGui::PushFont(res.SmallFont); break;
+	case font_small: ImGui::PushFont(gGuiResources.SmallFont); break;
 	}
 	if (dynamic) SetTitle(src);
 	float x2 = x;
@@ -1035,7 +895,7 @@ void _textcontrol_t::Render(bool active)
 	ImGui::PopFont();
 }
 
-void _screensetup_t::AddDynamicText(float x, float y, char *t, int len, alignment_t align, font_size fontsize )
+void _screensetup_t::AddDynamicText(float x, float y, char *t, int len, alignment_t align, font_size fontsize)
 {
 	_textcontrol_t *T = new _textcontrol_t(true, t);
 	T->Align = align;
@@ -1046,9 +906,10 @@ void _screensetup_t::AddDynamicText(float x, float y, char *t, int len, alignmen
 	ControlsInOrder.push_back(T);
 
 }
+
 void _screensetup_t::AddText(float x, float y, char *t, alignment_t align, font_size fontsize)
 {
-	
+
 	_textcontrol_t *T = new _textcontrol_t();
 	T->fontsize = fontsize;
 	T->Align = align;
@@ -1120,6 +981,7 @@ void _screensetup_t::SetActiveControl(_control_t *c)
 		ActiveControl = id;
 		ControlsInOrder[ActiveControl]->Activate();
 	}
+
 }
 void _screensetup_t::SideButton(FinalLedButtonEnum b)
 {
@@ -1134,6 +996,18 @@ void _screensetup_t::SideButton(FinalLedButtonEnum b)
 	}
 }
 
+void _screensetup_t::SetupEncoderSet(int n)
+{
+	_control_t::SetupEncoderSet(n);
+	for (int i = 0; i < MAXENCODERSETS; i++)
+	{
+		bool doskip = i != currentencoderset;
+		for (int j = 0; j < 11; j++)
+		{
+			encoders[i][j].skipencodercycling = doskip;
+		}
+	}
+}
 
 void LoadSelectedPreset()
 {
@@ -1174,16 +1048,16 @@ void _screensetup_t::PatchButton(FinalLedButtonEnum b)
 	case ledbutton_B7:LoadPatch(6); break;
 	case ledbutton_B8:LoadPatch(7); break;
 	case ledbutton_B9:LoadPatch(8); break;
-	case ledbutton_B10:LoadPatch( 9); break;
-	case ledbutton_B11:LoadPatch( 10); break;
-	case ledbutton_B12:LoadPatch( 11); break;
-	case ledbutton_B13:LoadPatch( 12); break;
-	case ledbutton_B14:LoadPatch( 13); break;
-	case ledbutton_B15:LoadPatch( 14); break;
-	case ledbutton_B16:LoadPatch( 15); break;
+	case ledbutton_B10:LoadPatch(9); break;
+	case ledbutton_B11:LoadPatch(10); break;
+	case ledbutton_B12:LoadPatch(11); break;
+	case ledbutton_B13:LoadPatch(12); break;
+	case ledbutton_B14:LoadPatch(13); break;
+	case ledbutton_B15:LoadPatch(14); break;
+	case ledbutton_B16:LoadPatch(15); break;
 
 	}
-	
+
 }
 
 void _screensetup_t::Encoder(FinalEncoderEnum button, int delta)
@@ -1204,11 +1078,12 @@ void _screensetup_t::Encoder(FinalEncoderEnum button, int delta)
 	}
 }
 
-void _screensetup_t::Render()
+void _screensetup_t::Render(float DT)
 {
+	ImGui::Image(gGuiResources.MainBG, ImVec2(1024, 600));
 	if (strlen(title) > 0)
 	{
-		ImGui::PushFont(res.BigFont);
+		ImGui::PushFont(gGuiResources.BigFont);
 		auto R = ImGui::CalcTextSize(title);
 		ImGui::SetCursorPos(ImVec2(1024 / 2 - R.x / 2, 0));
 		ImGui::Text(title);
@@ -1217,7 +1092,7 @@ void _screensetup_t::Render()
 
 	for (int i = 0; i < ControlsInOrder.size(); i++)
 	{
-		ControlsInOrder[i]->Render((i == ActiveControl) && (Modal == NULL));
+		ControlsInOrder[i]->Render((i == ActiveControl) && (Modal == NULL), DT);
 	}
 	if (Modal)
 	{
@@ -1226,7 +1101,7 @@ void _screensetup_t::Render()
 		pos.y = 0;
 		ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(pos.x, pos.y), ImVec2(pos.x + 1024, pos.y + 600), IM_COL32(0, 0, 0, 200));
 
-		Modal->Render();
+		Modal->Render(DT);
 	}
 
 }
@@ -1238,7 +1113,7 @@ class LedControl : public _control_t
 public:
 	LedTheme myLed;
 	int x, y;
-	LedControl(LedTheme w,int _x, int _y, const char* name)
+	LedControl(LedTheme w, int _x, int _y, const char* name)
 	{
 		SetTitle(name);
 		x = _x;
@@ -1248,13 +1123,13 @@ public:
 		skipencodercycling = true;
 	}
 
-	virtual void Render(bool active)
+	virtual void Render(bool active, float DT)
 	{
 		ImGui::SetCursorPos(ImVec2(x, y - ImGui::GetTextLineHeight()));
 		uint16_t r, g, b;
 		gPanState.GetThemeLed(myLed, &r, &g, &b);
-		ImGui::Text(title);		
-		ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(x,y), ImVec2(x + 40, y + 40), IM_COL32(r>>8, g >>8, b >>8, 255));
+		ImGui::Text(title);
+		ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(x, y), ImVec2(x + 40, y + 40), IM_COL32(r >> 8, g >> 8, b >> 8, 255));
 	}
 };
 
@@ -1285,25 +1160,32 @@ static bool init = false;
 void FinalPan_LoadResources()
 {
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
-	res.encoderbarmargin = 10;
-	res.encoderheight = 600;
-	res.PageTime = 0;
-	res.Highlight = IM_COL32(235, 200, 28, 255);
-	res.Normal = IM_COL32(255, 255, 255, 255);
-	res.BGColor = IM_COL32(0, 58, 66, 255);
+	gGuiResources.encoderbarmargin = 10;
+	gGuiResources.encoderheight = 600;
+	gGuiResources.PageTime = 0;
+	gGuiResources.Highlight = IM_COL32(235, 200, 28, 255);
+	gGuiResources.Normal = IM_COL32(255, 255, 255, 255);
+	gGuiResources.BGColor = IM_COL32(0, 58, 66, 255);
 	//res.BGColor = IM_COL32(0, 0, 0, 255);
-	res.FillColor = IM_COL32(0, 137, 127, 255);
-	res.OnOff[0] = Raspberry_LoadTexture("UI_ONOFF_OFF.png");
-	res.OnOff[1] = Raspberry_LoadTexture("UI_ONOFF_ON.png");
-	res.OnOff[2] = Raspberry_LoadTexture("UI_ONOFF_OFF_HI.png");
-	res.OnOff[3] = Raspberry_LoadTexture("UI_ONOFF_ON_HI.png");
-	res.MainBG = Raspberry_LoadTexture("UI_MAINBG.png");
-	res.RootBG = Raspberry_LoadTexture("UI_ROOTBG.png");
-	res.LeftIndicator = Raspberry_LoadTexture("UI_LEFT.png");
-	res.RightIndicator = Raspberry_LoadTexture("UI_RIGHT.png");
-	res.SmallFont = io.Fonts->AddFontFromFileTTF("Fontfabric - Panton.otf", 30.0f);
-	res.MediumFont = io.Fonts->AddFontFromFileTTF("Fontfabric - Panton.otf", 38.0f);
-	res.BigFont = io.Fonts->AddFontFromFileTTF("Fontfabric - Panton ExtraBold.otf", 44.0f);
+	gGuiResources.FillColor = IM_COL32(0, 137, 127, 255);
+	gGuiResources.OnOff[0] = Raspberry_LoadTexture("UI_ONOFF_OFF.png");
+	gGuiResources.OnOff[1] = Raspberry_LoadTexture("UI_ONOFF_ON.png");
+	gGuiResources.OnOff[2] = Raspberry_LoadTexture("UI_ONOFF_OFF_HI.png");
+	gGuiResources.OnOff[3] = Raspberry_LoadTexture("UI_ONOFF_ON_HI.png");
+
+	gGuiResources.LogoScreen = Raspberry_LoadTexture("PAN_LOGO.png");
+	gGuiResources.RootBG = Raspberry_LoadTexture("UI_ROOTBG.png");
+	gGuiResources.MainBG = Raspberry_LoadTexture("PAN_MAINBG.png");
+	gGuiResources.TestBG = Raspberry_LoadTexture("PAN_TEST.png");
+
+	gGuiResources.LeftIndicator = Raspberry_LoadTexture("UI_LEFT.png");
+	gGuiResources.RightIndicator = Raspberry_LoadTexture("UI_RIGHT.png");
+	gGuiResources.TinyFont = io.Fonts->AddFontFromFileTTF("Fontfabric - Panton.otf", 20.0f);
+	gGuiResources.SmallFont = io.Fonts->AddFontFromFileTTF("Fontfabric - Panton.otf", 30.0f);
+	gGuiResources.MediumFont = io.Fonts->AddFontFromFileTTF("Fontfabric - Panton.otf", 38.0f);
+	//gGuiResources.BigFont = io.Fonts->AddFontFromFileTTF("Fontfabric - Panton ExtraBold.otf", 44.0f);
+
+	gGuiResources.BigFont = io.Fonts->AddFontFromFileTTF("Petronius-Roman.ttf", 44.0f);
 	init = true;
 
 
@@ -1380,7 +1262,7 @@ Gui::Gui()
 void Gui::Init()
 {
 	BuildScreens();
-	CurrentScreen = SCREEN_HOME;
+	CurrentScreen = SCREEN_LOGO;
 }
 
 void Gui::SketchLeftPress()
@@ -1470,7 +1352,7 @@ void RenderLettersInABox(int x, int y, bool active, const char *text, int w, int
 {
 	ImVec2 tl(x, y);
 	ImVec2 br(x + w, y + h);
-	ImGui::GetWindowDrawList()->AddRect(tl, br, active ? res.Highlight : res.Normal, 0, 0, 2);
+	ImGui::GetWindowDrawList()->AddRect(tl, br, active ? gGuiResources.Highlight : gGuiResources.Normal, 0, 0, 2);
 	auto s = ImGui::CalcTextSize(text);
 	ImGui::SetCursorPos(ImVec2(x + w / 2 - s.x, y + h / 2 - s.y / 2 - ImGui::GetTextLineHeight()));
 	ImGui::Text(text);
@@ -1478,44 +1360,44 @@ void RenderLettersInABox(int x, int y, bool active, const char *text, int w, int
 }
 class LetterControl : public _control_t
 {
-	public:
-		int id;
-		int x;
-		int y;
-		virtual void SketchRightDelta(int delta)
-		{
-			Current = ((Current + delta - 32 + 96) % 96) + 32;						
-		}
-		
-		virtual void SketchRightPressed()
-		{
-			Current = ((Current + 32 - 64 + 64) % 64) + 64;
-			
-		}
+public:
+	int id;
+	int x;
+	int y;
+	virtual void SketchRightDelta(int delta)
+	{
+		Current = ((Current + delta - 32 + 96) % 96) + 32;
+	}
 
-		LetterControl(int _x, int _y, int _id)
-		{
-			
-			x = _x;
-			y = _y;
-			id = _id;
-			Current = gCurrentPreset.Name[id];
-			if (!(Current >= ' ' || Current <= '~'))
-			{
-				Current = ' ';
-			}
-		}
-		char Current;
+	virtual void SketchRightPressed()
+	{
+		Current = ((Current + 32 - 64 + 64) % 64) + 64;
 
-		virtual void Render(bool active)
+	}
+
+	LetterControl(int _x, int _y, int _id)
+	{
+
+		x = _x;
+		y = _y;
+		id = _id;
+		Current = gCurrentPreset.Name[id];
+		if (!(Current >= ' ' || Current <= '~'))
 		{
-			ImVec2 tl(x, y);
-			ImVec2 br(x + LetterBoxW, y + LetterBoxH);
-			ImGui::GetWindowDrawList()->AddRect(tl, br, active ? res.Highlight : res.Normal, 0, 0, 2);
-			auto s = ImGui::CalcTextSize(&Current, &Current + 1);
-			ImGui::SetCursorPos(ImVec2(x+LetterBoxW/2 - s.x, y + LetterBoxH/2 - s.y/2- ImGui::GetTextLineHeight()));
-			ImGui::Text("%c", Current);
+			Current = ' ';
 		}
+	}
+	char Current;
+
+	virtual void Render(bool active, float DT)
+	{
+		ImVec2 tl(x, y);
+		ImVec2 br(x + LetterBoxW, y + LetterBoxH);
+		ImGui::GetWindowDrawList()->AddRect(tl, br, active ? gGuiResources.Highlight : gGuiResources.Normal, 0, 0, 2);
+		auto s = ImGui::CalcTextSize(&Current, &Current + 1);
+		ImGui::SetCursorPos(ImVec2(x + LetterBoxW / 2 - s.x, y + LetterBoxH / 2 - s.y / 2 - ImGui::GetTextLineHeight()));
+		ImGui::Text("%c", Current);
+	}
 };
 
 class PresetScreen : public _screensetup_t
@@ -1542,14 +1424,14 @@ public:
 	PresetScreen()
 	{
 
-		for (int i = 0; i < PRESET_NAME_LENGTH-1; i++)
+		for (int i = 0; i < PRESET_NAME_LENGTH - 1; i++)
 		{
-			AddLetterControl(1024/2 - (LetterBoxW+5)*((PRESET_NAME_LENGTH-1.5)/2) + i * (LetterBoxW+5), 300-LetterBoxH/2, i);
+			AddLetterControl(1024 / 2 - (LetterBoxW + 5)*((PRESET_NAME_LENGTH - 1.5) / 2) + i * (LetterBoxW + 5), 300 - LetterBoxH / 2, i);
 		}
 
 		EnableButton(10, "Cancel", MenuEntry_Action, MenuAction_No);
 
-		EnableButton(11, "OK", MenuEntry_Action, MenuAction_Yes);	
+		EnableButton(11, "OK", MenuEntry_Action, MenuAction_Yes);
 	}
 
 	virtual void Activate()
@@ -1561,8 +1443,8 @@ public:
 
 		SetActiveControl(Letters[0]);
 	}
-	
-	
+
+
 	void AddLetterControl(int x, int y, int id)
 	{
 		auto L = new LetterControl(x, y, id);
@@ -1571,112 +1453,6 @@ public:
 	}
 };
 
-class ModSourceScreen : public _screensetup_t
-{
-public:
-	Screens_t myScreen;
-	int ActiveInstance ;
-	int MaxInstances;
-	
-	ModSource_t modType;
-	bool HasActiveInstanceDisplay;
-	virtual uint16_t GetParameterValue(int param) 
-	{
-		return gCurrentPreset.GetModParameterValue((ModParameters)param, ActiveInstance);
-	};
-	virtual void TweakParameterValue(int param, int delta)
-	{
-		gCurrentPreset.TweakModulation((ModParameters)param, ActiveInstance, delta);
-	}
-	ModSource_t ModTypeFromScreen(Screens_t screen)
-	{
-		switch (screen)
-		{
-		case SCREEN_LFO: return Source_LFO;
-		case SCREEN_ENVELOPE: return Source_Envelope;
-		
-		case SCREEN_X: return Source_x;
-		case SCREEN_Y: return Source_y;
-		case SCREEN_Z: return Source_y;
-		
-		case SCREEN_TOUCH: return Source_zprime;		
-		case SCREEN_KEYBOARD: return Source_note;
-
-
-		case SCREEN_VELOCITY: return Source_vel;
-		
-
-		}
-
-		return Source_none;
-	}
-	ModSourceScreen(Screens_t screen)
-	{
-		MaxInstances = 16;
-		ActiveInstance = 0;
-		myScreen = screen;
-		modType = ModTypeFromScreen(screen);
-		switch (myScreen)
-		{
-		case SCREEN_ENVELOPE:
-			HasActiveInstanceDisplay = true;
-
-			EnableAvailableEncoder("Attack", MenuEntry_EnvelopeValue, Envelope_Attack);
-			EnableAvailableEncoder("Decay", MenuEntry_EnvelopeValue, Envelope_Decay);
-			EnableAvailableEncoder("Sustain", MenuEntry_EnvelopeValue, Envelope_Sustain);
-			EnableAvailableEncoder("Release", MenuEntry_EnvelopeValue, Envelope_Release);
-			EnableAvailableEncoder("Curve", MenuEntry_EnvelopeValue, Envelope_Curve);
-
-			break;
-		case SCREEN_LFO:
-
-			EnableAvailableEncoder("Speed", MenuEntry_EnvelopeValue, LFO_Speed);
-			EnableAvailableEncoder("Shape", MenuEntry_EnvelopeValue, LFO_Shape);
-			EnableAvailableEncoder("Reset Phase", MenuEntry_EnvelopeValue, LFO_ResetPhase);
-			EnableAvailableEncoder("Depth", MenuEntry_EnvelopeValue, LFO_Depth);
-			HasActiveInstanceDisplay = true;
-			break;
-		}
-		if (HasActiveInstanceDisplay)
-		{
-			EnableButton(1, "Previous", MenuEntry_Action,MenuAction_Prev);
-			EnableButton(8, "Next", MenuEntry_Action, MenuAction_Next);
-		}
-		
-	}
-
-
-
-	virtual void Action(int a)
-	{
-		switch (a)
-		{
-		case MenuAction_Next: ActiveInstance = (ActiveInstance + 1) % MaxInstances; break;
-		case MenuAction_Prev: ActiveInstance = (ActiveInstance + MaxInstances - 1) % MaxInstances; break;
-		}
-		
-	}
-	virtual void Render()
-	{
-		_screensetup_t::Render();
-		if (HasActiveInstanceDisplay)
-		{
-			for (int i = 0; i < MaxInstances; i++)
-			{
-				char txt[10];
-				sprintf(txt, "%d", i);
-				RenderLettersInABox(i * 40 + 200, ButtonHeight(1), i == ActiveInstance, txt, 35, 35);
-			}
-		}
-
-		auto row = gCurrentPreset.GetModSourceRow(modType, ActiveInstance);
-
-	}
-	virtual void Activate()
-	{
-
-	}
-};
 
 class BankSelectScreen : public _screensetup_t
 {
@@ -1684,7 +1460,7 @@ public:
 
 	virtual void Action(int action)
 	{
-		
+
 		if (Side == Left) gPanState.BankLeft = action; else gPanState.BankRight = action;
 		LoadSelectedPreset();
 		Activate();
@@ -1697,7 +1473,7 @@ public:
 	BankSelectScreen()
 	{
 
-	
+
 	}
 	virtual void Activate()
 	{
@@ -1708,7 +1484,7 @@ public:
 		}
 		else
 		{
-			CurrentBank= &gPanState.BankRight;
+			CurrentBank = &gPanState.BankRight;
 			SetTitle("Select Right Bank");
 		}
 		EnableButton(1, (*CurrentBank == 0) ? "A (current)" : "A", MenuEntry_Action, 0);
@@ -1717,13 +1493,28 @@ public:
 		EnableButton(4, (*CurrentBank == 3) ? "D (current)" : "D", MenuEntry_Action, 3);
 		EnableButton(5, (*CurrentBank == 4) ? "E (current)" : "E", MenuEntry_Action, 4);
 		EnableButton(6, (*CurrentBank == 5) ? "F (current)" : "F", MenuEntry_Action, 5);
-		
+
 		EnableButton(8, (*CurrentBank == 6) ? "G (current)" : "G", MenuEntry_Action, 6);
 		EnableButton(9, (*CurrentBank == 7) ? "H (current)" : "H", MenuEntry_Action, 7);
 		EnableButton(10, (*CurrentBank == 8) ? "I (current)" : "I", MenuEntry_Action, 8);
 		EnableButton(11, (*CurrentBank == 9) ? "J (current)" : "J", MenuEntry_Action, 9);
 		EnableButton(12, (*CurrentBank == 10) ? "K (current)" : "K", MenuEntry_Action, 10);
 		EnableButton(13, (*CurrentBank == 11) ? "L (current)" : "L", MenuEntry_Action, 11);
+	}
+};
+
+class ImageScreen : public _screensetup_t
+{
+public:
+	ImTextureID theImg;
+	ImageScreen(ImTextureID img)
+	{
+		theImg = img;
+	}
+	virtual void Render(float dt)
+	{
+		ImGui::Image(theImg, ImVec2(1024, 600));
+		_screensetup_t::Render(dt);
 	}
 };
 
@@ -1738,7 +1529,15 @@ void Gui::BuildScreens()
 	BR->Side = Right;
 	Screens[SCREEN_SELECTBANKL] = BL;
 	Screens[SCREEN_SELECTBANKR] = BR;
-
+	Screens[SCREEN_TEST] = new ImageScreen(gGuiResources.TestBG);
+	Screens[SCREEN_TEST]->AddText(10, 30, "10,30 - tadaa", align_left ,font_small);
+	Screens[SCREEN_TEST]->AddText(30, 60, "10,60 - tadaa", align_left, font_small);
+	for (int i = 0; i < 100; i += 10)
+	{
+		Screens[SCREEN_TEST]->AddText(50+4*i, 600-i, "Hmm", align_left, font_small);
+	}
+	
+	Screens[SCREEN_LOGO] = new ImageScreen(gGuiResources.LogoScreen);
 	BL->LedButtonsThatOpenThisScreen.push_back(ledbutton_BankLeft);
 	BR->LedButtonsThatOpenThisScreen.push_back(ledbutton_BankRight);
 
@@ -1768,13 +1567,14 @@ void Gui::BuildScreens()
 	Screens[SCREEN_HOME]->EnableButton(9, "Revert", MenuEntry_Action, MenuAction_Revert);
 	Screens[SCREEN_HOME]->EnableButton(10, "System", MenuEntry_Page, SCREEN_SYSTEM);
 	Screens[SCREEN_HOME]->EnableButton(12, "Colors", MenuEntry_Page, SCREEN_COLORS);
+	Screens[SCREEN_HOME]->EnableButton(13, "Test-image", MenuEntry_Page, SCREEN_TEST);
 
 	Screens[SCREEN_PRESET]->SetTitle("Edit Name/Category");
 
 	Screens[SCREEN_COLORS]->SetTitle("Colors");
 
 
-	Screens[SCREEN_COLORS]->AddLedControl("Low",100,200,  Led_Low);
+	Screens[SCREEN_COLORS]->AddLedControl("Low", 100, 200, Led_Low);
 	Screens[SCREEN_COLORS]->AddLedControl("High", 200, 200, Led_High);
 	Screens[SCREEN_COLORS]->AddLedControl("Active", 300, 200, Led_Active);
 
@@ -1802,7 +1602,7 @@ void Gui::BuildScreens()
 	Screens[SCREEN_KEYBOARD]->SetTitle("CV Keytrack");
 
 
-	Screens[SCREEN_ENVELOPE]->SetTitle("Envelopes");	
+	Screens[SCREEN_ENVELOPE]->SetTitle("Envelopes");
 	Screens[SCREEN_ENVELOPE]->LedButtonsThatOpenThisScreen.push_back(ledbutton_BEnv);
 
 	Screens[SCREEN_LFO]->SetTitle("LFO's");
@@ -1851,15 +1651,18 @@ void Gui::BuildScreens()
 #undef MENU
 #undef ENTRY
 
+
+
 	for (int i = 0; i < SCREENS_COUNT; i++)
 	{
 		Screens[i]->SetFirstEnabledControlActive();
+		Screens[i]->SetupEncoderSet(0);
 	}
 }
 
-void Gui::Render()
+void Gui::Render(float dt)
 {
-	Screens[CurrentScreen]->Render();
+	Screens[CurrentScreen]->Render(dt);
 
 }
 
@@ -1876,6 +1679,17 @@ void Gui::GotoPage(Screens_t s)
 		CS()->Activate();
 	}
 
+}
+
+
+
+void hsv2rgb(uint16_t h, uint16_t s, uint16_t v, uint16_t *r, uint16_t *g, uint16_t *b)
+{
+	float rr, gg, bb;
+	ImGui::ColorConvertHSVtoRGB((h * 360.0f) / 65535.0, s / 65535.0f, v / 65535.0f, rr, gg, bb);
+	*r = (int)(rr * 65535.0f);
+	*g = (int)(gg * 65535.0f);
+	*b = (int)(bb * 65535.0f);
 }
 
 void Gui::SetupLeds()
@@ -1901,8 +1715,8 @@ void _screensetup_t::SketchLeftPress()
 
 void FinalPan_PushStyle()
 {
-	ImGui::PushFont(res.SmallFont);
-	ImGui::PushStyleColor(ImGuiCol_Text, res.Normal);
+	ImGui::PushFont(gGuiResources.SmallFont);
+	ImGui::PushStyleColor(ImGuiCol_Text, gGuiResources.Normal);
 }
 
 void FinalPan_PopStyle()
@@ -1963,12 +1777,12 @@ Screens_t GetPage(FinalEncoderEnum Button)
 	case encoder_VCF2Mix: return SCREEN_VCF2MIX;
 	case encoder_VCF1Mix: return SCREEN_VCF1MIX;
 
-	
+
 	}
 	return SCREEN_HOME;
 }
 
-void RenderMain()
+void RenderMain(float DT)
 {
 	if (!init)
 	{
@@ -1977,9 +1791,9 @@ void RenderMain()
 	FinalPan_PushStyle();
 	ImVec2 pos = ImGui::GetCursorPos();
 	pos = ImGui::GetCursorScreenPos();
-	ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(pos.x, pos.y), ImVec2(1024 + pos.x, 600 + pos.y), res.BGColor);
+	ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(pos.x, pos.y), ImVec2(1024 + pos.x, 600 + pos.y), gGuiResources.BGColor);
 
-	gGui.Render();
+	gGui.Render(DT);
 
 	FinalPan_PopStyle();
 }
@@ -1998,13 +1812,13 @@ void FinalPan_WindowFrame(float DT)
 	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
 	ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 0);
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
-	
+
 
 	ImGui::Begin("screen", 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoTitleBar);
 
 	ImGui::SetWindowSize(ImVec2(1024, 600));
 
-	RenderMain();
+	RenderMain(DT);
 
 	ImGui::End();
 	ImGui::PopStyleVar();
