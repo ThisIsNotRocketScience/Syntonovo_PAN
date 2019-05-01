@@ -42,7 +42,6 @@ LEDENCODER(MasteroutHeadphone, 26, 94, "MasteroutHeadphone")
 LEDENCODER(SketchLeft, 150, 142, "SketchLeft")
 LEDENCODER(SketchRight, 400, 142, "SketchRight")
 
-
 LEDENCODER( F1, 221, 131, "F1")
 LEDENCODER( F2, 234, 158, "F2")
 LEDENCODER( F3, 248, 131, "F3")
@@ -82,7 +81,6 @@ LEDBUTTON(BLFO, 329, 186,19, "LFO", 1, 0.9f, 0)
 LEDBUTTON(BVelocity, 282, 186,20, "Velocity", 1, 0.9f, 0)
 LEDBUTTON(BTouch, 298, 186,21, "Toucher", 1, 0.9f, 0)
 
-
 LEDBUTTON(B1, 79, 181, 22,"1",1,0,0)
 LEDBUTTON(B2, 94, 181, 23, "2", 1, 0, 0)
 LEDBUTTON(B3, 110, 181,24, "3", 1, 0, 0)
@@ -105,20 +103,20 @@ LEDBUTTON(BankLeft, 150, 170,38, "Left Hand Bank", 1, 0.9f, 0)
 LEDBUTTON(BankRight, 400, 170,39, "Right Hand Bank", 1, 0.9f, 0)
 
 LEDBUTTON(OctUpLeft, 0, 0,40, "OctUp", 1, 0.9f, 0)
-LEDBUTTON(OctDownLeft, 0, 0,41, "OctDown", 1, 0.9f, 0)
-LEDBUTTON(PortamentoLeft, 0, 0,42, "Portamento", 1, 0.9f, 0)
+LEDBUTTON(OctDownLeft, 20, 0,41, "OctDown", 1, 0.9f, 0)
+LEDBUTTON(PortamentoLeft, 40, 0,42, "Portamento", 1, 0.9f, 0)
 
-LEDBUTTON(OctUpRight, 0, 0,43, "OctUp", 1, 0.9f, 0)
-LEDBUTTON(OctDownRight, 0, 0,44, "OctDown", 1, 0.9f, 0)
-LEDBUTTON(PortamentoRight, 0, 0,45, "Portamento", 1, 0.9f, 0)
+LEDBUTTON(OctUpRight, 60, 0,43, "OctUp", 1, 0.9f, 0)
+LEDBUTTON(OctDownRight, 80, 0,44, "OctDown", 1, 0.9f, 0)
+LEDBUTTON(PortamentoRight, 100, 0,45, "Portamento", 1, 0.9f, 0)
 
-LEDBUTTON(ArpEnable, 0, 0,46, "ArpEnable", 1, 0.9f, 0)
-LEDBUTTON(ArpEdit, 0, 0, 47,"ArpEdit", 1, 0.9f, 0)
-LEDBUTTON(ArpFreeze, 0, 0,48, "ArpFreeze", 1, 0.9f, 0)
+LEDBUTTON(ArpEnable, 120, 0,46, "ArpEnable", 1, 0.9f, 0)
+LEDBUTTON(ArpEdit, 140, 0, 47,"ArpEdit", 1, 0.9f, 0)
+LEDBUTTON(ArpFreeze, 160, 0,48, "ArpFreeze", 1, 0.9f, 0)
 
-LEDBUTTON(SeqPlay, 0, 0, 49,"SeqPlay", 1, 0.9f, 0)
-LEDBUTTON(SeqEdit, 0, 0, 50, "SeqEdit", 1, 0.9f, 0)
-LEDBUTTON(SeqStop, 0, 0, 51, "SeqStop", 1, 0.9f, 0)
+LEDBUTTON(SeqPlay, 180, 0, 49,"SeqPlay", 1, 0.9f, 0)
+LEDBUTTON(SeqEdit, 200, 0, 50, "SeqEdit", 1, 0.9f, 0)
+LEDBUTTON(SeqStop, 220, 0, 51, "SeqStop", 1, 0.9f, 0)
 
 #ifdef LEDENCODERDEFINED
 	#undef LEDENCODERDEFINED
