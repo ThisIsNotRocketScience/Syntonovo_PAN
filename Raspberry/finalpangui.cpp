@@ -906,6 +906,7 @@ void _screensetup_t::AddDynamicText(float x, float y, char *t, int len, alignmen
 	ControlsInOrder.push_back(T);
 
 }
+
 void _screensetup_t::AddText(float x, float y, char *t, alignment_t align, font_size fontsize)
 {
 
@@ -1513,6 +1514,7 @@ public:
 	virtual void Render(float dt)
 	{
 		ImGui::Image(theImg, ImVec2(1024, 600));
+		_screensetup_t::Render(dt);
 	}
 };
 
@@ -1528,6 +1530,13 @@ void Gui::BuildScreens()
 	Screens[SCREEN_SELECTBANKL] = BL;
 	Screens[SCREEN_SELECTBANKR] = BR;
 	Screens[SCREEN_TEST] = new ImageScreen(gGuiResources.TestBG);
+	Screens[SCREEN_TEST]->AddText(10, 30, "10,30 - tadaa", align_left ,font_small);
+	Screens[SCREEN_TEST]->AddText(30, 60, "10,60 - tadaa", align_left, font_small);
+	for (int i = 0; i < 100; i += 10)
+	{
+		Screens[SCREEN_TEST]->AddText(50+4*i, 600-i, "Hmm", align_left, font_small);
+	}
+	
 	Screens[SCREEN_LOGO] = new ImageScreen(gGuiResources.LogoScreen);
 	BL->LedButtonsThatOpenThisScreen.push_back(ledbutton_BankLeft);
 	BR->LedButtonsThatOpenThisScreen.push_back(ledbutton_BankRight);
