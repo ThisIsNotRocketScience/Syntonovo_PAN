@@ -1,5 +1,7 @@
 #pragma once
 #include <vector>
+#include "../libs/imgui-master/imgui.h"
+
 
 enum alignment_t
 {
@@ -11,10 +13,44 @@ enum alignment_t
 
 enum font_size
 {
+	font_tiny,
 	font_small,
 	font_medium,
 	font_large
 };
+
+extern int ButtonHeight(int idx);
+extern void RenderLettersInABox(int x, int y, bool active, const char *text, int w, int h);
+
+extern uint16_t lerp(uint16_t i, uint16_t f, uint16_t t);
+extern void LedLerp(bool active, uint16_t value, uint16_t *r, uint16_t *g, uint16_t *b);
+extern void VerticalText(char *text, alignment_t align = align_left, ImU32 text_color = 0xffffffff);
+
+typedef struct FinalPan_GuiResources_t
+{
+	ImTextureID MainBG;
+	ImTextureID RootBG;
+	ImTextureID LogoScreen;
+	ImTextureID LeftIndicator;
+	ImTextureID RightIndicator;
+	ImTextureID SpriteSheet;
+	ImTextureID OnOff[4];
+	ImFont *BigFont;
+	ImFont *TinyFont;
+	ImFont *SmallFont;
+	ImFont *MediumFont;
+	ImU32 Highlight;
+	ImU32 Normal;
+	ImU32 BGColor;
+	ImU32 FillColor;
+	int PageTime;
+	int encoderbarmargin;
+	int encoderheight;
+
+	ImTextureID BgImages[1];
+} FinalPan_GuiResources_t;
+
+extern FinalPan_GuiResources_t gGuiResources; 
 
 class _control_t
 {
@@ -135,6 +171,7 @@ public:
 	_screensetup_t(_screensetup_t *parent = NULL);
 	virtual uint16_t GetParameterValue(int param);
 	virtual void TweakParameterValue(int param, int delta) ;
+	virtual void SetupEncoderSet(int n);
 
 
 
