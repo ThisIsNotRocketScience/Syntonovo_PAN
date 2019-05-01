@@ -37,7 +37,11 @@ public:
 	bool activestate;
 	void SetTitle(const char *t);
 
-	virtual void Render(bool active);
+	int encodersets;
+	int currentencoderset;
+	virtual void SetupEncoderSet(int n) { currentencoderset = n; };
+
+	virtual void Render(bool active, float DT);
 	virtual void Action(int action);
 	virtual void SketchRightPressed();
 
@@ -64,7 +68,7 @@ public:
 	float x, y;
 		alignment_t Align;
 	ImVec4 Color;
-	virtual void Render(bool active);
+	virtual void Render(bool active, float DT);
 
 };
 
@@ -88,7 +92,7 @@ public:
 
 	void SetupPosition(int id);
 
-	virtual void Render(bool active);
+	virtual void Render(bool active, float DT);
 };
 
 
@@ -100,7 +104,9 @@ public:
 	alignment_t Align;
 	ledmodes ledmode;
 	uint16_t r, g, b;
-
+	
+	int Set;
+	
 	int ParameterID;
 	int x, y;
 
@@ -109,7 +115,7 @@ public:
 	
 	void UpdateLed(bool active);
 	
-	virtual void Render(bool active);
+	virtual void Render(bool active, float DT);
 };
 #define MAXENCODERSETS 2
 
@@ -150,10 +156,7 @@ public:
 
 	sidebutton_t buttons[14];
 
-	int encodersets;
-	int currentencoderset;
 	bottomencoder_t encoders[MAXENCODERSETS][11];
-	virtual void SetupEncoderSet(int n) {};
 
 	void AddText(float x, float y, char *t, alignment_t align = align_left, font_size fontsize = font_small);
 	void AddDynamicText(float x, float y, char *t, int len, alignment_t align = align_left, font_size fontsize = font_small);
@@ -177,7 +180,7 @@ public:
 	virtual void SideButton(FinalLedButtonEnum b);
 	virtual void PatchButton(FinalLedButtonEnum b);
 	void Encoder(FinalEncoderEnum button, int delta);
-	virtual void Render();
+	virtual void Render(float DT);
 };
 
 class Gui
@@ -204,7 +207,7 @@ public:
 
 	void BuildScreens();
 
-	virtual	void Render();
+	virtual	void Render(float DT);
 
 	void GotoPage(Screens_t s);
 
