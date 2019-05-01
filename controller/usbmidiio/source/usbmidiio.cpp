@@ -966,8 +966,8 @@ void preset_init()
 
     MODMATRIX(modsource_ENV0, 2, 0, 0x3fff);
     MODMATRIX(modsource_ENV0, 2, 1, output_CLEANF_LIN);
-	preset.modmatrix[modsource_ENV0].targets[1].depth = 0x3fff;
-	preset.modmatrix[modsource_ENV0].targets[1].outputid = output_CLEANF_LIN;
+	preset.modmatrix[modsource_ENV0].targets[2].depth = 0x3fff;
+	preset.modmatrix[modsource_ENV0].targets[2].outputid = output_CLEANF_LIN;
 
 	preset.high.h = 0x1000;
 	preset.low.h = 0x4000;
