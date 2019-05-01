@@ -1175,7 +1175,7 @@ void FinalPan_LoadResources()
 
 	gGuiResources.LogoScreen = Raspberry_LoadTexture("PAN_LOGO.png");
 	gGuiResources.RootBG = Raspberry_LoadTexture("UI_ROOTBG.png");
-	gGuiResources.MainBG = Raspberry_LoadTexture("PAN_MAINBG.png");
+	gGuiResources.MainBG = Raspberry_LoadTexture("PAN_TEST.png");
 	gGuiResources.TestBG = Raspberry_LoadTexture("PAN_TEST.png");
 
 	gGuiResources.LeftIndicator = Raspberry_LoadTexture("UI_LEFT.png");
@@ -1320,7 +1320,7 @@ void Gui::ButtonPressed(FinalLedButtonEnum Button)
 	case ledbutton_BX:  GotoPage(SCREEN_X); break;
 	case ledbutton_BY:  GotoPage(SCREEN_Y); break;
 	case ledbutton_BZ:  GotoPage(SCREEN_Z); break;
-
+	case ledbutton_BVelocity: GotoPage(SCREEN_VELOCITY); break;
 	case ledbutton_BEnv: GotoPage(SCREEN_ENVELOPE); break;
 	case ledbutton_BLFO: GotoPage(SCREEN_LFO); break;
 	case ledbutton_BCV: GotoPage(SCREEN_KEYBOARD); break;
