@@ -1638,9 +1638,12 @@ void Gui::BuildScreens()
 #undef MENU
 #undef ENTRY
 
+
+
 	for (int i = 0; i < SCREENS_COUNT; i++)
 	{
 		Screens[i]->SetFirstEnabledControlActive();
+		Screens[i]->SetupEncoderSet(0);
 	}
 }
 

@@ -114,12 +114,12 @@ void bottomencoder_t::Render(bool active, float DT)
 	case MenuEntry_Value:
 	{
 
-		RenderBoxVertical(x, y, gCurrentPreset.paramvalue[target], style == MenuEntry_MidValue ? BOX_MID : BOX_REGULAR, active);
+		RenderBoxVertical(x, y2, gCurrentPreset.paramvalue[target], style == MenuEntry_MidValue ? BOX_MID : BOX_REGULAR, active);
 
 		char txt[400];
 
 		gCurrentPreset.DescribeParam((OutputEnum)target, style, txt, 400);
-		VerticalText(txt, align_right);
+	//	VerticalText(txt, align_right);
 	}
 
 	break;

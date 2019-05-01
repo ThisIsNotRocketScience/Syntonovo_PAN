@@ -136,7 +136,10 @@ public:
 class  bottomencoder_t :public _control_t
 {
 public:
-
+	bottomencoder_t()
+	{
+		Set = 0;
+	}
 	alignment_t Align;
 	ledmodes ledmode;
 	uint16_t r, g, b;
