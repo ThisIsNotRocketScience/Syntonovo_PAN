@@ -58,14 +58,14 @@ void adsr_init()
 
 void adsr_set_a(int adsrid, uint32_t a)
 {
-	adsr_state[adsrid].a = a * 2;
-	adsr_state[adsrid].a_const = (uint32_t)((float)0xFFFFFFFF * (1.0f - expf(-40.0f / (float)a)));
+	adsr_state[adsrid].a = a;
+	adsr_state[adsrid].a_const = (uint32_t)((float)0xFFFFFFFF * (1.0f - expf(-4.0f / (float)(a + 5))));
 }
 
 void adsr_set_d(int adsrid, uint32_t d)
 {
 	adsr_state[adsrid].d = d;
-	adsr_state[adsrid].d_const = (uint32_t)((float)0x7FFFFFFF * (1.0f - expf(-40.0f / (float)d)));
+	adsr_state[adsrid].d_const = (uint32_t)((float)0x7FFFFFFF * (1.0f - expf(-4.0f / (float)(d + 5))));
 }
 
 void adsr_set_s(int adsrid, uint32_t s)
@@ -76,7 +76,7 @@ void adsr_set_s(int adsrid, uint32_t s)
 void adsr_set_r(int adsrid, uint32_t r)
 {
 	adsr_state[adsrid].r = r;
-	adsr_state[adsrid].r_const = (uint32_t)((float)0xFFFFFFFF * expf(-4.0f / (float)r));
+	adsr_state[adsrid].r_const = (uint32_t)((float)0xFFFFFFFF * expf(-1.0f / (float)(r + 5)));
 }
 
 void adsr_set_gate(int adsrid, int gate, int reset)
@@ -94,13 +94,19 @@ void adsr_set_gate(int adsrid, int gate, int reset)
 	adsr_state[adsrid].gate = !!gate;
 }
 
+int deltaindex = 0;
+volatile uint32_t deltas[256];
+
 uint16_t adsr_update(int adsrid, int release_dampen)
 {
 	uint32_t timer_count = timer_value_nonisr();
 	uint32_t timer_delta = timer_count - adsr_state[adsrid].time;
 
-	if (timer_delta > 0x40000) timer_delta = 1;
-	else timer_delta >>= 13;
+	//if (timer_delta > 0x40000) timer_delta = 1;
+	//else timer_delta >>= 13;
+	deltas[deltaindex] = timer_delta;
+	deltaindex = (deltaindex+1)&255;
+	timer_delta >>= 10;
 	adsr_state_t* adsr = &adsr_state[adsrid];
 
 	if (timer_delta == 0) {
