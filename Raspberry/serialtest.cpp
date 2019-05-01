@@ -159,7 +159,7 @@ int main(int argc, char *argv[])
 	uart.tx.write = serial_write;
 	sync_init(&rpi_sync, &uart, sync_data_func, sync_oobdata_func);
 
-	S.Connect("/dev/ttyAMA0", 115200);
+	S.Connect("/dev/ttyAMA0", 500000);
 
 	pthread_create(&serial_thread, NULL, SerialThread, 0);
 
