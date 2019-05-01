@@ -86,15 +86,15 @@ void FinalPan_SetupDefaultPreset()
 #undef OUTPUT_VIRT
 #undef SWITCH
 
-	gCurrentPreset.high.h = 0x1000;
-	gCurrentPreset.low.h = 0x4000;
-	gCurrentPreset.active.h = 0x3000;
+	gCurrentPreset.high.h = 0;
+	gCurrentPreset.low.h = 0;
+	gCurrentPreset.active.h = 0;
 
-	gCurrentPreset.low.v = 0xffff;
-	gCurrentPreset.active.v = 0xffff;
-	gCurrentPreset.high.v = 0xffff;
+	gCurrentPreset.low.v = 0x8000;
+	gCurrentPreset.active.v = 0x8000;
+	gCurrentPreset.high.v = 0x8000;
 
-	gCurrentPreset.active.s = 0x1000;
+	gCurrentPreset.active.s = 0xffff;
 	gCurrentPreset.high.s = 0xffff;
 	gCurrentPreset.low.s = 0xffff;
 
@@ -1181,7 +1181,9 @@ void FinalPan_LoadResources()
 	gGuiResources.TinyFont = io.Fonts->AddFontFromFileTTF("Fontfabric - Panton.otf", 20.0f);
 	gGuiResources.SmallFont = io.Fonts->AddFontFromFileTTF("Fontfabric - Panton.otf", 30.0f);
 	gGuiResources.MediumFont = io.Fonts->AddFontFromFileTTF("Fontfabric - Panton.otf", 38.0f);
-	gGuiResources.BigFont = io.Fonts->AddFontFromFileTTF("Fontfabric - Panton ExtraBold.otf", 44.0f);
+	//gGuiResources.BigFont = io.Fonts->AddFontFromFileTTF("Fontfabric - Panton ExtraBold.otf", 44.0f);
+
+	gGuiResources.BigFont = io.Fonts->AddFontFromFileTTF("Petronius-Roman.ttf", 44.0f);
 	init = true;
 
 
@@ -1636,9 +1638,12 @@ void Gui::BuildScreens()
 #undef MENU
 #undef ENTRY
 
+
+
 	for (int i = 0; i < SCREENS_COUNT; i++)
 	{
 		Screens[i]->SetFirstEnabledControlActive();
+		Screens[i]->SetupEncoderSet(0);
 	}
 }
 
@@ -1661,6 +1666,17 @@ void Gui::GotoPage(Screens_t s)
 		CS()->Activate();
 	}
 
+}
+
+
+
+void hsv2rgb(uint16_t h, uint16_t s, uint16_t v, uint16_t *r, uint16_t *g, uint16_t *b)
+{
+	float rr, gg, bb;
+	ImGui::ColorConvertHSVtoRGB((h * 360.0f) / 65535.0, s / 65535.0f, v / 65535.0f, rr, gg, bb);
+	*r = (int)(rr * 65535.0f);
+	*g = (int)(gg * 65535.0f);
+	*b = (int)(bb * 65535.0f);
 }
 
 void Gui::SetupLeds()

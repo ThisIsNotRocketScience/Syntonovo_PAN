@@ -35,7 +35,7 @@ void bottomencoder_t::Turn(int delta)
 
 void bottomencoder_t::SetupPosition(int id)
 {
-	y = 600 - ParamVerticalBoxHeight - ParamMasterMargin;
+	y = 600 - ParamMasterMargin;
 	x = ((1024) / 11.0f) * (id + 0.5) - ParamBoxDim/2;
 	Align = align_left;
 
@@ -59,8 +59,10 @@ void bottomencoder_t::Render(bool active, float DT)
 		ImVec2 textsize = ImGui::CalcTextSize(title);
 		x2 -= textsize.x;
 	}
-	ImGui::SetCursorPos(ImVec2(x2, y2));
+
 	ImGui::PushFont(gGuiResources.TinyFont);
+
+	ImGui::SetCursorPos(ImVec2(x2 - ImGui::GetTextLineHeight(), y2));
 
 	if (active)
 	{
@@ -70,8 +72,8 @@ void bottomencoder_t::Render(bool active, float DT)
 	{
 		VerticalText(title, align_left);
 	}
-
-
+	y2 -= ParamVerticalBoxHeight;
+	
 	switch (style)
 	{
 
@@ -100,7 +102,7 @@ void bottomencoder_t::Render(bool active, float DT)
 
 	{
 		int16_t modval = ((ModSourceScreen*)Parent)->GetModValue(target);
-		RenderBoxVertical(x, y, modval, BOX_MID, active);
+		RenderBoxVertical(x, y2, modval, BOX_MID, active);
 	}
 	break;
 	case MenuEntry_MidValue:
@@ -114,12 +116,12 @@ void bottomencoder_t::Render(bool active, float DT)
 	case MenuEntry_Value:
 	{
 
-		RenderBoxVertical(x, y, gCurrentPreset.paramvalue[target], style == MenuEntry_MidValue ? BOX_MID : BOX_REGULAR, active);
+		RenderBoxVertical(x, y2, gCurrentPreset.paramvalue[target], style == MenuEntry_MidValue ? BOX_MID : BOX_REGULAR, active);
 
 		char txt[400];
 
 		gCurrentPreset.DescribeParam((OutputEnum)target, style, txt, 400);
-		VerticalText(txt, align_right);
+	//	VerticalText(txt, align_right);
 	}
 
 	break;

@@ -309,8 +309,8 @@ public:
 		}
 		int origp = *p;
 		int newp = origp + delta * 200;
-		if (newp > 0xffff) newp = 0xffff; else if (newp < 0) newp = 0;
-		*p = newp;
+		if (newp > 0xffff) *p = 0xffff; else if (newp < 0) *p = 0; else *p = newp;
+		
 	}
 	hsv low;
 	hsv high;
