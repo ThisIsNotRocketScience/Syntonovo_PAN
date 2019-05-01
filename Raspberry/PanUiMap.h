@@ -35,11 +35,8 @@ CUSTOMENTRY("Triangle", MenuEntry_Toggle, Switch_SEL1TRI)
 CUSTOMENTRY("Pulse", MenuEntry_Toggle, Switch_SEL1SQR)
 CUSTOMENTRY("Saw", MenuEntry_Toggle, Switch_SEL1SAW)
 CUSTOMENTRY("Subosc", MenuEntry_Toggle, Switch_SEL1SUB)
-CUSTOMENTRY("Sync", MenuEntry_Toggle, Switch_SELVCOSYNC1)
-
+CUSTOMENTRY("Sync", MenuEntry_Toggle, Switch_SELVCOSYNC3)
 ENTRY("PW", MenuEntry_Percentage, Output_VCO1_PW)
-ENTRY("VCFMix", MenuEntry_FilterMix, Output_VCO1_VCFMIX)
-ENTRY("RM Mix", MenuEntry_FilterMix, Output_RM1_VCFMIX)
 ENDMENU()
 
 MENU(VCO2, ledbutton_VCO2, "VCO2")
@@ -48,10 +45,10 @@ CUSTOMENTRY("Triangle", MenuEntry_Toggle, Switch_SEL2TRI)
 CUSTOMENTRY("Pulse", MenuEntry_Toggle, Switch_SEL2SQR)
 CUSTOMENTRY("Saw", MenuEntry_Toggle, Switch_SEL2SAW)
 CUSTOMENTRY("Subosc", MenuEntry_Toggle, Switch_SEL2SUB)
-CUSTOMENTRY("Sync", MenuEntry_Toggle, Switch_SELVCOSYNC2)
+CUSTOMENTRY("Sync", MenuEntry_Toggle, Switch_SELVCOSYNC1)
 ENTRY("PW", MenuEntry_Percentage, Output_VCO2_PW)
-ENTRY("FM", MenuEntry_Value, Output_VCO123_FM2)
-ENTRY("VCFMix", MenuEntry_FilterMix, Output_VCO2_VCFMIX)
+ENTRY("FM (from VCO1)", MenuEntry_Value, Output_VCO123_FM2)
+
 ENDMENU()
 
 MENU(VCO3, ledbutton_VCO3, "VCO3")
@@ -60,21 +57,32 @@ CUSTOMENTRY("Triangle", MenuEntry_Toggle, Switch_SEL3TRI)
 CUSTOMENTRY("Pulse", MenuEntry_Toggle, Switch_SEL3SQR)
 CUSTOMENTRY("Saw", MenuEntry_Toggle, Switch_SEL3SAW)
 CUSTOMENTRY("Subosc", MenuEntry_Toggle, Switch_SEL3SUB)
+CUSTOMENTRY("Sync", MenuEntry_Toggle, Switch_SELVCOSYNC2)
+
 ENTRY("PW", MenuEntry_Percentage, Output_VCO3_PW)
-ENTRY("FM", MenuEntry_Value, Output_VCO123_FM3)
-ENTRY("VCFMix", MenuEntry_FilterMix, Output_VCO3_VCFMIX)
+ENTRY("FM  (from VCO1)", MenuEntry_Value, Output_VCO123_FM3)
+ENDMENU()
+
+MENU(VCO8, ledbutton_VCO3, "Noise VCO")
+
+ENTRY("Color", MenuEntry_Pitch, Output_NOISE_COLOR)
+
 ENDMENU()
 
 MENU(VCO4567, ledbutton_VCO4, "VCO 4 5 6 7")
+
 ENTRY("4 Pitch", MenuEntry_Pitch, Output_VCO4_PITCH)
 CUSTOMENTRY("4 Sqr", MenuEntry_Toggle, Switch_SEL4SQR)
+
 ENTRY("5 Pitch", MenuEntry_Pitch, Output_VCO5_PITCH)
 CUSTOMENTRY("5 Sqr", MenuEntry_Toggle, Switch_SEL5SQR)
+
 ENTRY("6 Pitch", MenuEntry_Pitch, Output_VCO6_PITCH)
 CUSTOMENTRY("6 Sqr", MenuEntry_Toggle, Switch_SEL6SQR)
+
 ENTRY("7 Pitch", MenuEntry_Pitch, Output_VCO7_PITCH)
 CUSTOMENTRY("7 Sqr", MenuEntry_Toggle, Switch_SEL7SQR)
-ENTRY("VCFMix", MenuEntry_FilterMix, Output_VCO4567_VCFMIX)
+
 ENDMENU()
 
 EXTRABUTTON(VCF1, ledbutton_VCF1_ResonanceBut)
@@ -97,6 +105,7 @@ ENTRY("Whitenoise", MenuEntry_Value, Output_WHITENS_MIX1)
 ENTRY("Diginoise", MenuEntry_Value, Output_DIGINS_MIX1)
 ENTRY("DNSSaw", MenuEntry_Value, Output_DNSSAW_MIX1)
 ENTRY("RingMod", MenuEntry_Value, Output_RM1_MIX1)
+ENTRY("Sub", MenuEntry_Value, Output_VCO1_SUB1)
 
 //ENTRY("FX left", MenuEntry_Value, Output_VCF1_FX_12)
 //ENTRY("FX right", MenuEntry_Value, Output_VCF1_FX_24)
@@ -114,6 +123,8 @@ ENTRY("Whitenoise", MenuEntry_Value, Output_WHITENS_MIX2)
 ENTRY("Diginoise", MenuEntry_Value, Output_DIGINS_MIX2)
 ENTRY("DNSSaw", MenuEntry_Value, Output_DNSSAW_MIX2)
 ENTRY("RingMod", MenuEntry_Value, Output_RM1_MIX2)
+ENTRY("Sub", MenuEntry_Value, Output_VCO1_SUB2)
+
 
 //ENTRY("FX left", MenuEntry_Value, Output_VCF2_FX_L)
 //ENTRY("FX right", MenuEntry_Value, Output_VCF2_FX_L)

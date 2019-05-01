@@ -1561,6 +1561,8 @@ void Gui::BuildScreens()
 	Screens[SCREEN_HOME]->AddDynamicText(512, 40, gCurrentPreset.Name, PRESET_NAME_LENGTH);
 
 	Screens[SCREEN_HOME]->EncodersThatOpenThisScreen.push_back(encoder_SketchLeft);
+	
+	Screens[SCREEN_SYSTEM]->SetTitle("System Settings");
 
 
 	Screens[SCREEN_HOME]->EnableButton(8, "Store", MenuEntry_Page, SCREEN_PRESET);//(512, 40, "Some Sound");
@@ -1636,9 +1638,9 @@ void Gui::BuildScreens()
 
 
 	Screens[SCREEN_TEST]->SetTitle("Test scherm");
-	Screens[SCREEN_TEST]->EnableButton(2, "Button1!");
-	Screens[SCREEN_TEST]->EnableButton(5, "Button2!");
-	Screens[SCREEN_TEST]->EnableButton(11, "Button3!");
+	//Screens[SCREEN_TEST]->EnableButton(2, "Button1!");
+	//Screens[SCREEN_TEST]->EnableButton(5, "Button2!");
+	//Screens[SCREEN_TEST]->EnableButton(11, "Button3!");
 
 	_screensetup_t *current = Screens[SCREEN_TEST];
 	int lastbutton = 0;
