@@ -193,6 +193,8 @@ enum UIDisplayModes
 	MenuEntry_EffectParam1,
 	MenuEntry_EffectParam2,
 	MenuEntry_EffectParam3,
+	MenuEntry_EncoderSet
+
 };
 
 enum

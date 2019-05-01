@@ -118,11 +118,13 @@ typedef struct FinalPan_GuiResources_t
 {
 	ImTextureID MainBG;
 	ImTextureID RootBG;
+	ImTextureID LogoScreen;
 	ImTextureID LeftIndicator;
 	ImTextureID RightIndicator;
 	ImTextureID SpriteSheet;
 	ImTextureID OnOff[4];
 	ImFont *BigFont;
+	ImFont *TinyFont;
 	ImFont *SmallFont;
 	ImFont *MediumFont;
 	ImU32 Highlight;
@@ -329,7 +331,7 @@ void _control_t::SetTitle(const char *t)
 }
 
 
-void _control_t::Render(bool active)
+void _control_t::Render(bool active, float DT)
 {
 
 }
@@ -496,6 +498,7 @@ void sidebutton_t::Pressed()
 	{
 	case MenuEntry_Page: gGui.GotoPage((Screens_t)target); break;
 	case MenuEntry_Action: Parent->Action(target); break;
+	case MenuEntry_EncoderSet: Parent->SetupEncoderSet(target); break;
 	case MenuEntry_Toggle: gCurrentPreset.ToggleSwitch((SwitchEnum)target); break;
 	}
 }
@@ -522,7 +525,7 @@ void sidebutton_t::SetupPosition(int id)
 	}
 }
 
-void sidebutton_t::Render(bool active)
+void sidebutton_t::Render(bool active, float DT)
 {
 	if (enabled)
 	{
@@ -605,17 +608,22 @@ void bottomencoder_t::SetupPosition(int id)
 
 }
 
-void bottomencoder_t::Render(bool active)
+void bottomencoder_t::Render(bool active, float DT)
 {
 	if (enabled)
 	{
 		int x2 = x;
+		int y2 = y;
+		if (Set != Parent->currentencoderset)
+		{
+			y2 -= 100;
+		}
 		if (Align == align_right)
 		{
 			ImVec2 textsize = ImGui::CalcTextSize(title);
 			x2 -= textsize.x;
 		}
-		ImGui::SetCursorPos(ImVec2(x2, y));
+		ImGui::SetCursorPos(ImVec2(x2, y2));
 		if (active)
 		{
 			VerticalText(title, align_left, res.Highlight);
@@ -632,7 +640,7 @@ void bottomencoder_t::Render(bool active)
 		case MenuEntry_EnvelopeValue: 
 		case MenuEntry_LFOValue:
 		{
-			RenderBoxVertical(x, y, Parent->GetParameterValue(target), style == BOX_REGULAR, active);
+			RenderBoxVertical(x, y2, Parent->GetParameterValue(target), style == BOX_REGULAR, active);
 		//	char txt[400];
 	//		gCurrentPreset.DescribeParam((OutputEnum)target, style, txt, 400);
 	//		VerticalText(txt, align_right);
@@ -643,7 +651,7 @@ void bottomencoder_t::Render(bool active)
 		case MenuEntry_LedValue:
 		{
 
-			RenderBoxVertical(x, y, gCurrentPreset.GetLedParameter((LedParameter) target), style == BOX_REGULAR, active);
+			RenderBoxVertical(x, y2, gCurrentPreset.GetLedParameter((LedParameter) target), style == BOX_REGULAR, active);
 			char txt[400];
 			//gCurrentPreset.DescribeParam((OutputEnum)target, style, txt, 400);
 			//VerticalText(txt, align_right);
@@ -772,6 +780,7 @@ _screensetup_t::_screensetup_t(_screensetup_t *parent )
 		for (int i = 0; i < 11; i++)
 		{
 			encoders[j][i].SetTitle("");
+			encoders[j][i].Set = j;
 			encoders[j][i].Parent = this;
 			encoders[j][i].SetupPosition(i);
 			DisableEncoder(i);
@@ -1003,7 +1012,7 @@ void _screensetup_t::ButtonStyle(int i, int style, int target)
 
 }
 
-void _textcontrol_t::Render(bool active)
+void _textcontrol_t::Render(bool active, float DT)
 {
 	switch (fontsize)
 	{
@@ -1204,8 +1213,9 @@ void _screensetup_t::Encoder(FinalEncoderEnum button, int delta)
 	}
 }
 
-void _screensetup_t::Render()
+void _screensetup_t::Render(float DT)
 {
+	ImGui::Image(res.MainBG, ImVec2(1024, 600));
 	if (strlen(title) > 0)
 	{
 		ImGui::PushFont(res.BigFont);
@@ -1217,7 +1227,7 @@ void _screensetup_t::Render()
 
 	for (int i = 0; i < ControlsInOrder.size(); i++)
 	{
-		ControlsInOrder[i]->Render((i == ActiveControl) && (Modal == NULL));
+		ControlsInOrder[i]->Render((i == ActiveControl) && (Modal == NULL), DT);
 	}
 	if (Modal)
 	{
@@ -1226,7 +1236,7 @@ void _screensetup_t::Render()
 		pos.y = 0;
 		ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(pos.x, pos.y), ImVec2(pos.x + 1024, pos.y + 600), IM_COL32(0, 0, 0, 200));
 
-		Modal->Render();
+		Modal->Render(DT);
 	}
 
 }
@@ -1248,7 +1258,7 @@ public:
 		skipencodercycling = true;
 	}
 
-	virtual void Render(bool active)
+	virtual void Render(bool active, float DT)
 	{
 		ImGui::SetCursorPos(ImVec2(x, y - ImGui::GetTextLineHeight()));
 		uint16_t r, g, b;
@@ -1297,10 +1307,14 @@ void FinalPan_LoadResources()
 	res.OnOff[1] = Raspberry_LoadTexture("UI_ONOFF_ON.png");
 	res.OnOff[2] = Raspberry_LoadTexture("UI_ONOFF_OFF_HI.png");
 	res.OnOff[3] = Raspberry_LoadTexture("UI_ONOFF_ON_HI.png");
-	res.MainBG = Raspberry_LoadTexture("UI_MAINBG.png");
+	
+	res.LogoScreen = Raspberry_LoadTexture("PAN_LOGO.png");
 	res.RootBG = Raspberry_LoadTexture("UI_ROOTBG.png");
+	res.MainBG = Raspberry_LoadTexture("PAN_MAINBG.png");
+
 	res.LeftIndicator = Raspberry_LoadTexture("UI_LEFT.png");
 	res.RightIndicator = Raspberry_LoadTexture("UI_RIGHT.png");
+	res.TinyFont = io.Fonts->AddFontFromFileTTF("Fontfabric - Panton.otf", 20.0f);
 	res.SmallFont = io.Fonts->AddFontFromFileTTF("Fontfabric - Panton.otf", 30.0f);
 	res.MediumFont = io.Fonts->AddFontFromFileTTF("Fontfabric - Panton.otf", 38.0f);
 	res.BigFont = io.Fonts->AddFontFromFileTTF("Fontfabric - Panton ExtraBold.otf", 44.0f);
@@ -1380,7 +1394,7 @@ Gui::Gui()
 void Gui::Init()
 {
 	BuildScreens();
-	CurrentScreen = SCREEN_HOME;
+	CurrentScreen = SCREEN_LOGO;
 }
 
 void Gui::SketchLeftPress()
@@ -1507,7 +1521,7 @@ class LetterControl : public _control_t
 		}
 		char Current;
 
-		virtual void Render(bool active)
+		virtual void Render(bool active, float DT)
 		{
 			ImVec2 tl(x, y);
 			ImVec2 br(x + LetterBoxW, y + LetterBoxH);
@@ -1642,7 +1656,17 @@ public:
 			EnableButton(1, "Previous", MenuEntry_Action,MenuAction_Prev);
 			EnableButton(8, "Next", MenuEntry_Action, MenuAction_Next);
 		}
-		
+		EnableButton(9, "Parameters", MenuEntry_EncoderSet, 0);
+		EnableButton(10, "Targets", MenuEntry_EncoderSet, 1);
+
+		for (int i = 0; i < 11; i++)
+		{
+			encoders[1][i].enabled = true;
+			encoders[1][i].style = MenuEntry_MidValue;
+			char txt[30];
+			sprintf(txt, "target %d", i);
+			encoders[1][i].SetTitle(txt);
+		}
 	}
 
 
@@ -1656,9 +1680,9 @@ public:
 		}
 		
 	}
-	virtual void Render()
+	virtual void Render(float DT)
 	{
-		_screensetup_t::Render();
+		_screensetup_t::Render(DT);
 		if (HasActiveInstanceDisplay)
 		{
 			for (int i = 0; i < MaxInstances; i++)
@@ -1727,6 +1751,19 @@ public:
 	}
 };
 
+
+class LogoScreen : public _screensetup_t
+{
+public:
+	LogoScreen()
+	{
+
+	}
+	virtual void Render(float dt)
+	{
+		ImGui::Image(res.LogoScreen, ImVec2(1024, 600));
+	}
+};
 void Gui::BuildScreens()
 {
 	for (int i = 0; i < SCREENS_COUNT; i++) Screens[i] = 0;
@@ -1738,7 +1775,7 @@ void Gui::BuildScreens()
 	BR->Side = Right;
 	Screens[SCREEN_SELECTBANKL] = BL;
 	Screens[SCREEN_SELECTBANKR] = BR;
-
+	Screens[SCREEN_LOGO] = new LogoScreen();
 	BL->LedButtonsThatOpenThisScreen.push_back(ledbutton_BankLeft);
 	BR->LedButtonsThatOpenThisScreen.push_back(ledbutton_BankRight);
 
@@ -1857,9 +1894,9 @@ void Gui::BuildScreens()
 	}
 }
 
-void Gui::Render()
+void Gui::Render(float dt)
 {
-	Screens[CurrentScreen]->Render();
+	Screens[CurrentScreen]->Render( dt);
 
 }
 
@@ -1968,7 +2005,7 @@ Screens_t GetPage(FinalEncoderEnum Button)
 	return SCREEN_HOME;
 }
 
-void RenderMain()
+void RenderMain(float DT)
 {
 	if (!init)
 	{
@@ -1979,7 +2016,7 @@ void RenderMain()
 	pos = ImGui::GetCursorScreenPos();
 	ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(pos.x, pos.y), ImVec2(1024 + pos.x, 600 + pos.y), res.BGColor);
 
-	gGui.Render();
+	gGui.Render(DT);
 
 	FinalPan_PopStyle();
 }
@@ -2004,7 +2041,7 @@ void FinalPan_WindowFrame(float DT)
 
 	ImGui::SetWindowSize(ImVec2(1024, 600));
 
-	RenderMain();
+	RenderMain(DT);
 
 	ImGui::End();
 	ImGui::PopStyleVar();
