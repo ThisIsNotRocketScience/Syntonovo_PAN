@@ -123,7 +123,7 @@ instance:
     - config:
       - clockMode: 'kSCTIMER_System_ClockMode'
       - clockSource: 'SynchronousFunctionClock'
-      - clockSourceFreq: 'GetFreq'
+      - clockSourceFreq: 'BOARD_BootClockRUN'
       - SCTInputClockSourceFreq: 'custom'
       - clockSelect: 'kSCTIMER_Clock_On_Rise_Input_0'
       - enableCounterUnify: 'true'
