@@ -909,7 +909,7 @@ int main(int argc, char** argv)
 		
 		if (finalpan)
 		{
-			ImGui::SetNextWindowPos(ImVec2(10, 30));
+			ImGui::SetNextWindowPos(ImVec2(0, 0));
 			auto nt = SDL_GetTicks();
 			auto diff = nt - t;
 			t = nt;

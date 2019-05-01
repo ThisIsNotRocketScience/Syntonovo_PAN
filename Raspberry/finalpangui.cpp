@@ -86,15 +86,15 @@ void FinalPan_SetupDefaultPreset()
 #undef OUTPUT_VIRT
 #undef SWITCH
 
-	gCurrentPreset.high.h = 0;
-	gCurrentPreset.low.h = 0;
-	gCurrentPreset.active.h = 0;
+	gCurrentPreset.high.h = 0x2000;
+	gCurrentPreset.low.h = 0x1000;
+	gCurrentPreset.active.h = 0x2200;
 
-	gCurrentPreset.low.v = 0x8000;
+	gCurrentPreset.low.v = 0x4000;
 	gCurrentPreset.active.v = 0x8000;
-	gCurrentPreset.high.v = 0x8000;
+	gCurrentPreset.high.v = 0xff00;
 
-	gCurrentPreset.active.s = 0xffff;
+	gCurrentPreset.active.s = 0x8fff;
 	gCurrentPreset.high.s = 0xffff;
 	gCurrentPreset.low.s = 0xffff;
 
@@ -356,7 +356,28 @@ void _control_t::Deactivate() {}
 ImU32 CalcFillColor(uint16_t value, bool active)
 {
 	uint16_t r, g, b;
-	LedLerp(active, value, &r, &g, &b);
+	if (0)
+	{
+		r = gPanState.active_led_r;
+		g = gPanState.active_led_g;
+		b = gPanState.active_led_b;
+	}
+	else
+	{
+		if (value>0)
+		{
+			r = gPanState.high_led_r;
+			g = gPanState.high_led_g;
+			b = gPanState.high_led_b;
+		}
+		else
+		{
+			r = gPanState.low_led_r;
+			g = gPanState.low_led_g;
+			b = gPanState.low_led_b;
+		
+		}
+	}
 	return ImColor(r >> 8, g >> 8, b >> 8);
 }
 
@@ -374,7 +395,8 @@ void _control_t::RenderBox(int x, int y, int val, int mode, bool active)
 	{
 		ImVec2 br2 = br;
 		br2.x = tl.x + (val * 220) / 0xffff;
-		ImGui::GetWindowDrawList()->AddRectFilled(tl, br2, CalcFillColor(val, active));
+		ImGui::GetWindowDrawList()->AddRectFilled(tl, br, CalcFillColor(0, active));
+		ImGui::GetWindowDrawList()->AddRectFilled(tl, br2, CalcFillColor(1, active));
 		ImGui::GetWindowDrawList()->AddRect(tl, br2, active ? gGuiResources.Highlight : gGuiResources.Normal, 0, 0, 2);
 	}
 	break;
@@ -384,7 +406,8 @@ void _control_t::RenderBox(int x, int y, int val, int mode, bool active)
 		ImVec2 tl2 = tl;
 		tl2.x = tl.x + (val * 220) / 0xffff;
 		br2.x = tl.x + 220;
-		ImGui::GetWindowDrawList()->AddRectFilled(tl, br2, CalcFillColor(val, active));
+		ImGui::GetWindowDrawList()->AddRectFilled(tl, br, CalcFillColor(0, active));
+		ImGui::GetWindowDrawList()->AddRectFilled(tl, br2, CalcFillColor(1, active));
 		ImGui::GetWindowDrawList()->AddRect(tl, br2, active ? gGuiResources.Highlight : gGuiResources.Normal, 0, 0, 2);
 	}
 	break;
@@ -396,7 +419,9 @@ void _control_t::RenderBox(int x, int y, int val, int mode, bool active)
 		ImVec2 tl2 = tl;
 		tl2.x = __min(x1, x2);
 		br2.x = __max(x1, x2);
-		ImGui::GetWindowDrawList()->AddRectFilled(tl2, br2, CalcFillColor(val, active));
+		ImGui::GetWindowDrawList()->AddRectFilled(tl, br, CalcFillColor(0, active));
+
+		ImGui::GetWindowDrawList()->AddRectFilled(tl2, br2, CalcFillColor(1, active));
 		ImGui::GetWindowDrawList()->AddRect(tl2, br2, active ? gGuiResources.Highlight : gGuiResources.Normal, 0, 0, 2);
 	}
 	break;
@@ -408,7 +433,7 @@ void _control_t::RenderBox(int x, int y, int val, int mode, bool active)
 
 void _control_t::RenderBoxVertical(int x, int y, int val, int mode, bool active)
 {
-	ImVec2 p = ImVec2(x, y + ImGui::GetTextLineHeight());
+	ImVec2 p = ImVec2(x, y);// +ImGui::GetTextLineHeight());
 	p.x += 10;
 	ImVec2 tl = p;
 	ImVec2 br = tl;
@@ -421,7 +446,11 @@ void _control_t::RenderBoxVertical(int x, int y, int val, int mode, bool active)
 		ImVec2 br2 = br;
 		ImVec2 tl2 = tl;
 		tl2.y = br.y - (val * ParamVerticalBoxHeight) / 0xffff;
-		ImGui::GetWindowDrawList()->AddRectFilled(tl2, br2, CalcFillColor(val, active));
+		ImGui::GetWindowDrawList()->AddRectFilled(tl, br, CalcFillColor(0, active));
+		ImGui::GetWindowDrawList()->AddRectFilled(tl2, br2, CalcFillColor(1, active));
+
+
+		//ImGui::GetWindowDrawList()->AddRectFilled(tl2, br2, CalcFillColor(val, active));
 		ImGui::GetWindowDrawList()->AddRect(tl2, br2, active ? gGuiResources.Highlight : gGuiResources.Normal, 0, 0, 2);
 	}
 	break;
@@ -431,7 +460,9 @@ void _control_t::RenderBoxVertical(int x, int y, int val, int mode, bool active)
 		ImVec2 tl2 = tl;
 		tl2.y = tl.y + (val * ParamVerticalBoxHeight) / 0xffff;
 		br2.y = tl.y + ParamVerticalBoxHeight/2;
-		ImGui::GetWindowDrawList()->AddRectFilled(tl, br2, CalcFillColor(val, active));
+		ImGui::GetWindowDrawList()->AddRectFilled(tl, br, CalcFillColor(0, active));
+
+		ImGui::GetWindowDrawList()->AddRectFilled(tl, br2, CalcFillColor(1, active));
 		ImGui::GetWindowDrawList()->AddRect(tl, br2, active ? gGuiResources.Highlight : gGuiResources.Normal, 0, 0, 2);
 	}
 	break;
@@ -443,7 +474,8 @@ void _control_t::RenderBoxVertical(int x, int y, int val, int mode, bool active)
 		ImVec2 tl2 = tl;
 		tl2.y = __min(y1, y2);
 		br2.y = __max(y1, y2);
-		ImGui::GetWindowDrawList()->AddRectFilled(tl2, br2, CalcFillColor(val, active));
+		ImGui::GetWindowDrawList()->AddRectFilled(tl, br, CalcFillColor(0, active));
+		ImGui::GetWindowDrawList()->AddRectFilled(tl2, br2, CalcFillColor(1, active));
 		ImGui::GetWindowDrawList()->AddRect(tl2, br2, active ? gGuiResources.Highlight : gGuiResources.Normal, 0, 0, 2);
 	}
 	break;
@@ -1093,7 +1125,7 @@ void _screensetup_t::Render(float DT)
 	{
 		ImGui::PushFont(gGuiResources.BigFont);
 		auto R = ImGui::CalcTextSize(title);
-		ImGui::SetCursorPos(ImVec2(1024 / 2 - R.x / 2, 0));
+		ImGui::SetCursorPos(ImVec2(1024 / 2 - R.x / 2, ParamMasterMargin));
 		ImGui::Text(title);
 		ImGui::PopFont();
 	}
@@ -1102,6 +1134,7 @@ void _screensetup_t::Render(float DT)
 	{
 		ControlsInOrder[i]->Render((i == ActiveControl) && (Modal == NULL), DT);
 	}
+
 	if (Modal)
 	{
 		ImVec2 pos = ImGui::GetCursorPos();
@@ -1192,7 +1225,7 @@ void FinalPan_LoadResources()
 
 	gGuiResources.LogoScreen = Raspberry_LoadTexture("PAN_LOGO.png");
 	gGuiResources.RootBG = Raspberry_LoadTexture("UI_ROOTBG.png");
-	gGuiResources.MainBG = Raspberry_LoadTexture("PAN_TEST.png");
+	gGuiResources.MainBG = Raspberry_LoadTexture("PAN_MAINBG.png");
 	gGuiResources.TestBG = Raspberry_LoadTexture("PAN_TEST.png");
 
 	gGuiResources.LeftIndicator = Raspberry_LoadTexture("UI_LEFT.png");
@@ -1203,7 +1236,7 @@ void FinalPan_LoadResources()
 	//gGuiResources.BigFont = io.Fonts->AddFontFromFileTTF("Fontfabric - Panton ExtraBold.otf", 44.0f);
 
 
-	gGuiResources.BigFont = io.Fonts->AddFontFromFileTTF("Petronius-Roman.ttf", 44.0f);
+	gGuiResources.BigFont = io.Fonts->AddFontFromFileTTF("Petronius-Roman.ttf", 38.0f);
 	init = true;
 
 	int X = sizeof(PanPreset_t);
@@ -1598,8 +1631,8 @@ void Gui::BuildScreens()
 	}
 
 	Screens[SCREEN_HOME]->SetTitle("Syntonovo Pan");
-	Screens[SCREEN_HOME]->AddText(512, 40, "Current preset: ", align_right);
-	Screens[SCREEN_HOME]->AddDynamicText(512, 40, gCurrentPreset.Name, PRESET_NAME_LENGTH);
+	Screens[SCREEN_HOME]->AddText(512, 140, "Current preset: ", align_right);
+	Screens[SCREEN_HOME]->AddDynamicText(512, 140, gCurrentPreset.Name, PRESET_NAME_LENGTH);
 
 	Screens[SCREEN_HOME]->EncodersThatOpenThisScreen.push_back(encoder_SketchLeft);
 	
