@@ -241,7 +241,14 @@ public:
 		case Source_Envelope: return &modmatrix[0x10 + instance];
 		case Source_x: return &modmatrix[0x20];
 		case Source_y: return &modmatrix[0x21];
-		case Source_z: return &modmatrix[0x21];
+		case Source_z: return &modmatrix[0x21];	
+		case Source_zprime: return &modmatrix[0x22];
+		case Source_left_mod: return &modmatrix[0x23];
+		case Source_right_mod: return &modmatrix[0x24];
+		case Source_left_unac: return &modmatrix[0x25];
+		case Source_right_unac: return &modmatrix[0x26];
+		case Source_note: return &modmatrix[0x2E];
+			//		case Source_pedal: return &modmatrix[0x22];
 		}
 		return 0;
 	}

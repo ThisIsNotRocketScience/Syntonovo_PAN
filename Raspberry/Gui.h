@@ -30,6 +30,7 @@ typedef struct FinalPan_GuiResources_t
 {
 	ImTextureID MainBG;
 	ImTextureID RootBG;
+	ImTextureID TestBG;
 	ImTextureID LogoScreen;
 	ImTextureID LeftIndicator;
 	ImTextureID RightIndicator;
