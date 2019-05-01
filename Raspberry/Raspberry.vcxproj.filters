@@ -39,6 +39,12 @@
     <ClCompile Include="linux_serial.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ModSourceScreen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BottomEncoder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui_impl_es2.h">
@@ -48,6 +54,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="gui.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ModSourceScreen.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

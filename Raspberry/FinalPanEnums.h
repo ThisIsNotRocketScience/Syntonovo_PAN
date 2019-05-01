@@ -6,6 +6,8 @@
 
 #define ParamBoxWidth 220
 #define ParamVerticalBoxHeight 90
+#define ParamBoxDim 30
+#define ParamMasterMargin 10
 
 #pragma pack(1)
 
@@ -193,7 +195,8 @@ enum UIDisplayModes
 	MenuEntry_EffectParam1,
 	MenuEntry_EffectParam2,
 	MenuEntry_EffectParam3,
-	MenuEntry_EncoderSet
+	MenuEntry_EncoderSet,
+	MenuEntry_ModMatrixValue
 
 };
 
