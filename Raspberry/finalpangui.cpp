@@ -680,6 +680,14 @@ void _screensetup_t::TweakParameterValue(int param, int delta)
 
 void _screensetup_t::SetupLeds()
 {
+
+	int oct = ((int)gCurrentPreset.paramvalue[Output_MASTER_PITCH2]-0x8000) / (0x100*12);
+	
+	gPanState.SetButtonLed(ledbutton_OctDownLeft, oct < 0 ? ledmode_solid : ledmode_off);
+	gPanState.SetButtonLed(ledbutton_OctDownRight, oct < 0 ? ledmode_solid : ledmode_off);
+	gPanState.SetButtonLed(ledbutton_OctUpLeft, oct > 0 ? ledmode_solid : ledmode_off);
+	gPanState.SetButtonLed(ledbutton_OctUpRight, oct > 0 ? ledmode_solid : ledmode_off);
+
 	gGuiResources.Highlight = ImColor(gPanState.active_led_r >> 8, gPanState.active_led_g >> 8, gPanState.active_led_b >> 8);
 
 	for (int i = 0; i < 14; i++)
@@ -1156,6 +1164,15 @@ void RenderModulationAssignBar(_modmatrix_source_t *source)
 
 extern ImTextureID Raspberry_LoadTexture(const char *filename);
 static bool init = false;
+void PrintFontSpec(ImFont*F, const char* name)
+{
+	ImGui::PushFont(F);
+	float H = ImGui::GetTextLineHeight();
+	auto S = ImGui::CalcTextSize("the quick brown fox jumps over the lazy dog THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG");
+	printf("%s: height = %f, box = %f,%f\n",name, H, S.x, S.y);
+	ImGui::PopFont();
+
+}
 
 void FinalPan_LoadResources()
 {
@@ -1185,9 +1202,9 @@ void FinalPan_LoadResources()
 	gGuiResources.MediumFont = io.Fonts->AddFontFromFileTTF("Fontfabric - Panton.otf", 38.0f);
 	//gGuiResources.BigFont = io.Fonts->AddFontFromFileTTF("Fontfabric - Panton ExtraBold.otf", 44.0f);
 
+
 	gGuiResources.BigFont = io.Fonts->AddFontFromFileTTF("Petronius-Roman.ttf", 44.0f);
 	init = true;
-
 
 	int X = sizeof(PanPreset_t);
 	printf("Pan preset size: %d (%x) bytes\n", X, X);
@@ -1308,12 +1325,36 @@ void Gui::Encoder(FinalEncoderEnum button, int delta)
 	}
 }
 
+void AddPitch(int add)
+{
+	//gCurrentPreset.TweakParameter(Output_MASTER_PITCH2, add,1);
+	int oct = ((int)gCurrentPreset.paramvalue[Output_MASTER_PITCH2] - 0x8000) / (0x100 * 12);
+	oct += add;
+	oct *= 0x100 * 12;
+	oct += 0x8000;
+	gCurrentPreset.paramvalue[Output_MASTER_PITCH2] = oct;
+}
+
 void Gui::ButtonPressed(FinalLedButtonEnum Button)
 {
 
 	// insert what to do if selecting modulation source/target here? 
 	switch (Button)
 	{
+
+	case ledbutton_OctDownLeft:
+	case ledbutton_OctDownRight:
+		AddPitch(-1);
+		break;
+	
+	case ledbutton_OctUpLeft:
+	case ledbutton_OctUpRight:
+		AddPitch(1);
+		break;
+		
+	case ledbutton_PortamentoLeft:
+	case ledbutton_PortamentoRight:
+		GotoPage(SCREEN_PORTAMENTO); break;
 	case ledbutton_BankLeft: GotoPage(SCREEN_SELECTBANKL); break;
 	case ledbutton_BankRight: GotoPage(SCREEN_SELECTBANKR); break;
 	case ledbutton_ArpEdit: GotoPage(SCREEN_ARP); break;
@@ -1783,6 +1824,8 @@ Screens_t GetPage(FinalEncoderEnum Button)
 	}
 	return SCREEN_HOME;
 }
+bool dumpspec = true;
+
 
 void RenderMain(float DT)
 {
@@ -1796,6 +1839,18 @@ void RenderMain(float DT)
 	ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(pos.x, pos.y), ImVec2(1024 + pos.x, 600 + pos.y), gGuiResources.BGColor);
 
 	gGui.Render(DT);
+
+	if (dumpspec)
+	{
+		dumpspec = false;
+		PrintFontSpec(gGuiResources.TinyFont, "Tiny");
+		PrintFontSpec(gGuiResources.SmallFont, "Small");
+		PrintFontSpec(gGuiResources.MediumFont, "Medium");
+		PrintFontSpec(gGuiResources.BigFont, "Big");
+
+
+	}
+
 
 	FinalPan_PopStyle();
 }

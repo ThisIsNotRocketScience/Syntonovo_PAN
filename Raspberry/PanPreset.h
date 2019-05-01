@@ -204,7 +204,7 @@ public:
 
 	}
 
-	void TweakParameter(OutputEnum param, int delta)
+	void TweakParameter(OutputEnum param, int delta, int deltamod = 0x800)
 	{
 		int OrigVal = paramvalue[param];
 		int32_t val = OrigVal + delta * 1000;
@@ -283,7 +283,7 @@ public:
 		case Led_High_Hue: return high.h;
 
 		case Led_Active_Bright: return active.v;
-		case Led_Active_Sat: return active.s;
+		case Led_Active_Sat: return active.s;	
 		case Led_Active_Hue: return active.h;
 
 		case Led_BlinkSpeed: return ledblinkspeed;
