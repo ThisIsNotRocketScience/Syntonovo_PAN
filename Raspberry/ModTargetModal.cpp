@@ -201,6 +201,7 @@ ModTargetModal::ModTargetModal()
 
 
 	ControlsInOrder.push_back(&TheTargetList);
+	TheTargetList.Parent = this;
 }
 
 
