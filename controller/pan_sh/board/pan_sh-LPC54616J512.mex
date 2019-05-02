@@ -402,7 +402,7 @@
                         <data type="Frequency" unit="Hz">0</data>
                      </feature>
                   </dependency>
-                  <dependency resourceType="ClockOutput" resourceId="System_clock" description="System clock is inactive." problem_level="1" source="Peripherals:BOARD_InitPeripherals">
+                  <dependency resourceType="ClockOutput" resourceId="System_clock" description="System clock is inactive." problem_level="2" source="Peripherals:BOARD_InitPeripherals">
                      <feature name="frequency" evaluation="greaterThan">
                         <data type="Frequency" unit="Hz">0</data>
                      </feature>
@@ -548,7 +548,7 @@
                         <struct name="config">
                            <setting name="clockMode" value="kSCTIMER_System_ClockMode"/>
                            <setting name="clockSource" value="SynchronousFunctionClock"/>
-                           <setting name="clockSourceFreq" value="GetFreq"/>
+                           <setting name="clockSourceFreq" value="BOARD_BootClockRUN"/>
                            <setting name="SCTInputClockSourceFreq" value="custom"/>
                            <setting name="clockSelect" value="kSCTIMER_Clock_On_Rise_Input_0"/>
                            <setting name="enableCounterUnify" value="true"/>
