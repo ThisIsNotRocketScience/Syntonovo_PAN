@@ -39,9 +39,16 @@ public:
 };
 
 
-void cmd_pad_zero();
+void cmd_pad_zero()
+{
+	printf("Calibrating Pads!\n");
+};
 
-void cmd_calibrate();
+void cmd_calibrate()
+{
+	printf("Calibrating Oscillators!\n");
+
+};
 
 void cmd_preset_load(int presetid)
 {

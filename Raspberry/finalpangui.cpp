@@ -41,6 +41,7 @@ bool IsCenterEncoder(FinalEncoderEnum button)
 	}
 	return false;
 }
+
 int GetAssociatedParameter(FinalEncoderEnum button)
 {
 	switch (button)
@@ -1165,7 +1166,8 @@ void Gui::BuildScreens()
 	Screens[SCREEN_HOME]->EncodersThatOpenThisScreen.push_back(encoder_SketchLeft);
 	
 	Screens[SCREEN_SYSTEM]->SetTitle("System Settings");
-
+	Screens[SCREEN_SYSTEM]->EnableAvailableButton("Recalibrate Oscillators", MenuEntry_Action, MenuAction_CalibrateOscillators);
+	Screens[SCREEN_SYSTEM]->EnableAvailableButton("Recalibrate Pads", MenuEntry_Action, MenuAction_CalibratePads);
 
 	Screens[SCREEN_HOME]->EnableButton(8, "Store", MenuEntry_Page, SCREEN_PRESET);//(512, 40, "Some Sound");
 	Screens[SCREEN_HOME]->EnableButton(9, "Revert", MenuEntry_Action, MenuAction_Revert);

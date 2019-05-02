@@ -204,11 +204,15 @@ void _screensetup_t::SetupLeds()
 	SetupEncodersAndButtonsLeds();
 	
 }
+extern void cmd_pad_zero();
+extern void cmd_calibrate();
 
 void _screensetup_t::Action(int action)
 {
 	switch (action)
 	{
+	case MenuAction_CalibratePads: cmd_pad_zero(); break;
+	case MenuAction_CalibrateOscillators: cmd_calibrate(); break;
 	case MenuAction_CloseModal: Modal = NULL; break;
 	}
 };
