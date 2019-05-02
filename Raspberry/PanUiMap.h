@@ -115,7 +115,8 @@ ENDMENU()
 
 MENU(PORTAMENTO, ledbutton_PortamentoLeft,"Portamento" )
 ENTRY("Time", MenuEntry_Value, Output_PORTAMENTO_TIME)
-CUSTOMENTRY("Enable", MenuEntry_FeatureToggle, Toggle_Portamento)
+CUSTOMENTRY("Portamento", Switch_SELPORTAMENTO, Switch_SELPORTAMENTO)
+CUSTOMENTRY("Staccato", Switch_SELPORTAMENTO, Switch_SELSTACCATO)
 ENDMENU()
 
 MENU(VCF2MIX, ledbutton_VCF1_FrequencyBut, "VCF2 Mix")
