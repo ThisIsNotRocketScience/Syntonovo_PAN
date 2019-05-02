@@ -139,7 +139,7 @@ enum
 	MenuAction_Cancel,
 	MenuAction_Ok,
 	MenuAction_Remove,
-
+	MenuAction_CloseModal,
 
 	__MenuAction_Count
 };

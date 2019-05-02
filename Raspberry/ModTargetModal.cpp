@@ -1,12 +1,103 @@
 #include "ModTargetModal.h"
 
 
+typedef struct ModulationTargetOutputEntries_t
+{
+	const char *name;
+	int targetid;
+	int categoryid;
+} ModulationTargetOutputEntries_t;
+
+const char *CategoryNames[]=
+{
+	"VCO1",
+	"VCO2",
+	"VCO3",
+	"VCO4",
+	"VCO5",
+	"VCO6",
+	"VCO7",
+	"VCO8",
+	"VCF1",
+	"VCF2",
+	"VCF1 Mixer",
+	"VCF2 Mixer",
+	"Cleanfeed Mixer",
+	"Effect",
+};
+
+
+ModulationTargetOutputEntries_t Entries[] = {
+
+//#include "PanUiMap.h"
+	{ "Pitch"     , Output_VCO1_FREQ,0},
+	{ "Pulsewidth", Output_VCO1_PW,0 },
+{ "Pitch"     , Output_VCO2_FREQ,1 },
+{ "Pulsewidth", Output_VCO2_PW,1 },
+{ "Pitch"     , Output_VCO3_FREQ,2 },
+{ "Pulsewidth", Output_VCO3_PW,2 },
+};
+
+void TargetList::Render(bool active, float dt)
+{
+	for (int i = 0; i < PageLength; i++)
+	{
+
+	}
+}
+
+
 void ModTargetModal::SetupLeds()
 {
 	_screensetup_t::SetupLeds();
 }
 
+void ModTargetModal::Action(int action)
+{
+	switch (action)
+	{
+	case MenuAction_Ok:
+	{
+		Parent->Action(MenuAction_CloseModal);
+	}
+	break;
+	case MenuAction_Cancel:
+	{
+		auto row = gCurrentPreset.GetModSourceRow(modType, Instance);
+		row->targets[TargetID].outputid = OriginalOutputID;
+		row->targets[TargetID].depth = OriginalModulation;
+		row->targets[TargetID].sourceid = OriginalSourceID;
+		Parent->Action(MenuAction_CloseModal);
+	}
+	break;
+	case MenuAction_Remove:
+	{
+		auto row = gCurrentPreset.GetModSourceRow(modType, Instance);
+		row->targets[TargetID].outputid = -1;
+		row->targets[TargetID].depth = 0;
+		row->targets[TargetID].sourceid = 0;
+		Parent->Action(MenuAction_CloseModal);
+	}
+	break;
 
+	}
+}
+
+
+
+uint16_t ModTargetModal::GetParameterValue(int param, int encoderset)
+{
+	auto row = gCurrentPreset.GetModSourceRow(modType, Instance);
+	return row->targets[param].depth;
+}
+
+void ModTargetModal::Activate()
+{
+	auto row = gCurrentPreset.GetModSourceRow(modType, Instance);	
+	OriginalOutputID = row->targets[TargetID].outputid;
+	OriginalSourceID = row->targets[TargetID].sourceid;
+	OriginalModulation = row->targets[TargetID].depth;
+}
 
 ModTargetModal::ModTargetModal()
 {
@@ -14,7 +105,7 @@ ModTargetModal::ModTargetModal()
 	EnableButton(10, "Cancel", MenuEntry_Action, MenuAction_Cancel);
 	EnableButton(9, "Remove Modulation", MenuEntry_Action, MenuAction_Remove);
 
-
+	EnableAvailableEncoder("Modulation", MenuEntry_MidValue, 0);
 
 	ControlsInOrder.push_back(&TheTargetList);
 }
@@ -45,17 +136,10 @@ void GetModulationName(char *t, int len, ModSource_t mod)
 	}
 }
 
-void ModTargetModal::Action(int action)
-{
-	switch (action)
-	{
 
-	}
-}
-
-void ModTargetModal::Render(float dt)
+void ModTargetModal::Render(bool active, float dt)
 {
-	_screensetup_t::Render(dt);
+	_screensetup_t::Render(active, dt);
 
 
 	char name[100];

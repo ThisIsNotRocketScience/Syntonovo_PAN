@@ -22,13 +22,7 @@ public:
 		PageStart = idx;
 		PageEnd = PageStart + PageLength;
 	}
-	virtual void Render(float dt)
-	{
-		for (int i = 0; i < PageLength; i++)
-		{
-
-		}
-	}
+	virtual void Render(bool active, float dt);
 };
 
 class ModTargetModal : public _screensetup_t
@@ -38,7 +32,7 @@ public:
 
 	TargetList TheTargetList;
 
-	virtual void Render(float dt);
+	virtual void Render(bool active, float dt);
 
 	virtual void SketchLeft(int delta) {}
 
@@ -49,10 +43,17 @@ public:
 
 	virtual void EncoderPress(FinalEncoderEnum button) {}
 
+	virtual void Activate();
 	virtual void SetupLeds();
 		
 	ModSource_t modType;
 	virtual void Action(int action);
+	
+	int OriginalModulation;
+	int OriginalOutputID;
+	int OriginalSourceID;
+
+	virtual uint16_t GetParameterValue(int param, int encoderset);
 
 	int Instance;
 	int TargetID;

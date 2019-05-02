@@ -1,3 +1,5 @@
+#ifndef WIN32
+
 #include <stdio.h>
 #include <vector>
 #include "serial.hpp"
@@ -175,3 +177,4 @@ int main(int argc, char *argv[])
 	return 0;
 }
 
+#endif

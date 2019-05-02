@@ -206,7 +206,10 @@ void _screensetup_t::SetupLeds()
 
 void _screensetup_t::Action(int action)
 {
-
+	switch (action)
+	{
+	case MenuAction_CloseModal: Modal = NULL; break;
+	}
 };
 
 void _screensetup_t::SetFirstEnabledControlActive()
@@ -491,7 +494,7 @@ void _screensetup_t::Encoder(FinalEncoderEnum button, int delta)
 	}
 }
 
-void _screensetup_t::RenderContent(float DT)
+void _screensetup_t::RenderContent(bool active, float DT)
 {
 	if (Parent && ((_screensetup_t*)Parent)->Modal == this)
 	{
@@ -518,7 +521,7 @@ void _screensetup_t::RenderContent(float DT)
 
 }
 
-void _screensetup_t::RenderModalBox(float DT)
+void _screensetup_t::RenderModalBox(bool active, float DT)
 {
 	if (Modal)
 	{
@@ -527,14 +530,14 @@ void _screensetup_t::RenderModalBox(float DT)
 		pos.y = 0;
 		ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(pos.x, pos.y), ImVec2(pos.x + 1024, pos.y + 600), IM_COL32(0, 0, 0, 200));
 
-		Modal->Render(DT);
+		Modal->Render(active, DT);
 	}
 }
 
-void _screensetup_t::Render(float DT)
+void _screensetup_t::Render(bool active, float DT)
 {
-	RenderContent(DT);
-	RenderModalBox(DT);
+	RenderContent(active, DT);
+	RenderModalBox(active, DT);
 }
 
 class LedControl : public _control_t

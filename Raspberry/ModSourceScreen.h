@@ -27,6 +27,6 @@ public:
 	virtual void Deactivate();
 
 	void OpenTargetModal(int modtarget);
-	virtual void Render(float DT);
+	virtual void Render(bool active, float DT);
 	virtual void Activate();
 };

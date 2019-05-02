@@ -87,9 +87,18 @@ public:
 	int target;
 
 	_control_t *Parent;
-
+	virtual void AddTo(_control_t *newp)
+	{
+		if (Parent)
+		{
+			printf("need to remove parent first! ");
+			*(int32_t*)0 = 1;
+		}
+		Parent = newp;
+		if (Parent) Parent->RegisterNewChild(this);
+	};
 	_control_t();
-
+	virtual void RegisterNewChild(_control_t *newcontrol) {}
 	bool enabled;
 	bool skipencodercycling;
 	char title[255];
@@ -109,6 +118,27 @@ public:
 
 	void RenderBox(int x, int y, int val, int mode, bool active);
 	void RenderBoxVertical(int x, int y, int val, int mode, bool active);
+};
+
+class EncoderLineDisplay : public _control_t
+{
+public:
+	EncoderLineDisplay()
+	{
+		toSet = 0;
+		HideIfSetIsInactive = false;
+		fromX = 100;
+		fromY = 400;
+		skipencodercycling = true;
+		enabled = true;
+	}
+	virtual void Render(bool active, float dt);
+	
+	int fromX;
+	int fromY;
+	std::vector<int> toEncoders;
+	int toSet;
+	bool HideIfSetIsInactive;
 };
 
 class _textcontrol_t : public _control_t
@@ -185,9 +215,12 @@ class _screensetup_t : public _control_t
 {
 public:
 
-	std::vector<_screensetup_t *> SubScreens;
+
+	//std::vector<_screensetup_t *> SubScreens;
 
 	std::vector<_control_t *> ControlsInOrder;
+
+	virtual void RegisterNewChild(_control_t *newcontrol) { ControlsInOrder.push_back(newcontrol); }
 	int ActiveControl;
 	_screensetup_t *Modal;
 
@@ -247,9 +280,9 @@ public:
 	virtual void PatchButton(FinalLedButtonEnum b);
 	void Encoder(FinalEncoderEnum button, int delta);
 	
-	void RenderContent(float DT);
-	void RenderModalBox(float DT);
-	virtual void Render(float DT);
+	void RenderContent(bool active, float DT);
+	void RenderModalBox(bool active, float DT);
+	virtual void Render(bool active, float DT);
 
 };
 
@@ -277,7 +310,7 @@ public:
 
 	void BuildScreens();
 
-	virtual	void Render(float DT);
+	virtual	void Render(bool active, float DT);
 
 	void GotoPage(Screens_t s);
 

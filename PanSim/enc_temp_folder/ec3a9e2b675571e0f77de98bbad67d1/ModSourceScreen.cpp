@@ -121,7 +121,6 @@ void ModSourceScreen::Action(int a)
 {
 	switch (a)
 	{
-	case MenuAction_CloseModal: Modal = NULL; break;
 	case MenuAction_Next: ActiveInstance = (ActiveInstance + 1) % MaxInstances; break;
 	case MenuAction_Prev: ActiveInstance = (ActiveInstance + MaxInstances - 1) % MaxInstances; break;
 	}

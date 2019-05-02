@@ -302,6 +302,7 @@ _control_t::_control_t()
 	target = -1;
 	enabled = true;
 	skipencodercycling = false;
+	Parent = NULL;
 }
 
 void _control_t::SetTitle(const char *t)
@@ -1078,13 +1079,32 @@ public:
 	{
 		theImg = img;
 	}
-	virtual void Render(float dt)
+	virtual void Render(bool active, float dt)
 	{
-		_screensetup_t::Render(dt);
+		_screensetup_t::Render(active, dt);
 		ImGui::SetCursorPos(ImVec2(0, 0));
 		ImGui::Image(theImg, ImVec2(1024, 600));
 	}
 };
+
+void EncoderLineDisplay::Render(bool active, float dt)
+{
+	float midy = (fromY + 500) / 2;
+	ImGui::GetWindowDrawList()->AddLine(ImVec2(fromX, fromY), ImVec2(fromX, midy), gGuiResources.Normal, 3);
+	float minx = 1024;
+	float maxx = 0;
+	for (int i = 0; i < this->toEncoders.size(); i++)
+	{
+		int x = GetEncoderX(toEncoders[i]);
+		if (x > maxx) maxx = x;
+		if (x < minx) minx = x;
+
+		ImGui::GetWindowDrawList()->AddLine(ImVec2(x, midy), ImVec2(x, 500), gGuiResources.Normal, 3);
+
+	}
+	ImGui::GetWindowDrawList()->AddLine(ImVec2(minx, midy), ImVec2(maxx, midy), gGuiResources.Normal, 3);
+
+}
 
 void Gui::BuildScreens()
 {
@@ -1110,14 +1130,23 @@ void Gui::BuildScreens()
 	BR->LedButtonsThatOpenThisScreen.push_back(ledbutton_BankRight);
 
 	Screens[SCREEN_X] = new ModSourceScreen(SCREEN_X);
+	Screens[SCREEN_X]->LedButtonsThatOpenThisScreen.push_back(ledbutton_BX);
 	Screens[SCREEN_Y] = new ModSourceScreen(SCREEN_Y);
+	Screens[SCREEN_Y]->LedButtonsThatOpenThisScreen.push_back(ledbutton_BY);
 	Screens[SCREEN_Z] = new ModSourceScreen(SCREEN_Z);
+	Screens[SCREEN_Z]->LedButtonsThatOpenThisScreen.push_back(ledbutton_BZ);
 	Screens[SCREEN_TOUCH] = new ModSourceScreen(SCREEN_TOUCH);
+	Screens[SCREEN_TOUCH]->LedButtonsThatOpenThisScreen.push_back(ledbutton_BTouch);
+
 	Screens[SCREEN_VELOCITY] = new ModSourceScreen(SCREEN_VELOCITY);
+	Screens[SCREEN_VELOCITY]->LedButtonsThatOpenThisScreen.push_back(ledbutton_BVelocity);
 	Screens[SCREEN_KEYBOARD] = new ModSourceScreen(SCREEN_KEYBOARD);
+	Screens[SCREEN_KEYBOARD]->LedButtonsThatOpenThisScreen.push_back(ledbutton_BCV);
 	Screens[SCREEN_LFO] = new ModSourceScreen(SCREEN_LFO);
-	
+	Screens[SCREEN_LFO]->LedButtonsThatOpenThisScreen.push_back(ledbutton_BLFO);
+
 	Screens[SCREEN_ENVELOPE] = new ModSourceScreen(SCREEN_ENVELOPE);
+	Screens[SCREEN_ENVELOPE]->LedButtonsThatOpenThisScreen.push_back(ledbutton_BEnv);
 
 	for (int i = 0; i < SCREENS_COUNT; i++)
 	{
@@ -1147,6 +1176,32 @@ void Gui::BuildScreens()
 	Screens[SCREEN_COLORS]->AddLedControl("Low", GetEncoderX(1), 300, Led_Low);
 	Screens[SCREEN_COLORS]->AddLedControl("High", GetEncoderX(5), 300, Led_High);
 	Screens[SCREEN_COLORS]->AddLedControl("Active", GetEncoderX(9), 300, Led_Active);
+	
+	auto Lines1 = new EncoderLineDisplay();
+	Lines1->fromX = GetEncoderX(1);
+	Lines1->fromY = 300;
+	Lines1->toEncoders.push_back(0);
+	Lines1->toEncoders.push_back(1);
+	Lines1->toEncoders.push_back(2);
+	Lines1->AddTo(Screens[SCREEN_COLORS]);
+
+	auto Lines2 = new EncoderLineDisplay();
+	Lines2->fromX = GetEncoderX(5);
+	Lines2->fromY = 300;
+	Lines2->toEncoders.push_back(4);
+	Lines2->toEncoders.push_back(5);
+	Lines2->toEncoders.push_back(6);
+	Lines2->AddTo(Screens[SCREEN_COLORS]);
+
+	auto Lines3 = new EncoderLineDisplay();
+	Lines3->fromX = GetEncoderX(9);
+	Lines3->fromY = 300;
+	Lines3->toEncoders.push_back(8);
+	Lines3->toEncoders.push_back(9);
+	Lines3->toEncoders.push_back(10);
+
+	Lines3->AddTo(Screens[SCREEN_COLORS]);
+
 
 	Screens[SCREEN_COLORS]->EnableAvailableEncoder("Low: Hue", MenuEntry_LedValue, Led_Low_Hue);
 	Screens[SCREEN_COLORS]->EnableAvailableEncoder("Low: Sat", MenuEntry_LedValue, Led_Low_Sat);
@@ -1230,9 +1285,9 @@ void Gui::BuildScreens()
 	}
 }
 
-void Gui::Render(float dt)
+void Gui::Render(bool active, float dt)
 {
-	Screens[CurrentScreen]->Render(dt);
+	Screens[CurrentScreen]->Render(active, dt);
 
 }
 
@@ -1359,7 +1414,7 @@ void RenderMain(float DT)
 	pos = ImGui::GetCursorScreenPos();
 	ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(pos.x, pos.y), ImVec2(1024 + pos.x, 600 + pos.y), gGuiResources.BGColor);
 
-	gGui.Render(DT);
+	gGui.Render(true, DT);
 
 	if (dumpspec)
 	{
