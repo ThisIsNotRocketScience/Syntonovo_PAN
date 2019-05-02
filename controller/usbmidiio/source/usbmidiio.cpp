@@ -80,6 +80,30 @@ void dsp_reset()
 	control_write(data, 4);
 }
 
+void dsp_calibrate()
+{
+	uint8_t data[4];
+
+	data[0] = 0xfe;
+	data[1] = 0xfe;
+	data[2] = 0;
+	data[3] = 0;
+
+	control_write(data, 4);
+}
+
+void dsp_pad_zero()
+{
+	uint8_t data[4];
+
+	data[0] = 0xfe;
+	data[1] = 0xfb;
+	data[2] = 0;
+	data[3] = 0;
+
+	control_write(data, 4);
+}
+
 void dsp_cmd(int param, int subparam, uint16_t value)
 {
 	uint8_t data[4];
@@ -412,6 +436,11 @@ void SendLeds()
 	L2LatchOn();
 }
 
+
+#define CMD_PAD_ZERO		(0x11)
+#define CMD_CALIBRATE		(0x12)
+#define CMD_PRESET_LOAD		(0x21)
+#define CMD_PRESET_STORE	(0x22)
 
 #define OOB_UI_PAUSE		(0x41)
 #define OOB_UI_CONTINUE		(0x42)
@@ -751,6 +780,10 @@ extern "C" void SCT0_IRQHandler(void)
 	portEND_SWITCHING_ISR(higherPriorityTaskWoken);
 }
 
+unsigned char presetnames[PRESET_COUNT * PRESET_NAME_LENGTH] = {0};
+
+void sync_complete_presetnames(int status);
+
 void sync_complete(int status)
 {
 	if (status != 0) {
@@ -761,10 +794,18 @@ void sync_complete(int status)
 
 	if (status == 0) {
         sync_oob_word(&rpi_sync, OOB_UI_CONTINUE, 0, 0);
+	    sync_block(&rpi_sync, (uint8_t*)&presetnames, 0x1000000, sizeof(presetnames), sync_complete_presetnames);
         return;
 	}
 }
 
+void sync_complete_presetnames(int status)
+{
+	if (status != 0) {
+		sync_complete(status);
+	}
+	return;
+}
 
 #define KEYSCAN_NUMKEYSETS (5)
 #define KEYSCAN_MAXINDEX (2*KEYSCAN_NUMKEYSETS)
@@ -969,6 +1010,11 @@ void preset_init()
 	preset.modmatrix[modsource_ENV0].targets[2].depth = 0x3fff;
 	preset.modmatrix[modsource_ENV0].targets[2].outputid = output_CLEANF_LIN;
 
+    MODMATRIX(modsource_X, 0, 0, 0x3fff);
+    MODMATRIX(modsource_X, 0, 1, output_VCF1_CV);
+	preset.modmatrix[modsource_X].targets[0].depth = 0x3fff;
+	preset.modmatrix[modsource_X].targets[0].outputid = output_VCF1_CV;
+
 	preset.high.h = 0x1000;
 	preset.low.h = 0x4000;
 	preset.active.h = 0x3000;
@@ -1153,7 +1199,22 @@ void sync_data_func(int addr, uint8_t* data)
 
 int sync_oobdata_func(uint8_t cmd, uint32_t data)
 {
-	return 0;
+	switch (cmd) {
+	case CMD_PAD_ZERO:
+		dsp_pad_zero();
+		return 0;
+	case CMD_CALIBRATE:
+		dsp_calibrate();
+		return 0;
+	case CMD_PRESET_LOAD:
+		sync_complete(1);
+		return 0;
+	case CMD_PRESET_STORE:
+        sync_oob_word(&rpi_sync, OOB_UI_PAUSE, 0, 0);
+        sync_oob_word(&rpi_sync, OOB_UI_CONTINUE, 0, 0);
+		return 0;
+	}
+	return 1;
 }
 
 /*
