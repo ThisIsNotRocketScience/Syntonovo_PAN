@@ -167,6 +167,7 @@ void ModSourceScreen::OpenTargetModal(int n)
 	theModTargetModal.CurrentTarget = row->targets[target].outputid;
 
 	Modal = &theModTargetModal;
+	Modal->Activate();
 }
 
 void ModSourceScreen::EncoderPress(FinalEncoderEnum button)

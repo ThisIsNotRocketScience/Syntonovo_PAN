@@ -39,6 +39,37 @@ public:
 };
 
 
+void cmd_pad_zero();
+
+void cmd_calibrate();
+
+void cmd_preset_load(int presetid)
+{
+	if (presetid < 0 || presetid >= 256) return;
+	char filename[100];
+	sprintf(filename, "preset%d.dat", presetid);
+
+	FILE *F = fopen(filename, "rb+");
+	if (F)
+	{
+		fread(&gCurrentPreset, sizeof(PanPreset_t), 1, F);
+		fclose(F);
+	}
+}
+
+void cmd_preset_save(int presetid)
+{
+	char filename[100];
+	sprintf(filename, "preset%d.dat", presetid);
+
+	FILE *F = fopen(filename, "wb+");
+	if (F)
+	{
+		fwrite(&gCurrentPreset, sizeof(PanPreset_t), 1, F);
+		fclose(F);
+	}
+}
+
 
 fLedButton FinalButtons[__FINALLEDBUTTON_COUNT] = {
 #define LEDBUTTON(iname,ix,iy,fpid,str,r,g,b) {str ,ix, iy,ledbutton_##iname, fpid,r,g,b},

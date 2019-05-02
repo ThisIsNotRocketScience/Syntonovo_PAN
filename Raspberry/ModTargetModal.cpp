@@ -53,9 +53,11 @@ void TargetList::Render(bool active, float dt)
 	}
 	int LastCategory = -1;
 	ImGui::PushFont(gGuiResources.TinyFont);
+	float Line = ImGui::GetTextLineHeight();
 	for (int i = 0; i < PageLength; i++)
 	{
-		int idx = i + this->Current;
+		
+		int idx = PageStart + i;
 		if (idx < ModulationTargetList.size() && idx >= 0)
 		{
 			auto c = ModulationTargetList[idx];
@@ -63,12 +65,13 @@ void TargetList::Render(bool active, float dt)
 			{
 				LastCategory = c->categoryid;
 				auto R = ImGui::CalcTextSize(Categories[c->categoryid].label);
-				ImGui::SetCursorPos(ImVec2(200 - R.x - ParamMasterMargin, i * 30 + 40));
-				ImGui::Text(Categories[c->categoryid].label);
+				ImGui::SetCursorPos(ImVec2(400 - R.x - ParamMasterMargin, i * Line + 40));
+				ImGui::TextColored((ImVec4)(ImColor)(idx == Current? gGuiResources.Highlight: gGuiResources.Normal), (Categories[c->categoryid].label));
+				
 
 			}
-			ImGui::SetCursorPos(ImVec2(200, i * 30 + 40));
-			ImGui::Text(c->name);
+			ImGui::SetCursorPos(ImVec2(400, i * Line + 40));
+			ImGui::TextColored((ImVec4)(ImColor)(idx == Current ? gGuiResources.Highlight : gGuiResources.Normal), c->name);			
 		}
 	}
 	ImGui::PopFont();
@@ -125,6 +128,17 @@ void ModTargetModal::Activate()
 	OriginalOutputID = row->targets[TargetID].outputid;
 	OriginalSourceID = row->targets[TargetID].sourceid;
 	OriginalModulation = row->targets[TargetID].depth;
+
+	for (int i = 0; i < 11; i++)
+	{
+		encoders[0][i].enabled = false;
+		encoders[0][i].style = MenuEntry_MidValue;
+		encoders[0][i].target = 0;
+		encoders[0][i].ledmode = ledmode_solid;
+		encoders[0][i].SetTitle("modulation");
+	}
+	encoders[0][TargetID].enabled = true;
+	
 }
 
 ModTargetModal::ModTargetModal()
@@ -133,7 +147,6 @@ ModTargetModal::ModTargetModal()
 	EnableButton(10, "Cancel", MenuEntry_Action, MenuAction_Cancel);
 	EnableButton(9, "Remove Modulation", MenuEntry_Action, MenuAction_Remove);
 
-	EnableAvailableEncoder("Modulation", MenuEntry_MidValue, 0);
 
 	ControlsInOrder.push_back(&TheTargetList);
 }
