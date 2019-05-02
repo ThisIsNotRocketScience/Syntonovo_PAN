@@ -1,4 +1,5 @@
 #include <vector>
+#ifndef WIN32
 #include "bcm_host.h"
 
 #include "EGL/egl.h"
@@ -6,6 +7,11 @@
 
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
+#include <unistd.h>			//Used for UART
+#include <termios.h>		//Used for UART
+#include <pthread.h>
+
+
 
 #include <stdio.h>
 #include <assert.h>
@@ -18,10 +24,7 @@
 #include "imgui_impl_es2.h"
 
 int uart0_filestream = -1;
-#include <unistd.h>			//Used for UART
 #include <fcntl.h>			//Used for UART
-#include <termios.h>		//Used for UART
-#include <pthread.h>
 
 
 
@@ -563,3 +566,7 @@ int main()
 	exit_func();
 	return 0;
 }
+
+
+#endif
+

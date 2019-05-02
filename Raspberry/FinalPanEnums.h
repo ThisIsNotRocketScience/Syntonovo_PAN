@@ -137,6 +137,10 @@ enum
 	MenuAction_Next,
 	MenuAction_Prev,
 	MenuAction_Cancel,
+	MenuAction_Ok,
+	MenuAction_Remove,
+	MenuAction_CloseModal,
+
 	__MenuAction_Count
 };
 
@@ -175,6 +179,28 @@ enum ModParameters
 	__Mod_Parameter_Count
 };
 
+enum ModSource_t : unsigned char
+{
+	Source_none,
+
+	Source_left_mod,
+	Source_right_mod,
+	Source_x,
+	Source_y,
+	Source_z,
+	Source_zprime,
+	Source_note,
+	Source_vel,
+	Source_left_sus,
+	Source_right_sus,
+	Source_left_unac,
+	Source_right_unac,
+	Source_Envelope,
+	Source_LFO,
+	Source_Operator,
+	__ModSource_COUNT
+};
+
 
 enum UIDisplayModes
 {
@@ -197,8 +223,14 @@ enum UIDisplayModes
 	MenuEntry_EffectParam2,
 	MenuEntry_EffectParam3,
 	MenuEntry_EncoderSet,
-	MenuEntry_ModMatrixValue
+	MenuEntry_ModMatrixValue,
+	MenuEntry_FeatureToggle
+};
 
+enum StateToggles
+{
+	Toggle_Portamento,
+	__ToggleCount
 };
 
 enum
@@ -386,4 +418,5 @@ public:
 	PanLedState_t s;
 };
 
+extern PanState_t gPanState;
 #endif

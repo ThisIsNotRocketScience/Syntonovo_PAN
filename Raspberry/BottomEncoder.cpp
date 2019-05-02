@@ -8,6 +8,7 @@
 
 void bottomencoder_t::Turn(int delta)
 {
+	if (Set != Parent->currentencoderset) return;
 	switch (style)
 	{
 	case MenuEntry_Toggle: gCurrentPreset.PutSwitch((SwitchEnum)target, delta > 0); break;
@@ -32,11 +33,14 @@ void bottomencoder_t::Turn(int delta)
 	}
 }
 
-
+int GetEncoderX(int id)
+{
+	return ((1024) / 11.0f) * (id + 0.5) - ParamBoxDim / 2;;
+}
 void bottomencoder_t::SetupPosition(int id)
 {
 	y = 600 - ParamMasterMargin;
-	x = ((1024) / 11.0f) * (id + 0.5) - ParamBoxDim/2;
+	x = GetEncoderX(id);
 	Align = align_left;
 
 }
@@ -80,7 +84,7 @@ void bottomencoder_t::Render(bool active, float DT)
 	case MenuEntry_EnvelopeValue:
 	case MenuEntry_LFOValue:
 	{
-		RenderBoxVertical(x, y2, Parent->GetParameterValue(target), style == BOX_REGULAR, active);
+		RenderBoxVertical(x, y2, Parent->GetParameterValue(target, Set), style == BOX_REGULAR, active);
 		//	char txt[400];
 		//		gCurrentPreset.DescribeParam((OutputEnum)target, style, txt, 400);
 		//		VerticalText(txt, align_right);
@@ -101,7 +105,7 @@ void bottomencoder_t::Render(bool active, float DT)
 	case MenuEntry_ModMatrixValue:
 
 	{
-		int16_t modval = ((ModSourceScreen*)Parent)->GetModValue(target);
+		uint16_t modval = Parent->GetParameterValue(target, Set);
 		RenderBoxVertical(x, y2, modval, BOX_MID, active);
 	}
 	break;

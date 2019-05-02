@@ -1,7 +1,9 @@
+#ifndef WIN32
 
 #include <sys/ioctl.h>
 #include <asm/ioctls.h>
 #include <asm/termbits.h>
+
 
 void linux_set_baudrate(int fd, int baud)
 {
@@ -13,3 +15,5 @@ void linux_set_baudrate(int fd, int baud)
 	tio.c_ospeed = baud;
 	ioctl(fd, TCSETS2, &tio);
 }
+#endif
+

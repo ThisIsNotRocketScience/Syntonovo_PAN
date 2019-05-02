@@ -1,4 +1,7 @@
 #pragma once
+#ifndef PANPRESET
+#define PANPRESET
+
 #include <stdint.h>
 #include <vector>
 #include "FinalPanEnums.h"
@@ -60,26 +63,6 @@ typedef struct
 	uint16_t ___reserved;
 } PACK OperatorParam_t;
 
-enum ModSource_t : unsigned char
-{
-	Source_none,
-
-	Source_left_mod,
-	Source_right_mod,
-	Source_x,
-	Source_y,
-	Source_z,
-	Source_zprime,
-	Source_note,
-	Source_vel,
-	Source_left_sus,
-	Source_right_sus,
-	Source_left_unac,
-	Source_right_unac,
-	Source_Envelope,
-	Source_LFO,
-	__ModSource_COUNT
-};
 
 enum PresetCategoryEnum
 {
@@ -207,9 +190,8 @@ public:
 	void TweakParameter(OutputEnum param, int delta, int deltamod = 0x800)
 	{
 		int OrigVal = paramvalue[param];
-		int32_t val = OrigVal + delta * 1000;
-		if (val < 0) val = 0;
-		if (val > 0xffff) val = 0xffff;
+		int32_t val = OrigVal + delta * deltamod;
+		if (val < 0) val = 0;else if (val > 0xffff) val = 0xffff;
 		paramvalue[param] = val;
 	}
 
@@ -232,6 +214,18 @@ public:
 #define SYNTH_MODSOURCE_COUNT (64)
 	ModMatrixRow_t modmatrix[SYNTH_MODSOURCE_COUNT];
 
+	void TweakModMatrix(ModSource_t mod, int instance, int id, int delta, int deltamod = 0x800)
+	{
+		auto row = GetModSourceRow(mod, instance);
+		
+		int OrigVal = row->targets[id].depth;
+		int32_t val = OrigVal + delta * deltamod;
+		if (val < 0) val = 0; else if (val > 0xffff) val = 0xffff;
+		row->targets[id].depth = val;
+
+
+		
+	}
 
 	ModMatrixRow_t *GetModSourceRow(ModSource_t mod, int instance)
 	{
@@ -248,6 +242,7 @@ public:
 		case Source_left_unac: return &modmatrix[0x25];
 		case Source_right_unac: return &modmatrix[0x26];
 		case Source_note: return &modmatrix[0x2E];
+		case Source_vel:  return &modmatrix[0x2E];
 			//		case Source_pedal: return &modmatrix[0x22];
 		}
 		return 0;
@@ -325,3 +320,5 @@ public:
 } PACK;
 
 extern PanPreset_t gCurrentPreset;
+
+#endif

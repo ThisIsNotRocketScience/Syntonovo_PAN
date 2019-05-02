@@ -734,7 +734,7 @@ int main(int argc, char** argv)
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
 	SDL_DisplayMode current;
 	SDL_GetCurrentDisplayMode(0, &current);
-	SDL_Window *window = SDL_CreateWindow("Synton PAN Simulator", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 2000, 900, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+	SDL_Window *window = SDL_CreateWindow("Synton PAN Simulator", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 2400, 600, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 	SetupIcon(window);
 	SDL_GLContext glcontext = SDL_GL_CreateContext(window);
 	SDL_GL_SetSwapInterval(1); // Enable vsync
@@ -835,7 +835,7 @@ int main(int argc, char** argv)
 				done = true;
 		}
 		ImGui_ImplSdlGL3_NewFrame(window);
-
+		/*
 		if (ImGui::BeginMainMenuBar())
 		{
 			if (ImGui::BeginMenu("PanSim Windows"))
@@ -848,7 +848,7 @@ int main(int argc, char** argv)
 				ImGui::EndMenu();
 			}
 			ImGui::EndMainMenuBar();
-		}
+		}*/
 		if (allswitches)
 		{
 
@@ -909,7 +909,7 @@ int main(int argc, char** argv)
 		
 		if (finalpan)
 		{
-			ImGui::SetNextWindowPos(ImVec2(10, 30));
+			ImGui::SetNextWindowPos(ImVec2(0, 0));
 			auto nt = SDL_GetTicks();
 			auto diff = nt - t;
 			t = nt;
@@ -936,8 +936,8 @@ int main(int argc, char** argv)
 				ImVec2 pos = ImGui::GetCursorScreenPos();
 				ImGui::SetCursorScreenPos(pos);
 
-				float xscalefac = 3.0f;
-				float yscalefac = 3.0f;
+				float xscalefac = 2.0f;
+				float yscalefac = 2.0f;
 				
 
 				for (int i = 0; i < __FINALLEDBUTTON_COUNT; i++)

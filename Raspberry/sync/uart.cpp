@@ -1,3 +1,5 @@
+#ifndef WIN32
+
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
@@ -637,3 +639,4 @@ int main(void)
 
 #endif
 
+#endif

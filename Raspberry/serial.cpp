@@ -3,16 +3,17 @@
 
 #include <sys/types.h>
 #include <sys/stat.h>
+#ifndef WIN32
+#include <unistd.h>
+#include <pthread.h>
+#include <poll.h>
+#include <errno.h>
 #include <termios.h>
 #include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <unistd.h>
-#include <pthread.h>
 #include <signal.h>
-#include <poll.h>
-#include <errno.h>
 
 void linux_set_baudrate(int fd, int baud);
 
@@ -374,3 +375,6 @@ static void *serial_data_listener(void *param)
 
     return NULL;
 }
+
+
+#endif
