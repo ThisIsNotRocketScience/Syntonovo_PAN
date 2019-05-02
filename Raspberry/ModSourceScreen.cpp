@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include "ModSourceScreen.h"
 
-
 uint16_t ModSourceScreen::GetParameterValue(int param, int encoderset)
 {
 	if (encoderset == 0)
@@ -26,7 +25,19 @@ void ModSourceScreen::TweakParameterValue(int param, int delta)
 	{
 		gCurrentPreset.TweakModMatrix(modType, ActiveInstance, param, delta);
 	}
-}
+};
+
+bool ModulationSourceHasInstances(ModSource_t modType)
+{
+	switch (modType)
+	{
+	case Source_Operator:
+	case Source_Envelope:
+	case Source_LFO:
+		return true;
+	}
+	return false;
+};
 
 ModSource_t ModSourceScreen::ModTypeFromScreen(Screens_t screen)
 {
@@ -55,9 +66,10 @@ ModSourceScreen::ModSourceScreen(Screens_t screen)
 {
 	MaxInstances = 16;
 	ActiveInstance = 0;
+	theModTargetModal.Parent = this;
 	myScreen = screen;
-	HasActiveInstanceDisplay = false;
 	modType = ModTypeFromScreen(screen);
+	HasActiveInstanceDisplay = ModulationSourceHasInstances(modType);
 	switch (myScreen)
 	{
 	case SCREEN_ENVELOPE:
@@ -99,6 +111,10 @@ ModSourceScreen::ModSourceScreen(Screens_t screen)
 	}
 }
 
+void ModSourceScreen::Deactivate()
+{
+	Modal = NULL;
+}
 
 
 void ModSourceScreen::Action(int a)
@@ -112,7 +128,8 @@ void ModSourceScreen::Action(int a)
 
 void ModSourceScreen::Render(float DT)
 {
-	_screensetup_t::Render(DT);
+	RenderContent(DT);
+	
 	if (HasActiveInstanceDisplay)
 	{
 		for (int i = 0; i < MaxInstances; i++)
@@ -122,7 +139,8 @@ void ModSourceScreen::Render(float DT)
 			RenderLettersInABox(i * 40 + 200, ButtonHeight(1), i == ActiveInstance, txt, 35, 35);
 		}
 	}
-	auto row = gCurrentPreset.GetModSourceRow(modType, ActiveInstance);
+	RenderModalBox(DT);
+	//auto row = gCurrentPreset.GetModSourceRow(modType, ActiveInstance);
 }
 
 void ModSourceScreen::Activate()
@@ -134,4 +152,39 @@ uint16_t ModSourceScreen::GetModValue(int target)
 {
 	auto row = gCurrentPreset.GetModSourceRow(modType, ActiveInstance);
 	return row->targets[target].depth;
+}
+
+void ModSourceScreen::OpenTargetModal(int n) 
+{
+	theModTargetModal.Instance = ActiveInstance;
+	theModTargetModal.TargetID = n;
+	theModTargetModal.modType = modType;
+
+	auto row = gCurrentPreset.GetModSourceRow(modType, ActiveInstance);
+	
+
+	theModTargetModal.CurrentTarget = row->targets[target].outputid;
+
+	Modal = &theModTargetModal;
+}
+
+void ModSourceScreen::EncoderPress(FinalEncoderEnum button)
+{
+	if (currentencoderset == 1)
+	{
+		switch (button)
+		{
+		case encoder_F1: OpenTargetModal(0); break;
+		case encoder_F2: OpenTargetModal(1); break;
+		case encoder_F3: OpenTargetModal(2); break;
+		case encoder_F4: OpenTargetModal(3); break;
+		case encoder_F5: OpenTargetModal(4); break;
+		case encoder_F6: OpenTargetModal(5); break;
+		case encoder_F7: OpenTargetModal(6); break;
+		case encoder_F8: OpenTargetModal(7); break;
+		case encoder_F9: OpenTargetModal(8); break;
+		case encoder_F10: OpenTargetModal(9); break;
+		case encoder_F11: OpenTargetModal(10); break;
+		}
+	}
 }

@@ -3,6 +3,7 @@
 #include "FinalPanEnums.h"
 #include "PanPreset.h"
 #include "gui.h"
+#include "ModTargetModal.h"
 
 class ModSourceScreen : public _screensetup_t
 {
@@ -19,7 +20,13 @@ public:
 	ModSourceScreen(Screens_t screen);
 	virtual void Action(int a);
 	uint16_t GetModValue(int v);
+	
+	virtual void EncoderPress(FinalEncoderEnum button);
+	
+	ModTargetModal theModTargetModal;
+	virtual void Deactivate();
 
+	void OpenTargetModal(int modtarget);
 	virtual void Render(float DT);
 	virtual void Activate();
 };

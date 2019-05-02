@@ -1,4 +1,7 @@
 #pragma once
+#ifndef PANPRESET
+#define PANPRESET
+
 #include <stdint.h>
 #include <vector>
 #include "FinalPanEnums.h"
@@ -60,26 +63,6 @@ typedef struct
 	uint16_t ___reserved;
 } PACK OperatorParam_t;
 
-enum ModSource_t : unsigned char
-{
-	Source_none,
-
-	Source_left_mod,
-	Source_right_mod,
-	Source_x,
-	Source_y,
-	Source_z,
-	Source_zprime,
-	Source_note,
-	Source_vel,
-	Source_left_sus,
-	Source_right_sus,
-	Source_left_unac,
-	Source_right_unac,
-	Source_Envelope,
-	Source_LFO,
-	__ModSource_COUNT
-};
 
 enum PresetCategoryEnum
 {
@@ -337,3 +320,5 @@ public:
 } PACK;
 
 extern PanPreset_t gCurrentPreset;
+
+#endif

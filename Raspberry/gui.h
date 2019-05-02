@@ -1,7 +1,11 @@
 #pragma once
 #include <vector>
 #include "../libs/imgui-master/imgui.h"
+#include "FinalPanEnums.h"
+#include "FinalPanHeader.h"
 
+#ifndef PANGUIH
+#define PANGUIH
 
 enum alignment_t
 {
@@ -20,11 +24,28 @@ enum font_size
 };
 
 extern int ButtonHeight(int idx);
+extern int GetEncoderX(int id);
 extern void RenderLettersInABox(int x, int y, bool active, const char *text, int w, int h);
 
 extern uint16_t lerp(uint16_t i, uint16_t f, uint16_t t);
 extern void LedLerp(bool active, uint16_t value, uint16_t *r, uint16_t *g, uint16_t *b);
 extern void VerticalText(char *text, alignment_t align = align_left, ImU32 text_color = 0xffffffff);
+
+
+extern bool IsCenterEncoder(FinalEncoderEnum button);
+extern int GetAssociatedParameter(FinalEncoderEnum button);
+extern int ButtonHeight(int idx);
+
+extern void FinalPan_SetupDefaultPreset();
+extern int GetSideButtonID(FinalLedButtonEnum B);
+extern bool IsSideButton(FinalLedButtonEnum B);
+extern bool IsPatchButton(FinalLedButtonEnum B);
+
+
+extern void LoadSelectedPreset();
+extern void LoadPatch(int n);
+extern bool ModulationSourceHasInstances(ModSource_t modType);
+
 
 typedef struct FinalPan_GuiResources_t
 {
@@ -43,6 +64,7 @@ typedef struct FinalPan_GuiResources_t
 	ImU32 Highlight;
 	ImU32 Normal;
 	ImU32 BGColor;
+	ImU32 ModalBGColor;
 	ImU32 FillColor;
 	int PageTime;
 	int encoderbarmargin;
@@ -178,6 +200,9 @@ public:
 	virtual void SetupEncoderSet(int n);
 
 
+	void SetupMainUILeds();
+	void SetupEncodersAndButtonsLeds();
+	void SetupKeyboardStateLeds();
 
 	virtual void SetupLeds();
 	virtual void Action(int action);
@@ -221,7 +246,11 @@ public:
 	virtual void SideButton(FinalLedButtonEnum b);
 	virtual void PatchButton(FinalLedButtonEnum b);
 	void Encoder(FinalEncoderEnum button, int delta);
+	
+	void RenderContent(float DT);
+	void RenderModalBox(float DT);
 	virtual void Render(float DT);
+
 };
 
 class Gui
@@ -257,4 +286,5 @@ public:
 	Screens_t CurrentScreen;
 };
 
-
+extern Gui gGui;
+#endif

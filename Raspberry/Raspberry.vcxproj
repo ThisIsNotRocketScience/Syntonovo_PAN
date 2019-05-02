@@ -157,7 +157,9 @@
     <ClCompile Include="imgui_es2.cpp" />
     <ClCompile Include="linux_serial.cpp" />
     <ClCompile Include="ModSourceScreen.cpp" />
+    <ClCompile Include="ModTargetModal.cpp" />
     <ClCompile Include="Raspberry.cpp" />
+    <ClCompile Include="ScreenSetup.cpp" />
     <ClCompile Include="SerialSearcher.cpp" />
     <ClCompile Include="serialtest.cpp" />
   </ItemGroup>
@@ -165,6 +167,7 @@
     <ClInclude Include="gui.h" />
     <ClInclude Include="imgui_impl_es2.h" />
     <ClInclude Include="ModSourceScreen.h" />
+    <ClInclude Include="ModTargetModal.h" />
     <ClInclude Include="uart.hpp" />
   </ItemGroup>
   <ItemGroup>
