@@ -388,6 +388,11 @@ void _screensetup_t::SketchRightPress()
 
 void _screensetup_t::EncoderPress(FinalEncoderEnum button)
 {
+	if (Modal)
+	{
+		Modal->EncoderPress(button);
+		return;
+	}
 }
 
 int _screensetup_t::GetControlIndex(_control_t *c)

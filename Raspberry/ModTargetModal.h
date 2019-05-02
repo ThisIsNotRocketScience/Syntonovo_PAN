@@ -11,12 +11,16 @@ public:
 	int PageStart;
 	int PageEnd;
 	int PageLength;
+	int CurrentIDX;
 	TargetList()
 	{
 		Current = 0;
 		PageLength = 20;
 		SetPage(0);
+		enabled = true;
 	}
+	virtual void SketchRightDelta(int delta);
+	void SetCurrent(int C);
 	void SetPage(int idx)
 	{
 		PageStart = idx;
@@ -36,7 +40,7 @@ public:
 
 	virtual void SketchLeft(int delta) {}
 
-	virtual void SketchRight(int delta) {}
+	//virtual void SketchRight(int delta) {}
 	virtual void SketchLeftPress() {}
 
 	virtual void SketchRightPress() {}

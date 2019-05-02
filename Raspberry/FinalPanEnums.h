@@ -122,6 +122,7 @@ enum FinalEncoderEnum
 	__FINALENCODER_COUNT
 };
 
+
 void LedEncoderButtonPress(FinalEncoderEnum Button);
 void LedEncoderButtonLeft(FinalEncoderEnum Button);
 void LedEncoderButtonRight(FinalEncoderEnum Button);
@@ -258,6 +259,15 @@ enum OutputEnum
 #undef OUTPUT
 #undef OUTPUT_VIRT
 	__OUTPUT_COUNT
+};
+
+
+enum ModSourceEnum
+{
+#define MODSOURCE(name, type, idx) modsource_##name = idx,
+#include "../interface/paramdef.h"
+#undef MODSOURCE
+	__MODSOURCE_COUNT
 };
 
 enum SwitchEnum

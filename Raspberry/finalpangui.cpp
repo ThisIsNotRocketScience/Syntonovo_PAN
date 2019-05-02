@@ -10,7 +10,6 @@
 
 #include "ModSourceScreen.h"
 
-
 PanPreset_t gCurrentPreset;
 PanPreset_t gRevertPreset;
 PanState_t gPanState;
@@ -129,6 +128,21 @@ void FinalPan_SetupDefaultPreset()
 	gCurrentPreset.modmatrix[0x20].targets[0].depth = 0xffff;
 	gCurrentPreset.modmatrix[0x20].targets[0].outputid = 0;
 	gCurrentPreset.modmatrix[0x20].targets[0].sourceid = Output_MASTER_PITCH;
+
+
+	gCurrentPreset.modmatrix[modsource_ENV0].targets[0].depth = 0x3fff;
+	gCurrentPreset.modmatrix[modsource_ENV0].targets[0].outputid = Output_VCF1_LIN;
+
+	gCurrentPreset.modmatrix[modsource_ENV0].targets[1].depth = 0x3fff;
+	gCurrentPreset.modmatrix[modsource_ENV0].targets[1].outputid = Output_VCF2_LIN;
+
+	gCurrentPreset.modmatrix[modsource_ENV0].targets[2].depth = 0x3fff;
+	gCurrentPreset.modmatrix[modsource_ENV0].targets[2].outputid = Output_CLEANF_LIN;
+
+	gCurrentPreset.modmatrix[modsource_X].targets[0].depth = 0x3fff;
+	gCurrentPreset.modmatrix[modsource_X].targets[0].outputid = Output_VCF1_CV;
+
+
 
 	
 };
@@ -678,6 +692,8 @@ void PrintFontSpec(ImFont*F, const char* name)
 
 void FinalPan_LoadResources()
 {
+	BuildModulationTargetList();
+
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
 	gGuiResources.encoderbarmargin = 10;
 	gGuiResources.encoderheight = 600;
@@ -1410,11 +1426,11 @@ Screens_t GetPage(FinalEncoderEnum Button)
 }
 bool dumpspec = true;
 
-
 void RenderMain(float DT)
 {
 	if (!init)
 	{
+
 		FinalPan_LoadResources();
 	}
 	FinalPan_PushStyle();

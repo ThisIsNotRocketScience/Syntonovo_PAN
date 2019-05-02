@@ -172,6 +172,12 @@ void ModSourceScreen::OpenTargetModal(int n)
 
 void ModSourceScreen::EncoderPress(FinalEncoderEnum button)
 {
+	if (Modal)
+	{
+		Modal->EncoderPress(button);
+		return;
+	}
+
 	if (currentencoderset == 1)
 	{
 		switch (button)
