@@ -284,6 +284,7 @@ void* SerialThread(void*)
 	return 0;
 }
 
+unsigned char presetnames[PRESET_COUNT * PRESET_NAME_LENGTH] = {0};
 
 void sync_data_func(int addr, uint8_t* data)
 {
@@ -292,7 +293,16 @@ void sync_data_func(int addr, uint8_t* data)
 	if (addr >= 0 && addr < (int)sizeof(gCurrentPreset)) {
 		*(uint32_t*)&((uint8_t*)&gCurrentPreset)[addr] = *(uint32_t*)data;
 	}
+	if (addr >= 0x1000000 && addr < 0x1000000 + (int)sizeof(presetnames)) {
+		addr -= 0x1000000;
+		*(uint32_t*)&((uint8_t*)&presetnames)[addr] = *(uint32_t*)data;
+	}
 }
+
+#define CMD_PAD_ZERO		(0x11)
+#define CMD_CALIBRATE		(0x12)
+#define CMD_PRESET_LOAD		(0x21)
+#define CMD_PRESET_STORE	(0x22)
 
 #define OOB_UI_PAUSE		(0x41)
 #define OOB_UI_CONTINUE		(0x42)
@@ -303,6 +313,32 @@ void sync_data_func(int addr, uint8_t* data)
 #define OOB_ENCODER_DOWN	(0x58)
 #define OOB_ENCODER_UP		(0x59)
 #define OOB_SWITCH_CHANGE	(0x5F)
+
+void cmd_pad_zero()
+{
+	sync_oob_word(&rpi_sync, CMD_PAD_ZERO, 0, 0);
+}
+
+void cmd_calibrate()
+{
+	sync_oob_word(&rpi_sync, CMD_CALIBRATE, 0, 0);
+}
+
+void cmd_preset_load(int presetid)
+{
+	if (presetid < 0 || presetid >= 256) return;
+	uint8_t data[4] = {0};
+	data[0] = presetid;
+	sync_oob_word(&rpi_sync, CMD_PRESET_LOAD, *(uint32_t*)data, 0);
+}
+
+void cmd_preset_save(int presetid)
+{
+	if (presetid < 0 || presetid >= 256) return;
+	uint8_t data[4] = {0};
+	data[0] = presetid;
+	sync_oob_word(&rpi_sync, CMD_PRESET_LOAD, *(uint32_t*)data, 0);
+}
 
 #include "FinalPanEnums.h"
 
@@ -374,17 +410,17 @@ int sync_oobdata_func(uint8_t cmd, uint32_t data)
 {
 	switch (cmd) {
 	case OOB_UI_PAUSE:
-#ifdef SHOWSYNCPRINTF
+//#ifdef SHOWSYNCPRINTF
 		printf("OOB_UI_PAUSE\n");
-#endif
+//#endif
 		ledsync.reset();
 		presetsync.reset();
 		sync_running = 1;
 		break;
 	case OOB_UI_CONTINUE:
-#ifdef SHOWSYNCPRINTF
+//#ifdef SHOWSYNCPRINTF
 		printf("OOB_UI_CONTINUE\n");
-#endif
+//#endif
 		//FinalPan_SetupDefaultPreset();
 		ledsync.reset();
 		presetsync.reset();

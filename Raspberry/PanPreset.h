@@ -13,6 +13,8 @@
 #define PACK  __attribute__((packed))
 #endif
 
+#define PRESET_COUNT 256
+
 #define MODTARGET_COUNT (11)
 typedef struct
 {

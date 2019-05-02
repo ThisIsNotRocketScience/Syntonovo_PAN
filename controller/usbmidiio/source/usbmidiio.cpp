@@ -63,6 +63,8 @@ PanLedState_t ledstate;
 uart_t rpi_uart;
 sync_state_t rpi_sync;
 
+volatile int loading = 0;
+
 #define NOTEON(note, velocity) dsp_cmd(0xfc, 2, note | (velocity << 8))
 #define NOTEOFF(note) dsp_cmd(0xfc, 1, note)
 
@@ -77,6 +79,30 @@ void dsp_reset()
 	control_write(data, 4);
 	control_write(data, 4);
 	control_write(data, 4);
+	control_write(data, 4);
+}
+
+void dsp_calibrate()
+{
+	uint8_t data[4];
+
+	data[0] = 0xfe;
+	data[1] = 0xfe;
+	data[2] = 0;
+	data[3] = 0;
+
+	control_write(data, 4);
+}
+
+void dsp_pad_zero()
+{
+	uint8_t data[4];
+
+	data[0] = 0xfe;
+	data[1] = 0xfb;
+	data[2] = 0;
+	data[3] = 0;
+
 	control_write(data, 4);
 }
 
@@ -401,17 +427,22 @@ void SendLeds()
 		}
 	}
 
-	L1LatchOff();
-	L2LatchOff();
-	__NOP();
-	__NOP();
-	__NOP();
-	__NOP();
-	__NOP();
 	L1LatchOn();
 	L2LatchOn();
+	__NOP();
+	__NOP();
+	__NOP();
+	__NOP();
+	__NOP();
+	L1LatchOff();
+	L2LatchOff();
 }
 
+
+#define CMD_PAD_ZERO		(0x11)
+#define CMD_CALIBRATE		(0x12)
+#define CMD_PRESET_LOAD		(0x21)
+#define CMD_PRESET_STORE	(0x22)
 
 #define OOB_UI_PAUSE		(0x41)
 #define OOB_UI_CONTINUE		(0x42)
@@ -751,20 +782,98 @@ extern "C" void SCT0_IRQHandler(void)
 	portEND_SWITCHING_ISR(higherPriorityTaskWoken);
 }
 
+struct presetnames_t {
+	unsigned char names[PRESET_COUNT * PRESET_NAME_LENGTH];
+};
+
+presetnames_t presetnames = {0};
+
+void sync_complete(int status);
+
+template <typename T>
+class DiffSyncer
+{
+public:
+	DiffSyncer(T* data, uint32_t address) : _data(data), _address(address), _resend_full(true)
+	{
+		_dummy = 0;
+	}
+
+	void reset()
+	{
+		_resend_full = true;
+	}
+
+	int run()
+	{
+		if (_resend_full) {
+		//printf("%x - %x @ %x\n", 0, sizeof(T), _address);
+			_resend_full = false;
+			memcpy(&_prev, _data, sizeof(T));
+			sync_block(&rpi_sync, (uint8_t*)&_prev, _address, sizeof(T), sync_complete);
+			return 0;
+		}
+
+		for (int i = 0; i < sizeof(T); i += 4) {
+			if ( *(uint32_t*)&((uint8_t*)_data)[i] != *(uint32_t*)&((uint8_t*)&_prev)[i] )
+			{
+				int j = i + 4;
+				for (; j < sizeof(T); j += 4) {
+					if ( *(uint32_t*)&((uint8_t*)_data)[j] == *(uint32_t*)&((uint8_t*)&_prev)[j] ) {
+						break;
+					}
+				}
+		//printf("%x - %x (max %x) @ %x\n", i, j, sizeof(T), _address);
+				memcpy(&((uint8_t*)&_prev)[i], &((uint8_t*)_data)[i], j - i);
+				sync_block(&rpi_sync, &((uint8_t*)&_prev)[i], _address + i, j - i, sync_complete);
+				return 0;
+			}
+		}
+
+		return 1;
+	}
+private:
+	T _prev;
+	uint32_t _dummy; // don't move it, it's for padding end of _prev
+	T* _data;
+	uint32_t _address;
+	bool _resend_full;
+};
+
+volatile int sync_running = 1;
+DiffSyncer<presetnames_t> namesync(&presetnames, 0x1000000);
+
+void sync_complete_presetnames(int status);
+
+int preset_load_start()
+{
+	if (loading) return 1;
+
+	loading = 1;
+	sync_oob_word(&rpi_sync, OOB_UI_PAUSE, 0, 0);
+    sync_block(&rpi_sync, (uint8_t*)&preset, 0, sizeof(preset), sync_complete);
+
+	return 0;
+}
+
 void sync_complete(int status)
 {
 	if (status != 0) {
-        sync_oob_word(&rpi_sync, OOB_UI_PAUSE, 0, 0);
-	    sync_block(&rpi_sync, (uint8_t*)&preset, 0, sizeof(preset), sync_complete);
+		loading = 0;
+		namesync.reset();
+		preset_load_start();
 		return;
 	}
 
 	if (status == 0) {
-        sync_oob_word(&rpi_sync, OOB_UI_CONTINUE, 0, 0);
-        return;
+		if (loading) {
+			if (namesync.run()) {
+				sync_oob_word(&rpi_sync, OOB_UI_CONTINUE, 0, 0);
+				loading = 0;
+			}
+		}
 	}
 }
-
 
 #define KEYSCAN_NUMKEYSETS (5)
 #define KEYSCAN_MAXINDEX (2*KEYSCAN_NUMKEYSETS)
@@ -969,6 +1078,11 @@ void preset_init()
 	preset.modmatrix[modsource_ENV0].targets[2].depth = 0x3fff;
 	preset.modmatrix[modsource_ENV0].targets[2].outputid = output_CLEANF_LIN;
 
+    MODMATRIX(modsource_X, 0, 0, 0x3fff);
+    MODMATRIX(modsource_X, 0, 1, output_VCF1_CV);
+	preset.modmatrix[modsource_X].targets[0].depth = 0x3fff;
+	preset.modmatrix[modsource_X].targets[0].outputid = output_VCF1_CV;
+
 	preset.high.h = 0x1000;
 	preset.low.h = 0x4000;
 	preset.active.h = 0x3000;
@@ -1153,7 +1267,23 @@ void sync_data_func(int addr, uint8_t* data)
 
 int sync_oobdata_func(uint8_t cmd, uint32_t data)
 {
-	return 0;
+	switch (cmd) {
+	case CMD_PAD_ZERO:
+		dsp_pad_zero();
+		return 0;
+	case CMD_CALIBRATE:
+		dsp_calibrate();
+		return 0;
+	case CMD_PRESET_LOAD:
+		preset_load_start();
+		return 0;
+	case CMD_PRESET_STORE:
+		if (loading) return 0;
+        sync_oob_word(&rpi_sync, OOB_UI_PAUSE, 0, 0);
+        sync_oob_word(&rpi_sync, OOB_UI_CONTINUE, 0, 0);
+		return 0;
+	}
+	return 1;
 }
 
 /*
