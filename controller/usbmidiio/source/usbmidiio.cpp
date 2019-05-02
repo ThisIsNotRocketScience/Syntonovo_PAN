@@ -63,6 +63,8 @@ PanLedState_t ledstate;
 uart_t rpi_uart;
 sync_state_t rpi_sync;
 
+volatile int loading = 0;
+
 #define NOTEON(note, velocity) dsp_cmd(0xfc, 2, note | (velocity << 8))
 #define NOTEOFF(note) dsp_cmd(0xfc, 1, note)
 
@@ -425,15 +427,15 @@ void SendLeds()
 		}
 	}
 
-	L1LatchOff();
-	L2LatchOff();
-	__NOP();
-	__NOP();
-	__NOP();
-	__NOP();
-	__NOP();
 	L1LatchOn();
 	L2LatchOn();
+	__NOP();
+	__NOP();
+	__NOP();
+	__NOP();
+	__NOP();
+	L1LatchOff();
+	L2LatchOff();
 }
 
 
@@ -780,31 +782,97 @@ extern "C" void SCT0_IRQHandler(void)
 	portEND_SWITCHING_ISR(higherPriorityTaskWoken);
 }
 
-unsigned char presetnames[PRESET_COUNT * PRESET_NAME_LENGTH] = {0};
+struct presetnames_t {
+	unsigned char names[PRESET_COUNT * PRESET_NAME_LENGTH];
+};
+
+presetnames_t presetnames = {0};
+
+void sync_complete(int status);
+
+template <typename T>
+class DiffSyncer
+{
+public:
+	DiffSyncer(T* data, uint32_t address) : _data(data), _address(address), _resend_full(true)
+	{
+		_dummy = 0;
+	}
+
+	void reset()
+	{
+		_resend_full = true;
+	}
+
+	int run()
+	{
+		if (_resend_full) {
+		//printf("%x - %x @ %x\n", 0, sizeof(T), _address);
+			_resend_full = false;
+			memcpy(&_prev, _data, sizeof(T));
+			sync_block(&rpi_sync, (uint8_t*)&_prev, _address, sizeof(T), sync_complete);
+			return 0;
+		}
+
+		for (int i = 0; i < sizeof(T); i += 4) {
+			if ( *(uint32_t*)&((uint8_t*)_data)[i] != *(uint32_t*)&((uint8_t*)&_prev)[i] )
+			{
+				int j = i + 4;
+				for (; j < sizeof(T); j += 4) {
+					if ( *(uint32_t*)&((uint8_t*)_data)[j] == *(uint32_t*)&((uint8_t*)&_prev)[j] ) {
+						break;
+					}
+				}
+		//printf("%x - %x (max %x) @ %x\n", i, j, sizeof(T), _address);
+				memcpy(&((uint8_t*)&_prev)[i], &((uint8_t*)_data)[i], j - i);
+				sync_block(&rpi_sync, &((uint8_t*)&_prev)[i], _address + i, j - i, sync_complete);
+				return 0;
+			}
+		}
+
+		return 1;
+	}
+private:
+	T _prev;
+	uint32_t _dummy; // don't move it, it's for padding end of _prev
+	T* _data;
+	uint32_t _address;
+	bool _resend_full;
+};
+
+volatile int sync_running = 1;
+DiffSyncer<presetnames_t> namesync(&presetnames, 0x1000000);
 
 void sync_complete_presetnames(int status);
+
+int preset_load_start()
+{
+	if (loading) return 1;
+
+	loading = 1;
+	sync_oob_word(&rpi_sync, OOB_UI_PAUSE, 0, 0);
+    sync_block(&rpi_sync, (uint8_t*)&preset, 0, sizeof(preset), sync_complete);
+
+	return 0;
+}
 
 void sync_complete(int status)
 {
 	if (status != 0) {
-        sync_oob_word(&rpi_sync, OOB_UI_PAUSE, 0, 0);
-	    sync_block(&rpi_sync, (uint8_t*)&preset, 0, sizeof(preset), sync_complete);
+		loading = 0;
+		namesync.reset();
+		preset_load_start();
 		return;
 	}
 
 	if (status == 0) {
-        sync_oob_word(&rpi_sync, OOB_UI_CONTINUE, 0, 0);
-	    sync_block(&rpi_sync, (uint8_t*)&presetnames, 0x1000000, sizeof(presetnames), sync_complete_presetnames);
-        return;
+		if (loading) {
+			if (namesync.run()) {
+				sync_oob_word(&rpi_sync, OOB_UI_CONTINUE, 0, 0);
+				loading = 0;
+			}
+		}
 	}
-}
-
-void sync_complete_presetnames(int status)
-{
-	if (status != 0) {
-		sync_complete(status);
-	}
-	return;
 }
 
 #define KEYSCAN_NUMKEYSETS (5)
@@ -1207,9 +1275,10 @@ int sync_oobdata_func(uint8_t cmd, uint32_t data)
 		dsp_calibrate();
 		return 0;
 	case CMD_PRESET_LOAD:
-		sync_complete(1);
+		preset_load_start();
 		return 0;
 	case CMD_PRESET_STORE:
+		if (loading) return 0;
         sync_oob_word(&rpi_sync, OOB_UI_PAUSE, 0, 0);
         sync_oob_word(&rpi_sync, OOB_UI_CONTINUE, 0, 0);
 		return 0;
