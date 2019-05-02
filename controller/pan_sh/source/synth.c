@@ -766,17 +766,19 @@ int process_param_log_add(int ctrlid, int32_t add, int32_t addchase)
 {
 	int result = doing_reset;
 
-	int32_t value = synth_param[ctrlid].value + add;
+	int32_t value = (int32_t)synth_param[ctrlid].value + add;
+	//printf("%d = %d + %d\n", value, synth_param[ctrlid].value, add);
 	if (value < 0) value = 0;
 	else if (value > 65535) value = 65535;
 	value += addchase;
 	if (value < 0) value = 0;
 	else if (value > 65535) value = 65535;
+	//printf("+ sum\n", synth_param[ctrlid].sum),
 	value += synth_param[ctrlid].sum;
-
 	if (value < 0) value = 65535;
 	else if (value > 65535) value = 0;
 	else value = 65535 - value;
+	//printf("= %d\n", value);
 
 	result |= (synth_param[ctrlid].last != value);
 	synth_param[ctrlid].last = value;
@@ -882,56 +884,56 @@ void do_output_VCO1_SUB2(int ctrlid, int port)
 
 void do_output_VCF1_FX_12(int ctrlid, int port)
 {
-	if (process_param_lin(ctrlid)) {
+	if (process_param_inv(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
 }
 
 void do_output_VCF1_FX_24(int ctrlid, int port)
 {
-	if (process_param_lin(ctrlid)) {
+	if (process_param_inv(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
 }
 
 void do_output_VCF2_FX_L(int ctrlid, int port)
 {
-	if (process_param_lin(ctrlid)) {
+	if (process_param_inv(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
 }
 
 void do_output_VCF2_FX_R(int ctrlid, int port)
 {
-	if (process_param_lin(ctrlid)) {
+	if (process_param_inv(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
 }
 
 void do_output_CLEANF_FX_L(int ctrlid, int port)
 {
-	if (process_param_lin(ctrlid)) {
+	if (process_param_inv(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
 }
 
 void do_output_CLEANF_FX_R(int ctrlid, int port)
 {
-	if (process_param_lin(ctrlid)) {
+	if (process_param_inv(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
 }
 
 void do_output_FX_L_RETURN(int ctrlid, int port)
 {
-	if (process_param_lin(ctrlid)) {
+	if (process_param_inv(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
 }
 
 void do_output_FX_R_RETURN(int ctrlid, int port)
 {
-	if (process_param_lin(ctrlid)) {
+	if (process_param_inv(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
 }
@@ -1234,7 +1236,9 @@ void virt_CLEANF_LEVEL()
 
 void virt_VCF1_LEVEL()
 {
+	//printf("VCF1\n");
 	process_param_log_add(VCF1_LEVEL, (int32_t)synth_param[MASTER_LEVEL].last - 0xFFFF, 0);
+	//printf("---\n");
 }
 
 void virt_VCF2_LEVEL()
@@ -1433,7 +1437,8 @@ int process_param_note(int ctrlid, int32_t notevalue, int modrange)
 
 void virt_VCO1_PITCH()
 {
-	int32_t value = note_add(signed_scale(synth_param[NOTE].last, synth_param[VCO1_PITCH].note), note_scale(synth_param[VCO1_PITCH].value, 24 * 0x4000 / 128));
+	int32_t value = note_add(signed_scale(synth_param[NOTE].last, synth_param[VCO1_PITCH].note),
+			                 note_scale(synth_param[VCO1_PITCH].value, 24 * 0x4000 / 128));
 
 	process_param_note(VCO1_PITCH, value, 24);
 }
