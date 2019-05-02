@@ -44,6 +44,7 @@ void BuildModulationTargetList()
 	sprintf(dummy->name, "No target");
 
 	ModulationTargetList.push_back(dummy);
+
 #define OUTPUT(outname,codecport,codecpin, type,id, style,defaultvalue, label, categorylbl)if (Category_##categorylbl != Category_IGNORE) {ModulationTargetOutputEntries_t *t = new ModulationTargetOutputEntries_t();snprintf(t->name, MODULATIONTARGETNAMELENGTH,"%s", label);t->targetid = Output_##outname; t->categoryid = Category_##categorylbl ; ModulationTargetList.push_back(t);  }
 #define OUTPUT_VIRT(outname,codecport,codecpin, type,id, style,defaultvalue, label, categorylbl)if (Category_##categorylbl != Category_IGNORE){ModulationTargetOutputEntries_t *t = new ModulationTargetOutputEntries_t();snprintf(t->name, MODULATIONTARGETNAMELENGTH,"%s", label);t->targetid = Output_##outname; t->categoryid = Category_##categorylbl ; ModulationTargetList.push_back(t);  }
 #include "../interface/paramdef.h"
@@ -76,6 +77,9 @@ void TargetList::SketchRightDelta(int delta)
 	CurrentIDX = (CurrentIDX + delta + ModulationTargetList.size()) % ModulationTargetList.size();
 
 	Current = ModulationTargetList[CurrentIDX]->targetid;
+	((ModTargetModal*)Parent)->SetOutput(Current);
+
+
 	while (CurrentIDX > PageEnd - 1)
 	{
 		PageEnd++;
@@ -86,6 +90,12 @@ void TargetList::SketchRightDelta(int delta)
 		PageStart--;
 		PageEnd--;
 	}
+}
+
+void ModTargetModal::SetOutput(int out)
+{
+	auto row = gCurrentPreset.GetModSourceRow(modType, Instance);
+	row->targets[TargetID].outputid = out;
 }
 
 void TargetList::Render(bool active, float dt)
@@ -135,7 +145,7 @@ void ModTargetModal::Action(int action)
 	{
 		auto row = gCurrentPreset.GetModSourceRow(modType, Instance);
 		row->targets[TargetID].outputid = OriginalOutputID;
-		row->targets[TargetID].depth = OriginalModulation;
+		//row->targets[TargetID].depth = OriginalModulation;
 		row->targets[TargetID].sourceid = OriginalSourceID;
 		Parent->Action(MenuAction_CloseModal);
 	}

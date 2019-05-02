@@ -23,7 +23,8 @@ public:
 	void SetCurrent(int C);
 	void SetPage(int idx)
 	{
-		PageStart = idx;
+		PageStart = idx- 10;
+		if (PageStart < 0) PageStart = 0;
 		PageEnd = PageStart + PageLength;
 	}
 	virtual void Render(bool active, float dt);
@@ -56,6 +57,8 @@ public:
 	int OriginalModulation;
 	int OriginalOutputID;
 	int OriginalSourceID;
+
+	void SetOutput(int newOut);
 
 	virtual uint16_t GetParameterValue(int param, int encoderset);
 
