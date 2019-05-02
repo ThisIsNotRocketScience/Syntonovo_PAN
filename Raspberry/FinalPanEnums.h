@@ -130,6 +130,7 @@ void LedButtonPressed(FinalLedButtonEnum button);
 enum
 {
 	MenuAction_Save,
+
 	MenuAction_Revert,
 	MenuAction_Store,
 	MenuAction_Yes,
@@ -140,6 +141,8 @@ enum
 	MenuAction_Ok,
 	MenuAction_Remove,
 	MenuAction_CloseModal,
+	MenuAction_CalibratePads,
+	MenuAction_CalibrateOscillators,
 
 	__MenuAction_Count
 };
