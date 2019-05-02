@@ -1024,8 +1024,8 @@ void preset_init()
 		FULLVALUE(param, 2, 0);
 	}
 
-#define OUTPUT(NAME, x, y, z, w, k, VALUE) FULLVALUE(output_##NAME, 0, VALUE); preset.paramvalue[output_##NAME] = VALUE;
-#define OUTPUT_VIRT(NAME, x, y, z, w, k, VALUE) FULLVALUE(output_##NAME, 0, VALUE); preset.paramvalue[output_##NAME] = VALUE;
+#define OUTPUT(NAME, x, y, z, w, k, VALUE, dummy1, dummy2) FULLVALUE(output_##NAME, 0, VALUE); preset.paramvalue[output_##NAME] = VALUE;
+#define OUTPUT_VIRT(NAME, x, y, z, w, k, VALUE, dummy1, dummy2) FULLVALUE(output_##NAME, 0, VALUE); preset.paramvalue[output_##NAME] = VALUE;
 
 #include "../../../interface/paramdef.h"
 

@@ -72,9 +72,9 @@ param_t synth_param[SYNTH_PARAM_COUNT] =
 #define SWITCH(NAME, ID, DEFAULT) \
 	const int NAME = ID;
 
-#define OUTPUT(NAME, PGROUP, PID, CTRLTYPE, CTRLID, MODE, INITVALUE) \
+#define OUTPUT(NAME, PGROUP, PID, CTRLTYPE, CTRLID, MODE, INITVALUE, dummy1, dummy2) \
 	MAPPING_##CTRLTYPE(CTRLID, NAME, PORTID(PGROUP, PID))
-#define OUTPUT_VIRT(NAME, PGROUP, PID, CTRLTYPE, CTRLID, MODE, INITVALUE) \
+#define OUTPUT_VIRT(NAME, PGROUP, PID, CTRLTYPE, CTRLID, MODE, INITVALUE, dummy1, dummy2) \
 	MAPPING_##CTRLTYPE(CTRLID, NAME, 0)
 
 #include "../../interface/paramdef.h"
@@ -104,9 +104,9 @@ operator_param_t op_param[NUM_OPERATORS];
 #define DO_OUTPUT_LOG(NAME, CTRLID, PID)
 #define DO_OUTPUT_CUSTOM(NAME, CTRLID, PID) \
 	void do_output_##NAME(int ctrlid, int pid);
-#define OUTPUT(NAME, PGROUP, PID, CTRLTYPE, CTRLID, MODE, INITVALUE) \
+#define OUTPUT(NAME, PGROUP, PID, CTRLTYPE, CTRLID, MODE, INITVALUE, dummy1, dummy2) \
 	DO_OUTPUT_##MODE(NAME, CTRLID, PORTID(PGROUP, PID));
-#define OUTPUT_VIRT(NAME, PGROUP, PID, CTRLTYPE, CTRLID, MODE, INITVALUE) \
+#define OUTPUT_VIRT(NAME, PGROUP, PID, CTRLTYPE, CTRLID, MODE, INITVALUE, dummy1, dummy2) \
 	void virt_##NAME();
 #define SWITCH(NAME, ID, DEFAULT)
 
@@ -127,13 +127,13 @@ void synth_mapping_init()
 	memset(synth_param, 0xff, sizeof(synth_param));
 	memset(synth_output, 0xff, sizeof(synth_output));
 
-#define OUTPUT(NAME, PGROUP, PID, CTRLTYPE, CTRLID, MODE, INITVALUE) \
+#define OUTPUT(NAME, PGROUP, PID, CTRLTYPE, CTRLID, MODE, INITVALUE, dummy1, dummy2) \
 	memset(&synth_param[CTRLID], 0, sizeof(synth_param[0])); \
 	synth_param[CTRLID].port = PORTID(PGROUP, PID); \
 	synth_param[CTRLID].last = 0xfff0; \
 	synth_param[CTRLID].value = INITVALUE; \
 	synth_output[synth_param[CTRLID].port] = CTRLID;
-#define OUTPUT_VIRT(NAME, PGROUP, PID, CTRLTYPE, CTRLID, MODE, INITVALUE) \
+#define OUTPUT_VIRT(NAME, PGROUP, PID, CTRLTYPE, CTRLID, MODE, INITVALUE, dummy1, dummy2) \
 	memset(&synth_param[CTRLID], 0, sizeof(synth_param[0])); \
 	synth_param[CTRLID].port = -1; \
 	synth_param[CTRLID].last = 0xfff0; \
@@ -152,9 +152,9 @@ void synth_mapping_init()
 
 void synth_mapping_reset()
 {
-#define OUTPUT(NAME, PGROUP, PID, CTRLTYPE, CTRLID, MODE, INITVALUE) \
+#define OUTPUT(NAME, PGROUP, PID, CTRLTYPE, CTRLID, MODE, INITVALUE, dummy1, dummy2) \
 		synth_param[CTRLID].sum = 0;
-#define OUTPUT_VIRT(NAME, PGROUP, PID, CTRLTYPE, CTRLID, MODE, INITVALUE) \
+#define OUTPUT_VIRT(NAME, PGROUP, PID, CTRLTYPE, CTRLID, MODE, INITVALUE, dummy1, dummy2) \
 		synth_param[CTRLID].sum = 0;
 #include "../../interface/paramdef.h"
 #undef OUTPUT
@@ -171,10 +171,10 @@ void synth_mapping_run()
 	do_output_log(CTRLID, PID);
 #define DO_OUTPUT_CUSTOM(NAME, CTRLID, PID) \
 	do_output_##NAME(CTRLID, PID);
-#define OUTPUT(NAME, PGROUP, PID, CTRLTYPE, CTRLID, MODE, INITVALUE) \
+#define OUTPUT(NAME, PGROUP, PID, CTRLTYPE, CTRLID, MODE, INITVALUE, dummy1, dummy2) \
 	DO_OUTPUT_##MODE(NAME, CTRLID, PORTID(PGROUP, PID));
 
-#define OUTPUT_VIRT(NAME, PGROUP, PID, CTRLTYPE, CTRLID, MODE, INITVALUE)
+#define OUTPUT_VIRT(NAME, PGROUP, PID, CTRLTYPE, CTRLID, MODE, INITVALUE, dummy1, dummy2)
 
 #include "../../interface/paramdef.h"
 
@@ -185,10 +185,10 @@ void synth_mapping_run()
 #undef OUTPUT
 #undef OUTPUT_VIRT
 
-#define OUTPUT_VIRT(NAME, PGROUP, PID, CTRLTYPE, CTRLID, MODE, INITVALUE) \
+#define OUTPUT_VIRT(NAME, PGROUP, PID, CTRLTYPE, CTRLID, MODE, INITVALUE, dummy1, dummy2) \
 	virt_##NAME();
 
-#define OUTPUT(NAME, PGROUP, PID, CTRLTYPE, CTRLID, MODE, INITVALUE)
+#define OUTPUT(NAME, PGROUP, PID, CTRLTYPE, CTRLID, MODE, INITVALUE, dummy1, dummy2)
 #define SWITCH(NAME, ID, DEFAULT)
 
 #include "../../interface/paramdef.h"

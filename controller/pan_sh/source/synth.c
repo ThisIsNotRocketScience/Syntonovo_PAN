@@ -840,28 +840,28 @@ void do_output_VCO7_DRY_MIX(int ctrlid, int port)
 	}
 }
 
-void do_output_VCF2_L_MIX(int ctrlid, int port)
+void do_output_VCF2_A_MIX(int ctrlid, int port)
 {
 	if (process_param_log_add(ctrlid, 0, chase_vcf(0))) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
 }
 
-void do_output_VCF2_M1_MIX(int ctrlid, int port)
+void do_output_VCF2_B_MIX(int ctrlid, int port)
 {
 	if (process_param_log_add(ctrlid, 0, chase_vcf(1))) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
 }
 
-void do_output_VCF2_M2_MIX(int ctrlid, int port)
+void do_output_VCF2_C_MIX(int ctrlid, int port)
 {
 	if (process_param_log_add(ctrlid, 0, chase_vcf(2))) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
 }
 
-void do_output_VCF2_H_MIX(int ctrlid, int port)
+void do_output_VCF2_D_MIX(int ctrlid, int port)
 {
 	if (process_param_log_add(ctrlid, 0, chase_vcf(3))) {
 		ports_value(port, synth_param[ctrlid].last);

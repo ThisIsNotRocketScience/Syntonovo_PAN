@@ -1,10 +1,10 @@
 #pragma once
 
 enum output_t {
-#define OUTPUT(name,codecport,codecpin, type,id, style,defaultvalue) \
+#define OUTPUT(name,codecport,codecpin, type,id, style,defaultvalue,dummy1,dummy2) \
 	output_##name = id,
 
-#define OUTPUT_VIRT(name,codecport,codecpin, type,id, style,defaultvalue) \
+#define OUTPUT_VIRT(name,codecport,codecpin, type,id, style,defaultvalue,dummy1,dummy2) \
 	output_##name = id,
 
 #include "../../../interface/paramdef.h"
