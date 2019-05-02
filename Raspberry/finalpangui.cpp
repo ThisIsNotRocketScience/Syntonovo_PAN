@@ -17,6 +17,11 @@ PanState_t gPanState;
 
 Gui gGui;
 
+void cmd_pad_zero();
+void cmd_calibrate();
+void cmd_preset_load(int presetid);
+void cmd_preset_save(int presetid);
+
 bool IsCenterEncoder(FinalEncoderEnum button)
 {
 	switch (button)
@@ -643,7 +648,8 @@ void LoadSelectedPreset()
 	}
 
 	printf("Pan should load preset %d from bank %c.\n", idx, bank + 'A');
-
+	// there is space for 256 presets
+	cmd_preset_load((bank << 4) + idx);
 }
 
 void LoadPatch(int n)
