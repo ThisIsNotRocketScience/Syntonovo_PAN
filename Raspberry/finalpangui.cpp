@@ -106,6 +106,25 @@ void FinalPan_SetupDefaultPreset()
 	gRevertPreset.SetName("Fancy Beeping");
 	gCurrentPreset.SetName("Fancy Beeping");
 
+
+	for (int i = 0; i < SYNTH_MODSOURCE_COUNT; i++)
+	{
+		for (int j = 0; j < MODTARGET_COUNT; j++)
+		{
+			gCurrentPreset.modmatrix[i].targets[j].depth = 0x8000;
+			gCurrentPreset.modmatrix[i].targets[j].outputid = 0;
+			gCurrentPreset.modmatrix[i].targets[j].sourceid = 0xff;
+		}
+	}
+	gCurrentPreset.modmatrix[0x10].targets[0].depth = 0xffff;
+	gCurrentPreset.modmatrix[0x10].targets[0].outputid = 0;
+	gCurrentPreset.modmatrix[0x10].targets[0].sourceid = Output_VCF1_LEVEL;
+
+	gCurrentPreset.modmatrix[0x20].targets[0].depth = 0xffff;
+	gCurrentPreset.modmatrix[0x20].targets[0].outputid = 0;
+	gCurrentPreset.modmatrix[0x20].targets[0].sourceid = Output_MASTER_PITCH;
+
+	
 };
 
 int GetSideButtonID(FinalLedButtonEnum B);
@@ -470,7 +489,7 @@ void _control_t::RenderBoxVertical(int x, int y, int val, int mode, bool active)
 	{
 		ImVec2 br2 = br;
 		float y1 = tl.y + ParamVerticalBoxHeight/2;
-		float y2 = tl.y + (val * ParamVerticalBoxHeight) / 0xffff;
+		float y2 = tl.y + ((0xffff-val) * ParamVerticalBoxHeight) / 0xffff;
 		ImVec2 tl2 = tl;
 		tl2.y = __min(y1, y2);
 		br2.y = __max(y1, y2);
@@ -700,7 +719,7 @@ _screensetup_t::_screensetup_t(_screensetup_t *parent)
 
 
 
-uint16_t _screensetup_t::GetParameterValue(int param)
+uint16_t _screensetup_t::GetParameterValue(int param, int encoderset)
 {
 	return gCurrentPreset.paramvalue[param];
 }

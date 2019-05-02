@@ -58,7 +58,7 @@ class _control_t
 public:
 
 	virtual void SketchRightDelta(int delta);
-	virtual uint16_t GetParameterValue(int param) { return 0; };
+	virtual uint16_t GetParameterValue(int param, int encodersset) { return 0; };
 	virtual void TweakParameterValue(int param, int delta) { };
 
 	int style;
@@ -173,7 +173,7 @@ public:
 	std::vector<int> LedButtonsThatOpenThisScreen;
 
 	_screensetup_t(_screensetup_t *parent = NULL);
-	virtual uint16_t GetParameterValue(int param);
+	virtual uint16_t GetParameterValue(int param, int encoderset);
 	virtual void TweakParameterValue(int param, int delta) ;
 	virtual void SetupEncoderSet(int n);
 

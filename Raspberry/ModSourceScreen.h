@@ -13,7 +13,7 @@ public:
 
 	ModSource_t modType;
 	bool HasActiveInstanceDisplay;
-	virtual uint16_t GetParameterValue(int param);
+	virtual uint16_t GetParameterValue(int param, int encoderset);
 	virtual void TweakParameterValue(int param, int delta);
 	ModSource_t ModTypeFromScreen(Screens_t screen);
 	ModSourceScreen(Screens_t screen);

@@ -207,9 +207,8 @@ public:
 	void TweakParameter(OutputEnum param, int delta, int deltamod = 0x800)
 	{
 		int OrigVal = paramvalue[param];
-		int32_t val = OrigVal + delta * 1000;
-		if (val < 0) val = 0;
-		if (val > 0xffff) val = 0xffff;
+		int32_t val = OrigVal + delta * deltamod;
+		if (val < 0) val = 0;else if (val > 0xffff) val = 0xffff;
 		paramvalue[param] = val;
 	}
 
@@ -232,6 +231,18 @@ public:
 #define SYNTH_MODSOURCE_COUNT (64)
 	ModMatrixRow_t modmatrix[SYNTH_MODSOURCE_COUNT];
 
+	void TweakModMatrix(ModSource_t mod, int instance, int id, int delta, int deltamod = 0x800)
+	{
+		auto row = GetModSourceRow(mod, instance);
+		
+		int OrigVal = row->targets[id].depth;
+		int32_t val = OrigVal + delta * deltamod;
+		if (val < 0) val = 0; else if (val > 0xffff) val = 0xffff;
+		row->targets[id].depth = val;
+
+
+		
+	}
 
 	ModMatrixRow_t *GetModSourceRow(ModSource_t mod, int instance)
 	{

@@ -3,14 +3,29 @@
 #include "ModSourceScreen.h"
 
 
-uint16_t ModSourceScreen::GetParameterValue(int param)
+uint16_t ModSourceScreen::GetParameterValue(int param, int encoderset)
 {
-	return gCurrentPreset.GetModParameterValue((ModParameters)param, ActiveInstance);
+	if (encoderset == 0)
+	{
+		return gCurrentPreset.GetModParameterValue((ModParameters)param, ActiveInstance);
+	}
+	else
+	{
+		auto row = gCurrentPreset.GetModSourceRow(modType, ActiveInstance);
+		return row->targets[param].depth;
+	}
 };
 
 void ModSourceScreen::TweakParameterValue(int param, int delta)
 {
-	gCurrentPreset.TweakModulation((ModParameters)param, ActiveInstance, delta);
+	if (currentencoderset == 0)
+	{
+		gCurrentPreset.TweakModulation((ModParameters)param, ActiveInstance, delta);
+	}
+	else
+	{
+		gCurrentPreset.TweakModMatrix(modType, ActiveInstance, param, delta);
+	}
 }
 
 ModSource_t ModSourceScreen::ModTypeFromScreen(Screens_t screen)
@@ -41,6 +56,7 @@ ModSourceScreen::ModSourceScreen(Screens_t screen)
 	MaxInstances = 16;
 	ActiveInstance = 0;
 	myScreen = screen;
+	HasActiveInstanceDisplay = false;
 	modType = ModTypeFromScreen(screen);
 	switch (myScreen)
 	{
@@ -74,6 +90,8 @@ ModSourceScreen::ModSourceScreen(Screens_t screen)
 	for (int i = 0; i < 11; i++)
 	{
 		encoders[1][i].enabled = true;
+		encoders[1][i].target = i;
+		encoders[1][i].Set= 1;
 		encoders[1][i].style = MenuEntry_ModMatrixValue;
 		char txt[30];
 		snprintf(txt,30, "target %d", i);
