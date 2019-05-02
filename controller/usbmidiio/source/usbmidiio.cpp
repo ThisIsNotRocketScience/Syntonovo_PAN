@@ -1302,6 +1302,58 @@ void LedTask( void * pvParameters )
 
 }
 
+#include "fsl_nor_flash.h"
+#include "fsl_spifi_nor_flash.h"
+
+#define FLASH_PAGE_SIZE (256)
+#define SECTOR_SIZE (4096)
+#define EXAMPLE_SPI_BAUDRATE (96000000)
+#define SPIFI_CLOCK_FREQ_MIN (24000000)
+#define SPIFI_CLOCK_FREQ_MAX (96000000)
+#define NOR_FLASH_START_ADDRESS  FSL_FEATURE_SPIFI_START_ADDR
+
+void SPIFI_Clock(spifi_nor_clock_init_t clock)
+{
+	uint32_t sourceClockFreq;
+
+	switch(clock)
+	{
+		case kSpifiNorClockInit_Max:
+	    sourceClockFreq = CLOCK_GetCoreSysClkFreq();
+	    CLOCK_SetClkDiv(kCLOCK_DivSpifiClk, sourceClockFreq / SPIFI_CLOCK_FREQ_MAX, false);
+	    break;
+		case kSpifiNorClockInit_Sdfp:
+        default:
+	    sourceClockFreq = CLOCK_GetCoreSysClkFreq();
+	    /* Set the clock divider. */
+	    CLOCK_SetClkDiv(kCLOCK_DivSpifiClk, sourceClockFreq / SPIFI_CLOCK_FREQ_MIN, false);
+	    break;
+	}
+}
+
+extern nor_config_t norConfig;
+nor_handle_t norHandle = {NULL};
+
+spifi_mem_nor_config_t spifiMemConfig = {
+    .clockInit = SPIFI_Clock,
+    .cmd_format = kSPIFI_CommandDataQuad,
+    .quad_mode_setting = 0,
+};
+
+nor_config_t norConfig = {
+    .memControlConfig = (void *)&spifiMemConfig,
+    .driverBaseAddr = (void *)SPIFI0,
+};
+
+void spifi_init()
+{
+    int status = Nor_Flash_Init(&norConfig, &norHandle);
+    if (status != kStatus_Success)
+    {
+        printf("\r\n***NOR Flash Initialization Failed!***\r\n");
+    }
+}
+
 int main(void) {
   	/* Init board hardware. */
 	BOARD_InitBootPins();
@@ -1333,6 +1385,8 @@ int main(void) {
     CLOCK_EnableClock(kCLOCK_Gpio1);
     CLOCK_EnableClock(kCLOCK_Gpio2);
     CLOCK_EnableClock(kCLOCK_Gpio3);
+
+    //spifi_init();
 
     control_init();
 

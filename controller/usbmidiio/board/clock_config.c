@@ -66,6 +66,7 @@ outputs:
 - {id: FXCOM7_clock.outFreq, value: 48 MHz}
 - {id: MAIN_clock.outFreq, value: 180 MHz}
 - {id: SCT_clock.outFreq, value: 180 MHz}
+- {id: SPIFI_clock.outFreq, value: 20 MHz}
 - {id: SYSPLL_clock.outFreq, value: 180 MHz}
 - {id: System_clock.outFreq, value: 180 MHz}
 - {id: USB1_clock.outFreq, value: 48 MHz}
@@ -84,6 +85,8 @@ settings:
 - {id: SYSCON.PDEC.scale, value: '2', locked: true}
 - {id: SYSCON.SCTCLKDIV.scale, value: '1', locked: true}
 - {id: SYSCON.SCTCLKSEL.sel, value: SYSCON.MAINCLKSELB}
+- {id: SYSCON.SPIFICLKDIV.scale, value: '9', locked: true}
+- {id: SYSCON.SPIFICLKSEL.sel, value: SYSCON.PLL_BYPASS}
 - {id: SYSCON.USB1CLKSEL.sel, value: SYSCON.USBDIRECT}
 - {id: SYSCON.USBPLL_PSEL.scale, value: '4', locked: true}
 - {id: SYSCON.USB_M_MULT.scale, value: '16', locked: true}
@@ -164,6 +167,7 @@ void BOARD_BootClockRUN(void)
     CLOCK_AttachClk(kAUDIO_PLL_to_FLEXCOMM2);                  /*!< Switch FLEXCOMM2 to AUDIO_PLL */
     CLOCK_AttachClk(kAUDIO_PLL_to_FLEXCOMM7);                  /*!< Switch FLEXCOMM7 to AUDIO_PLL */
     CLOCK_AttachClk(kMCLK_to_SCT_CLK);                  /*!< Switch SCT_CLK to MAIN_CLK */
+    CLOCK_AttachClk(kSYS_PLL_to_SPIFI_CLK);                  /*!< Switch SPIFI_CLK to SYS_PLL */
     SYSCON->MAINCLKSELA = ((SYSCON->MAINCLKSELA & ~SYSCON_MAINCLKSELA_SEL_MASK) | SYSCON_MAINCLKSELA_SEL(0U)); /*!< Switch MAINCLKSELA to FRO12M even it is not used for MAINCLKSELB */
     /* Set SystemCoreClock variable. */
     SystemCoreClock = BOARD_BOOTCLOCKRUN_CORE_CLOCK;
