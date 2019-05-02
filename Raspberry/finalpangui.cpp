@@ -17,6 +17,11 @@ PanState_t gPanState;
 
 Gui gGui;
 
+void cmd_pad_zero();
+void cmd_calibrate();
+void cmd_preset_load(int presetid);
+void cmd_preset_save(int presetid);
+
 bool IsCenterEncoder(FinalEncoderEnum button)
 {
 	switch (button)
@@ -42,7 +47,7 @@ int GetAssociatedParameter(FinalEncoderEnum button)
 	{
 
 	case encoder_Masterout: return Output_MASTER_LEVEL;
-	case encoder_MasteroutHeadphone: return -1; // TODO -> headphone level?
+	case encoder_MasteroutHeadphone: return Output_MASTER_LEVEL; // TODO -> headphone level?
 
 												// 8 on left side
 	case encoder_VCO1: return Output_VCO1_PITCH;
@@ -56,10 +61,10 @@ int GetAssociatedParameter(FinalEncoderEnum button)
 
 												  // 8 on right side
 	case encoder_VCF1Freq: return Output_VCF1_CV;
-	case encoder_VCF2a: return Output_VCF2_L_CV;
-	case encoder_VCF2b: return Output_VCF2_M1_CV;
-	case encoder_VCF2c: return Output_VCF2_M2_CV;
-	case encoder_VCF2d: return Output_VCF2_H_CV;
+	case encoder_VCF2a: return Output_VCF2_A_CV;
+	case encoder_VCF2b: return Output_VCF2_B_CV;
+	case encoder_VCF2c: return Output_VCF2_C_CV;
+	case encoder_VCF2d: return Output_VCF2_D_CV;
 	case encoder_Cleanmix: return Output_CLEANF_LEVEL;
 	case encoder_VCF2Mix: return Output_VCF2_LEVEL;
 	case encoder_VCF1Mix: return Output_VCF1_LEVEL;
@@ -79,8 +84,8 @@ void FinalPan_SetupDefaultPreset()
 {
 
 #define SWITCH(name,id,defaultvalue) 	gCurrentPreset.PutSwitch(Switch_##name , defaultvalue>0?true:false);gRevertPreset.PutSwitch(Switch_##name , defaultvalue>0?true:false);   
-#define OUTPUT(name,codecport,codecpin, type,id, style,defaultvalue) 	gCurrentPreset.paramvalue[id] = gRevertPreset.paramvalue[id] = defaultvalue;
-#define OUTPUT_VIRT(name,codecport,codecpin, type,id, style,defaultvalue) gCurrentPreset.paramvalue[id] = gRevertPreset.paramvalue[id] = defaultvalue;
+#define OUTPUT(name,codecport,codecpin, type,id, style,defaultvalue,Label, Category) 	gCurrentPreset.paramvalue[id] = gRevertPreset.paramvalue[id] = defaultvalue;
+#define OUTPUT_VIRT(name,codecport,codecpin, type,id, style,defaultvalue,Label, Category) gCurrentPreset.paramvalue[id] = gRevertPreset.paramvalue[id] = defaultvalue;
 #include "../interface/paramdef.h"
 #undef OUTPUT
 #undef OUTPUT_VIRT
@@ -146,8 +151,8 @@ FinalPan_GuiResources_t gGuiResources;
 
 enum ParamEnum
 {
-#define OUTPUT(name,codecport,codecpin, type,id, style,defaultvalue) Param_##name = id,
-#define OUTPUT_VIRT(name,codecport,codecpin, type,id, style,defaultvalue) Param_##name = id,
+#define OUTPUT(name,codecport,codecpin, type,id, style,defaultvalue,Label, Category) Param_##name = id,
+#define OUTPUT_VIRT(name,codecport,codecpin, type,id, style,defaultvalue,Label, Category) Param_##name = id,
 #include "../interface/paramdef.h"
 #undef OUTPUT
 #undef OUTPUT_VIRT
@@ -643,7 +648,8 @@ void LoadSelectedPreset()
 	}
 
 	printf("Pan should load preset %d from bank %c.\n", idx, bank + 'A');
-
+	// there is space for 256 presets
+	cmd_preset_load((bank << 4) + idx);
 }
 
 void LoadPatch(int n)
@@ -1389,9 +1395,9 @@ Screens_t GetPage(FinalEncoderEnum Button)
 		// 8 on right side
 	case encoder_VCF1Freq: return SCREEN_VCF1;
 	case encoder_VCF2a: return SCREEN_VCF2a;
-	case encoder_VCF2b: return SCREEN_VCF2a;
-	case encoder_VCF2c: return SCREEN_VCF2a;
-	case encoder_VCF2d: return SCREEN_VCF2a;
+	case encoder_VCF2b: return SCREEN_VCF2b;
+	case encoder_VCF2c: return SCREEN_VCF2c;
+	case encoder_VCF2d: return SCREEN_VCF2d;
 	case encoder_Cleanmix: return SCREEN_CLEANMIX;
 	case encoder_VCF2Mix: return SCREEN_VCF2MIX;
 	case encoder_VCF1Mix: return SCREEN_VCF1MIX;

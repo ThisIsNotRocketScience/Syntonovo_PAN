@@ -240,10 +240,17 @@ enum
 	BOX_INV
 };
 
+enum ModulationTargetCategories
+{
+#define CATEGORY(enumname, desc) Category_##enumname, 
+#include "../interface/paramdef.h"
+#undef CATEGORY
+};
+
 enum OutputEnum
 {
-#define OUTPUT(name,codecport,codecpin, type,id, style,defaultvalue) Output_##name = id,
-#define OUTPUT_VIRT(name,codecport,codecpin, type,id, style,defaultvalue) Output_##name = id,
+#define OUTPUT(name,codecport,codecpin, type,id, style,defaultvalue,Label, Category) Output_##name = id,
+#define OUTPUT_VIRT(name,codecport,codecpin, type,id, style,defaultvalue, Label, Category) Output_##name = id,
 #include "../interface/paramdef.h"
 #undef OUTPUT
 #undef OUTPUT_VIRT

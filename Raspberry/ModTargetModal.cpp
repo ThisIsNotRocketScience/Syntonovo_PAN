@@ -1,51 +1,77 @@
 #include <stdio.h>
-
+#include <algorithm>
 #include "ModTargetModal.h"
 
-
+#define MODULATIONTARGETNAMELENGTH 100
 typedef struct ModulationTargetOutputEntries_t
 {
-	const char *name;
+	char name[MODULATIONTARGETNAMELENGTH];
 	int targetid;
 	int categoryid;
 } ModulationTargetOutputEntries_t;
 
-const char *CategoryNames[]=
+
+typedef struct CategoryDesc_t
 {
-	"VCO1",
-	"VCO2",
-	"VCO3",
-	"VCO4",
-	"VCO5",
-	"VCO6",
-	"VCO7",
-	"VCO8",
-	"VCF1",
-	"VCF2",
-	"VCF1 Mixer",
-	"VCF2 Mixer",
-	"Cleanfeed Mixer",
-	"Effect",
+	int id;
+	char *label;
+} CategoryDesc_t;
+
+const CategoryDesc_t Categories[]=
+{
+#define CATEGORY(enumname, desc) {Category_##enumname, desc},
+#include "../interface/paramdef.h"
+#undef CATEGORY
 };
 
-
-ModulationTargetOutputEntries_t Entries[] = {
-
-//#include "PanUiMap.h"
-	{ "Pitch"     , Output_VCO1_FREQ,0},
-	{ "Pulsewidth", Output_VCO1_PW,0 },
-{ "Pitch"     , Output_VCO2_FREQ,1 },
-{ "Pulsewidth", Output_VCO2_PW,1 },
-{ "Pitch"     , Output_VCO3_FREQ,2 },
-{ "Pulsewidth", Output_VCO3_PW,2 },
+std::vector<ModulationTargetOutputEntries_t *> ModulationTargetList;
+bool SortList(ModulationTargetOutputEntries_t *A, ModulationTargetOutputEntries_t *B)
+{
+	if (A->categoryid < B->categoryid) return true;
+	return false;
 };
+
+void BuildList()
+{
+#define OUTPUT(outname,codecport,codecpin, type,id, style,defaultvalue, label, categorylbl)if (Category_##categorylbl != Category_IGNORE) {ModulationTargetOutputEntries_t *t = new ModulationTargetOutputEntries_t();snprintf(t->name, MODULATIONTARGETNAMELENGTH,"%s", label);t->targetid = Output_##outname; t->categoryid = Category_##categorylbl ; ModulationTargetList.push_back(t);  }
+#define OUTPUT_VIRT(outname,codecport,codecpin, type,id, style,defaultvalue, label, categorylbl)if (Category_##categorylbl != Category_IGNORE){ModulationTargetOutputEntries_t *t = new ModulationTargetOutputEntries_t();snprintf(t->name, MODULATIONTARGETNAMELENGTH,"%s", label);t->targetid = Output_##outname; t->categoryid = Category_##categorylbl ; ModulationTargetList.push_back(t);  }
+#include "../interface/paramdef.h"
+#undef OUTPUT
+#undef OUTPUT_VIRT
+	;
+	
+	std::sort (ModulationTargetList.begin(), ModulationTargetList.end(), [](ModulationTargetOutputEntries_t * a, ModulationTargetOutputEntries_t * b) {return a->categoryid < b->categoryid; });
+};
+bool modulationlistbuilt = false;
 
 void TargetList::Render(bool active, float dt)
 {
+	if (modulationlistbuilt == false)
+	{
+		BuildList();
+		modulationlistbuilt = true;
+	}
+	int LastCategory = -1;
+	ImGui::PushFont(gGuiResources.TinyFont);
 	for (int i = 0; i < PageLength; i++)
 	{
+		int idx = i + this->Current;
+		if (idx < ModulationTargetList.size() && idx >= 0)
+		{
+			auto c = ModulationTargetList[idx];
+			if (c->categoryid != LastCategory)
+			{
+				LastCategory = c->categoryid;
+				auto R = ImGui::CalcTextSize(Categories[c->categoryid].label);
+				ImGui::SetCursorPos(ImVec2(200 - R.x - ParamMasterMargin, i * 30 + 40));
+				ImGui::Text(Categories[c->categoryid].label);
 
+			}
+			ImGui::SetCursorPos(ImVec2(200, i * 30 + 40));
+			ImGui::Text(c->name);
+		}
 	}
+	ImGui::PopFont();
 }
 
 
