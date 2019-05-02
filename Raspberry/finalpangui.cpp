@@ -42,7 +42,7 @@ int GetAssociatedParameter(FinalEncoderEnum button)
 	{
 
 	case encoder_Masterout: return Output_MASTER_LEVEL;
-	case encoder_MasteroutHeadphone: return -1; // TODO -> headphone level?
+	case encoder_MasteroutHeadphone: return Output_MASTER_LEVEL; // TODO -> headphone level?
 
 												// 8 on left side
 	case encoder_VCO1: return Output_VCO1_PITCH;

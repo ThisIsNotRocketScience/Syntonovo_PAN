@@ -43,8 +43,12 @@ CATEGORY(Cleanfeed, "Cleanfeed")
 CATEGORY(VCF1MIX, "VCF1 input mix")
 CATEGORY(VCF2MIX, "VCF2 input mix")
 CATEGORY(CLEANMIX, "Cleanfeed input mix")
+
 CATEGORY(MASTERMIX, "Master mix")
 CATEGORY(FX, "Output Effects")
+CATEGORY(EXTERNAL, "External outputs")
+CATEGORY(MODULATION, "Modulation Parameters")
+
 CATEGORY(IGNORE, "to be ignored - for internal use only")
 
 
