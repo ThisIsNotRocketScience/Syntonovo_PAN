@@ -32,12 +32,12 @@ const char *CategoryNames[]=
 ModulationTargetOutputEntries_t Entries[] = {
 
 //#include "PanUiMap.h"
-	{ "Pitch"     , Output_VCO1_FREQ,0},
-	{ "Pulsewidth", Output_VCO1_PW,0 },
-{ "Pitch"     , Output_VCO2_FREQ,1 },
-{ "Pulsewidth", Output_VCO2_PW,1 },
-{ "Pitch"     , Output_VCO3_FREQ,2 },
-{ "Pulsewidth", Output_VCO3_PW,2 },
+	{ "Pitch"     , Output_VCO1_FREQ,0 },
+	{ "Pulsewidth", Output_VCO1_PW,0   },
+	{ "Pitch"     , Output_VCO2_FREQ,1 },
+	{ "Pulsewidth", Output_VCO2_PW,1   },
+	{ "Pitch"     , Output_VCO3_FREQ,2 },
+	{ "Pulsewidth", Output_VCO3_PW,2   },
 };
 
 void TargetList::Render(bool active, float dt)
