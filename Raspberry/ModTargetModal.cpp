@@ -68,7 +68,9 @@ int FindModulationListIndex(int c)
 
 const char *GetModulationTargetName(int Output)
 {
-	return ModulationTargetList[FindModulationListIndex(Output)]->name;
+	int idx = FindModulationListIndex(Output);
+	if (idx < 0) idx = 0;
+	return ModulationTargetList[idx]->name;
 }
 void TargetList::SetCurrent(int c)
 {
@@ -83,6 +85,8 @@ void TargetList::SketchRightDelta(int delta)
 
 	Current = ModulationTargetList[CurrentIDX]->targetid;
 	((ModTargetModal*)Parent)->SetOutput(Current);
+
+
 
 
 	while (CurrentIDX > PageEnd - 1)
@@ -195,6 +199,7 @@ void ModTargetModal::Activate()
 		encoders[0][i].SetTitle("modulation");
 	}
 	encoders[0][TargetID].enabled = true;
+	encoders[0][TargetID].SetTitle(GetModulationTargetName(OriginalOutputID));
 	
 }
 

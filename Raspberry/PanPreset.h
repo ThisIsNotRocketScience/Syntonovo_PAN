@@ -14,7 +14,7 @@
 #endif
 
 #define PRESET_COUNT 256
-
+#define NOMODTARGET 0xFF
 #define MODTARGET_COUNT (11)
 typedef struct
 {

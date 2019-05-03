@@ -25,8 +25,11 @@ public:
 	
 	ModTargetModal theModTargetModal;
 	virtual void Deactivate();
+	virtual void RepeatGoto();
+	int FindNextUsed(int start);
 
 	void OpenTargetModal(int modtarget);
 	virtual void Render(bool active, float DT);
 	virtual void Activate();
+	void SetEncoderNames();
 };

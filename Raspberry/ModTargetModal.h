@@ -59,7 +59,7 @@ public:
 	int OriginalSourceID;
 
 	void SetOutput(int newOut);
-
+	
 	virtual uint16_t GetParameterValue(int param, int encoderset);
 
 	int Instance;

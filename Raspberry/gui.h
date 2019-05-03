@@ -65,6 +65,8 @@ typedef struct FinalPan_GuiResources_t
 	ImFont *SmallFont;
 	ImFont *MediumFont;
 	ImU32 Highlight;
+
+	ImU32 GhostBG;
 	ImU32 Normal;
 	ImU32 BGColor;
 	ImU32 ModalBGColor;
@@ -74,6 +76,9 @@ typedef struct FinalPan_GuiResources_t
 	int encoderheight;
 
 	ImTextureID BgImages[1];
+
+	bool referencelines;
+	bool testimage;
 } FinalPan_GuiResources_t;
 
 extern FinalPan_GuiResources_t gGuiResources; 
@@ -222,7 +227,7 @@ public:
 	//std::vector<_screensetup_t *> SubScreens;
 
 	std::vector<_control_t *> ControlsInOrder;
-
+	virtual void RepeatGoto() {};
 	virtual void RegisterNewChild(_control_t *newcontrol) { ControlsInOrder.push_back(newcontrol); }
 	int ActiveControl;
 	_screensetup_t *Modal;

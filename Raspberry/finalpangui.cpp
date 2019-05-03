@@ -117,8 +117,8 @@ void FinalPan_SetupDefaultPreset()
 		for (int j = 0; j < MODTARGET_COUNT; j++)
 		{
 			gCurrentPreset.modmatrix[i].targets[j].depth = 0;
-			gCurrentPreset.modmatrix[i].targets[j].outputid = 0;
-			gCurrentPreset.modmatrix[i].targets[j].sourceid = 0xff;
+			gCurrentPreset.modmatrix[i].targets[j].outputid = NOMODTARGET;
+			gCurrentPreset.modmatrix[i].targets[j].sourceid = 0;
 		}
 	}
 	gCurrentPreset.modmatrix[0x10].targets[0].depth = 0xffff;
@@ -449,7 +449,7 @@ void _control_t::RenderBox(int x, int y, int val, int mode, bool active)
 void _control_t::RenderBoxVertical(int x, int y, int val, int mode, bool active)
 {
 	ImVec2 p = ImVec2(x, y);// +ImGui::GetTextLineHeight());
-	p.x += 10;
+	p.x -= ParamBoxDim/2;
 	ImVec2 tl = p;
 	ImVec2 br = tl;
 	br.x += ParamBoxDim;
@@ -467,6 +467,12 @@ void _control_t::RenderBoxVertical(int x, int y, int val, int mode, bool active)
 
 		//ImGui::GetWindowDrawList()->AddRectFilled(tl2, br2, CalcFillColor(val, active));
 		ImGui::GetWindowDrawList()->AddRect(tl2, br2, active ? gGuiResources.Highlight : gGuiResources.Normal, 0, 0, 2);
+	}
+	break;
+
+	case BOX_GHOST:
+	{
+		ImGui::GetWindowDrawList()->AddRectFilled(tl, br, gGuiResources.GhostBG);
 	}
 	break;
 	case BOX_INV:
@@ -715,6 +721,7 @@ void FinalPan_LoadResources()
 	gGuiResources.Normal = IM_COL32(255, 255, 255, 255);
 	gGuiResources.BGColor = IM_COL32(0, 58, 66, 255);
 	gGuiResources.ModalBGColor = IM_COL32(0, 58, 66, 140);
+	gGuiResources.GhostBG = IM_COL32(0, 0, 0, 200);
 	//res.BGColor = IM_COL32(0, 0, 0, 255);
 	gGuiResources.FillColor = IM_COL32(0, 137, 127, 255);
 	gGuiResources.OnOff[0] = Raspberry_LoadTexture("UI_ONOFF_OFF.png");
@@ -734,7 +741,8 @@ void FinalPan_LoadResources()
 	gGuiResources.MediumFont = io.Fonts->AddFontFromFileTTF("Fontfabric - Panton.otf", 38.0f);
 	//gGuiResources.BigFont = io.Fonts->AddFontFromFileTTF("Fontfabric - Panton ExtraBold.otf", 44.0f);
 
-
+	gGuiResources.referencelines = false;
+	gGuiResources.testimage = false;
 	gGuiResources.BigFont = io.Fonts->AddFontFromFileTTF("Petronius-Roman.ttf", 38.0f);
 	init = true;
 
@@ -808,7 +816,7 @@ Gui::Gui()
 void Gui::Init()
 {
 	BuildScreens();
-	CurrentScreen = SCREEN_LOGO;
+	CurrentScreen = SCREEN_ENVELOPE;
 }
 
 void Gui::SketchLeftPress()
@@ -1203,7 +1211,8 @@ void Gui::BuildScreens()
 	Screens[SCREEN_HOME]->EnableButton(9, "Revert", MenuEntry_Action, MenuAction_Revert);
 	Screens[SCREEN_HOME]->EnableButton(10, "System", MenuEntry_Page, SCREEN_SYSTEM);
 	Screens[SCREEN_HOME]->EnableButton(12, "Colors", MenuEntry_Page, SCREEN_COLORS);
-	Screens[SCREEN_HOME]->EnableButton(13, "Test-image", MenuEntry_Page, SCREEN_TEST);
+	Screens[SCREEN_HOME]->EnableButton(5, "Reference Lines", MenuEntry_Action, MenuAction_EnableReferenceLines);
+	Screens[SCREEN_HOME]->EnableButton(6, "Test-image", MenuEntry_Action, MenuAction_EnableTestImage);
 
 	Screens[SCREEN_PRESET]->SetTitle("Edit Name/Category");
 
@@ -1323,17 +1332,26 @@ void Gui::BuildScreens()
 	}
 }
 
+
 void Gui::Render(bool active, float dt)
 {
 	Screens[CurrentScreen]->Render(active, dt);
 
+	if (gGuiResources.referencelines)
+	{
+		for (int i = 0; i < 11; i++)
+		{
+			int X = GetEncoderX(i);
+			ImGui::GetWindowDrawList()->AddLine(ImVec2(X, 0), ImVec2(X, 1024), gGuiResources.Normal, 2);
+		}
+	}
 }
 
 void Gui::GotoPage(Screens_t s)
 {
 	if (CurrentScreen == s)
 	{
-		// maybe rotate through pages if they exist??
+		CS()->RepeatGoto();
 	}
 	else
 	{

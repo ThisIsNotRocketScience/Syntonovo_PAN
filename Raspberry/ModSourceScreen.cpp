@@ -98,17 +98,19 @@ ModSourceScreen::ModSourceScreen(Screens_t screen)
 	}
 	EnableButton(9, "Parameters", MenuEntry_EncoderSet, 0);
 	EnableButton(10, "Targets", MenuEntry_EncoderSet, 1);
-
+	
+	auto row = gCurrentPreset.GetModSourceRow(modType, ActiveInstance);
+	
 	for (int i = 0; i < 11; i++)
 	{
 		encoders[1][i].enabled = true;
 		encoders[1][i].target = i;
 		encoders[1][i].Set= 1;
 		encoders[1][i].style = MenuEntry_ModMatrixValue;
-		char txt[30];
-		snprintf(txt,30, "target %d", i);
-		encoders[1][i].SetTitle(txt);
+		
+//		encoders[1][i].SetTitle(GetModulationTargetName(row->targets[i].outputid));		
 	}
+	SetEncoderNames();
 }
 
 void ModSourceScreen::Deactivate()
@@ -116,14 +118,58 @@ void ModSourceScreen::Deactivate()
 	Modal = NULL;
 }
 
+void ModSourceScreen::SetEncoderNames()
+{
+	auto row = gCurrentPreset.GetModSourceRow(modType, ActiveInstance);
+
+	for (int i = 0; i < 11; i++)
+	{
+		encoders[1][i].enabled = true;
+		encoders[1][i].target = i;
+		encoders[1][i].Set = 1;
+		encoders[1][i].style = row->targets[i].outputid!= NOMODTARGET ? MenuEntry_ModMatrixValue: MenuEntry_Ghosted;
+		
+		encoders[1][i].SetTitle(GetModulationTargetName(row->targets[i].outputid));
+	}
+}
+
+int ModSourceScreen::FindNextUsed(int start)
+{
+	for (int i = 0; i < 15; i++)
+	{
+		bool used = false;
+
+		auto row = gCurrentPreset.GetModSourceRow(modType, (i + start + 1) % 16);
+		for (int j = 0; j < MODTARGET_COUNT; j++)
+		{
+			if (row->targets[j].depth != 0 && row->targets[j].outputid != -1) used = true;
+		};
+		if (used) return (i + start + 1) % 16;
+	}
+	return (start + 1)%16;
+}
+
+void ModSourceScreen::RepeatGoto()
+{
+	ActiveInstance = FindNextUsed(ActiveInstance);
+	SetEncoderNames();
+}
 
 void ModSourceScreen::Action(int a)
 {
 	switch (a)
 	{
 	case MenuAction_CloseModal: Modal = NULL; break;
-	case MenuAction_Next: ActiveInstance = (ActiveInstance + 1) % MaxInstances; break;
-	case MenuAction_Prev: ActiveInstance = (ActiveInstance + MaxInstances - 1) % MaxInstances; break;
+	case MenuAction_Next:
+	{
+		ActiveInstance = (ActiveInstance + 1) % MaxInstances;
+		SetEncoderNames();
+	}break;
+	case MenuAction_Prev: 
+	{
+		ActiveInstance = (ActiveInstance + MaxInstances - 1) % MaxInstances; 
+		SetEncoderNames();
+	} break;
 	}
 }
 

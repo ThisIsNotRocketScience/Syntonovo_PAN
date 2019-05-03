@@ -144,7 +144,8 @@ enum
 	MenuAction_CloseModal,
 	MenuAction_CalibratePads,
 	MenuAction_CalibrateOscillators,
-
+	MenuAction_EnableReferenceLines,
+	MenuAction_EnableTestImage,
 	__MenuAction_Count
 };
 
@@ -228,6 +229,7 @@ enum UIDisplayModes
 	MenuEntry_EffectParam3,
 	MenuEntry_EncoderSet,
 	MenuEntry_ModMatrixValue,
+	MenuEntry_Ghosted,
 	MenuEntry_FeatureToggle
 	
 
@@ -244,7 +246,9 @@ enum
 	BOX_REGULAR,
 	BOX_MID,
 	BOX_INV,
-	BOX_MOD
+	BOX_MOD,
+	BOX_GHOST,
+
 };
 
 enum ModulationTargetCategories
