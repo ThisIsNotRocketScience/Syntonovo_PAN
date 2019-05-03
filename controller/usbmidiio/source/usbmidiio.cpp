@@ -1010,9 +1010,9 @@ void preset_init()
 	// modmatrix
 	for (int param = 0; param < 0x40; param++) {
 		for (int target = 0; target < 11; target++) {
-				preset.modmatrix[param].targets[target].outputid = 0xff;
+				preset.modmatrix[param].targets[target].outputid = 0xffff;
 				MODMATRIX(param, target, 0, 0);
-				MODMATRIX(param, target, 1, 0xff);
+				MODMATRIX(param, target, 1, 0xffff);
 				MODMATRIX(param, target, 2, 0);
 			}
 	}
@@ -1125,9 +1125,8 @@ void IdleTask(void* pvParameters)
 
 void sync_preset(uint32_t addr)
 {
-	if (addr >= offsetof(PanPreset_t, Name)) {
-		addr -= offsetof(PanPreset_t, Name);
-		// name
+	if (addr >= offsetof(PanPreset_t, ledbrightness)) {
+		// the rest is skipped
 	}
 	else if (addr >= offsetof(PanPreset_t, op)) {
 		addr -= offsetof(PanPreset_t, op);
@@ -1199,6 +1198,9 @@ void sync_preset(uint32_t addr)
 			//printf("mod %d/%d d=%x oid=%d\n", matrixrow, entry, preset.modmatrix[matrixrow].targets[entry].depth, preset.modmatrix[matrixrow].targets[entry].outputid);
 		    MODMATRIX(matrixrow, entry, 0, preset.modmatrix[matrixrow].targets[entry].depth);
 		    MODMATRIX(matrixrow, entry, 1, preset.modmatrix[matrixrow].targets[entry].outputid);
+			break;
+		case 1:
+			//printf("mod %d/%d d=%x oid=%d\n", matrixrow, entry, preset.modmatrix[matrixrow].targets[entry].depth, preset.modmatrix[matrixrow].targets[entry].outputid);
 		    MODMATRIX(matrixrow, entry, 2, preset.modmatrix[matrixrow].targets[entry].sourceid);
 			break;
 		}
@@ -1222,6 +1224,10 @@ void sync_preset(uint32_t addr)
 				SWITCH_OFF(addr * 32 + i);
 			}
 		}
+	}
+	else if (addr >= offsetof(PanPreset_t, Name)) {
+		addr -= offsetof(PanPreset_t, Name);
+		// name
 	}
 }
 
@@ -1307,9 +1313,9 @@ void LedTask( void * pvParameters )
 
 #define FLASH_PAGE_SIZE (256)
 #define SECTOR_SIZE (4096)
-#define EXAMPLE_SPI_BAUDRATE (96000000)
-#define SPIFI_CLOCK_FREQ_MIN (24000000)
-#define SPIFI_CLOCK_FREQ_MAX (96000000)
+//#define EXAMPLE_SPI_BAUDRATE (96000000)
+#define SPIFI_CLOCK_FREQ_MIN (1000000)
+#define SPIFI_CLOCK_FREQ_MAX (1000000)
 #define NOR_FLASH_START_ADDRESS  FSL_FEATURE_SPIFI_START_ADDR
 
 void SPIFI_Clock(spifi_nor_clock_init_t clock)
@@ -1331,13 +1337,16 @@ void SPIFI_Clock(spifi_nor_clock_init_t clock)
 	}
 }
 
+uint8_t mem_writeBuffer[FLASH_PAGE_SIZE];
+uint8_t mem_readBuffer[FLASH_PAGE_SIZE] = {0};
+
 extern nor_config_t norConfig;
 nor_handle_t norHandle = {NULL};
 
 spifi_mem_nor_config_t spifiMemConfig = {
     .clockInit = SPIFI_Clock,
     .cmd_format = kSPIFI_CommandDataQuad,
-    .quad_mode_setting = 0,
+    .quad_mode_setting = kSerialNorQuadMode_StatusReg2_Bit1_0x31,
 };
 
 nor_config_t norConfig = {
@@ -1347,12 +1356,50 @@ nor_config_t norConfig = {
 
 void spifi_init()
 {
+    memset(mem_writeBuffer, 0xaa, sizeof(mem_writeBuffer));
+
+    printf("init\n");
     int status = Nor_Flash_Init(&norConfig, &norHandle);
     if (status != kStatus_Success)
     {
         printf("\r\n***NOR Flash Initialization Failed!***\r\n");
+        return;
     }
+
+//    uint32_t address = NOR_FLASH_START_ADDRESS + norHandle.bytesInPageSize * 10;//pageIndex;
+
+/*    printf("erase\n");
+    status = Nor_Flash_Erase_Chip(&norHandle);
+    if (status != kStatus_Success)
+    {
+        printf("\r\n***NOR Flash Erase Chip Failed!***\r\n");
+        return;
+    }*/
+#if 0
+    printf("program\n");
+     status = Nor_Flash_Page_Program(&norHandle, address, mem_writeBuffer);
+     if (status != kStatus_Success)
+     {
+         printf("\r\n***NOR Flash Page %d Program Failed!***\r\n", 5);
+         return;
+     }
+
+     status = Nor_Flash_Read(&norHandle, address, mem_readBuffer, norHandle.bytesInPageSize);
+      if (status != kStatus_Success)
+      {
+    	  printf("\r\n***NOR Flash Page %d Read Failed!***\r\n", 5);
+          return;
+      }
+
+      if (memcmp(mem_writeBuffer, mem_readBuffer, norHandle.bytesInPageSize) != 0)
+      {
+    	  printf("\r\n***NOR Flash Page %d Read/Write Failed!***\r\n", 5);
+          return;
+      }
+#endif
 }
+
+void flashtest();
 
 int main(void) {
   	/* Init board hardware. */
@@ -1386,7 +1433,8 @@ int main(void) {
     CLOCK_EnableClock(kCLOCK_Gpio2);
     CLOCK_EnableClock(kCLOCK_Gpio3);
 
-    //spifi_init();
+    spifi_init();
+    flashtest();
 
     control_init();
 
