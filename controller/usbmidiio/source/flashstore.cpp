@@ -13,6 +13,12 @@
 
 extern nor_handle_t norHandle;
 
+struct presetnames_t {
+	unsigned char names[PRESET_COUNT * PRESET_NAME_LENGTH];
+};
+
+extern presetnames_t presetnames;
+
 uint32_t crc32_for_byte(uint32_t r) {
   for(int j = 0; j < 8; ++j)
     r = (r & 1? 0: (uint32_t)0xEDB88320L) ^ r >> 1;
@@ -249,6 +255,17 @@ public:
     }
   }
 
+  int LoadPreset(int preset_id, preset_t* preset)
+  {
+	  if (!index[preset_id].valid) {
+		  return 0;
+	  }
+
+	  ReadPreset(index[preset_id].page, preset);
+
+	  return 1;
+  }
+
   int WritePreset(int page, preset_t* preset)
   {
     //printf("Write preset to page %d\n", page);
@@ -391,7 +408,8 @@ public:
     index[preset_id].generation = preset->header.generation;
     index[preset_id].page = page;
     index[preset_id].valid = needrefresh ? 2 : 1;
-    memcpy(&index[preset_id].name, & preset->data.Name, sizeof(preset->data.Name));
+    memcpy(&index[preset_id].name, preset->data.Name, 16);
+    memcpy(&presetnames.names[preset_id * 16], preset->data.Name, 16);
   }
 
   void SetDirtyPreset(int page)
@@ -414,6 +432,24 @@ public:
 Store s(MEMSIZE);
 Index i(s);
 
+preset_t tmp_preset;
+void SavePreset(int presetid, PanPreset_t* preset)
+{
+	memcpy(&tmp_preset.data, preset, sizeof(PanPreset_t));
+	tmp_preset.header.preset_id = presetid;
+	i.SavePreset(&tmp_preset);
+}
+
+int LoadPreset(int presetid, PanPreset_t* preset)
+{
+	int status = i.LoadPreset(presetid, &tmp_preset);
+	if (!status) {
+		return 0;
+	}
+
+	memcpy(preset, &tmp_preset.data, sizeof(PanPreset_t));
+}
+
 void flashtest()
 {
 	eeprom_config_t config;
@@ -424,7 +460,7 @@ void flashtest()
 
 	printf("size %d count %d realsize %d\n", preset_size, preset_count, sizeof(PanPreset_t));
 	return;
-
+/*
 	preset_t p1;
 	p1.header.preset_id = 1;
 	strcpy((char*)p1.data.Name, "P1");
@@ -438,6 +474,7 @@ void flashtest()
 
 	i.SavePreset(&p1);
 	i.SavePreset(&p1);
+	*/
 }
 
 /*

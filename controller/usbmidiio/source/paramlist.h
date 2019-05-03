@@ -23,6 +23,7 @@ enum switch_t {
 #undef SWITCH
 };
 
+#if 0
 enum modsource_t {
 #define MODSOURCE(name,type,id) \
 	modsource_##name = id,
@@ -31,3 +32,4 @@ enum modsource_t {
 
 #undef MODSOURCE
 };
+#endif

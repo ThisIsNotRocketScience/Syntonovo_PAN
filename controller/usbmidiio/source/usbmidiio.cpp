@@ -1271,6 +1271,9 @@ void sync_data_func(int addr, uint8_t* data)
 	}
 }
 
+void SavePreset(int presetid, PanPreset_t* preset);
+int LoadPreset(int presetid, PanPreset_t* preset);
+
 int sync_oobdata_func(uint8_t cmd, uint32_t data)
 {
 	switch (cmd) {
@@ -1281,11 +1284,14 @@ int sync_oobdata_func(uint8_t cmd, uint32_t data)
 		dsp_calibrate();
 		return 0;
 	case CMD_PRESET_LOAD:
+		if (loading) return 0;
+        LoadPreset(data, &preset);
 		preset_load_start();
 		return 0;
 	case CMD_PRESET_STORE:
 		if (loading) return 0;
         sync_oob_word(&rpi_sync, OOB_UI_PAUSE, 0, 0);
+        SavePreset(data, &preset);
         sync_oob_word(&rpi_sync, OOB_UI_CONTINUE, 0, 0);
 		return 0;
 	}
