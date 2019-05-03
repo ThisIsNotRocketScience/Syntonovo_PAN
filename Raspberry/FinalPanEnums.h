@@ -181,6 +181,15 @@ enum ModParameters
 	LFO_Shape,
 	LFO_ResetPhase,
 
+	KeyboardParam_DeadzoneX,
+	KeyboardParam_ScaleX,
+
+	KeyboardParam_DeadzoneY,
+	KeyboardParam_ScaleY,
+
+	KeyboardParam_DeadzoneZ,
+	KeyboardParam_ScaleZ,
+
 	__Mod_Parameter_Count
 };
 

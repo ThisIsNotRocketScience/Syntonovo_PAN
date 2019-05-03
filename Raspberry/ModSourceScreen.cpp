@@ -72,6 +72,22 @@ ModSourceScreen::ModSourceScreen(Screens_t screen)
 	HasActiveInstanceDisplay = ModulationSourceHasInstances(modType);
 	switch (myScreen)
 	{
+
+	case SCREEN_X:
+		EnableAvailableEncoder("Deadzone", MenuEntry_EnvelopeValue, KeyboardParam_DeadzoneX);
+		EnableAvailableEncoder("Scale", MenuEntry_EnvelopeValue, KeyboardParam_ScaleX);
+
+		break;
+	case SCREEN_Y:
+		EnableAvailableEncoder("Deadzone", MenuEntry_EnvelopeValue, KeyboardParam_DeadzoneY);
+		EnableAvailableEncoder("Scale", MenuEntry_EnvelopeValue, KeyboardParam_ScaleY);
+
+		break;
+	case SCREEN_Z:
+		EnableAvailableEncoder("Deadzone", MenuEntry_EnvelopeValue, KeyboardParam_DeadzoneZ);
+		EnableAvailableEncoder("Scale", MenuEntry_EnvelopeValue, KeyboardParam_ScaleZ);
+
+		break;
 	case SCREEN_ENVELOPE:
 		HasActiveInstanceDisplay = true;
 
