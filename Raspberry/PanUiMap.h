@@ -93,6 +93,11 @@ ENTRY("Freq", MenuEntry_Value, Output_VCF1_CV)
 ENTRY("Resonance", MenuEntry_Value, Output_VCF1_RES)
 ENTRY("Spectrum Mod", MenuEntry_Value, Output_VCF1_CROSSMOD)
 
+
+CUSTOMENTRY("SELVCF1AP", MenuEntry_Toggle, Switch_SELVCF1AP)
+CUSTOMENTRY("SELVCF1BP", MenuEntry_Toggle, Switch_SELVCF1BP)
+CUSTOMENTRY("SELFSM1SRC", MenuEntry_Toggle, Switch_SELFSM1SRC)
+
 //CUSTOMENTRY("VCF parallel", MenuEntry_Toggle, Switch_SELVCF2POST)
 ENDMENU()
 
@@ -169,6 +174,12 @@ EXTRABUTTON(VCF2a, ledbutton_PB4but)
 EXTRABUTTON(VCF2a, ledbutton_VCF2_RES)
 
 MENU(VCF2a, ledbutton_LowButton, "VCF2 A")
+
+CUSTOMENTRY("Ringmod", MenuEntry_Toggle, Switch_SELRMVCF2)
+CUSTOMENTRY("Mod to AB", MenuEntry_Toggle, Switch_SELVCF23FSM)
+CUSTOMENTRY("Mod to CD", MenuEntry_Toggle, Switch_SELVCF45FSM)
+CUSTOMENTRY("SELFSM2SRC", MenuEntry_Toggle, Switch_SELFSM2SRC)
+
 //ENTRY("Feedback", MenuEntry_Value, Output_VCF2_FB)
 ENTRY("Frequency A", MenuEntry_Value, Output_VCF2_A_CV)
 ENTRY("Resonance A", MenuEntry_Value, Output_VCF2_A_RES)
