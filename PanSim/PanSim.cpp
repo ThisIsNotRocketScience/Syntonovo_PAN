@@ -975,7 +975,7 @@ int main(int argc, char** argv)
 				ImGui::SetCursorScreenPos(pos);
 
 				float xscalefac = 2.0f;
-				float yscalefac = 2.0f;
+				float yscalefac = 3.3f;
 				
 
 				for (int i = 0; i < __FINALLEDBUTTON_COUNT; i++)

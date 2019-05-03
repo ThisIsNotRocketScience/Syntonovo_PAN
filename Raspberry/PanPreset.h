@@ -14,7 +14,7 @@
 #endif
 
 #define PRESET_COUNT 256
-
+#define NOMODTARGET 0xFF
 #define MODTARGET_COUNT (11)
 typedef struct
 {
@@ -76,6 +76,22 @@ enum PresetCategoryEnum
 	PresetCategory_Drone,
 	PresetCategory_Brass,
 	__PresetCategoryCount
+};
+
+enum
+{
+	Controller_X,
+	Controller_Y,
+	Controller_Z,
+	Controller_ZPrime,
+	Controller_PadL,
+	Controller_PadR,
+	Controller_SustainL,
+	Controller_SustainR,
+	Controller_UnaCordaL,
+	Controller_UnaCordaR,
+	Controller_Pedal,
+	NUM_CONTROLLERS
 };
 
 #define PRESET_NAME_LENGTH 16
@@ -162,6 +178,21 @@ public:
 		case LFO_Depth: return (uint16_t*)&lfo[instance].depth;
 		case LFO_Shape: return (uint16_t*)&lfo[instance].shape;
 		case LFO_ResetPhase: return &lfo[instance].reset_phase;
+
+		case KeyboardParam_DeadzoneX: return (uint16_t*)&controller[Controller_X].deadzone;
+		case KeyboardParam_ScaleX:    return (uint16_t*)&controller[Controller_X].scale;
+	 
+		case KeyboardParam_DeadzoneY:return (uint16_t*)&controller[Controller_Y].deadzone;
+		case KeyboardParam_ScaleY:	 return (uint16_t*)&controller[Controller_Y].scale;
+	 
+		case KeyboardParam_DeadzoneZ:return (uint16_t*)&controller[Controller_Z].deadzone;
+		case KeyboardParam_ScaleZ:	 return (uint16_t*)&controller[Controller_Z].scale;
+
+
+
+
+
+
 
 
 		}
@@ -258,7 +289,8 @@ public:
 #define NUM_ENVS (16)
 	EnvParam_t env[NUM_ENVS];
 
-#define NUM_CONTROLLERS (11)
+//#define NUM_CONTROLLERS (11)
+
 	ControllerParam_t controller[NUM_CONTROLLERS];
 
 #define NUM_OPERATORS (16)

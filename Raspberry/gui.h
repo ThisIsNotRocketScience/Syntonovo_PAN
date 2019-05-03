@@ -25,12 +25,15 @@ enum font_size
 
 extern int ButtonHeight(int idx);
 extern int GetEncoderX(int id);
-extern void RenderLettersInABox(int x, int y, bool active, const char *text, int w, int h);
+extern void RenderLettersInABox(int x, int y, bool active, const char *text, int w, int h, bool notghosted = true);
+ImU32 Dimmed(int dim, ImU32 col);
 
 extern uint16_t lerp(uint16_t i, uint16_t f, uint16_t t);
 extern void LedLerp(bool active, uint16_t value, uint16_t *r, uint16_t *g, uint16_t *b);
 extern void VerticalText(char *text, alignment_t align = align_left, ImU32 text_color = 0xffffffff);
 
+extern void BuildModulationTargetList();
+const char *GetModulationTargetName(int Output);
 
 extern bool IsCenterEncoder(FinalEncoderEnum button);
 extern int GetAssociatedParameter(FinalEncoderEnum button);
@@ -62,6 +65,8 @@ typedef struct FinalPan_GuiResources_t
 	ImFont *SmallFont;
 	ImFont *MediumFont;
 	ImU32 Highlight;
+
+	ImU32 GhostBG;
 	ImU32 Normal;
 	ImU32 BGColor;
 	ImU32 ModalBGColor;
@@ -71,6 +76,9 @@ typedef struct FinalPan_GuiResources_t
 	int encoderheight;
 
 	ImTextureID BgImages[1];
+
+	bool referencelines;
+	bool testimage;
 } FinalPan_GuiResources_t;
 
 extern FinalPan_GuiResources_t gGuiResources; 
@@ -219,7 +227,7 @@ public:
 	//std::vector<_screensetup_t *> SubScreens;
 
 	std::vector<_control_t *> ControlsInOrder;
-
+	virtual void RepeatGoto() {};
 	virtual void RegisterNewChild(_control_t *newcontrol) { ControlsInOrder.push_back(newcontrol); }
 	int ActiveControl;
 	_screensetup_t *Modal;

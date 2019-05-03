@@ -11,15 +11,20 @@ public:
 	int PageStart;
 	int PageEnd;
 	int PageLength;
+	int CurrentIDX;
 	TargetList()
 	{
 		Current = 0;
 		PageLength = 20;
 		SetPage(0);
+		enabled = true;
 	}
+	virtual void SketchRightDelta(int delta);
+	void SetCurrent(int C);
 	void SetPage(int idx)
 	{
-		PageStart = idx;
+		PageStart = idx- 10;
+		if (PageStart < 0) PageStart = 0;
 		PageEnd = PageStart + PageLength;
 	}
 	virtual void Render(bool active, float dt);
@@ -36,7 +41,7 @@ public:
 
 	virtual void SketchLeft(int delta) {}
 
-	virtual void SketchRight(int delta) {}
+	//virtual void SketchRight(int delta) {}
 	virtual void SketchLeftPress() {}
 
 	virtual void SketchRightPress() {}
@@ -53,6 +58,8 @@ public:
 	int OriginalOutputID;
 	int OriginalSourceID;
 
+	void SetOutput(int newOut);
+	
 	virtual uint16_t GetParameterValue(int param, int encoderset);
 
 	int Instance;

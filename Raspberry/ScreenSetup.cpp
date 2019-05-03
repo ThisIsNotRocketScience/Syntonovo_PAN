@@ -214,6 +214,9 @@ void _screensetup_t::Action(int action)
 	case MenuAction_CalibratePads: cmd_pad_zero(); break;
 	case MenuAction_CalibrateOscillators: cmd_calibrate(); break;
 	case MenuAction_CloseModal: Modal = NULL; break;
+	case MenuAction_EnableReferenceLines: gGuiResources.referencelines = !gGuiResources.referencelines; break;
+	case MenuAction_EnableTestImage: gGuiResources.testimage = !gGuiResources.testimage; break;
+
 	}
 };
 
@@ -388,6 +391,11 @@ void _screensetup_t::SketchRightPress()
 
 void _screensetup_t::EncoderPress(FinalEncoderEnum button)
 {
+	if (Modal)
+	{
+		Modal->EncoderPress(button);
+		return;
+	}
 }
 
 int _screensetup_t::GetControlIndex(_control_t *c)
@@ -508,7 +516,14 @@ void _screensetup_t::RenderContent(bool active, float DT)
 	else
 	{
 		ImGui::SetCursorPos(ImVec2(0, 0));
-		ImGui::Image(gGuiResources.MainBG, ImVec2(1024, 600));
+		if (gGuiResources.testimage)
+		{
+			ImGui::Image(gGuiResources.TestBG, ImVec2(1024, 600));
+		}
+		else
+		{
+			ImGui::Image(gGuiResources.MainBG, ImVec2(1024, 600));
+		}
 	}
 	if (strlen(title) > 0)
 	{

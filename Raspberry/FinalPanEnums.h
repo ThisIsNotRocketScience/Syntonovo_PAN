@@ -122,6 +122,7 @@ enum FinalEncoderEnum
 	__FINALENCODER_COUNT
 };
 
+
 void LedEncoderButtonPress(FinalEncoderEnum Button);
 void LedEncoderButtonLeft(FinalEncoderEnum Button);
 void LedEncoderButtonRight(FinalEncoderEnum Button);
@@ -143,7 +144,8 @@ enum
 	MenuAction_CloseModal,
 	MenuAction_CalibratePads,
 	MenuAction_CalibrateOscillators,
-
+	MenuAction_EnableReferenceLines,
+	MenuAction_EnableTestImage,
 	__MenuAction_Count
 };
 
@@ -178,6 +180,15 @@ enum ModParameters
 	LFO_Depth,
 	LFO_Shape,
 	LFO_ResetPhase,
+
+	KeyboardParam_DeadzoneX,
+	KeyboardParam_ScaleX,
+
+	KeyboardParam_DeadzoneY,
+	KeyboardParam_ScaleY,
+
+	KeyboardParam_DeadzoneZ,
+	KeyboardParam_ScaleZ,
 
 	__Mod_Parameter_Count
 };
@@ -227,7 +238,10 @@ enum UIDisplayModes
 	MenuEntry_EffectParam3,
 	MenuEntry_EncoderSet,
 	MenuEntry_ModMatrixValue,
+	MenuEntry_Ghosted,
 	MenuEntry_FeatureToggle
+	
+
 };
 
 enum StateToggles
@@ -240,7 +254,10 @@ enum
 {
 	BOX_REGULAR,
 	BOX_MID,
-	BOX_INV
+	BOX_INV,
+	BOX_MOD,
+	BOX_GHOST,
+
 };
 
 enum ModulationTargetCategories
@@ -258,6 +275,15 @@ enum OutputEnum
 #undef OUTPUT
 #undef OUTPUT_VIRT
 	__OUTPUT_COUNT
+};
+
+
+enum ModSourceEnum
+{
+#define MODSOURCE(name, type, idx) modsource_##name = idx,
+#include "../interface/paramdef.h"
+#undef MODSOURCE
+	__MODSOURCE_COUNT
 };
 
 enum SwitchEnum

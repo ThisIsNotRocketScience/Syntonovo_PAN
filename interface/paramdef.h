@@ -23,6 +23,8 @@
 #define CATEGORY(name,label)
 #endif
 
+CATEGORY(EMPTY, "")
+
 CATEGORY(VCO1, "Oscillator 1")
 CATEGORY(VCO2, "Oscillator 2")
 CATEGORY(VCO3, "Oscillator 3")
