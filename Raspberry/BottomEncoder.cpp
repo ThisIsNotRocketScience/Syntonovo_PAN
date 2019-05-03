@@ -105,8 +105,8 @@ void bottomencoder_t::Render(bool active, float DT)
 	case MenuEntry_ModMatrixValue:
 
 	{
-		uint16_t modval = Parent->GetParameterValue(target, Set);
-		RenderBoxVertical(x, y2, modval, BOX_MID, active);
+		int16_t modval = Parent->GetParameterValue(target, Set);
+		RenderBoxVertical(x, y2, modval, BOX_MOD, active);
 	}
 	break;
 	case MenuEntry_MidValue:

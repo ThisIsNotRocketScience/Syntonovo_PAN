@@ -25,13 +25,15 @@ enum font_size
 
 extern int ButtonHeight(int idx);
 extern int GetEncoderX(int id);
-extern void RenderLettersInABox(int x, int y, bool active, const char *text, int w, int h);
+extern void RenderLettersInABox(int x, int y, bool active, const char *text, int w, int h, bool notghosted = true);
+ImU32 Dimmed(int dim, ImU32 col);
 
 extern uint16_t lerp(uint16_t i, uint16_t f, uint16_t t);
 extern void LedLerp(bool active, uint16_t value, uint16_t *r, uint16_t *g, uint16_t *b);
 extern void VerticalText(char *text, alignment_t align = align_left, ImU32 text_color = 0xffffffff);
 
 extern void BuildModulationTargetList();
+const char *GetModulationTargetName(int Output);
 
 extern bool IsCenterEncoder(FinalEncoderEnum button);
 extern int GetAssociatedParameter(FinalEncoderEnum button);

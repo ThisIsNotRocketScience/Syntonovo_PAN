@@ -116,7 +116,7 @@ void FinalPan_SetupDefaultPreset()
 	{
 		for (int j = 0; j < MODTARGET_COUNT; j++)
 		{
-			gCurrentPreset.modmatrix[i].targets[j].depth = 0x8000;
+			gCurrentPreset.modmatrix[i].targets[j].depth = 0;
 			gCurrentPreset.modmatrix[i].targets[j].outputid = 0;
 			gCurrentPreset.modmatrix[i].targets[j].sourceid = 0xff;
 		}
@@ -481,6 +481,19 @@ void _control_t::RenderBoxVertical(int x, int y, int val, int mode, bool active)
 		ImGui::GetWindowDrawList()->AddRect(tl, br2, active ? gGuiResources.Highlight : gGuiResources.Normal, 0, 0, 2);
 	}
 	break;
+	case BOX_MOD:
+	{
+		ImVec2 br2 = br;
+		float y1 = tl.y + ParamVerticalBoxHeight / 2;
+		float y2 = y1 + ((val) * ParamVerticalBoxHeight/2) / 0x8000;
+		ImVec2 tl2 = tl;
+		tl2.y = __min(y1, y2);
+		br2.y = __max(y1, y2);
+		ImGui::GetWindowDrawList()->AddRectFilled(tl, br, CalcFillColor(0, active));
+		ImGui::GetWindowDrawList()->AddRectFilled(tl2, br2, CalcFillColor(1, active));
+		ImGui::GetWindowDrawList()->AddRect(tl2, br2, active ? gGuiResources.Highlight : gGuiResources.Normal, 0, 0, 2);
+	}
+		break;
 	case BOX_MID:
 	{
 		ImVec2 br2 = br;
@@ -905,16 +918,17 @@ _screensetup_t *Gui::CS()
 #define LetterBoxH 40
 
 
-void RenderLettersInABox(int x, int y, bool active, const char *text, int w, int h)
+void RenderLettersInABox(int x, int y, bool active, const char *text, int w, int h, bool notghosted )
 {
 	ImVec2 tl(x, y);
 	ImVec2 br(x + w, y + h);
-	ImGui::GetWindowDrawList()->AddRect(tl, br, active ? gGuiResources.Highlight : gGuiResources.Normal, 0, 0, 2);
+
+	ImGui::GetWindowDrawList()->AddRect(tl, br, active ? gGuiResources.Highlight : Dimmed(notghosted?1:50, gGuiResources.Normal), 0, 0, 2);
 	
 	auto s = ImGui::CalcTextSize(text);
 
 	ImGui::SetCursorPos(ImVec2(x + LetterBoxW / 2 - s.x / 2, y + LetterBoxH / 2 - s.y / 2));
-	ImGui::Text(text);
+	ImGui::TextColored((ImVec4)(ImColor)(Dimmed(notghosted ? 1 : 10, gGuiResources.Normal) ),  text);
 
 }
 

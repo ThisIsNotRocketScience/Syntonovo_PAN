@@ -65,6 +65,11 @@ int FindModulationListIndex(int c)
 	}
 	return -1;
 }
+
+const char *GetModulationTargetName(int Output)
+{
+	return ModulationTargetList[FindModulationListIndex(Output)]->name;
+}
 void TargetList::SetCurrent(int c)
 {
 	Current = c;

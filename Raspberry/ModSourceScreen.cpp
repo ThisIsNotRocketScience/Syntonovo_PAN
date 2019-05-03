@@ -137,7 +137,15 @@ void ModSourceScreen::Render(bool active, float DT)
 		{
 			char txt[10];
 			snprintf(txt,10, "%d", i);
-			RenderLettersInABox(i * 40 + 200, ButtonHeight(1), i == ActiveInstance, txt, 35, 35);
+			bool used = false;
+			
+			auto row = gCurrentPreset.GetModSourceRow(modType, i);
+			for (int j = 0; j < MODTARGET_COUNT; j++)
+			{
+				if (row->targets[j].depth != 0 && row->targets[j].outputid !=-1) used = true;
+			};
+
+			RenderLettersInABox(i * 40 + 200, ButtonHeight(1), i == ActiveInstance, txt, 35, 35, used);
 		}
 	}
 	RenderModalBox(active, DT);

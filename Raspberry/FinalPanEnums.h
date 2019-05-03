@@ -229,6 +229,8 @@ enum UIDisplayModes
 	MenuEntry_EncoderSet,
 	MenuEntry_ModMatrixValue,
 	MenuEntry_FeatureToggle
+	
+
 };
 
 enum StateToggles
@@ -241,7 +243,8 @@ enum
 {
 	BOX_REGULAR,
 	BOX_MID,
-	BOX_INV
+	BOX_INV,
+	BOX_MOD
 };
 
 enum ModulationTargetCategories
