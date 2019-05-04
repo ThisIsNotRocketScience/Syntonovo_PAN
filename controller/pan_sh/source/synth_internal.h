@@ -134,12 +134,16 @@ void synth_mapping_init()
 	synth_param[CTRLID].port = PORTID(PGROUP, PID); \
 	synth_param[CTRLID].last = 0xfff0; \
 	synth_param[CTRLID].value = INITVALUE; \
+	synth_param[CTRLID].target = INITVALUE; \
+	synth_param[CTRLID].add = 0; \
 	synth_output[synth_param[CTRLID].port] = CTRLID;
 #define OUTPUT_VIRT(NAME, PGROUP, PID, CTRLTYPE, CTRLID, MODE, INITVALUE, dummy1, dummy2) \
 	memset(&synth_param[CTRLID], 0, sizeof(synth_param[0])); \
 	synth_param[CTRLID].port = -1; \
 	synth_param[CTRLID].last = 0xfff0; \
-	synth_param[CTRLID].value = INITVALUE;
+	synth_param[CTRLID].value = INITVALUE; \
+	synth_param[CTRLID].target = INITVALUE; \
+	synth_param[CTRLID].add = 0;
 
 #define SWITCH(NAME, ID, DEFAULT)
 
@@ -166,15 +170,17 @@ void synth_mapping_reset()
 void synth_mapping_run()
 {
 #define DO_OUTPUT_LIN(NAME, CTRLID, PID) \
+	do_smooth(CTRLID); \
 	do_output_lin(CTRLID, PID);
 #define DO_OUTPUT_INV(NAME, CTRLID, PID) \
+	do_smooth(CTRLID); \
 	do_output_inv(CTRLID, PID);
 #define DO_OUTPUT_LOG(NAME, CTRLID, PID) \
+	do_smooth(CTRLID); \
 	do_output_log(CTRLID, PID);
 #define DO_OUTPUT_CUSTOM(NAME, CTRLID, PID) \
 	do_output_##NAME(CTRLID, PID);
 #define OUTPUT(NAME, PGROUP, PID, CTRLTYPE, CTRLID, MODE, INITVALUE, dummy1, dummy2) \
-	do_smooth(CTRLID); \
 	DO_OUTPUT_##MODE(NAME, CTRLID, PORTID(PGROUP, PID));
 
 #define OUTPUT_VIRT(NAME, PGROUP, PID, CTRLTYPE, CTRLID, MODE, INITVALUE, dummy1, dummy2)

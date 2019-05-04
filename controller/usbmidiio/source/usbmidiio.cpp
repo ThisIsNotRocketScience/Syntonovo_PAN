@@ -56,6 +56,9 @@
 /* TODO: insert other definitions and declarations here. */
 
 void preset_init();
+void flash_savepreset(int presetid, PanPreset_t* preset);
+int flash_loadpreset(int presetid, PanPreset_t* preset);
+void sync_preset_full();
 
 PanPreset_t preset;
 PanLedState_t ledstate;
@@ -950,7 +953,13 @@ void KeyScan()
 void KeyboardTask(void* pvParameters)
 {
 	dsp_reset();
-	preset_init();
+	if (!flash_loadpreset(0, &preset)) {
+		preset_init();
+		flash_savepreset(0, &preset);
+	}
+	else {
+		sync_preset_full();
+	}
 
 	rpi_start();
 
@@ -1287,8 +1296,6 @@ void sync_preset_full()
 	FULLVALUE(output_VCO6_PITCH, 1, 0x4000);
 	FULLVALUE(output_VCO7_PITCH, 1, 0x4000);
 
-	preset.switches[0] = 0;
-	preset.switches[1] = 0;
 	for (int i = 0; i < 64; i++) {
 		if (i < 32) {
 			if (preset.switches[0] & (1 << i)) {
@@ -1348,9 +1355,6 @@ void sync_data_func(int addr, uint8_t* data)
 		sync_ledstate(addr);
 	}
 }
-
-void flash_savepreset(int presetid, PanPreset_t* preset);
-int flash_loadpreset(int presetid, PanPreset_t* preset);
 
 int sync_oobdata_func(uint8_t cmd, uint32_t data)
 {

@@ -225,4 +225,5 @@ void control_write(uint8_t* data, int count)
 	for (int i = 0; i < count; i++) {
 		fifo_tx_queue(data[i]);
 	}
+	//while (!(USART_DSP_PERIPHERAL->FIFOSTAT & USART_FIFOSTAT_TXEMPTY_MASK)) {}
 }
