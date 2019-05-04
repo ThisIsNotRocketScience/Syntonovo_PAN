@@ -1220,8 +1220,10 @@ void sync_preset(uint32_t addr)
 		addr -= offsetof(PanPreset_t, paramvalue);
 
 		int paramid = addr / 2;
-		FULLVALUE(paramid, 2, preset.paramvalue[paramid]);
-		FULLVALUE(paramid+1, 2, preset.paramvalue[paramid+1]);
+		if (paramid < 0xf0) {
+			FULLVALUE(paramid, 2, preset.paramvalue[paramid]);
+			FULLVALUE(paramid+1, 2, preset.paramvalue[paramid+1]);
+		}
 	}
 	else if (addr >= offsetof(PanPreset_t, switches)) {
 		addr -= offsetof(PanPreset_t, switches);
