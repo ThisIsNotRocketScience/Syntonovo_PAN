@@ -931,12 +931,12 @@ void RenderLettersInABox(int x, int y, bool active, const char *text, int w, int
 	ImVec2 tl(x, y);
 	ImVec2 br(x + w, y + h);
 
-	ImGui::GetWindowDrawList()->AddRect(tl, br, active ? gGuiResources.Highlight : Dimmed(notghosted?1:2, gGuiResources.Normal), 0, 0, 2);
+	ImGui::GetWindowDrawList()->AddRect(tl, br, active ? gGuiResources.Highlight : Dimmed(notghosted?1:5, gGuiResources.Normal), 0, 0, 2);
 	
 	auto s = ImGui::CalcTextSize(text);
 
 	ImGui::SetCursorPos(ImVec2(x + LetterBoxW / 2 - s.x / 2, y + LetterBoxH / 2 - s.y / 2));
-	ImGui::TextColored((ImVec4)(ImColor)(Dimmed(notghosted ? 1 : 2, gGuiResources.Normal) ),  text);
+	ImGui::TextColored((ImVec4)(ImColor)(Dimmed(notghosted ? 1 : 5, gGuiResources.Normal) ),  text);
 
 }
 
@@ -1202,7 +1202,9 @@ void Gui::BuildScreens()
 	Screens[SCREEN_HOME]->AddText(512, 140, "Current preset: ", align_right);
 	Screens[SCREEN_HOME]->AddDynamicText(512, 140, gCurrentPreset.Name, PRESET_NAME_LENGTH);
 	Screens[SCREEN_HOME]->EncodersThatOpenThisScreen.push_back(encoder_SketchLeft);
-	
+	Screens[SCREEN_LFO]->LedButtonsThatOpenThisScreen.push_back(ledbutton_BHome);
+
+
 	Screens[SCREEN_SYSTEM]->SetTitle("System Settings");
 	Screens[SCREEN_SYSTEM]->EnableAvailableButton("Recalibrate Oscillators", MenuEntry_Action, MenuAction_CalibrateOscillators);
 	Screens[SCREEN_SYSTEM]->EnableAvailableButton("Recalibrate Pads", MenuEntry_Action, MenuAction_CalibratePads);

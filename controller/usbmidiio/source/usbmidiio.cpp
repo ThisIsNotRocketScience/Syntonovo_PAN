@@ -307,9 +307,9 @@ void setupleds()
 	LEDBUTTON(0, OctUpRight);
 	LEDBUTTON(0, BankRight);
 	LEDBUTTON(0, PortamentoRight);
-	UNUSED(0);//LEDBUTTON(0, RSus);
-	UNUSED(0);//LEDBUTTON(0, RUna);
-	UNUSED(0);//LEDBUTTON(0, RMod);
+	LEDBUTTON(0, RSus);
+	LEDBUTTON(0, RUna);
+	LEDBUTTON(0, RMod);
 	LEDBUTTON(0, ArpEnable);
 	LEDBUTTON(0, ArpFreeze);
 	LEDBUTTON(0, ArpEdit);

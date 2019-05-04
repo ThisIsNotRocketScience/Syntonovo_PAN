@@ -175,6 +175,7 @@ enum ModParameters
 	Envelope_Sustain,
 	Envelope_Release,
 	Envelope_Curve,
+	Envelope_Staccato,
 
 	LFO_Speed,
 	LFO_Depth,
@@ -222,6 +223,7 @@ enum UIDisplayModes
 	MenuEntry_Page,
 	MenuEntry_LedValue,
 	MenuEntry_EnvelopeValue,
+	MenuEntry_EnvelopeToggle,
 	MenuEntry_LFOValue,
 	MenuEntry_Text,
 	MenuEntry_Toggle,
@@ -363,6 +365,7 @@ public:
 			break;
 		}
 	}
+
 	void SetLed(LedTheme led, hsv &H)
 	{
 		uint16_t *r = &low_led_r;
