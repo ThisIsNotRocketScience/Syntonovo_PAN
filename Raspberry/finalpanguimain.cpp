@@ -337,7 +337,7 @@ void cmd_preset_save(int presetid)
 	if (presetid < 0 || presetid >= 256) return;
 	uint8_t data[4] = {0};
 	data[0] = presetid;
-	sync_oob_word(&rpi_sync, CMD_PRESET_LOAD, *(uint32_t*)data, 0);
+	sync_oob_word(&rpi_sync, CMD_PRESET_STORE, *(uint32_t*)data, 0);
 }
 
 #include "FinalPanEnums.h"
@@ -438,16 +438,16 @@ int sync_oobdata_func(uint8_t cmd, uint32_t data)
 #endif
 		break;
 	case OOB_ENCODER_CCW:
-#ifdef SHOWSYNCPRINTF
-		printf("encoder dec %d\n", data);
-#endif
-		LedEncoderButtonLeft((FinalEncoderEnum)data);
+//#ifdef SHOWSYNCPRINTF
+		printf("encoder dec %d %d\n", data & 0xff, data >> 8);
+//#endif
+		LedEncoderButtonLeft((FinalEncoderEnum)(data & 0xFF), data>>8);
 		break;
 	case OOB_ENCODER_CW:
-#ifdef SHOWSYNCPRINTF
-		printf("encoder inc %d\n", data);
-#endif
-		LedEncoderButtonRight((FinalEncoderEnum)data);
+//#ifdef SHOWSYNCPRINTF
+		printf("encoder inc %d %d\n", data & 0xff, data >> 8);
+//#endif
+		LedEncoderButtonRight((FinalEncoderEnum)(data & 0xFF), data>>8);
 		break;
 	case OOB_ENCODER_DOWN:
 #ifdef SHOWSYNCPRINTF
@@ -577,7 +577,7 @@ int main()
 	auto lasttick100 = t;
 	while (!terminate)
 	{
-		if (t - lasttick100 > 100) {
+		if (t - lasttick100 > 200) {
 			lasttick100 = t;
 			uart.config.timer_tick(uart.config.timer_tick_data);
 		}

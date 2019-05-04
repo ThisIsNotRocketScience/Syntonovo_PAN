@@ -253,6 +253,41 @@ void update_porta_time(int retrigger)
 	}
 }
 
+void do_update_smooth(int ctrlid)
+{
+	const int steps = 100;
+	int32_t value = synth_param[ctrlid].value;
+	int32_t target = synth_param[ctrlid].target;
+	int32_t add = 0;
+	if (value < target) {
+		add = ((target - value) + steps - 1) / steps;
+	}
+	else if (value > target) {
+		add = (((value - target) + steps - 1) / steps);
+	}
+	// else add = 0
+	synth_param[ctrlid].add = add;
+}
+
+void do_smooth(int ctrlid)
+{
+	if (synth_param[ctrlid].flags & SubParamFlags_SmoothUpdate) {
+		synth_param[ctrlid].flags &= ~SubParamFlags_SmoothUpdate;
+		do_update_smooth(ctrlid);
+	}
+	int32_t value = synth_param[ctrlid].value;
+	int32_t target = synth_param[ctrlid].target;
+	if (value < target) {
+		value += synth_param[ctrlid].add;
+		if (value > target) value = target;
+	}
+	else if (value > target) {
+		value -= synth_param[ctrlid].add;
+		if (value < target) value = target;
+	}
+	synth_param[ctrlid].value = value;
+}
+
 int32_t chase(int i, uint16_t value)
 {
 	int32_t x = 0x4000 - abs((i + 1) * 0x4000 - (int32_t)value);
@@ -301,6 +336,7 @@ void synth_mapping_defaultpatch()
 	synth_param[VCO5_PITCH].note = 0x4000;
 	synth_param[VCO6_PITCH].note = 0x4000;
 	synth_param[VCO7_PITCH].note = 0x4000;
+	synth_param[NOISE_COLOR].note = 0x4000;
 
 	shiftctrl_set(SEL1SQR);
 	shiftctrl_set(SEL2SQR);
@@ -720,10 +756,16 @@ void control_cb(int param, int subparam, uint16_t value)
 
 	switch (subparam) {
 	case 0:
+		synth_param[param].target = value;
 		synth_param[param].value = value;
+		synth_param[param].add = 0;
 		break;
 	case 1:
 		synth_param[param].note = value;
+		break;
+	case 2:
+		synth_param[param].target = value;
+		synth_param[param].flags |= SubParamFlags_SmoothUpdate;
 		break;
 	case 32:
 		synth_param[param].flags = value;
@@ -814,6 +856,7 @@ void do_output_log(int ctrlid, int port)
 
 void do_output_VCO4_DRY_MIX(int ctrlid, int port)
 {
+	do_smooth(ctrlid);
 	if (process_param_log_add(ctrlid, (int32_t)synth_param[VCO4567_DRY_MIX].last, chase_vco(0))) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
@@ -821,6 +864,7 @@ void do_output_VCO4_DRY_MIX(int ctrlid, int port)
 
 void do_output_VCO5_DRY_MIX(int ctrlid, int port)
 {
+	do_smooth(ctrlid);
 	if (process_param_log_add(ctrlid, synth_param[VCO4567_DRY_MIX].last, chase_vco(1))) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
@@ -828,6 +872,7 @@ void do_output_VCO5_DRY_MIX(int ctrlid, int port)
 
 void do_output_VCO6_DRY_MIX(int ctrlid, int port)
 {
+	do_smooth(ctrlid);
 	if (process_param_log_add(ctrlid, synth_param[VCO4567_DRY_MIX].last, chase_vco(2))) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
@@ -835,6 +880,7 @@ void do_output_VCO6_DRY_MIX(int ctrlid, int port)
 
 void do_output_VCO7_DRY_MIX(int ctrlid, int port)
 {
+	do_smooth(ctrlid);
 	if (process_param_log_add(ctrlid, synth_param[VCO4567_DRY_MIX].last, chase_vco(3))) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
@@ -842,6 +888,7 @@ void do_output_VCO7_DRY_MIX(int ctrlid, int port)
 
 void do_output_VCF2_A_MIX(int ctrlid, int port)
 {
+	do_smooth(ctrlid);
 	if (process_param_log_add(ctrlid, 0, chase_vcf(0))) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
@@ -849,6 +896,7 @@ void do_output_VCF2_A_MIX(int ctrlid, int port)
 
 void do_output_VCF2_B_MIX(int ctrlid, int port)
 {
+	do_smooth(ctrlid);
 	if (process_param_log_add(ctrlid, 0, chase_vcf(1))) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
@@ -856,6 +904,7 @@ void do_output_VCF2_B_MIX(int ctrlid, int port)
 
 void do_output_VCF2_C_MIX(int ctrlid, int port)
 {
+	do_smooth(ctrlid);
 	if (process_param_log_add(ctrlid, 0, chase_vcf(2))) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
@@ -863,6 +912,7 @@ void do_output_VCF2_C_MIX(int ctrlid, int port)
 
 void do_output_VCF2_D_MIX(int ctrlid, int port)
 {
+	do_smooth(ctrlid);
 	if (process_param_log_add(ctrlid, 0, chase_vcf(3))) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
@@ -870,6 +920,7 @@ void do_output_VCF2_D_MIX(int ctrlid, int port)
 
 void do_output_VCO1_SUB1(int ctrlid, int port)
 {
+	do_smooth(ctrlid);
 	if (process_param_inv(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
@@ -877,6 +928,7 @@ void do_output_VCO1_SUB1(int ctrlid, int port)
 
 void do_output_VCO1_SUB2(int ctrlid, int port)
 {
+	do_smooth(ctrlid);
 	if (process_param_inv(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
@@ -884,6 +936,7 @@ void do_output_VCO1_SUB2(int ctrlid, int port)
 
 void do_output_VCF1_FX_12(int ctrlid, int port)
 {
+	do_smooth(ctrlid);
 	if (process_param_inv(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
@@ -891,6 +944,7 @@ void do_output_VCF1_FX_12(int ctrlid, int port)
 
 void do_output_VCF1_FX_24(int ctrlid, int port)
 {
+	do_smooth(ctrlid);
 	if (process_param_inv(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
@@ -898,6 +952,7 @@ void do_output_VCF1_FX_24(int ctrlid, int port)
 
 void do_output_VCF2_FX_L(int ctrlid, int port)
 {
+	do_smooth(ctrlid);
 	if (process_param_inv(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
@@ -905,6 +960,7 @@ void do_output_VCF2_FX_L(int ctrlid, int port)
 
 void do_output_VCF2_FX_R(int ctrlid, int port)
 {
+	do_smooth(ctrlid);
 	if (process_param_inv(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
@@ -912,6 +968,7 @@ void do_output_VCF2_FX_R(int ctrlid, int port)
 
 void do_output_CLEANF_FX_L(int ctrlid, int port)
 {
+	do_smooth(ctrlid);
 	if (process_param_inv(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
@@ -919,6 +976,7 @@ void do_output_CLEANF_FX_L(int ctrlid, int port)
 
 void do_output_CLEANF_FX_R(int ctrlid, int port)
 {
+	do_smooth(ctrlid);
 	if (process_param_inv(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
@@ -926,6 +984,7 @@ void do_output_CLEANF_FX_R(int ctrlid, int port)
 
 void do_output_FX_L_RETURN(int ctrlid, int port)
 {
+	do_smooth(ctrlid);
 	if (process_param_inv(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
@@ -933,6 +992,7 @@ void do_output_FX_L_RETURN(int ctrlid, int port)
 
 void do_output_FX_R_RETURN(int ctrlid, int port)
 {
+	do_smooth(ctrlid);
 	if (process_param_inv(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
@@ -962,6 +1022,7 @@ void linpan_r(int ctrlid, int port, int linctrlid, int panctrlid)
 
 void do_output_VCO1_MIX1(int ctrlid, int port)
 {
+	do_smooth(ctrlid);
 	if (process_param_inv(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
@@ -969,6 +1030,7 @@ void do_output_VCO1_MIX1(int ctrlid, int port)
 
 void do_output_VCO1_MIX2(int ctrlid, int port)
 {
+	do_smooth(ctrlid);
 	if (process_param_inv(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
@@ -976,6 +1038,7 @@ void do_output_VCO1_MIX2(int ctrlid, int port)
 
 void do_output_VCO2_MIX1(int ctrlid, int port)
 {
+	do_smooth(ctrlid);
 	if (process_param_inv(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
@@ -983,6 +1046,7 @@ void do_output_VCO2_MIX1(int ctrlid, int port)
 
 void do_output_VCO2_MIX2(int ctrlid, int port)
 {
+	do_smooth(ctrlid);
 	if (process_param_inv(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
@@ -990,6 +1054,7 @@ void do_output_VCO2_MIX2(int ctrlid, int port)
 
 void do_output_VCO3_MIX1(int ctrlid, int port)
 {
+	do_smooth(ctrlid);
 	if (process_param_inv(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
@@ -997,6 +1062,7 @@ void do_output_VCO3_MIX1(int ctrlid, int port)
 
 void do_output_VCO3_MIX2(int ctrlid, int port)
 {
+	do_smooth(ctrlid);
 	if (process_param_inv(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
@@ -1004,6 +1070,7 @@ void do_output_VCO3_MIX2(int ctrlid, int port)
 
 void do_output_VCO4567_MIX1(int ctrlid, int port)
 {
+	do_smooth(ctrlid);
 	if (process_param_inv(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
@@ -1011,6 +1078,7 @@ void do_output_VCO4567_MIX1(int ctrlid, int port)
 
 void do_output_VCO4567_MIX2(int ctrlid, int port)
 {
+	do_smooth(ctrlid);
 	if (process_param_inv(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
@@ -1018,6 +1086,7 @@ void do_output_VCO4567_MIX2(int ctrlid, int port)
 
 void do_output_RM1_MIX1(int ctrlid, int port)
 {
+	do_smooth(ctrlid);
 	if (process_param_inv(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
@@ -1025,6 +1094,7 @@ void do_output_RM1_MIX1(int ctrlid, int port)
 
 void do_output_RM1_MIX2(int ctrlid, int port)
 {
+	do_smooth(ctrlid);
 	if (process_param_inv(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
@@ -1032,6 +1102,7 @@ void do_output_RM1_MIX2(int ctrlid, int port)
 
 void do_output_RM2_MIX3(int ctrlid, int port)
 {
+	do_smooth(ctrlid);
 	if (process_param_inv(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
@@ -1046,6 +1117,7 @@ void do_output_RM2_MIX3(int ctrlid, int port)
 
 void do_output_WHITENS_MIX1(int ctrlid, int port)
 {
+	do_smooth(ctrlid);
 	if (process_param_inv(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
@@ -1053,6 +1125,7 @@ void do_output_WHITENS_MIX1(int ctrlid, int port)
 
 void do_output_WHITENS_MIX2(int ctrlid, int port)
 {
+	do_smooth(ctrlid);
 	if (process_param_inv(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
@@ -1060,6 +1133,7 @@ void do_output_WHITENS_MIX2(int ctrlid, int port)
 
 void do_output_DIGINS_MIX1(int ctrlid, int port)
 {
+	do_smooth(ctrlid);
 	if (process_param_inv(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
@@ -1067,6 +1141,7 @@ void do_output_DIGINS_MIX1(int ctrlid, int port)
 
 void do_output_DIGINS_MIX2(int ctrlid, int port)
 {
+	do_smooth(ctrlid);
 	if (process_param_inv(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
@@ -1074,6 +1149,7 @@ void do_output_DIGINS_MIX2(int ctrlid, int port)
 
 void do_output_EXT_MIX1(int ctrlid, int port)
 {
+	do_smooth(ctrlid);
 	if (process_param_inv(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
@@ -1081,6 +1157,7 @@ void do_output_EXT_MIX1(int ctrlid, int port)
 
 void do_output_EXT_MIX2(int ctrlid, int port)
 {
+	do_smooth(ctrlid);
 	if (process_param_inv(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
@@ -1088,6 +1165,7 @@ void do_output_EXT_MIX2(int ctrlid, int port)
 
 void do_output_DNSSAW_MIX1(int ctrlid, int port)
 {
+	do_smooth(ctrlid);
 	if (process_param_inv(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
@@ -1095,6 +1173,7 @@ void do_output_DNSSAW_MIX1(int ctrlid, int port)
 
 void do_output_DNSSAW_MIX2(int ctrlid, int port)
 {
+	do_smooth(ctrlid);
 	if (process_param_inv(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
@@ -1186,6 +1265,15 @@ void do_output_VCF2_R_LOG(int ctrlid, int port)
 	}
 }
 
+void do_output_NOISE_COLOR(int ctrlid, int port)
+{
+	do_smooth(NOISE_COLOR);
+	int32_t value = signed_scale(synth_param[NOTE].last, synth_param[NOISE_COLOR].note);
+	value = note_add(value, note_scale(synth_param[NOISE_COLOR].value, 72 * 0x4000 / 128));
+
+	process_param_note(NOISE_COLOR, value, 24);
+}
+
 void do_output_VCO1_FREQ(int ctrlid, int port)
 {
 }
@@ -1216,26 +1304,31 @@ void do_output_VCO7_FREQ(int ctrlid, int port)
 
 void virt_CLEANF_LIN()
 {
+	do_smooth(CLEANF_LIN);
 	process_param_lin(CLEANF_LIN);
 }
 
 void virt_VCF1_LIN()
 {
+	do_smooth(VCF1_LIN);
 	process_param_lin(VCF1_LIN);
 }
 
 void virt_VCF2_LIN()
 {
+	do_smooth(VCF2_LIN);
 	process_param_lin(VCF2_LIN);
 }
 
 void virt_CLEANF_LEVEL()
 {
+	do_smooth(CLEANF_LEVEL);
 	process_param_log_add(CLEANF_LEVEL, (int32_t)synth_param[MASTER_LEVEL].last - 0xFFFF, 0);
 }
 
 void virt_VCF1_LEVEL()
 {
+	do_smooth(VCF1_LEVEL);
 	//printf("VCF1\n");
 	process_param_log_add(VCF1_LEVEL, (int32_t)synth_param[MASTER_LEVEL].last - 0xFFFF, 0);
 	//printf("---\n");
@@ -1243,124 +1336,33 @@ void virt_VCF1_LEVEL()
 
 void virt_VCF2_LEVEL()
 {
+	do_smooth(VCF2_LEVEL);
 	process_param_log_add(VCF2_LEVEL, (int32_t)synth_param[MASTER_LEVEL].last - 0xFFFF, 0);
 }
 
 void virt_CLEANF_PAN()
 {
+	do_smooth(CLEANF_LEVEL);
 	process_param_lin(CLEANF_PAN);
 }
 
 void virt_VCF1_PAN()
 {
+	do_smooth(VCF1_PAN);
 	process_param_lin(VCF1_PAN);
 }
 
 void virt_VCF2_PAN()
 {
+	do_smooth(VCF2_PAN);
 	process_param_lin(VCF2_PAN);
 }
 
-#if 0
-void virt_VCO1_VCFMIX()
-{
-	process_param_lin(VCO1_VCFMIX);
-}
-
-void virt_VCO2_VCFMIX()
-{
-	process_param_lin(VCO2_VCFMIX);
-}
-
-void virt_VCO3_VCFMIX()
-{
-	process_param_lin(VCO3_VCFMIX);
-}
-
-void virt_VCO4567_VCFMIX()
-{
-	process_param_lin(VCO4567_VCFMIX);
-}
-
-void virt_RM1_VCFMIX()
-{
-	process_param_lin(RM1_VCFMIX);
-}
-
-void virt_WHITENS_VCFMIX()
-{
-	process_param_lin(WHITENS_VCFMIX);
-}
-
-void virt_DIGINS_VCFMIX()
-{
-	process_param_lin(DIGINS_VCFMIX);
-}
-
-void virt_EXT_VCFMIX()
-{
-	process_param_lin(EXT_VCFMIX);
-}
-#endif
-
 void virt_VCO4567_DRY_MIX()
 {
+	do_smooth(VCO4567_DRY_MIX);
 	process_param_lin(VCO4567_DRY_MIX);
 }
-
-#if 0
-void virt_VCO1_LEVEL()
-{
-	process_param_lin(VCO1_LEVEL);
-}
-
-void virt_VCO2_LEVEL()
-{
-	process_param_lin(VCO2_LEVEL);
-}
-
-void virt_VCO3_LEVEL()
-{
-	process_param_lin(VCO3_LEVEL);
-}
-
-void virt_VCO4567_LEVEL()
-{
-	process_param_lin(VCO4567_LEVEL);
-}
-
-void virt_RM1_LEVEL()
-{
-	process_param_lin(RM1_LEVEL);
-}
-
-void virt_WHITENS_LEVEL()
-{
-	process_param_lin(WHITENS_LEVEL);
-}
-
-void virt_DIGINS_LEVEL()
-{
-	process_param_lin(DIGINS_LEVEL);
-}
-
-void virt_EXT_LEVEL()
-{
-	process_param_lin(EXT_LEVEL);
-}
-#endif
-
-//void virt_DNSSAW_VCFMIX()
-//{
-//	process_param_lin(DNSSAW_VCFMIX);
-//}
-
-#if 0
-void virt_DNSSAW_LEVEL()
-{
-	process_param_lin(DNSSAW_LEVEL);
-}
-#endif
 
 void virt_NOTE()
 {
@@ -1404,6 +1406,7 @@ void virt_PORTAMENTO_TIME()
 
 void virt_MASTER_LEVEL()
 {
+	do_smooth(MASTER_LEVEL);
 	synth_param[MASTER_LEVEL].last = synth_param[MASTER_LEVEL].value;
 }
 
@@ -1437,6 +1440,7 @@ int process_param_note(int ctrlid, int32_t notevalue, int modrange)
 
 void virt_VCO1_PITCH()
 {
+	do_smooth(VCO1_PITCH);
 	int32_t value = note_add(signed_scale(synth_param[NOTE].last, synth_param[VCO1_PITCH].note),
 			                 note_scale(synth_param[VCO1_PITCH].value, 24 * 0x4000 / 128));
 
@@ -1445,6 +1449,7 @@ void virt_VCO1_PITCH()
 
 void virt_VCO2_PITCH()
 {
+	do_smooth(VCO2_PITCH);
 	int32_t value = signed_scale(synth_param[NOTE].last, synth_param[VCO1_PITCH].note);
 	value = note_add(value, note_scale(synth_param[VCO1_PITCH].value, 24 * 0x4000 / 128));
 	value = note_add(value, note_scale(synth_param[VCO2_PITCH].value, 4 * 0x4000 / 128));
@@ -1454,6 +1459,7 @@ void virt_VCO2_PITCH()
 
 void virt_VCO3_PITCH()
 {
+	do_smooth(VCO3_PITCH);
 	int32_t value = signed_scale(synth_param[NOTE].last, synth_param[VCO1_PITCH].note);
 	value = note_add(value, note_scale(synth_param[VCO1_PITCH].value, 24 * 0x4000 / 128));
 	value = note_add(value, note_scale(synth_param[VCO3_PITCH].value, 4 * 0x4000 / 128));
@@ -1463,6 +1469,7 @@ void virt_VCO3_PITCH()
 
 void virt_VCO4_PITCH()
 {
+	do_smooth(VCO4_PITCH);
 	int32_t value = signed_scale(synth_param[NOTE].last, synth_param[VCO4_PITCH].note);
 	value = note_add(value, note_scale(synth_param[VCO4_PITCH].value, 72 * 0x4000 / 128));
 
@@ -1471,6 +1478,7 @@ void virt_VCO4_PITCH()
 
 void virt_VCO5_PITCH()
 {
+	do_smooth(VCO5_PITCH);
 	int32_t value = signed_scale(synth_param[NOTE].last, synth_param[VCO4_PITCH].note);
 	value = note_add(value, note_scale(synth_param[VCO4_PITCH].value, 72 * 0x4000 / 128));
 	value += signed_scale(synth_param[VCO5_PITCH].value, 36 * 0x4000 / 256);
@@ -1480,6 +1488,7 @@ void virt_VCO5_PITCH()
 
 void virt_VCO6_PITCH()
 {
+	do_smooth(VCO6_PITCH);
 	int32_t value = signed_scale(synth_param[NOTE].last, synth_param[VCO4_PITCH].note);
 	value = note_add(value, note_scale(synth_param[VCO4_PITCH].value, 72 * 0x4000 / 128));
 	value += signed_scale(synth_param[VCO6_PITCH].value, 36 * 0x4000 / 256);
@@ -1489,12 +1498,23 @@ void virt_VCO6_PITCH()
 
 void virt_VCO7_PITCH()
 {
+	do_smooth(VCO7_PITCH);
 	int32_t value = signed_scale(synth_param[NOTE].last, synth_param[VCO4_PITCH].note);
 	value = note_add(value, note_scale(synth_param[VCO4_PITCH].value, 72 * 0x4000 / 128));
 	value += signed_scale(synth_param[VCO7_PITCH].value, 36 * 0x4000 / 256);
 
 	process_param_note(VCO7_PITCH, value, 24);
 }
+
+/*
+void virt_VCO8_PITCH()
+{
+	do_smooth(VCO8_PITCH);
+	int32_t value = signed_scale(synth_param[NOTE].last, synth_param[VCO8_PITCH].note);
+	value = note_add(value, note_scale(synth_param[VCO8_PITCH].value, 72 * 0x4000 / 128));
+
+	process_param_note(VCO8_PITCH, value, 24);
+}*/
 
 void virt_GATE()
 {
@@ -1517,21 +1537,25 @@ void virt_RETRIGGER()
 
 void virt_MASTER_PITCH()
 {
+	do_smooth(MASTER_PITCH);
 	synth_param[MASTER_PITCH].last = (((int32_t)synth_param[MASTER_PITCH].value - 0x8000) * 12) / 128 + 0x8000;
 }
 
 void virt_MASTER_PITCH2()
 {
+	synth_param[MASTER_PITCH2].value = synth_param[MASTER_PITCH2].target;
 	synth_param[MASTER_PITCH2].last = synth_param[MASTER_PITCH2].value;
 }
 
 void virt_CHASE()
 {
+	do_smooth(CHASE);
 	process_param_lin(CHASE);
 }
 
 void virt_STASH()
 {
+	do_smooth(STASH);
 	process_param_lin(STASH);
 }
 
@@ -1580,6 +1604,12 @@ void synth_mapping_virt()
 		ports_value(synth_param[VCO7_FREQ].port, val);
 		last[6] = val;
 	}
+
+	val = autotune_note_to_dac(7, synth_param[NOISE_COLOR].last);
+	if (val != last[7] || doing_reset) {
+		ports_value(synth_param[NOISE_COLOR].port, val);
+		last[7] = val;
+	}
 }
 
 void pad_zero()
@@ -1599,15 +1629,22 @@ void pad_init()
 
 void synth_init()
 {
+	notestack_init(keyboard_mode_last);
+
 	for (int i = 0; i < SYNTH_MODSOURCE_COUNT; i++) {
 		for(int k = 0; k < MODTARGET_COUNT; k++) {
-			modmatrix[i].targets[k].outputid = 0xff;
+			modmatrix[i].targets[k].outputid = 0xffff;
 			modmatrix[i].targets[k].sourceid = 0;
 			modmatrix[i].targets[k].depth = 0;
 		}
 	}
 
 	synth_mapping_init();
+
+	// start with master level OFF
+	synth_param[MASTER_LEVEL].last = 0;
+	synth_param[MASTER_LEVEL].value = 0;
+
 	pan_law_init();
     lfo_init();
     adsr_init();
@@ -1730,10 +1767,13 @@ void add_mod_targets(int modid, int32_t value)
 {
 	for (int k = 0; k < NUM_CONTROLLERS; k++) {
 		int outputid = modmatrix[modid].targets[k].outputid;
-		if (outputid != 0xff) {
+		if (outputid >= 0 && outputid < 0xf0) {
 			int depth = modmatrix[modid].targets[k].depth;
 			synth_param[outputid].sum += bipolar_signed_scale(value, depth);
 		}
+		//else if (outputid >= 0x100 && outputid < 0x110) {
+
+		//}
 	}
 }
 

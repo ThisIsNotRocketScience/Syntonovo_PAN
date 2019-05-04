@@ -127,8 +127,8 @@ enum FinalEncoderEnum
 
 
 void LedEncoderButtonPress(FinalEncoderEnum Button);
-void LedEncoderButtonLeft(FinalEncoderEnum Button);
-void LedEncoderButtonRight(FinalEncoderEnum Button);
+void LedEncoderButtonLeft(FinalEncoderEnum Button, int delta);
+void LedEncoderButtonRight(FinalEncoderEnum Button, int delta);
 void LedButtonPressed(FinalLedButtonEnum button);
 
 enum

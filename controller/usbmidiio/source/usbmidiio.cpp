@@ -55,7 +55,12 @@
 
 /* TODO: insert other definitions and declarations here. */
 
+uint32_t timer_value();
+
 void preset_init();
+void flash_savepreset(int presetid, PanPreset_t* preset);
+int flash_loadpreset(int presetid, PanPreset_t* preset);
+void sync_preset_full();
 
 PanPreset_t preset;
 PanLedState_t ledstate;
@@ -581,6 +586,26 @@ int encoder_debounce(int encid, int input)
 	return ok;
 }
 
+int encoder_time[__encoder_Count] = {0};
+
+uint32_t cur_encoder_time = 0;
+
+int speedup(int encid, int dir)
+{
+	uint32_t diff = (cur_encoder_time - encoder_time[encid]) >> 10;
+
+	encoder_time[encid] = cur_encoder_time;
+
+	if (diff < 1) diff = 1;
+	int mul = (1<<20) / diff;
+	if (mul < 150) mul = 1;
+
+	mul = (mul * mul) >> 13;
+	if (mul < 1) mul = 1;
+
+	return dir * mul;
+}
+
 int encoder_process(int encid, int astate, int cstate)
 {
 	int encoder_shift[] = {
@@ -617,7 +642,7 @@ int encoder_process(int encid, int astate, int cstate)
 
 			//if (dir) printf("%d -> %d\n", encid, dir);
 
-			return dir;
+			return speedup(encid, dir);
 	}
 
 	return 0;
@@ -636,6 +661,11 @@ void ScanButtonsAndEncoders()
 	SW1LatchOn();
 	SW2LatchOn();
 
+	__NOP();
+	__NOP();
+	__NOP();
+	__NOP();
+	__NOP();
 	__NOP();
 	__NOP();
 	__NOP();
@@ -672,7 +702,7 @@ void ScanButtonsAndEncoders()
 	}
 
 	uint8_t data[4] = {0};
-
+/*
 	for (int i = 0; i < 160; i++) {
 		if (sw[i] != last_sw[i]) { //printf("sw %d\n", PINMANGLE(i));
 			data[0] = PINMANGLE(i);
@@ -680,7 +710,7 @@ void ScanButtonsAndEncoders()
 		}
 	}
 	memcpy(last_sw, sw, 160);
-
+*/
 	for (int i = 0; i < __ledbutton_Count; i++) {
 		if (switch_sw[i] == 0) {
 			// sw[0] is bound to an encoder so we can easily skip unbound buttons
@@ -698,15 +728,22 @@ void ScanButtonsAndEncoders()
 		}
 	}
 
+	cur_encoder_time = timer_value();
+
 	for (int i = 0; i < __encoder_Count; i++) {
 		int move = encoder_process(i, sw[encoder_a[i]], sw[encoder_c[i]]);
 
 		if (move < 0) {
 			data[0] = i;
+			move = -move;
+			data[1] = move & 0xFF;
+			data[2] = (move >> 8) & 0xFF;
 			sync_oob_word(&rpi_sync, OOB_ENCODER_CCW, *(uint32_t*)data, 0);
 		}
 		else if (move > 0) {
 			data[0] = i;
+			data[1] = move & 0xFF;
+			data[2] = (move >> 8) & 0xFF;
 			sync_oob_word(&rpi_sync, OOB_ENCODER_CW, *(uint32_t*)data, 0);
 		}
 
@@ -764,20 +801,39 @@ void SetMkBr(uint16_t mask)
 
 SemaphoreHandle_t xKeyTimerSemaphore = NULL;
 
+volatile uint32_t sctimer_state = 0;
+volatile uint32_t sctimer_counter = 0;
+
 uint32_t timer_value()
 {
-	static uint32_t value = 0;
+	taskENTER_CRITICAL();
+	uint32_t highcount = sctimer_counter << 16;
+	uint32_t timervalue = SCT0->COUNT;
 
-	value++;
-	return value;
+	// but now the counter may have already overflowed! so highcount may be outdated.
+	// must read COUNT first, because the overflow may happen also between reading COUNT and STATE.
+	int overflow = SCT0->STATE != sctimer_state;
+	taskEXIT_CRITICAL();
+
+	// if there was an overflow, and the timer was close to beginning of its range,
+	// assume that it did indeed overflow since last interrupt.
+	if (overflow && timervalue < 32768) {
+			highcount += 65536;
+	}
+
+	return highcount + timervalue;
 }
 
 extern "C" void SCT0_IRQHandler(void)
 {
+	sctimer_state = SCT0->STATE;
+	sctimer_counter++;
+
 	BaseType_t higherPriorityTaskWoken;
 	xSemaphoreGiveFromISR(xKeyTimerSemaphore, &higherPriorityTaskWoken);
 
-	SCTIMER_ClearStatusFlags(SCTIMER_1_PERIPHERAL, 1);
+	SCTIMER_1_PERIPHERAL->EVFLAG = SCTIMER_1_PERIPHERAL->EVFLAG;
+	//SCTIMER_ClearStatusFlags(SCTIMER_1_PERIPHERAL, 1);
 
 	portEND_SWITCHING_ISR(higherPriorityTaskWoken);
 }
@@ -869,6 +925,7 @@ void sync_complete(int status)
 		if (loading) {
 			if (namesync.run()) {
 				sync_oob_word(&rpi_sync, OOB_UI_CONTINUE, 0, 0);
+		        LedsOn();
 				loading = 0;
 			}
 		}
@@ -950,7 +1007,13 @@ void KeyScan()
 void KeyboardTask(void* pvParameters)
 {
 	dsp_reset();
-	preset_init();
+	//if (!flash_loadpreset(0, &preset)) {
+		preset_init();
+		flash_savepreset(0, &preset);
+	//}
+	//else {
+	//	sync_preset_full();
+	//}
 
 	rpi_start();
 
@@ -1083,17 +1146,24 @@ void preset_init()
 	preset.modmatrix[modsource_X].targets[0].depth = 0x3fff;
 	preset.modmatrix[modsource_X].targets[0].outputid = output_VCF1_CV;
 
+    MODMATRIX(modsource_LFO0, 0, 0, 0x3fff);
+    MODMATRIX(modsource_LFO0, 0, 1, output_VCF1_CV);
+	preset.modmatrix[modsource_LFO0].targets[0].depth = 0x3fff;
+	preset.modmatrix[modsource_LFO0].targets[0].outputid = output_VCF1_CV;
+	SETMODSOURCE(0, 1, 0x4000);
+	preset.lfo[0].speed = 0x4000;
+
+	preset.low.h = 0x1000;
 	preset.high.h = 0x1000;
-	preset.low.h = 0x4000;
-	preset.active.h = 0x3000;
+	preset.active.h = 0xC000;
 
-	preset.low.v = 0xffff;
+	preset.low.v = 0x1fff;
+	preset.high.v = 0x7fff;
 	preset.active.v = 0xffff;
-	preset.high.v = 0xffff;
 
-	preset.active.s = 0x1000;
-	preset.high.s = 0xffff;
 	preset.low.s = 0xffff;
+	preset.high.s = 0xffff;
+	preset.active.s = 0xffff;
 
 	preset.SetName("Bleepy");
 }
@@ -1152,6 +1222,7 @@ void sync_preset(uint32_t addr)
 		switch (subaddr) {
 		case 0:
 			//printf("env %d a=%x\n", envid, preset.env[envid].a);
+			SETMODSOURCE(envid + modsource_ENV0, 0, preset.env[envid].flags);
 			SETMODSOURCE(envid + modsource_ENV0, 1, preset.env[envid].a);
 			break;
 		case 4:
@@ -1175,6 +1246,7 @@ void sync_preset(uint32_t addr)
 		int subaddr = addr - lfoid * sizeof(LfoParam_t);
 		switch (subaddr) {
 		case 0:
+			SETMODSOURCE(lfoid + modsource_LFO0, 0, preset.lfo[lfoid].flags);
 			SETMODSOURCE(lfoid + modsource_LFO0, 1, preset.lfo[lfoid].speed);
 			break;
 		case 4:
@@ -1199,7 +1271,7 @@ void sync_preset(uint32_t addr)
 		    MODMATRIX(matrixrow, entry, 0, preset.modmatrix[matrixrow].targets[entry].depth);
 		    MODMATRIX(matrixrow, entry, 1, preset.modmatrix[matrixrow].targets[entry].outputid);
 			break;
-		case 1:
+		case 4:
 			//printf("mod %d/%d d=%x oid=%d\n", matrixrow, entry, preset.modmatrix[matrixrow].targets[entry].depth, preset.modmatrix[matrixrow].targets[entry].outputid);
 		    MODMATRIX(matrixrow, entry, 2, preset.modmatrix[matrixrow].targets[entry].sourceid);
 			break;
@@ -1209,8 +1281,10 @@ void sync_preset(uint32_t addr)
 		addr -= offsetof(PanPreset_t, paramvalue);
 
 		int paramid = addr / 2;
-		FULLVALUE(paramid, 0, preset.paramvalue[paramid]);
-		FULLVALUE(paramid+1, 0, preset.paramvalue[paramid+1]);
+		if (paramid < 0xf0) {
+			FULLVALUE(paramid, 2, preset.paramvalue[paramid]);
+			FULLVALUE(paramid+1, 2, preset.paramvalue[paramid+1]);
+		}
 	}
 	else if (addr >= offsetof(PanPreset_t, switches)) {
 		addr -= offsetof(PanPreset_t, switches);
@@ -1228,6 +1302,80 @@ void sync_preset(uint32_t addr)
 	else if (addr >= offsetof(PanPreset_t, Name)) {
 		addr -= offsetof(PanPreset_t, Name);
 		// name
+	}
+}
+
+void sync_preset_full()
+{
+	// lfos
+	for (int param = 0; param < 16; param++) {
+		SETMODSOURCE(param + 0x00, 0, preset.lfo[param].flags);
+		SETMODSOURCE(param + 0x00, 1, preset.lfo[param].speed);
+		SETMODSOURCE(param + 0x00, 2, preset.lfo[param].depth);
+		SETMODSOURCE(param + 0x00, 3, preset.lfo[param].shape);
+		SETMODSOURCE(param + 0x00, 4, preset.lfo[param].reset_phase);
+	}
+	// envelopes
+	for (int param = 0; param < 16; param++) {
+		SETMODSOURCE(param + 0x10, 0, preset.env[param].flags);
+		SETMODSOURCE(param + 0x10, 1, preset.env[param].a);
+		SETMODSOURCE(param + 0x10, 2, preset.env[param].d);
+		SETMODSOURCE(param + 0x10, 3, preset.env[param].s);
+		SETMODSOURCE(param + 0x10, 4, preset.env[param].r);
+	}
+	// controllers
+	for (int param = 0; param < 11; param++) {
+		SETMODSOURCE(param + 0x20, 0, preset.controller[param].scale);
+		SETMODSOURCE(param + 0x20, 1, preset.controller[param].deadzone);
+	}
+	// operators
+	for (int param = 0; param < 16; param++) {
+		SETMODSOURCE(param + 0x30, 0, preset.op[param].modsource1);
+		SETMODSOURCE(param + 0x30, 1, preset.op[param].modsource2);
+		SETMODSOURCE(param + 0x30, 2, preset.op[param].op);
+		SETMODSOURCE(param + 0x30, 3, preset.op[param].parameter);
+	}
+
+	// modmatrix
+	for (int param = 0; param < 0x40; param++) {
+		for (int target = 0; target < 11; target++) {
+				MODMATRIX(param, target, 0, preset.modmatrix[param].targets[target].depth);
+				MODMATRIX(param, target, 1, preset.modmatrix[param].targets[target].outputid);
+				MODMATRIX(param, target, 2, preset.modmatrix[param].targets[target].sourceid);
+			}
+	}
+
+	// parameters
+	for (int param = 0; param < 0xf0; param++) {
+		FULLVALUE(param, 0, preset.paramvalue[param]);
+		FULLVALUE(param, 1, 0);
+	}
+
+	FULLVALUE(output_VCO1_PITCH, 1, 0x4000);
+	FULLVALUE(output_VCO2_PITCH, 1, 0x4000);
+	FULLVALUE(output_VCO3_PITCH, 1, 0x4000);
+	FULLVALUE(output_VCO4_PITCH, 1, 0x4000);
+	FULLVALUE(output_VCO5_PITCH, 1, 0x4000);
+	FULLVALUE(output_VCO6_PITCH, 1, 0x4000);
+	FULLVALUE(output_VCO7_PITCH, 1, 0x4000);
+
+	for (int i = 0; i < 64; i++) {
+		if (i < 32) {
+			if (preset.switches[0] & (1 << i)) {
+			    SWITCH_ON(i);
+			}
+			else {
+			    SWITCH_OFF(i);
+			}
+		}
+		else {
+			if (preset.switches[1] & (1 << (i - 32))) {
+			    SWITCH_ON(i);
+			}
+			else {
+			    SWITCH_OFF(i);
+			}
+		}
 	}
 }
 
@@ -1281,11 +1429,15 @@ int sync_oobdata_func(uint8_t cmd, uint32_t data)
 		dsp_calibrate();
 		return 0;
 	case CMD_PRESET_LOAD:
+		if (loading) return 0;
+        flash_loadpreset(data, &preset);
+        sync_preset_full();
 		preset_load_start();
 		return 0;
 	case CMD_PRESET_STORE:
 		if (loading) return 0;
         sync_oob_word(&rpi_sync, OOB_UI_PAUSE, 0, 0);
+        flash_savepreset(data, &preset);
         sync_oob_word(&rpi_sync, OOB_UI_CONTINUE, 0, 0);
 		return 0;
 	}
@@ -1399,7 +1551,7 @@ void spifi_init()
 #endif
 }
 
-void flashtest();
+void flash_init();
 
 int main(void) {
   	/* Init board hardware. */
@@ -1411,7 +1563,6 @@ int main(void) {
     setupleds();
 
     LedsOff();
-    LedsOn();
     printf("Board init done\n");
 
     POWER_DisablePD(kPDRUNCFG_PD_USB1_PHY);
@@ -1434,7 +1585,7 @@ int main(void) {
     CLOCK_EnableClock(kCLOCK_Gpio3);
 
     spifi_init();
-    flashtest();
+    flash_init();
 
     control_init();
 

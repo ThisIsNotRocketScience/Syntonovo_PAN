@@ -475,7 +475,7 @@
                         <struct name="usartConfig">
                            <setting name="clockSource" value="FXCOMFunctionClock"/>
                            <setting name="clockSourceFreq" value="BOARD_BootClockRUN"/>
-                           <setting name="baudRate_Bps" value="115200"/>
+                           <setting name="baudRate_Bps" value="500000"/>
                            <setting name="parityMode" value="kUSART_ParityDisabled"/>
                            <setting name="stopBitCount" value="kUSART_OneStopBit"/>
                            <setting name="bitCountPerChar" value="kUSART_8BitsPerChar"/>
@@ -562,7 +562,7 @@
                            <setting name="enableCounterUnify" value="true"/>
                            <setting name="enableBidirection_l" value="false"/>
                            <setting name="enableBidirection_h" value="false"/>
-                           <setting name="prescale_l" value="180"/>
+                           <setting name="prescale_l" value="1"/>
                            <setting name="prescale_h" value="1"/>
                            <set name="outInitState">
                               <selected>
@@ -584,7 +584,7 @@
                         <array name="events">
                            <struct name="0">
                               <setting name="type" value="kSCTIMER_MatchEventOnly"/>
-                              <setting name="matchValue" value="100"/>
+                              <setting name="matchValue" value="65535"/>
                               <setting name="counter" value="kSCTIMER_Counter_L"/>
                               <array name="actions">
                                  <struct name="0">
