@@ -37,6 +37,11 @@ CUSTOMENTRY("Saw", MenuEntry_Toggle, Switch_SEL1SAW)
 CUSTOMENTRY("Subosc", MenuEntry_Toggle, Switch_SEL1SUB)
 CUSTOMENTRY("Sync", MenuEntry_Toggle, Switch_SELVCOSYNC3)
 ENTRY("PW", MenuEntry_Percentage, Output_VCO1_PW)
+
+
+ENTRY("-> VCF1", MenuEntry_Value, Output_VCO1_MIX1)
+ENTRY("-> VCF2", MenuEntry_Value, Output_VCO1_MIX2)
+
 ENDMENU()
 
 MENU(VCO2, ledbutton_VCO2, "VCO2")
@@ -48,6 +53,8 @@ CUSTOMENTRY("Subosc", MenuEntry_Toggle, Switch_SEL2SUB)
 CUSTOMENTRY("Sync", MenuEntry_Toggle, Switch_SELVCOSYNC1)
 ENTRY("PW", MenuEntry_Percentage, Output_VCO2_PW)
 ENTRY("FM (from VCO1)", MenuEntry_Value, Output_VCO123_FM2)
+ENTRY("-> VCF1", MenuEntry_Value, Output_VCO2_MIX1)
+ENTRY("-> VCF2", MenuEntry_Value, Output_VCO2_MIX2)
 
 ENDMENU()
 
@@ -61,6 +68,11 @@ CUSTOMENTRY("Sync", MenuEntry_Toggle, Switch_SELVCOSYNC2)
 
 ENTRY("PW", MenuEntry_Percentage, Output_VCO3_PW)
 ENTRY("FM  (from VCO1)", MenuEntry_Value, Output_VCO123_FM3)
+
+ENTRY("-> VCF1", MenuEntry_Value, Output_VCO3_MIX1)
+ENTRY("-> VCF2", MenuEntry_Value, Output_VCO3_MIX2)
+
+
 ENDMENU()
 
 MENU(VCO8, ledbutton_VCO3, "Noise VCO")

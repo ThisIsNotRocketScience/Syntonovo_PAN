@@ -931,12 +931,12 @@ void RenderLettersInABox(int x, int y, bool active, const char *text, int w, int
 	ImVec2 tl(x, y);
 	ImVec2 br(x + w, y + h);
 
-	ImGui::GetWindowDrawList()->AddRect(tl, br, active ? gGuiResources.Highlight : Dimmed(notghosted?1:2, gGuiResources.Normal), 0, 0, 2);
+	ImGui::GetWindowDrawList()->AddRect(tl, br, active ? gGuiResources.Highlight : Dimmed(notghosted?1:5, gGuiResources.Normal), 0, 0, 2);
 	
 	auto s = ImGui::CalcTextSize(text);
 
 	ImGui::SetCursorPos(ImVec2(x + LetterBoxW / 2 - s.x / 2, y + LetterBoxH / 2 - s.y / 2));
-	ImGui::TextColored((ImVec4)(ImColor)(Dimmed(notghosted ? 1 : 2, gGuiResources.Normal) ),  text);
+	ImGui::TextColored((ImVec4)(ImColor)(Dimmed(notghosted ? 1 : 5, gGuiResources.Normal) ),  text);
 
 }
 
