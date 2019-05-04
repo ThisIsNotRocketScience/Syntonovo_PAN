@@ -27,6 +27,7 @@ enum SubParamFlags_t
 	SubParamFlags_AdsrRetrigger = 1,
 	SubParamFlags_AdRetrigger = 2,
 	SubParamFlags_LfoRetrigger = 4,
+	SubParamFlags_SmoothUpdate = 8,
 
 	SubParamFlags_max = 0xffff
 };
@@ -39,7 +40,7 @@ extern param_t synth_param[SYNTH_PARAM_COUNT];
 typedef struct _modtarget_spec_t
 {
 	uint16_t depth;
-	uint8_t outputid;
+	uint16_t outputid;
 	uint8_t sourceid;
 } modtarget_spec_t;
 
@@ -59,7 +60,7 @@ typedef struct _lfo_param_t
 {
 	uint16_t flags; // including key range
 	uint16_t speed;
-	int16_t depth;
+	uint16_t depth;
 	int16_t shape;
 	uint16_t reset_phase;
 } lfo_param_t;
@@ -74,7 +75,8 @@ typedef struct _env_param_t
 	uint16_t d;
 	uint16_t s;
 	uint16_t r;
-	//uint16_t curve;
+	uint16_t curve;
+	uint16_t depth;
 } env_param_t;
 
 #define NUM_ENVS (16)

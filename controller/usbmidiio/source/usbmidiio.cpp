@@ -55,6 +55,8 @@
 
 /* TODO: insert other definitions and declarations here. */
 
+uint32_t timer_value();
+
 void preset_init();
 void flash_savepreset(int presetid, PanPreset_t* preset);
 int flash_loadpreset(int presetid, PanPreset_t* preset);
@@ -584,6 +586,26 @@ int encoder_debounce(int encid, int input)
 	return ok;
 }
 
+int encoder_time[__encoder_Count] = {0};
+
+uint32_t cur_encoder_time = 0;
+
+int speedup(int encid, int dir)
+{
+	uint32_t diff = (cur_encoder_time - encoder_time[encid]) >> 10;
+
+	encoder_time[encid] = cur_encoder_time;
+
+	if (diff < 1) diff = 1;
+	int mul = (1<<20) / diff;
+	if (mul < 150) mul = 1;
+
+	mul = (mul * mul) >> 13;
+	if (mul < 1) mul = 1;
+
+	return dir * mul;
+}
+
 int encoder_process(int encid, int astate, int cstate)
 {
 	int encoder_shift[] = {
@@ -620,7 +642,7 @@ int encoder_process(int encid, int astate, int cstate)
 
 			//if (dir) printf("%d -> %d\n", encid, dir);
 
-			return dir;
+			return speedup(encid, dir);
 	}
 
 	return 0;
@@ -639,6 +661,11 @@ void ScanButtonsAndEncoders()
 	SW1LatchOn();
 	SW2LatchOn();
 
+	__NOP();
+	__NOP();
+	__NOP();
+	__NOP();
+	__NOP();
 	__NOP();
 	__NOP();
 	__NOP();
@@ -675,7 +702,7 @@ void ScanButtonsAndEncoders()
 	}
 
 	uint8_t data[4] = {0};
-
+/*
 	for (int i = 0; i < 160; i++) {
 		if (sw[i] != last_sw[i]) { //printf("sw %d\n", PINMANGLE(i));
 			data[0] = PINMANGLE(i);
@@ -683,7 +710,7 @@ void ScanButtonsAndEncoders()
 		}
 	}
 	memcpy(last_sw, sw, 160);
-
+*/
 	for (int i = 0; i < __ledbutton_Count; i++) {
 		if (switch_sw[i] == 0) {
 			// sw[0] is bound to an encoder so we can easily skip unbound buttons
@@ -701,15 +728,22 @@ void ScanButtonsAndEncoders()
 		}
 	}
 
+	cur_encoder_time = timer_value();
+
 	for (int i = 0; i < __encoder_Count; i++) {
 		int move = encoder_process(i, sw[encoder_a[i]], sw[encoder_c[i]]);
 
 		if (move < 0) {
 			data[0] = i;
+			move = -move;
+			data[1] = move & 0xFF;
+			data[2] = (move >> 8) & 0xFF;
 			sync_oob_word(&rpi_sync, OOB_ENCODER_CCW, *(uint32_t*)data, 0);
 		}
 		else if (move > 0) {
 			data[0] = i;
+			data[1] = move & 0xFF;
+			data[2] = (move >> 8) & 0xFF;
 			sync_oob_word(&rpi_sync, OOB_ENCODER_CW, *(uint32_t*)data, 0);
 		}
 
@@ -767,20 +801,39 @@ void SetMkBr(uint16_t mask)
 
 SemaphoreHandle_t xKeyTimerSemaphore = NULL;
 
+volatile uint32_t sctimer_state = 0;
+volatile uint32_t sctimer_counter = 0;
+
 uint32_t timer_value()
 {
-	static uint32_t value = 0;
+	taskENTER_CRITICAL();
+	uint32_t highcount = sctimer_counter << 16;
+	uint32_t timervalue = SCT0->COUNT;
 
-	value++;
-	return value;
+	// but now the counter may have already overflowed! so highcount may be outdated.
+	// must read COUNT first, because the overflow may happen also between reading COUNT and STATE.
+	int overflow = SCT0->STATE != sctimer_state;
+	taskEXIT_CRITICAL();
+
+	// if there was an overflow, and the timer was close to beginning of its range,
+	// assume that it did indeed overflow since last interrupt.
+	if (overflow && timervalue < 32768) {
+			highcount += 65536;
+	}
+
+	return highcount + timervalue;
 }
 
 extern "C" void SCT0_IRQHandler(void)
 {
+	sctimer_state = SCT0->STATE;
+	sctimer_counter++;
+
 	BaseType_t higherPriorityTaskWoken;
 	xSemaphoreGiveFromISR(xKeyTimerSemaphore, &higherPriorityTaskWoken);
 
-	SCTIMER_ClearStatusFlags(SCTIMER_1_PERIPHERAL, 1);
+	SCTIMER_1_PERIPHERAL->EVFLAG = SCTIMER_1_PERIPHERAL->EVFLAG;
+	//SCTIMER_ClearStatusFlags(SCTIMER_1_PERIPHERAL, 1);
 
 	portEND_SWITCHING_ISR(higherPriorityTaskWoken);
 }
@@ -872,6 +925,7 @@ void sync_complete(int status)
 		if (loading) {
 			if (namesync.run()) {
 				sync_oob_word(&rpi_sync, OOB_UI_CONTINUE, 0, 0);
+		        LedsOn();
 				loading = 0;
 			}
 		}
@@ -953,13 +1007,13 @@ void KeyScan()
 void KeyboardTask(void* pvParameters)
 {
 	dsp_reset();
-	if (!flash_loadpreset(0, &preset)) {
+	//if (!flash_loadpreset(0, &preset)) {
 		preset_init();
 		flash_savepreset(0, &preset);
-	}
-	else {
-		sync_preset_full();
-	}
+	//}
+	//else {
+	//	sync_preset_full();
+	//}
 
 	rpi_start();
 
@@ -1092,17 +1146,24 @@ void preset_init()
 	preset.modmatrix[modsource_X].targets[0].depth = 0x3fff;
 	preset.modmatrix[modsource_X].targets[0].outputid = output_VCF1_CV;
 
+    MODMATRIX(modsource_LFO0, 0, 0, 0x3fff);
+    MODMATRIX(modsource_LFO0, 0, 1, output_VCF1_CV);
+	preset.modmatrix[modsource_LFO0].targets[0].depth = 0x3fff;
+	preset.modmatrix[modsource_LFO0].targets[0].outputid = output_VCF1_CV;
+	SETMODSOURCE(0, 1, 0x4000);
+	preset.lfo[0].speed = 0x4000;
+
+	preset.low.h = 0x1000;
 	preset.high.h = 0x1000;
-	preset.low.h = 0x4000;
-	preset.active.h = 0x3000;
+	preset.active.h = 0xC000;
 
-	preset.low.v = 0xffff;
+	preset.low.v = 0x1fff;
+	preset.high.v = 0x7fff;
 	preset.active.v = 0xffff;
-	preset.high.v = 0xffff;
 
-	preset.active.s = 0x1000;
-	preset.high.s = 0xffff;
 	preset.low.s = 0xffff;
+	preset.high.s = 0xffff;
+	preset.active.s = 0xffff;
 
 	preset.SetName("Bleepy");
 }
@@ -1220,8 +1281,10 @@ void sync_preset(uint32_t addr)
 		addr -= offsetof(PanPreset_t, paramvalue);
 
 		int paramid = addr / 2;
-		FULLVALUE(paramid, 2, preset.paramvalue[paramid]);
-		FULLVALUE(paramid+1, 2, preset.paramvalue[paramid+1]);
+		if (paramid < 0xf0) {
+			FULLVALUE(paramid, 2, preset.paramvalue[paramid]);
+			FULLVALUE(paramid+1, 2, preset.paramvalue[paramid+1]);
+		}
 	}
 	else if (addr >= offsetof(PanPreset_t, switches)) {
 		addr -= offsetof(PanPreset_t, switches);
@@ -1392,7 +1455,6 @@ void LedTask( void * pvParameters )
 	for( ;; )
     {
         SendLeds();
-        LedsOn();
         vTaskDelay( xDelay );
     }
 

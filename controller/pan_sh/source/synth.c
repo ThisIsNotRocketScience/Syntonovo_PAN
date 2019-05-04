@@ -253,21 +253,6 @@ void update_porta_time(int retrigger)
 	}
 }
 
-void do_smooth(int ctrlid)
-{
-	int32_t value = synth_param[ctrlid].value;
-	int32_t target = synth_param[ctrlid].target;
-	if (value < target) {
-		value += synth_param[ctrlid].add;
-		if (value > target) value = target;
-	}
-	else if (value > target) {
-		value -= synth_param[ctrlid].add;
-		if (value < target) value = target;
-	}
-	synth_param[ctrlid].value = value;
-}
-
 void do_update_smooth(int ctrlid)
 {
 	const int steps = 100;
@@ -282,6 +267,25 @@ void do_update_smooth(int ctrlid)
 	}
 	// else add = 0
 	synth_param[ctrlid].add = add;
+}
+
+void do_smooth(int ctrlid)
+{
+	if (synth_param[ctrlid].flags & SubParamFlags_SmoothUpdate) {
+		synth_param[ctrlid].flags &= ~SubParamFlags_SmoothUpdate;
+		do_update_smooth(ctrlid);
+	}
+	int32_t value = synth_param[ctrlid].value;
+	int32_t target = synth_param[ctrlid].target;
+	if (value < target) {
+		value += synth_param[ctrlid].add;
+		if (value > target) value = target;
+	}
+	else if (value > target) {
+		value -= synth_param[ctrlid].add;
+		if (value < target) value = target;
+	}
+	synth_param[ctrlid].value = value;
 }
 
 int32_t chase(int i, uint16_t value)
@@ -332,6 +336,7 @@ void synth_mapping_defaultpatch()
 	synth_param[VCO5_PITCH].note = 0x4000;
 	synth_param[VCO6_PITCH].note = 0x4000;
 	synth_param[VCO7_PITCH].note = 0x4000;
+	synth_param[NOISE_COLOR].note = 0x4000;
 
 	shiftctrl_set(SEL1SQR);
 	shiftctrl_set(SEL2SQR);
@@ -760,7 +765,7 @@ void control_cb(int param, int subparam, uint16_t value)
 		break;
 	case 2:
 		synth_param[param].target = value;
-		do_update_smooth(param);
+		synth_param[param].flags |= SubParamFlags_SmoothUpdate;
 		break;
 	case 32:
 		synth_param[param].flags = value;
@@ -1260,6 +1265,15 @@ void do_output_VCF2_R_LOG(int ctrlid, int port)
 	}
 }
 
+void do_output_NOISE_COLOR(int ctrlid, int port)
+{
+	do_smooth(NOISE_COLOR);
+	int32_t value = signed_scale(synth_param[NOTE].last, synth_param[NOISE_COLOR].note);
+	value = note_add(value, note_scale(synth_param[NOISE_COLOR].value, 72 * 0x4000 / 128));
+
+	process_param_note(NOISE_COLOR, value, 24);
+}
+
 void do_output_VCO1_FREQ(int ctrlid, int port)
 {
 }
@@ -1492,6 +1506,16 @@ void virt_VCO7_PITCH()
 	process_param_note(VCO7_PITCH, value, 24);
 }
 
+/*
+void virt_VCO8_PITCH()
+{
+	do_smooth(VCO8_PITCH);
+	int32_t value = signed_scale(synth_param[NOTE].last, synth_param[VCO8_PITCH].note);
+	value = note_add(value, note_scale(synth_param[VCO8_PITCH].value, 72 * 0x4000 / 128));
+
+	process_param_note(VCO8_PITCH, value, 24);
+}*/
+
 void virt_GATE()
 {
 	synth_param[GATE].last = synth_param[GATE].value;
@@ -1580,6 +1604,12 @@ void synth_mapping_virt()
 		ports_value(synth_param[VCO7_FREQ].port, val);
 		last[6] = val;
 	}
+
+	val = autotune_note_to_dac(7, synth_param[NOISE_COLOR].last);
+	if (val != last[7] || doing_reset) {
+		ports_value(synth_param[NOISE_COLOR].port, val);
+		last[7] = val;
+	}
 }
 
 void pad_zero()
@@ -1599,9 +1629,11 @@ void pad_init()
 
 void synth_init()
 {
+	notestack_init(keyboard_mode_last);
+
 	for (int i = 0; i < SYNTH_MODSOURCE_COUNT; i++) {
 		for(int k = 0; k < MODTARGET_COUNT; k++) {
-			modmatrix[i].targets[k].outputid = 0xff;
+			modmatrix[i].targets[k].outputid = 0xffff;
 			modmatrix[i].targets[k].sourceid = 0;
 			modmatrix[i].targets[k].depth = 0;
 		}
@@ -1735,10 +1767,13 @@ void add_mod_targets(int modid, int32_t value)
 {
 	for (int k = 0; k < NUM_CONTROLLERS; k++) {
 		int outputid = modmatrix[modid].targets[k].outputid;
-		if (outputid != 0xff) {
+		if (outputid >= 0 && outputid < 0xf0) {
 			int depth = modmatrix[modid].targets[k].depth;
 			synth_param[outputid].sum += bipolar_signed_scale(value, depth);
 		}
+		//else if (outputid >= 0x100 && outputid < 0x110) {
+
+		//}
 	}
 }
 

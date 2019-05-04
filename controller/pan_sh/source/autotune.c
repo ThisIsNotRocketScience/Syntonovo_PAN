@@ -151,6 +151,9 @@ void Voutraw(int channel, uint16_t ictrl)
 	case 6:
 		ports_value(synth_param[VCO7_FREQ].port, ictrl);
 		break;
+	case 7:
+		ports_value(synth_param[NOISE_COLOR].port, ictrl);
+		break;
 	}
 	ports_flush();
 }
@@ -173,11 +176,11 @@ struct caldata_t {
 	int minbin, maxbin;
 };
 
-static struct caldata_t caldata[7] = {0};
+static struct caldata_t caldata[8] = {0};
 
 struct flashcontent_t
 {
-	struct caldata_t caldata[7];
+	struct caldata_t caldata[8];
 	//POPSettings settings;
 };
 
@@ -209,7 +212,7 @@ void Vout(int channel, uint16_t note)
 
 void resetcal()
 {
-	for (int c = 0; c < 7; c++) {
+	for (int c = 0; c < 8; c++) {
 		for (int i = 0; i < BINCOUNT; i++) {
 			//caldata.inv_scale_error[i] = 1.0f;
 			caldata[c].inv_offset_error[i] = 0.0f;
@@ -227,8 +230,8 @@ int loadcal()
 	//FLASH1_Read(FLASH1_DeviceData, FLASH1_USER_AREA0_DATA_ADDRESS, &caldata[0], sizeof(caldata));
 	memcpy(&flashdata, (void*)FSL_FEATURE_EEPROM_BASE_ADDRESS, sizeof(flashdata));
 
-	if (flashdata.caldata[0].magic == 0x55612347) {
-		memcpy(&caldata[0], &flashdata.caldata[0], 7*sizeof(struct caldata_t));
+	if (flashdata.caldata[0].magic == 0x55612348) {
+		memcpy(&caldata[0], &flashdata.caldata[0], 8*sizeof(struct caldata_t));
 		return 0;
 	}
 	else {
@@ -241,8 +244,8 @@ int loadcal()
 
 void writecal()
 {
-	memcpy(&flashdata.caldata[0], &caldata[0], 7*sizeof(struct caldata_t));
-	flashdata.caldata[0].magic = 0x55612347;
+	memcpy(&flashdata.caldata[0], &caldata[0], 8*sizeof(struct caldata_t));
+	flashdata.caldata[0].magic = 0x55612348;
 
 	int pagecount = (sizeof(struct flashcontent_t) + (EEPROM_PAGE_SIZE-1)) / EEPROM_PAGE_SIZE;
 
@@ -373,6 +376,9 @@ void autotune_set_routing(int osc)
 	case 6:
 	    shiftctrl_set(SEL7SQR);
 	    break;
+	case 7:
+	    shiftctrl_clear(SELMUTEDNSAW);
+	    break;
 	}
     shiftctrl_update();
 }
@@ -450,7 +456,7 @@ uint16_t bindacvalue(int bin)
 	return (uint16_t) ((65535 * bin) / 10);
 }
 
-uint16_t bindacvalue_e(int bin, int16_t error)
+uint16_t bindacvalue_e(int bin, int32_t error)
 {
 	int32_t value = ((65535 * bin) / 10);
 	value += error;
@@ -513,6 +519,19 @@ void log_meas(int osc, int bin, int i, uint16_t targetvalue, int binsamples, flo
 	meas_logpos++;
 }
 
+uint16_t uint16_add_clamp(uint16_t value, uint16_t add)
+{
+	int32_t x = (int32_t)value + (int32_t)add;
+	if (x > 65535) return 65535;
+	return x;
+}
+
+uint16_t uint16_sub_clamp(uint16_t value, uint16_t sub)
+{
+	int32_t x = (int32_t)value - (int32_t)sub;
+	if (x < 0) return 0;
+	return x;
+}
 
 volatile float startf;
 
@@ -527,7 +546,12 @@ int autotune(int osc)
 	//while(1)
 		autotune_set_routing(osc);
 
-	Voutraw(osc, 0);
+	int osc_offset = 0;
+
+	if (osc == 7)
+		osc_offset = 0x6000;
+
+	Voutraw(osc, osc_offset);
 	WAIT1_Waitms(1);
 	startf = readhz(16);
 
@@ -545,12 +569,12 @@ int autotune(int osc)
 		if (bin == 0) {
 			caldata[osc].inv_offset_error[bin] = 0.0f;
 			caldata[osc].dacerror[bin] = 0;
-			caldata[osc].dacvalue[bin] = bindacvalue(bin);
+			caldata[osc].dacvalue[bin] = bindacvalue_e(bin, osc_offset);
 		}
 		else {
 			caldata[osc].inv_offset_error[bin] = caldata[osc].inv_offset_error[bin - 1];
 			caldata[osc].dacerror[bin] = caldata[osc].dacerror[bin - 1];
-			caldata[osc].dacvalue[bin] = bindacvalue_e(bin, caldata[osc].dacerror[bin]);
+			caldata[osc].dacvalue[bin] = bindacvalue_e(bin, (int32_t)caldata[osc].dacerror[bin] + osc_offset);
 		}
 		//float last_real_scale_error = 10000.0f;
 
@@ -563,14 +587,14 @@ int autotune(int osc)
 		if (pitch > target_freq) {
 			high_pitch = pitch;
 			high = caldata[osc].dacvalue[bin];
-			low = high - 3000;
+			low = uint16_sub_clamp(high, 3000);
 			Voutraw(osc, low);
 			low_pitch = readhz(binsamples(bin));
 		}
 		else {
 			low_pitch = pitch;
 			low = caldata[osc].dacvalue[bin];
-			high = low + 3000;
+			high = uint16_add_clamp(low, 3000);
 			Voutraw(osc, high);
 			high_pitch = readhz(binsamples(bin));
 		}
@@ -625,7 +649,7 @@ int autotune(int osc)
 			}
 
 			caldata[osc].dacvalue[bin] = ivalue;
-			caldata[osc].dacerror[bin] = (int32_t)caldata[osc].dacvalue[bin] - (int32_t)bindacvalue(bin);
+			caldata[osc].dacerror[bin] = (int32_t)caldata[osc].dacvalue[bin] - (int32_t)bindacvalue_e(bin, osc_offset);
 
 			if (high <= low + 4) {
 				log_meas(osc, bin, i, ivalue, binsamples(bin), target_freq, pitch, caldata[osc].dacerror[bin], low_pitch, low, high_pitch, high, 10);
@@ -725,16 +749,24 @@ void autotune_start()
 
 	autotune_phase = 9;
 
+	r = autotune(7);
+	if (r) {
+		autotune_phase |= 0x100;
+		return;
+	}
+
+	autotune_phase = 10;
+
 	//printf("writecal\n");
 
 	writecal();
 
 	//printf("done\n");
 
-	autotune_phase = 10;
-
-	Vout(6, 57*256);
-
 	autotune_phase = 11;
+
+	//Vout(6, 2*256);
+
+	autotune_phase = 12;
 }
 

@@ -58,7 +58,7 @@ instance:
     - usartConfig:
       - clockSource: 'FXCOMFunctionClock'
       - clockSourceFreq: 'BOARD_BootClockRUN'
-      - baudRate_Bps: '115200'
+      - baudRate_Bps: '500000'
       - parityMode: 'kUSART_ParityDisabled'
       - stopBitCount: 'kUSART_OneStopBit'
       - bitCountPerChar: 'kUSART_8BitsPerChar'
@@ -225,7 +225,7 @@ instance:
       - enableCounterUnify: 'true'
       - enableBidirection_l: 'false'
       - enableBidirection_h: 'false'
-      - prescale_l: '180'
+      - prescale_l: '1'
       - prescale_h: '1'
       - outInitState: 'SCTIMER_OUTPUT_0_MASK'
     - enableIRQ: 'true'
@@ -241,7 +241,7 @@ instance:
     - events:
       - 0:
         - type: 'kSCTIMER_MatchEventOnly'
-        - matchValue: '100'
+        - matchValue: '65535'
         - counter: 'kSCTIMER_Counter_L'
         - actions:
           - 0:
@@ -261,7 +261,7 @@ const sctimer_config_t SCTimer_1_initConfig = {
   .clockSelect = kSCTIMER_Clock_On_Rise_Input_0,
   .enableBidirection_l = false,
   .enableBidirection_h = false,
-  .prescale_l = 179,
+  .prescale_l = 0,
   .prescale_h = 0,
   .outInitState = SCTIMER_OUTPUT_0_MASK
 };
@@ -270,7 +270,7 @@ uint32_t SCTimer_1_event[1];
 void SCTimer_1_init(void) {
   SCTIMER_Init(SCTIMER_1_PERIPHERAL, &SCTimer_1_initConfig);
   /* Initialization of state 0 */
-  SCTIMER_CreateAndScheduleEvent(SCTIMER_1_PERIPHERAL, kSCTIMER_MatchEventOnly, 100, kSCTIMER_Out_0, kSCTIMER_Counter_L, &SCTimer_1_event[0]);
+  SCTIMER_CreateAndScheduleEvent(SCTIMER_1_PERIPHERAL, kSCTIMER_MatchEventOnly, 65535, kSCTIMER_Out_0, kSCTIMER_Counter_L, &SCTimer_1_event[0]);
   SCTIMER_SetupCounterLimitAction(SCTIMER_1_PERIPHERAL, kSCTIMER_Counter_L, SCTimer_1_event[0]);
   SCTIMER_SetupNextStateAction(SCTIMER_1_PERIPHERAL, 0, SCTimer_1_event[0]);
   /* Enable interrupt SCT0_IRQn request in the NVIC */
