@@ -1205,6 +1205,10 @@ void Gui::BuildScreens()
 	Screens[SCREEN_LFO]->LedButtonsThatOpenThisScreen.push_back(ledbutton_BHome);
 
 
+	Screens[SCREEN_VCO4]->SetTitle("Oscillator 4");
+	Screens[SCREEN_VCO5]->SetTitle("Oscillator 5");
+	Screens[SCREEN_VCO6]->SetTitle("Oscillator 6");
+	Screens[SCREEN_VCO7]->SetTitle("Oscillator 7");
 	Screens[SCREEN_VCO4]->EncodersThatOpenThisScreen.push_back(encoder_VCO4);
 	Screens[SCREEN_VCO5]->EncodersThatOpenThisScreen.push_back(encoder_VCO5);
 	Screens[SCREEN_VCO6]->EncodersThatOpenThisScreen.push_back(encoder_VCO6);
