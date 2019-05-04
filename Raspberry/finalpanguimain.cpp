@@ -573,12 +573,16 @@ int main()
 	
 
 	auto t = current_timestamp();
-	auto lasttick = t;
+	auto lasttick1 = t;
+	auto lasttick100 = t;
 	while (!terminate)
 	{
-		if (t - lasttick > 100) {
+		if (t - lasttick100 > 100) {
+			lasttick100 = t;
 			uart.config.timer_tick(uart.config.timer_tick_data);
-			lasttick = t;
+		}
+		if (t - lasttick1 > 1) {
+			lasttick1 = t;
 			if (!sync_running) sync_complete(0);
 		}
 		
