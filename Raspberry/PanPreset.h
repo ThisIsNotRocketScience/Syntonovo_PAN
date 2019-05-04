@@ -19,7 +19,7 @@
 typedef struct
 {
 	uint16_t depth;
-	uint8_t outputid;
+	uint16_t outputid;
 	uint8_t sourceid;
 } PACK ModTargetSpec_t;
 
@@ -109,6 +109,8 @@ public:
 
 class PanPreset_t {
 public:
+	char Name[PRESET_NAME_LENGTH];
+
 	void PutSwitch(SwitchEnum SwitchID, bool v)
 	{
 		if (v) SetSwitch(SwitchID); else ClearSwitch(SwitchID);
@@ -293,8 +295,6 @@ public:
 
 #define NUM_OPERATORS (16)
 	OperatorParam_t op[NUM_OPERATORS];
-
-	char Name[PRESET_NAME_LENGTH];
 
 	uint16_t ledbrightness;
 	uint16_t ledblinkspeed;

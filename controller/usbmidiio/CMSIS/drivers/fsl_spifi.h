@@ -47,8 +47,8 @@
 
 /*! @name Driver version */
 /*@{*/
-/*! @brief SPIFI driver version 2.0.0. */
-#define FSL_SPIFI_DRIVER_VERSION (MAKE_VERSION(2, 0, 0))
+/*! @brief SPIFI driver version 2.0.2. */
+#define FSL_SPIFI_DRIVER_VERSION (MAKE_VERSION(2, 0, 2))
 /*@}*/
 
 /*! @brief Status structure of SPIFI.*/
@@ -161,6 +161,14 @@ extern "C" {
  * @name Initialization and deinitialization
  * @{
  */
+
+/*!
+ * @brief Get the SPIFI instance from peripheral base address.
+ *
+ * @param base SPIFI peripheral base address.
+ * @return SPIFI instance.
+ */
+uint32_t SPIFI_GetInstance(SPIFI_Type *base);
 
 /*!
  * @brief Initializes the SPIFI with the user configuration structure.
@@ -359,6 +367,29 @@ static inline void SPIFI_WriteData(SPIFI_Type *base, uint32_t data)
 }
 
 /*!
+ * @brief Write a byte data in address of SPIFI.
+ *
+ * Users can write a byte data into SPIFI address.
+ *
+ * @param base     SPIFI peripheral base address.
+ * @param data     Data need be write.
+ */
+static inline void SPIFI_WriteDataByte(SPIFI_Type *base, uint8_t data)
+{
+    *((volatile uint8_t *)(&(base->DATA))) = data;
+}
+
+/*!
+ * @brief Write a halfword data in address of SPIFI.
+ *
+ * Users can write a halfword data into SPIFI address.
+ *
+ * @param base     SPIFI peripheral base address.
+ * @param data     Data need be write.
+ */
+void SPIFI_WriteDataHalfword(SPIFI_Type *base, uint16_t data);
+
+/*!
  * @brief Read data from serial flash.
  *
  * Users should notice before call this function, the data length field in command register shall larger
@@ -371,6 +402,25 @@ static inline uint32_t SPIFI_ReadData(SPIFI_Type *base)
 {
     return base->DATA;
 }
+
+/*!
+ * @brief Read a byte data from serial flash.
+ *
+ * @param base     SPIFI peripheral base address.
+ * @return Data input from flash.
+ */
+static inline uint8_t SPIFI_ReadDataByte(SPIFI_Type *base)
+{
+    return *((volatile uint8_t *)(&(base->DATA)));
+}
+
+/*!
+ * @brief Read a halfword data from serial flash.
+ *
+ * @param base     SPIFI peripheral base address.
+ * @return Data input from flash.
+ */
+uint16_t SPIFI_ReadDataHalfword(SPIFI_Type *base);
 
 /* @} */
 

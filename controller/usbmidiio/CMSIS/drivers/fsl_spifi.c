@@ -38,17 +38,15 @@
  * Definitions
  ******************************************************************************/
 
+/* Component ID definition, used by tools. */
+#ifndef FSL_COMPONENT_ID
+#define FSL_COMPONENT_ID "platform.drivers.spifi"
+#endif
+
+
 /*******************************************************************************
  * Prototypes
  ******************************************************************************/
-
-/*!
- * @brief Get the SPIFI instance from peripheral base address.
- *
- * @param base SPIFI peripheral base address.
- * @return SPIFI instance.
- */
-uint32_t SPIFI_GetInstance(SPIFI_Type *base);
 
 /*******************************************************************************
  * Variables
@@ -124,27 +122,53 @@ void SPIFI_Deinit(SPIFI_Type *base)
 
 void SPIFI_SetCommand(SPIFI_Type *base, spifi_command_t *cmd)
 {
-    /* Wait for the CMD and MCINT flag all be 0 */
-    while (SPIFI_GetStatusFlag(base) & (SPIFI_STAT_MCINIT_MASK | SPIFI_STAT_CMD_MASK))
+    /* If SPIFI in memory mode, call reset function to abort memory mode */
+    if (SPIFI_GetStatusFlag(base) & SPIFI_STAT_MCINIT_MASK)
+    {
+        SPIFI_ResetCommand(base);
+    }
+
+    /* Wait for other command finished */
+    while (SPIFI_GetStatusFlag(base) & SPIFI_STAT_CMD_MASK)
     {
     }
+
     base->CMD = SPIFI_CMD_DATALEN(cmd->dataLen) | SPIFI_CMD_POLL(cmd->isPollMode) | SPIFI_CMD_DOUT(cmd->direction) |
                 SPIFI_CMD_INTLEN(cmd->intermediateBytes) | SPIFI_CMD_FIELDFORM(cmd->format) |
                 SPIFI_CMD_FRAMEFORM(cmd->type) | SPIFI_CMD_OPCODE(cmd->opcode);
-
-    /* Wait for the command written */
-    while ((base->STAT & SPIFI_STAT_CMD_MASK) == 0U)
-    {
-    }
 }
 
 void SPIFI_SetMemoryCommand(SPIFI_Type *base, spifi_command_t *cmd)
 {
-    /* Wait for the CMD and MCINT flag all be 0 */
-    while (SPIFI_GetStatusFlag(base) & (SPIFI_STAT_MCINIT_MASK | SPIFI_STAT_CMD_MASK))
+    /* Wait for the CMD flag be 0 */
+    while (SPIFI_GetStatusFlag(base) & SPIFI_STAT_CMD_MASK)
     {
     }
 
     base->MCMD = SPIFI_MCMD_POLL(0U) | SPIFI_MCMD_DOUT(0U) | SPIFI_MCMD_INTLEN(cmd->intermediateBytes) |
                  SPIFI_MCMD_FIELDFORM(cmd->format) | SPIFI_MCMD_FRAMEFORM(cmd->type) | SPIFI_MCMD_OPCODE(cmd->opcode);
+
+    /* Wait for the command written */
+    while ((base->STAT & SPIFI_STAT_MCINIT_MASK) == 0)
+    {
+    }
+}
+
+void SPIFI_WriteDataHalfword(SPIFI_Type *base, uint16_t data)
+{
+    volatile uint8_t *dataReg = ((volatile uint8_t *)(&(base->DATA)));
+
+    *dataReg = (data & 0xFFU);
+    dataReg++;
+    *dataReg = ((data >> 8U) & 0xFFU);
+}
+
+uint16_t SPIFI_ReadDataHalfword(SPIFI_Type *base)
+{
+    uint16_t val = 0;
+    volatile uint8_t *dataReg = ((volatile uint8_t *)(&(base->DATA)));
+
+    val = ((*dataReg) | (uint16_t)((uint16_t)(*(dataReg + 1U)) << 8U));
+
+    return val;
 }

@@ -330,14 +330,14 @@ void autotune_set_routing(int osc)
 	ports_value(PORT_CLEANF_R_LOG, 0xffff);
 
 	ports_value(PORT_VCF1_RES, 0xffff);
-	ports_value(PORT_VCF2_L_CV, 0xffff);
-	ports_value(PORT_VCF2_M1_CV, 0xffff);
-	ports_value(PORT_VCF2_M2_CV, 0xffff);
-	ports_value(PORT_VCF2_H_CV, 0xffff);
-	ports_value(PORT_VCF2_L_RES, 0xffff);
-	ports_value(PORT_VCF2_M1_RES, 0xffff);
-	ports_value(PORT_VCF2_M2_RES, 0xffff);
-	ports_value(PORT_VCF2_H_RES, 0xffff);
+	ports_value(PORT_VCF2_A_CV, 0xffff);
+	ports_value(PORT_VCF2_B_CV, 0xffff);
+	ports_value(PORT_VCF2_C_CV, 0xffff);
+	ports_value(PORT_VCF2_D_CV, 0xffff);
+	ports_value(PORT_VCF2_A_RES, 0xffff);
+	ports_value(PORT_VCF2_B_RES, 0xffff);
+	ports_value(PORT_VCF2_C_RES, 0xffff);
+	ports_value(PORT_VCF2_D_RES, 0xffff);
 
 	ports_value(PORT_VCO1_PW, 0x8000);
 	ports_value(PORT_VCO2_PW, 0x8000);
