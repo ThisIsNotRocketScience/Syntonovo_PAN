@@ -1554,23 +1554,23 @@ void LedEncoderButtonPress(FinalEncoderEnum Button)
 	}
 }
 
-void LedEncoderButtonLeft(FinalEncoderEnum Button)
+void LedEncoderButtonLeft(FinalEncoderEnum Button, int delta)
 {
 	switch (Button)
 	{
 	case encoder_SketchLeft: gGui.SketchLeft(-1); break;
 	case encoder_SketchRight: gGui.SketchRight(-1); break;
-	default: gGui.Encoder(Button, -1); break;
+	default: gGui.Encoder(Button, -delta); break;
 	}
 }
 
-void LedEncoderButtonRight(FinalEncoderEnum Button)
+void LedEncoderButtonRight(FinalEncoderEnum Button, int delta)
 {
 	switch (Button)
 	{
 	case encoder_SketchLeft: gGui.SketchLeft(1); break;
 	case encoder_SketchRight: gGui.SketchRight(1); break;
-	default: gGui.Encoder(Button, 1); break;
+	default: gGui.Encoder(Button, delta); break;
 	}
 }
 

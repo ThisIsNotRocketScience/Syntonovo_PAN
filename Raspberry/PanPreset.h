@@ -222,7 +222,7 @@ public:
 
 	}
 
-	void TweakParameter(OutputEnum param, int delta, int deltamod = 0x800)
+	void TweakParameter(OutputEnum param, int delta, int deltamod = 1)
 	{
 		int OrigVal = paramvalue[param];
 		int32_t val = OrigVal + delta * deltamod;
@@ -249,7 +249,7 @@ public:
 #define SYNTH_MODSOURCE_COUNT (64)
 	ModMatrixRow_t modmatrix[SYNTH_MODSOURCE_COUNT];
 
-	void TweakModMatrix(ModSource_t mod, int instance, int id, int delta, int deltamod = 0x800)
+	void TweakModMatrix(ModSource_t mod, int instance, int id, int delta, int deltamod = 1)
 	{
 		auto row = GetModSourceRow(mod, instance);
 		
