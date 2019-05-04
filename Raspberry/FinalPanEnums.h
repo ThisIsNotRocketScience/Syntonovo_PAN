@@ -146,6 +146,7 @@ enum
 	MenuAction_Ok,
 	MenuAction_Remove,
 	MenuAction_CloseModal,
+	MenuAction_CloseParentModal,
 	MenuAction_CalibratePads,
 	MenuAction_CalibrateOscillators,
 	MenuAction_EnableReferenceLines,
