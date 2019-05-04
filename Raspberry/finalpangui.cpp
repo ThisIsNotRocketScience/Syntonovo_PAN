@@ -1218,6 +1218,7 @@ void Gui::BuildScreens()
 	Screens[SCREEN_SYSTEM]->SetTitle("System Settings");
 	Screens[SCREEN_SYSTEM]->EnableAvailableButton("Recalibrate Oscillators", MenuEntry_Action, MenuAction_CalibrateOscillators);
 	Screens[SCREEN_SYSTEM]->EnableAvailableButton("Recalibrate Pads", MenuEntry_Action, MenuAction_CalibratePads);
+	Screens[SCREEN_SYSTEM]->EnableButton(7, "Done", MenuEntry_Action, MenuAction_Home);
 
 	Screens[SCREEN_HOME]->EnableButton(8, "Store", MenuEntry_Page, SCREEN_PRESET);//(512, 40, "Some Sound");
 	Screens[SCREEN_HOME]->EnableButton(9, "Revert", MenuEntry_Action, MenuAction_Revert);
@@ -1235,7 +1236,8 @@ void Gui::BuildScreens()
 	Screens[SCREEN_COLORS]->AddLedControl("Low", GetEncoderX(1), 300, Led_Low);
 	Screens[SCREEN_COLORS]->AddLedControl("High", GetEncoderX(5), 300, Led_High);
 	Screens[SCREEN_COLORS]->AddLedControl("Active", GetEncoderX(9), 300, Led_Active);
-	
+	Screens[SCREEN_COLORS]->EnableButton(7, "Done", MenuEntry_Action, MenuAction_Home);
+
 	auto Lines1 = new EncoderLineDisplay();
 	Lines1->fromX = GetEncoderX(1);
 	Lines1->fromY = 300;

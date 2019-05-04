@@ -204,7 +204,7 @@ public:
 		uint16_t *p = GetModParamPointer(param, instance);
 		if (p) {
 			int OrigVal = *p;
-			int32_t val = OrigVal + delta * 1000;
+			int32_t val = OrigVal + delta ;
 			if (val < 0) val = 0;
 			if (val > 0xffff) val = 0xffff;
 			*p = val;

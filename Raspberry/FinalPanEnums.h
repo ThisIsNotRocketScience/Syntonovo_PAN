@@ -149,6 +149,7 @@ enum
 	MenuAction_CalibrateOscillators,
 	MenuAction_EnableReferenceLines,
 	MenuAction_EnableTestImage,
+	MenuAction_Home,
 	__MenuAction_Count
 };
 

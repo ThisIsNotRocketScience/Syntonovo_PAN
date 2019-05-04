@@ -87,7 +87,7 @@ ENTRY("Color", MenuEntry_Pitch, Output_NOISE_COLOR)
 ENTRY("Saw -> VCF1", MenuEntry_Value, Output_DNSSAW_MIX1)
 ENTRY("Saw -> VCF2", MenuEntry_Value, Output_DNSSAW_MIX2)
 ENTRY("Noise -> VCF1", MenuEntry_Value, Output_DIGINS_MIX1)
-ENTRY("Noise -> VCF2", MenuEntry_Value, Output_DIGINS_MIX1)
+ENTRY("Noise -> VCF2", MenuEntry_Value, Output_DIGINS_MIX2)
 
 
 ENDMENU()
