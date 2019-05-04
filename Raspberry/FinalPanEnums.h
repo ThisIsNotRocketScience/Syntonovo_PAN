@@ -241,8 +241,9 @@ enum UIDisplayModes
 	MenuEntry_EncoderSet,
 	MenuEntry_ModMatrixValue,
 	MenuEntry_Ghosted,
-	MenuEntry_FeatureToggle
-	
+	MenuEntry_FeatureToggle,
+	MenuEntry_Octave,
+
 
 };
 

@@ -382,8 +382,6 @@ void _screensetup_t::SketchRight(int delta)
 	ControlsInOrder[ActiveControl]->SketchRightDelta(delta);
 }
 
-
-
 void _screensetup_t::SketchRightPress()
 {
 	ControlsInOrder[ActiveControl]->SketchRightPressed();
@@ -447,7 +445,6 @@ void _screensetup_t::SetupEncoderSet(int n)
 		}
 	}
 }
-
 
 void _screensetup_t::SketchLeftPress()
 {
