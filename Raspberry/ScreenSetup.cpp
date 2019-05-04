@@ -211,6 +211,7 @@ void _screensetup_t::Action(int action)
 {
 	switch (action)
 	{
+	case MenuAction_OpenEffects: Modal = gGui.Screens[SCREEN_EFFECTS]; break;
 	case MenuAction_Home: gGui.GotoPage(SCREEN_HOME); break;
 	case MenuAction_CalibratePads: cmd_pad_zero(); break;
 	case MenuAction_CalibrateOscillators: cmd_calibrate(); break;

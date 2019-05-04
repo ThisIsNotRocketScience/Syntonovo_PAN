@@ -90,6 +90,7 @@ enum Screens_t
 	SCREEN_SELECTBANKL,
 	SCREEN_SELECTBANKR,
 	SCREEN_TEST,
+	
 	SCREENS_COUNT
 };
 
@@ -150,6 +151,8 @@ enum
 	MenuAction_EnableReferenceLines,
 	MenuAction_EnableTestImage,
 	MenuAction_Home,
+	MenuAction_OpenEffects,
+
 	__MenuAction_Count
 };
 

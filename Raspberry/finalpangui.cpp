@@ -1297,7 +1297,6 @@ void Gui::BuildScreens()
 	Screens[SCREEN_ARP]->SetTitle("Arpeggiator");
 	Screens[SCREEN_ARP]->LedButtonsThatOpenThisScreen.push_back(ledbutton_ArpEdit);
 
-
 	Screens[SCREEN_VCO1]->SetTitle("Oscillator 1");
 	Screens[SCREEN_VCO1]->EncodersThatOpenThisScreen.push_back(encoder_VCO1);
 
@@ -1310,7 +1309,6 @@ void Gui::BuildScreens()
 	Screens[SCREEN_VCF1]->SetTitle("Filter 1");
 	Screens[SCREEN_VCF1]->EncodersThatOpenThisScreen.push_back(encoder_VCF1Freq);
 
-
 	Screens[SCREEN_VCF2a]->SetTitle("Filter 2: A");
 	Screens[SCREEN_VCF2a]->EncodersThatOpenThisScreen.push_back(encoder_VCF2a);
 	Screens[SCREEN_VCF2b]->SetTitle("Filter 2: B");
@@ -1319,6 +1317,14 @@ void Gui::BuildScreens()
 	Screens[SCREEN_VCF2c]->EncodersThatOpenThisScreen.push_back(encoder_VCF2c);
 	Screens[SCREEN_VCF2d]->SetTitle("Filter 2: D");
 	Screens[SCREEN_VCF2d]->EncodersThatOpenThisScreen.push_back(encoder_VCF2d);
+
+	
+	Screens[SCREEN_VCF1MIX]->EnableAvailableButton("Effects", MenuEntry_Action, MenuAction_OpenEffects);
+	Screens[SCREEN_VCF2MIX]->EnableAvailableButton("Effects", MenuEntry_Action, MenuAction_OpenEffects);
+	Screens[SCREEN_CLEANMIX]->EnableAvailableButton("Effects", MenuEntry_Action, MenuAction_OpenEffects);
+	Screens[SCREEN_MASTER]->EnableAvailableButton("Effects", MenuEntry_Action, MenuAction_OpenEffects);
+
+	Screens[SCREEN_EFFECTS]->EnableAvailableButton("Done", MenuEntry_Action, MenuAction_CloseModal);
 
 
 	Screens[SCREEN_TEST]->SetTitle("Test scherm");
