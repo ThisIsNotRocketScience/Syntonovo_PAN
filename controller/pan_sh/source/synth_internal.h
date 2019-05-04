@@ -13,6 +13,8 @@ void do_output_lin(int ctrlid, int port);
 void do_output_inv(int ctrlid, int port);
 void do_output_log(int ctrlid, int port);
 
+void do_smooth(int ctrlid);
+
 #define PORTID(PGROUP, PID) (((PGROUP)&1) | ((PID)<<1) | (((PGROUP)>>1) << 4))
 
 #include "synth_internal_defs.h"
@@ -172,6 +174,7 @@ void synth_mapping_run()
 #define DO_OUTPUT_CUSTOM(NAME, CTRLID, PID) \
 	do_output_##NAME(CTRLID, PID);
 #define OUTPUT(NAME, PGROUP, PID, CTRLTYPE, CTRLID, MODE, INITVALUE, dummy1, dummy2) \
+	do_smooth(CTRLID); \
 	DO_OUTPUT_##MODE(NAME, CTRLID, PORTID(PGROUP, PID));
 
 #define OUTPUT_VIRT(NAME, PGROUP, PID, CTRLTYPE, CTRLID, MODE, INITVALUE, dummy1, dummy2)

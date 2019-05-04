@@ -253,6 +253,37 @@ void update_porta_time(int retrigger)
 	}
 }
 
+void do_smooth(int ctrlid)
+{
+	int32_t value = synth_param[ctrlid].value;
+	int32_t target = synth_param[ctrlid].target;
+	if (value < target) {
+		value += synth_param[ctrlid].add;
+		if (value > target) value = target;
+	}
+	else if (value > target) {
+		value -= synth_param[ctrlid].add;
+		if (value < target) value = target;
+	}
+	synth_param[ctrlid].value = value;
+}
+
+void do_update_smooth(int ctrlid)
+{
+	const int steps = 100;
+	int32_t value = synth_param[ctrlid].value;
+	int32_t target = synth_param[ctrlid].target;
+	int32_t add = 0;
+	if (value < target) {
+		add = ((target - value) + steps - 1) / steps;
+	}
+	else if (value > target) {
+		add = (((value - target) + steps - 1) / steps);
+	}
+	// else add = 0
+	synth_param[ctrlid].add = add;
+}
+
 int32_t chase(int i, uint16_t value)
 {
 	int32_t x = 0x4000 - abs((i + 1) * 0x4000 - (int32_t)value);
@@ -720,10 +751,16 @@ void control_cb(int param, int subparam, uint16_t value)
 
 	switch (subparam) {
 	case 0:
+		synth_param[param].target = value;
 		synth_param[param].value = value;
+		synth_param[param].add = 0;
 		break;
 	case 1:
 		synth_param[param].note = value;
+		break;
+	case 2:
+		synth_param[param].target = value;
+		do_update_smooth(param);
 		break;
 	case 32:
 		synth_param[param].flags = value;
@@ -1608,6 +1645,11 @@ void synth_init()
 	}
 
 	synth_mapping_init();
+
+	// start with master level OFF
+	synth_param[MASTER_LEVEL].last = 0;
+	synth_param[MASTER_LEVEL].value = 0;
+
 	pan_law_init();
     lfo_init();
     adsr_init();
