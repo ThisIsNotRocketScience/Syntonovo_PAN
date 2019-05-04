@@ -1205,6 +1205,12 @@ void Gui::BuildScreens()
 	Screens[SCREEN_LFO]->LedButtonsThatOpenThisScreen.push_back(ledbutton_BHome);
 
 
+	Screens[SCREEN_VCO4]->EncodersThatOpenThisScreen.push_back(encoder_VCO4);
+	Screens[SCREEN_VCO5]->EncodersThatOpenThisScreen.push_back(encoder_VCO5);
+	Screens[SCREEN_VCO6]->EncodersThatOpenThisScreen.push_back(encoder_VCO6);
+	Screens[SCREEN_VCO7]->EncodersThatOpenThisScreen.push_back(encoder_VCO7);
+
+
 	Screens[SCREEN_SYSTEM]->SetTitle("System Settings");
 	Screens[SCREEN_SYSTEM]->EnableAvailableButton("Recalibrate Oscillators", MenuEntry_Action, MenuAction_CalibrateOscillators);
 	Screens[SCREEN_SYSTEM]->EnableAvailableButton("Recalibrate Pads", MenuEntry_Action, MenuAction_CalibratePads);
@@ -1438,10 +1444,10 @@ Screens_t GetPage(FinalEncoderEnum Button)
 	case encoder_VCO1: return SCREEN_VCO1;
 	case encoder_VCO2: return SCREEN_VCO2;
 	case encoder_VCO3: return SCREEN_VCO3;
-	case encoder_VCO4: return SCREEN_VCO4567;
-	case encoder_VCO5: return SCREEN_VCO4567;
-	case encoder_VCO6: return SCREEN_VCO4567;
-	case encoder_VCO7: return SCREEN_VCO4567;
+	case encoder_VCO4: return SCREEN_VCO4;
+	case encoder_VCO5: return SCREEN_VCO5;
+	case encoder_VCO6: return SCREEN_VCO6;
+	case encoder_VCO7: return SCREEN_VCO7;
 	case encoder_VCO8: return SCREEN_VCO8;
 
 		// 8 on right side
