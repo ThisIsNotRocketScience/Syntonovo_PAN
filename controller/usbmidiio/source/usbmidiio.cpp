@@ -1152,6 +1152,7 @@ void sync_preset(uint32_t addr)
 		switch (subaddr) {
 		case 0:
 			//printf("env %d a=%x\n", envid, preset.env[envid].a);
+			SETMODSOURCE(envid + modsource_ENV0, 0, preset.env[envid].flags);
 			SETMODSOURCE(envid + modsource_ENV0, 1, preset.env[envid].a);
 			break;
 		case 4:
@@ -1175,6 +1176,7 @@ void sync_preset(uint32_t addr)
 		int subaddr = addr - lfoid * sizeof(LfoParam_t);
 		switch (subaddr) {
 		case 0:
+			SETMODSOURCE(lfoid + modsource_LFO0, 0, preset.lfo[lfoid].flags);
 			SETMODSOURCE(lfoid + modsource_LFO0, 1, preset.lfo[lfoid].speed);
 			break;
 		case 4:
@@ -1199,7 +1201,7 @@ void sync_preset(uint32_t addr)
 		    MODMATRIX(matrixrow, entry, 0, preset.modmatrix[matrixrow].targets[entry].depth);
 		    MODMATRIX(matrixrow, entry, 1, preset.modmatrix[matrixrow].targets[entry].outputid);
 			break;
-		case 1:
+		case 4:
 			//printf("mod %d/%d d=%x oid=%d\n", matrixrow, entry, preset.modmatrix[matrixrow].targets[entry].depth, preset.modmatrix[matrixrow].targets[entry].outputid);
 		    MODMATRIX(matrixrow, entry, 2, preset.modmatrix[matrixrow].targets[entry].sourceid);
 			break;
@@ -1209,8 +1211,8 @@ void sync_preset(uint32_t addr)
 		addr -= offsetof(PanPreset_t, paramvalue);
 
 		int paramid = addr / 2;
-		FULLVALUE(paramid, 0, preset.paramvalue[paramid]);
-		FULLVALUE(paramid+1, 0, preset.paramvalue[paramid+1]);
+		FULLVALUE(paramid, 2, preset.paramvalue[paramid]);
+		FULLVALUE(paramid+1, 2, preset.paramvalue[paramid+1]);
 	}
 	else if (addr >= offsetof(PanPreset_t, switches)) {
 		addr -= offsetof(PanPreset_t, switches);
@@ -1228,6 +1230,82 @@ void sync_preset(uint32_t addr)
 	else if (addr >= offsetof(PanPreset_t, Name)) {
 		addr -= offsetof(PanPreset_t, Name);
 		// name
+	}
+}
+
+void sync_preset_full()
+{
+	// lfos
+	for (int param = 0; param < 16; param++) {
+		SETMODSOURCE(param + 0x00, 0, preset.lfo[param].flags);
+		SETMODSOURCE(param + 0x00, 1, preset.lfo[param].speed);
+		SETMODSOURCE(param + 0x00, 2, preset.lfo[param].depth);
+		SETMODSOURCE(param + 0x00, 3, preset.lfo[param].shape);
+		SETMODSOURCE(param + 0x00, 4, preset.lfo[param].reset_phase);
+	}
+	// envelopes
+	for (int param = 0; param < 16; param++) {
+		SETMODSOURCE(param + 0x10, 0, preset.env[param].flags);
+		SETMODSOURCE(param + 0x10, 1, preset.env[param].a);
+		SETMODSOURCE(param + 0x10, 2, preset.env[param].d);
+		SETMODSOURCE(param + 0x10, 3, preset.env[param].s);
+		SETMODSOURCE(param + 0x10, 4, preset.env[param].r);
+	}
+	// controllers
+	for (int param = 0; param < 11; param++) {
+		SETMODSOURCE(param + 0x20, 0, preset.controller[param].scale);
+		SETMODSOURCE(param + 0x20, 1, preset.controller[param].deadzone);
+	}
+	// operators
+	for (int param = 0; param < 16; param++) {
+		SETMODSOURCE(param + 0x30, 0, preset.op[param].modsource1);
+		SETMODSOURCE(param + 0x30, 1, preset.op[param].modsource2);
+		SETMODSOURCE(param + 0x30, 2, preset.op[param].op);
+		SETMODSOURCE(param + 0x30, 3, preset.op[param].parameter);
+	}
+
+	// modmatrix
+	for (int param = 0; param < 0x40; param++) {
+		for (int target = 0; target < 11; target++) {
+				MODMATRIX(param, target, 0, preset.modmatrix[param].targets[target].depth);
+				MODMATRIX(param, target, 1, preset.modmatrix[param].targets[target].outputid);
+				MODMATRIX(param, target, 2, preset.modmatrix[param].targets[target].sourceid);
+			}
+	}
+
+	// parameters
+	for (int param = 0; param < 0xf0; param++) {
+		FULLVALUE(param, 0, preset.paramvalue[param]);
+		FULLVALUE(param, 1, 0);
+	}
+
+	FULLVALUE(output_VCO1_PITCH, 1, 0x4000);
+	FULLVALUE(output_VCO2_PITCH, 1, 0x4000);
+	FULLVALUE(output_VCO3_PITCH, 1, 0x4000);
+	FULLVALUE(output_VCO4_PITCH, 1, 0x4000);
+	FULLVALUE(output_VCO5_PITCH, 1, 0x4000);
+	FULLVALUE(output_VCO6_PITCH, 1, 0x4000);
+	FULLVALUE(output_VCO7_PITCH, 1, 0x4000);
+
+	preset.switches[0] = 0;
+	preset.switches[1] = 0;
+	for (int i = 0; i < 64; i++) {
+		if (i < 32) {
+			if (preset.switches[0] & (1 << i)) {
+			    SWITCH_ON(i);
+			}
+			else {
+			    SWITCH_OFF(i);
+			}
+		}
+		else {
+			if (preset.switches[1] & (1 << (i - 32))) {
+			    SWITCH_ON(i);
+			}
+			else {
+			    SWITCH_OFF(i);
+			}
+		}
 	}
 }
 
@@ -1271,8 +1349,8 @@ void sync_data_func(int addr, uint8_t* data)
 	}
 }
 
-void SavePreset(int presetid, PanPreset_t* preset);
-int LoadPreset(int presetid, PanPreset_t* preset);
+void flash_savepreset(int presetid, PanPreset_t* preset);
+int flash_loadpreset(int presetid, PanPreset_t* preset);
 
 int sync_oobdata_func(uint8_t cmd, uint32_t data)
 {
@@ -1285,13 +1363,14 @@ int sync_oobdata_func(uint8_t cmd, uint32_t data)
 		return 0;
 	case CMD_PRESET_LOAD:
 		if (loading) return 0;
-        LoadPreset(data, &preset);
+        flash_loadpreset(data, &preset);
+        sync_preset_full();
 		preset_load_start();
 		return 0;
 	case CMD_PRESET_STORE:
 		if (loading) return 0;
         sync_oob_word(&rpi_sync, OOB_UI_PAUSE, 0, 0);
-        SavePreset(data, &preset);
+        flash_savepreset(data, &preset);
         sync_oob_word(&rpi_sync, OOB_UI_CONTINUE, 0, 0);
 		return 0;
 	}
@@ -1309,6 +1388,7 @@ void LedTask( void * pvParameters )
 	for( ;; )
     {
         SendLeds();
+        LedsOn();
         vTaskDelay( xDelay );
     }
 
@@ -1405,7 +1485,7 @@ void spifi_init()
 #endif
 }
 
-void flashtest();
+void flash_init();
 
 int main(void) {
   	/* Init board hardware. */
@@ -1417,7 +1497,6 @@ int main(void) {
     setupleds();
 
     LedsOff();
-    LedsOn();
     printf("Board init done\n");
 
     POWER_DisablePD(kPDRUNCFG_PD_USB1_PHY);
@@ -1440,7 +1519,7 @@ int main(void) {
     CLOCK_EnableClock(kCLOCK_Gpio3);
 
     spifi_init();
-    flashtest();
+    flash_init();
 
     control_init();
 

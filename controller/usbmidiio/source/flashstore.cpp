@@ -433,14 +433,14 @@ Store s(MEMSIZE);
 Index i(s);
 
 preset_t tmp_preset;
-void SavePreset(int presetid, PanPreset_t* preset)
+void flash_savepreset(int presetid, PanPreset_t* preset)
 {
 	memcpy(&tmp_preset.data, preset, sizeof(PanPreset_t));
 	tmp_preset.header.preset_id = presetid;
 	i.SavePreset(&tmp_preset);
 }
 
-int LoadPreset(int presetid, PanPreset_t* preset)
+int flash_loadpreset(int presetid, PanPreset_t* preset)
 {
 	int status = i.LoadPreset(presetid, &tmp_preset);
 	if (!status) {
@@ -450,7 +450,7 @@ int LoadPreset(int presetid, PanPreset_t* preset)
 	memcpy(preset, &tmp_preset.data, sizeof(PanPreset_t));
 }
 
-void flashtest()
+void flash_init()
 {
 	eeprom_config_t config;
 	EEPROM_GetDefaultConfig(&config);
@@ -459,22 +459,6 @@ void flashtest()
 	i.Init();
 
 	printf("size %d count %d realsize %d\n", preset_size, preset_count, sizeof(PanPreset_t));
-	return;
-/*
-	preset_t p1;
-	p1.header.preset_id = 1;
-	strcpy((char*)p1.data.Name, "P1");
-
-	preset_t p2;
-	p2.header.preset_id = 2;
-	strcpy((char*)p2.data.Name, "P2");
-
-	i.SavePreset(&p1);
-	i.SavePreset(&p2);
-
-	i.SavePreset(&p1);
-	i.SavePreset(&p1);
-	*/
 }
 
 /*
