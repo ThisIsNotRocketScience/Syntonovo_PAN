@@ -292,7 +292,7 @@ ENTRY("Parameter 3", MenuEntry_Value, Output_VCA_FXPOT1)
 ENTRY("VCF2 R -> Effect", MenuEntry_Value, Output_VCF2_FX_R)
 ENTRY("Effect L -> Master L", MenuEntry_Value, Output_FX_L_RETURN)
 ENTRY("Cleanfeed L -> Effect", MenuEntry_Value, Output_CLEANF_FX_L)
-ENTRY("Effect R -> Master R", MenuEntry_Value, Output_FX_L_RETURN)
+ENTRY("Effect R -> Master R", MenuEntry_Value, Output_FX_R_RETURN)
 ENTRY("Cleanfeed R -> Effect", MenuEntry_Value, Output_CLEANF_FX_R)
 
 

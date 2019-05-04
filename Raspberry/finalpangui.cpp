@@ -1332,6 +1332,8 @@ void Gui::BuildScreens()
 	//Screens[SCREEN_TEST]->EnableButton(5, "Button2!");
 	//Screens[SCREEN_TEST]->EnableButton(11, "Button3!");
 
+
+
 	_screensetup_t *current = Screens[SCREEN_TEST];
 	int lastbutton = 0;
 	int lastencoder = 0;
