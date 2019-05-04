@@ -208,12 +208,13 @@ void sync_in_read_complete(int status, void* stateptr)
 		break;
 	default:
 		if (state->oob_data) {
+			sync_out_write_ack(state, state->in_running_checksum);
+			state->uart->rx.waitfor(6);
+		    LEAVE_CRITICAL_SECTION();
 			uint32_t d =
 				data[1] | (data[2] << 8) | (data[3] << 16) | (data[4] << 24);
-			if (state->oob_data(cmd, d) == 0) {
-				sync_out_write_ack(state, state->in_running_checksum);
-				break;
-			}
+			state->oob_data(cmd, d);
+			return;
 		}
 		printf("unexpected %d\n", cmd);
 		sync_reset(state);

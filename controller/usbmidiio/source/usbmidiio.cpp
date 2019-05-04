@@ -666,6 +666,11 @@ void ScanButtonsAndEncoders()
 	__NOP();
 	__NOP();
 	__NOP();
+	__NOP();
+	__NOP();
+	__NOP();
+	__NOP();
+	__NOP();
 
 	for (int i = 0; i < 80; i++) {
 		sw[i] = SW1Data();
@@ -677,8 +682,18 @@ void ScanButtonsAndEncoders()
 		__NOP();
 		__NOP();
 		__NOP();
+		__NOP();
+		__NOP();
+		__NOP();
+		__NOP();
+		__NOP();
 		SW1ClkOn();
 		SW2ClkOn();
+		__NOP();
+		__NOP();
+		__NOP();
+		__NOP();
+		__NOP();
 		__NOP();
 		__NOP();
 		__NOP();
@@ -910,6 +925,7 @@ void sync_complete(int status)
 		if (loading) {
 			if (namesync.run()) {
 				sync_oob_word(&rpi_sync, OOB_UI_CONTINUE, 0, 0);
+		        LedsOn();
 				loading = 0;
 			}
 		}
@@ -991,13 +1007,13 @@ void KeyScan()
 void KeyboardTask(void* pvParameters)
 {
 	dsp_reset();
-	if (!flash_loadpreset(0, &preset)) {
+	//if (!flash_loadpreset(0, &preset)) {
 		preset_init();
 		flash_savepreset(0, &preset);
-	}
-	else {
-		sync_preset_full();
-	}
+	//}
+	//else {
+	//	sync_preset_full();
+	//}
 
 	rpi_start();
 
@@ -1130,17 +1146,24 @@ void preset_init()
 	preset.modmatrix[modsource_X].targets[0].depth = 0x3fff;
 	preset.modmatrix[modsource_X].targets[0].outputid = output_VCF1_CV;
 
+    MODMATRIX(modsource_LFO0, 0, 0, 0x3fff);
+    MODMATRIX(modsource_LFO0, 0, 1, output_VCF1_CV);
+	preset.modmatrix[modsource_LFO0].targets[0].depth = 0x3fff;
+	preset.modmatrix[modsource_LFO0].targets[0].outputid = output_VCF1_CV;
+	SETMODSOURCE(0, 1, 0x4000);
+	preset.lfo[0].speed = 0x4000;
+
+	preset.low.h = 0x1000;
 	preset.high.h = 0x1000;
-	preset.low.h = 0x4000;
-	preset.active.h = 0x3000;
+	preset.active.h = 0xC000;
 
-	preset.low.v = 0xffff;
+	preset.low.v = 0x1fff;
+	preset.high.v = 0x7fff;
 	preset.active.v = 0xffff;
-	preset.high.v = 0xffff;
 
-	preset.active.s = 0x1000;
-	preset.high.s = 0xffff;
 	preset.low.s = 0xffff;
+	preset.high.s = 0xffff;
+	preset.active.s = 0xffff;
 
 	preset.SetName("Bleepy");
 }
@@ -1432,7 +1455,6 @@ void LedTask( void * pvParameters )
 	for( ;; )
     {
         SendLeds();
-        LedsOn();
         vTaskDelay( xDelay );
     }
 
