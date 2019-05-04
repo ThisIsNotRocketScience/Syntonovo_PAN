@@ -1202,7 +1202,9 @@ void Gui::BuildScreens()
 	Screens[SCREEN_HOME]->AddText(512, 140, "Current preset: ", align_right);
 	Screens[SCREEN_HOME]->AddDynamicText(512, 140, gCurrentPreset.Name, PRESET_NAME_LENGTH);
 	Screens[SCREEN_HOME]->EncodersThatOpenThisScreen.push_back(encoder_SketchLeft);
-	
+	Screens[SCREEN_LFO]->LedButtonsThatOpenThisScreen.push_back(ledbutton_BHome);
+
+
 	Screens[SCREEN_SYSTEM]->SetTitle("System Settings");
 	Screens[SCREEN_SYSTEM]->EnableAvailableButton("Recalibrate Oscillators", MenuEntry_Action, MenuAction_CalibrateOscillators);
 	Screens[SCREEN_SYSTEM]->EnableAvailableButton("Recalibrate Pads", MenuEntry_Action, MenuAction_CalibratePads);

@@ -119,10 +119,11 @@ LEDBUTTON(SeqEdit, 200, 0, 50, "SeqEdit", 1, 0.9f, 0)
 LEDBUTTON(SeqStop, 220, 0, 51, "SeqStop", 1, 0.9f, 0)
 
 LEDBUTTON(LMod, 40, 140, 49, "PadLeft", 1, 0.9f, 0)
+LEDBUTTON(RMod, 520, 140, 50, "PadRight", 1, 0.9f, 0)
+LEDBUTTON(BHome, 60, 140, 50, "Home", 1, 0.9f, 0)
 LEDBUTTON(LUna, 40, 140, 49, "PadLeft", 1, 0.9f, 0)
 LEDBUTTON(LSus, 40, 140, 49, "PadLeft", 1, 0.9f, 0)
 
-LEDBUTTON(RMod, 520,140, 50, "PadRight", 1, 0.9f, 0)
 LEDBUTTON(RUna, 520, 140, 50, "PadRight", 1, 0.9f, 0)
 LEDBUTTON(RSus, 520, 140, 50, "PadRight", 1, 0.9f, 0)
 //LEDBUTTON(SeqStop, 220, 0, 51, "SeqStop", 1, 0.9f, 0)

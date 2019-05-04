@@ -91,6 +91,8 @@ ModSourceScreen::ModSourceScreen(Screens_t screen)
 	case SCREEN_ENVELOPE:
 		HasActiveInstanceDisplay = true;
 
+		EnableButton(3, "Legato", MenuEntry_EnvelopeToggle, Envelope_Staccato);
+
 		EnableAvailableEncoder("Attack", MenuEntry_EnvelopeValue, Envelope_Attack);
 		EnableAvailableEncoder("Decay", MenuEntry_EnvelopeValue, Envelope_Decay);
 		EnableAvailableEncoder("Sustain", MenuEntry_EnvelopeValue, Envelope_Sustain);
@@ -109,8 +111,8 @@ ModSourceScreen::ModSourceScreen(Screens_t screen)
 	}
 	if (HasActiveInstanceDisplay)
 	{
-		EnableButton(1, "Previous", MenuEntry_Action, MenuAction_Prev);
-		EnableButton(8, "Next", MenuEntry_Action, MenuAction_Next);
+		EnableButton(0, "Previous", MenuEntry_Action, MenuAction_Prev);
+		EnableButton(1, "Next", MenuEntry_Action, MenuAction_Next);
 	}
 	EnableButton(9, "Parameters", MenuEntry_EncoderSet, 0);
 	EnableButton(10, "Targets", MenuEntry_EncoderSet, 1);
@@ -198,7 +200,7 @@ void ModSourceScreen::Render(bool active, float DT)
 		for (int i = 0; i < MaxInstances; i++)
 		{
 			char txt[10];
-			snprintf(txt,10, "%d", i);
+			snprintf(txt,10, "%d", i+1);
 			bool used = false;
 			
 			auto row = gCurrentPreset.GetModSourceRow(modType, i);
@@ -207,7 +209,9 @@ void ModSourceScreen::Render(bool active, float DT)
 				if (row->targets[j].depth != 0 && row->targets[j].outputid !=-1) used = true;
 			};
 
-			RenderLettersInABox(i * 40 + 200, ButtonHeight(1), i == ActiveInstance, txt, 35, 35, used);
+			int x = (i%8) * 40 + 100;
+			int y = (i / 8) * 40 + ButtonHeight(1);
+			RenderLettersInABox(x,y, i == ActiveInstance, txt, 35, 35, used);
 		}
 	}
 	RenderModalBox(active, DT);
