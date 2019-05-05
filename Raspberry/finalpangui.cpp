@@ -1454,10 +1454,16 @@ void Gui::BuildScreens()
 
 
 	Screens[SCREEN_VCF2a]->SetTitle("Filter 2a");
+	Screens[SCREEN_VCF2a]->EnableAvailableButton("-> Mixer", MenuEntry_Page, SCREEN_VCF2MIX);
 	Screens[SCREEN_VCF2b]->SetTitle("Filter 2b");
+	Screens[SCREEN_VCF2b]->EnableAvailableButton("-> Mixer", MenuEntry_Page, SCREEN_VCF2MIX);
 	Screens[SCREEN_VCF2c]->SetTitle("Filter 2c");
+	Screens[SCREEN_VCF2c]->EnableAvailableButton("-> Mixer", MenuEntry_Page, SCREEN_VCF2MIX);
 	Screens[SCREEN_VCF2d]->SetTitle("Filter 2d");
+	Screens[SCREEN_VCF2d]->EnableAvailableButton("-> Mixer", MenuEntry_Page, SCREEN_VCF2MIX);
+
 	Screens[SCREEN_VCF2_structure]->SetTitle("Filter 2 routing");
+	Screens[SCREEN_VCF1]->EnableAvailableButton("-> Mixer", MenuEntry_Page, SCREEN_VCF1MIX);
 
 
 	Screens[SCREEN_VCO4]->SetTitle("Oscillator 4");
