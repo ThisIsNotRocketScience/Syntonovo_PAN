@@ -328,12 +328,12 @@ void setupleds()
 	ENCODER(0, VCF2b);
 	ENCODER(0, VCF2a);
 
-	UNUSED(1);//LEDBUTTON(1, LHome);
+	LEDBUTTON(1, BHome);
 	UNUSED(1);//LEDBUTTON(1, Lseq2);
 	UNUSED(1);//LEDBUTTON(1, Lseq1);
-	UNUSED(1);//LEDBUTTON(1, LSus);
-	UNUSED(1);//LEDBUTTON(1, LUna);
-	UNUSED(1);//LEDBUTTON(1, LMod);
+	LEDBUTTON(1, LSus);
+	LEDBUTTON(1, LUna);
+	LEDBUTTON(1, LMod);
 	LEDBUTTON(1, PortamentoLeft);
 	LEDBUTTON(1, OctDownLeft);
 	LEDBUTTON(1, B6);
@@ -1007,13 +1007,13 @@ void KeyScan()
 void KeyboardTask(void* pvParameters)
 {
 	dsp_reset();
-	//if (!flash_loadpreset(0, &preset)) {
+	if (!flash_loadpreset(0, &preset)) {
 		preset_init();
-	//	flash_savepreset(0, &preset);
-	//}
-	//else {
-	//	sync_preset_full();
-	//}
+		flash_savepreset(0, &preset);
+	}
+	else {
+		sync_preset_full();
+	}
 
 	rpi_start();
 
@@ -1267,12 +1267,14 @@ void sync_preset(uint32_t addr)
 
 		switch (subaddr) {
 		case 0:
-			//printf("mod %d/%d d=%x oid=%d\n", matrixrow, entry, preset.modmatrix[matrixrow].targets[entry].depth, preset.modmatrix[matrixrow].targets[entry].outputid);
+			//if (preset.modmatrix[matrixrow].targets[entry].depth)
+			//	printf("mod %d/%d d=%x oid=%d at %x+%x\n", matrixrow, entry, preset.modmatrix[matrixrow].targets[entry].depth, preset.modmatrix[matrixrow].targets[entry].outputid, addr, offsetof(PanPreset_t, modmatrix));
 		    MODMATRIX(matrixrow, entry, 0, preset.modmatrix[matrixrow].targets[entry].depth);
 		    MODMATRIX(matrixrow, entry, 1, preset.modmatrix[matrixrow].targets[entry].outputid);
 			break;
 		case 4:
-			//printf("mod %d/%d d=%x oid=%d\n", matrixrow, entry, preset.modmatrix[matrixrow].targets[entry].depth, preset.modmatrix[matrixrow].targets[entry].outputid);
+			//if (preset.modmatrix[matrixrow].targets[entry].depth)
+			//	printf("mod %d/%d d=%x oid=%d sid=%d at %x\n", matrixrow, entry, preset.modmatrix[matrixrow].targets[entry].depth, preset.modmatrix[matrixrow].targets[entry].outputid, preset.modmatrix[matrixrow].targets[entry].sourceid, addr);
 		    MODMATRIX(matrixrow, entry, 2, preset.modmatrix[matrixrow].targets[entry].sourceid);
 			break;
 		}
@@ -1358,6 +1360,7 @@ void sync_preset_full()
 	FULLVALUE(output_VCO5_PITCH, 1, 0x4000);
 	FULLVALUE(output_VCO6_PITCH, 1, 0x4000);
 	FULLVALUE(output_VCO7_PITCH, 1, 0x4000);
+	FULLVALUE(output_NOISE_COLOR, 1, 0x4000);
 
 	for (int i = 0; i < 64; i++) {
 		if (i < 32) {
@@ -1510,7 +1513,7 @@ void spifi_init()
 {
     memset(mem_writeBuffer, 0xaa, sizeof(mem_writeBuffer));
 
-    printf("init\n");
+    //printf("init\n");
     int status = Nor_Flash_Init(&norConfig, &norHandle);
     if (status != kStatus_Success)
     {
