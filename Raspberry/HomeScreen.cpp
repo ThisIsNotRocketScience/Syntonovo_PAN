@@ -1,4 +1,6 @@
+#include <stdio.h>
 #include "HomeScreen.h"
+
 extern presetnames_t presetnames;
 
 class BankList : public _control_t
