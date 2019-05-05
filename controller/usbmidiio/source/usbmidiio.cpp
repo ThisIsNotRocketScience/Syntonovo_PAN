@@ -1431,12 +1431,15 @@ int sync_oobdata_func(uint8_t cmd, uint32_t data)
 	case CMD_CALIBRATE:
 		dsp_calibrate();
 		return 0;
-	case CMD_PRESET_LOAD:
+	case CMD_PRESET_LOAD: {
 		if (loading) return 0;
+		uint16_t mastervol = preset.paramvalue[Output_MASTER_LEVEL];
         flash_loadpreset(data, &preset);
+		preset.paramvalue[Output_MASTER_LEVEL] = mastervol;
         sync_preset_full();
 		preset_load_start();
 		return 0;
+	}
 	case CMD_PRESET_STORE:
 		if (loading) return 0;
         sync_oob_word(&rpi_sync, OOB_UI_PAUSE, 0, 0);
