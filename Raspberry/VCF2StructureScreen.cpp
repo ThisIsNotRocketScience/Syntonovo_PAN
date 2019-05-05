@@ -39,7 +39,7 @@ VCF2StructureScreen::VCF2StructureScreen()
 	EnableButton(4, "Mode C", MenuEntry_Action, MenuAction_VCFCMode);
 	EnableButton(5, "Mode D", MenuEntry_Action, MenuAction_VCFDMode);
 	EnableButton(6, "C/D Parralel", MenuEntry_Action, MenuAction_VCFCD);
-	EnableButton(12, "done", MenuEntry_Action, MenuAction_CloseModal);
+	EnableButton(12, "done", MenuEntry_Action, MenuAction_CloseParentModal);
 }
 
 void VCF2StructureScreen::Action(int action)
@@ -52,6 +52,7 @@ void VCF2StructureScreen::Action(int action)
 	case MenuAction_VCFAB: gCurrentPreset.ToggleSwitch(Switch_SELVCF21SER); break;
 	case MenuAction_VCFCD: gCurrentPreset.ToggleSwitch(Switch_SELVCF23SER); break;
 	}
+	_screensetup_t::Action(action);
 }
 
 void VCF2StructureScreen::Render(bool active, float dt)
