@@ -178,7 +178,7 @@ void ModSourceScreen::Action(int a)
 {
 	switch (a)
 	{
-	case MenuAction_CloseModal: Modal = NULL; break;
+	case MenuAction_CloseModal: Modal = NULL; SetEncoderNames(); break;
 	case MenuAction_Next:
 	{
 		ActiveInstance = (ActiveInstance + 1) % MaxInstances;
@@ -221,6 +221,7 @@ void ModSourceScreen::Render(bool active, float DT)
 
 void ModSourceScreen::Activate()
 {
+	SetEncoderNames();
 	_control_t::Activate();
 }
 
