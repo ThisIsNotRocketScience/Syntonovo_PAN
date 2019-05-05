@@ -16,7 +16,7 @@
 
 typedef struct
 {
-	uint16_t depth;
+	int16_t depth;
 	uint16_t outputid;
 	uint8_t sourceid;
 	uint8_t __reserved1;
@@ -288,9 +288,9 @@ public:
 	{
 		auto row = GetModSourceRow(mod, instance);
 		
-		int OrigVal = row->targets[id].depth;
+		int OrigVal = (int16_t)row->targets[id].depth;
 		int32_t val = OrigVal + delta * deltamod;
-		if (val < 0) val = 0; else if (val > 0xffff) val = 0xffff;
+		if (val < -0x8000) val = -0x8000; else if (val > 0x7fff) val = 0x7fff;
 		row->targets[id].depth = val;
 
 
