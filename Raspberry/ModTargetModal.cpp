@@ -105,6 +105,8 @@ void ModTargetModal::SetOutput(int out)
 {
 	auto row = gCurrentPreset.GetModSourceRow(modType, Instance);
 	row->targets[TargetID].outputid = out;
+
+	encoders[0][TargetID].SetTitle(GetModulationTargetName(out));
 }
 
 void TargetList::Render(bool active, float dt)

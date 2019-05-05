@@ -102,7 +102,7 @@ ModSourceScreen::ModSourceScreen(Screens_t screen)
 
 		break;
 	case SCREEN_LFO:
-
+		EnableButton(3, "Reset on key", MenuEntry_EnvelopeToggle, Envelope_Staccato);
 		EnableAvailableEncoder("Speed", MenuEntry_EnvelopeValue, LFO_Speed);
 		EnableAvailableEncoder("Shape", MenuEntry_EnvelopeValue, LFO_Shape);
 		EnableAvailableEncoder("Reset Phase", MenuEntry_EnvelopeValue, LFO_ResetPhase);
@@ -178,7 +178,7 @@ void ModSourceScreen::Action(int a)
 {
 	switch (a)
 	{
-	case MenuAction_CloseModal: Modal = NULL; break;
+	case MenuAction_CloseModal: Modal = NULL; SetEncoderNames(); break;
 	case MenuAction_Next:
 	{
 		ActiveInstance = (ActiveInstance + 1) % MaxInstances;
@@ -221,6 +221,7 @@ void ModSourceScreen::Render(bool active, float DT)
 
 void ModSourceScreen::Activate()
 {
+	SetEncoderNames();
 	_control_t::Activate();
 }
 

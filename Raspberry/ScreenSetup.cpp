@@ -148,7 +148,7 @@ void _screensetup_t::SetupMainUILeds()
 			V = 0;
 			int idx = GetAssociatedParameter(enc);
 			bool active = false;
-			for (int i = 0; i < EncodersThatOpenThisScreen.size(); i++) if (EncodersThatOpenThisScreen[i] == i) active = true;
+			for (int k = 0; k < EncodersThatOpenThisScreen.size(); k++) if (EncodersThatOpenThisScreen[k] == i) active = true;
 
 			if (idx > -1)
 			{

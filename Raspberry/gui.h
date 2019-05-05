@@ -298,6 +298,39 @@ public:
 
 };
 
+
+class BankList : public _control_t
+{
+public:
+	int x, y;
+	int *bankid;
+	char Title[100];
+	BankList(int _x, int _y, int* _bank, const char *title)
+	{
+		bankid = _bank;
+		x = _x;
+		y = _y;
+		snprintf(Title, 100, title);
+		skipencodercycling = true;
+	}
+
+	virtual void Render(bool active, float dt)
+	{
+		ImGui::PushFont(gGuiResources.TinyFont);
+		for (int i = 0; i < 8; i++)
+		{
+			int presetidx = (*bankid) * 8 + i;
+			int Y = (ImGui::GetTextLineHeight() + ParamMasterMargin*3)  * i + y;
+			ImGui::SetCursorPos(ImVec2(x+ ParamMasterMargin, Y + ParamMasterMargin));
+			ImGui::Text(presetnames.names[presetidx]);
+			ImGui::GetWindowDrawList()->AddRect(ImVec2(x, Y), ImVec2(x + 300, Y + ImGui::GetTextLineHeight() + ParamMasterMargin*2), gGuiResources.Normal);
+		}
+		ImGui::PopFont();
+	}
+};
+
+
+
 class Gui
 {
 public:
