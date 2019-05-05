@@ -20,7 +20,7 @@ typedef struct
 	uint16_t outputid;
 	uint8_t sourceid;
 	uint8_t __reserved;
-	uint16_t __reserved;
+	uint16_t __reserved2;
 } PACK ModTargetSpec_t;
 
 typedef struct
