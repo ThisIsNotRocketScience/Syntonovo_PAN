@@ -1225,6 +1225,107 @@ public:
 	}
 };
 
+
+class SavePresetScreen : public _screensetup_t
+{
+public:
+	virtual void PatchButton(FinalLedButtonEnum b)
+	{
+		int idx = -1;
+		switch (b)
+		{
+		case ledbutton_B1:idx = 0 ; break;
+		case ledbutton_B2:idx = 1 ; break;
+		case ledbutton_B3:idx = 2 ; break;
+		case ledbutton_B4:idx = 3 ; break;
+		case ledbutton_B5:idx = 4 ; break;
+		case ledbutton_B6:idx = 5 ; break;
+		case ledbutton_B7:idx = 6 ; break;
+		case ledbutton_B8:idx = 7 ; break;
+		case ledbutton_B9:idx = 0 ; break;
+		case ledbutton_B10:idx = 1; break;
+		case ledbutton_B11:idx = 2; break;
+		case ledbutton_B12:idx = 3; break;
+		case ledbutton_B13:idx = 4; break;
+		case ledbutton_B14:idx = 5; break;
+		case ledbutton_B15:idx = 6; break;
+		case ledbutton_B16:idx = 7; break;
+		}
+
+		cmd_preset_save(idx  + df * 8);
+		gGui.GotoPage(SCREEN_HOME);
+	}
+	virtual void Action(int action)
+	{
+		switch (action)
+		{
+
+		case MenuAction_BankA: df = 0; break;
+		case MenuAction_BankB:df = 1; break;
+		case MenuAction_BankC:df = 2; break;
+		case MenuAction_BankD:df = 3; break;
+		case MenuAction_BankE:df = 4; break;
+		case MenuAction_BankF:df = 5; break;
+		case MenuAction_BankG:df = 6; break;
+		case MenuAction_BankH:df = 7; break;
+		case MenuAction_BankI:df = 8; break;
+		case MenuAction_BankJ:df = 9; break;
+		case MenuAction_BankK:df = 10; break;
+		case MenuAction_BankL:df = 11; break;
+
+		default:
+			_screensetup_t::Action(action);
+		}
+		Activate();
+	}
+	LeftRight Side;
+	int *mybank;
+	int df;
+	void SetLeftRight(LeftRight lr)
+	{
+
+	}
+
+	BankList* list;
+	SavePresetScreen()
+	{
+		mybank = &df;
+		list = new BankList(400, 150, mybank, "");
+		EnableButton(7, "Cancel", MenuEntry_Action, MenuAction_Home);
+		SetTitle("Save preset");
+		AddText(140, 50, "select bank and press a preset button to save");
+		
+	}
+	virtual void Activate()
+	{
+		int *CurrentBank = &gPanState.BankLeft;
+		list->bankid = CurrentBank;
+		if (Side == Left)
+		{
+			SetTitle("Select Left Bank");
+		}
+		else
+		{
+			CurrentBank = &gPanState.BankRight;
+			SetTitle("Select Right Bank");
+		}
+		EnableButton(1, (*CurrentBank == 0) ? "A (current)" : "A", MenuEntry_Action, MenuAction_BankA);
+		EnableButton(2, (*CurrentBank == 1) ? "B (current)" : "B", MenuEntry_Action, MenuAction_BankB);
+		EnableButton(3, (*CurrentBank == 2) ? "C (current)" : "C", MenuEntry_Action, MenuAction_BankC);
+		EnableButton(4, (*CurrentBank == 3) ? "D (current)" : "D", MenuEntry_Action, MenuAction_BankD);
+		EnableButton(5, (*CurrentBank == 4) ? "E (current)" : "E", MenuEntry_Action, MenuAction_BankE);
+		EnableButton(6, (*CurrentBank == 5) ? "F (current)" : "F", MenuEntry_Action, MenuAction_BankF);
+
+		EnableButton(8, (*CurrentBank == 6) ? "G (current)" : "G", MenuEntry_Action, MenuAction_BankG);
+		EnableButton(9, (*CurrentBank == 7) ? "H (current)" : "H", MenuEntry_Action, MenuAction_BankH);
+		EnableButton(10, (*CurrentBank == 8) ? "I (current)" : "I", MenuEntry_Action, MenuAction_BankI);
+		EnableButton(11, (*CurrentBank == 9) ? "J (current)" : "J", MenuEntry_Action, MenuAction_BankJ);
+		EnableButton(12, (*CurrentBank == 10) ? "K (current)" : "K", MenuEntry_Action, MenuAction_BankK);
+		EnableButton(13, (*CurrentBank == 11) ? "L (current)" : "L", MenuEntry_Action, MenuAction_BankL);
+	}
+};
+
+
 class ImageScreen : public _screensetup_t
 {
 public:
@@ -1277,6 +1378,8 @@ void Gui::BuildScreens()
 {
 	for (int i = 0; i < SCREENS_COUNT; i++) Screens[i] = 0;
 
+
+
 	Screens[SCREEN_PRESETNAME] = new PresetScreen();
 	auto BL = new BankSelectScreen();
 	BL->Side = Left;
@@ -1284,6 +1387,10 @@ void Gui::BuildScreens()
 	BR->Side = Right;
 	Screens[SCREEN_SELECTBANKL] = BL;
 	Screens[SCREEN_SELECTBANKR] = BR;
+
+	auto SaveScreen = new SavePresetScreen();
+	Screens[SCREEN_PRESETSAVE] = SaveScreen;
+
 	Screens[SCREEN_TEST] = new ImageScreen(gGuiResources.TestBG);
 	Screens[SCREEN_TEST]->AddText(10, 30, "10,30 - tadaa", align_left ,font_small);
 	Screens[SCREEN_TEST]->AddText(30, 60, "10,60 - tadaa", align_left, font_small);
@@ -1324,8 +1431,8 @@ void Gui::BuildScreens()
 	}
 
 	Screens[SCREEN_HOME]->SetTitle("Syntonovo Pan");
-	Screens[SCREEN_HOME]->AddText(512, 140, "Current preset: ", align_right);
-	Screens[SCREEN_HOME]->AddDynamicText(512, 140, gCurrentPreset.Name, PRESET_NAME_LENGTH);
+	Screens[SCREEN_HOME]->AddText(512, 50, "Current preset: ", align_right);
+	Screens[SCREEN_HOME]->AddDynamicText(512, 50, gCurrentPreset.Name, PRESET_NAME_LENGTH);
 	Screens[SCREEN_HOME]->EncodersThatOpenThisScreen.push_back(encoder_SketchLeft);
 	Screens[SCREEN_LFO]->LedButtonsThatOpenThisScreen.push_back(ledbutton_BHome);
 
@@ -1352,7 +1459,8 @@ void Gui::BuildScreens()
 	Screens[SCREEN_SYSTEM]->EnableAvailableButton("Recalibrate Pads", MenuEntry_Action, MenuAction_CalibratePads);
 	Screens[SCREEN_SYSTEM]->EnableButton(7, "Done", MenuEntry_Action, MenuAction_Home);
 
-	Screens[SCREEN_HOME]->EnableButton(8, "Store", MenuEntry_Page, SCREEN_PRESETNAME);//(512, 40, "Some Sound");
+	Screens[SCREEN_HOME]->EnableButton(7, "Change name", MenuEntry_Page, SCREEN_PRESETNAME);//(512, 40, "Some Sound");
+	Screens[SCREEN_HOME]->EnableButton(8, "Save preset", MenuEntry_Page, SCREEN_PRESETSAVE);//(512, 40, "Some Sound");
 	Screens[SCREEN_HOME]->EnableButton(9, "Revert", MenuEntry_Action, MenuAction_Revert);
 	Screens[SCREEN_HOME]->EnableButton(10, "System", MenuEntry_Page, SCREEN_SYSTEM);
 	Screens[SCREEN_HOME]->EnableButton(12, "Colors", MenuEntry_Page, SCREEN_COLORS);
