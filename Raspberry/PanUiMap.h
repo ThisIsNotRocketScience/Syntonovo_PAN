@@ -71,7 +71,7 @@ CUSTOMENTRY("Subosc", MenuEntry_Toggle, Switch_SEL3SUB)
 CUSTOMENTRY("Sync", MenuEntry_Toggle, Switch_SELVCOSYNC2)
 
 ENTRY("PW", MenuEntry_Percentage, Output_VCO3_PW)
-ENTRY("FM  (from VCO1)", MenuEntry_Value, Output_VCO123_FM3)
+ENTRY("FM (from VCO1)", MenuEntry_Value, Output_VCO123_FM3)
 
 ENTRY("-> VCF1", MenuEntry_Value, Output_VCO3_MIX1)
 ENTRY("-> VCF2", MenuEntry_Value, Output_VCO3_MIX2)

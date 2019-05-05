@@ -102,7 +102,7 @@ ModSourceScreen::ModSourceScreen(Screens_t screen)
 
 		break;
 	case SCREEN_LFO:
-
+		EnableButton(3, "Reset on key", MenuEntry_EnvelopeToggle, Envelope_Staccato);
 		EnableAvailableEncoder("Speed", MenuEntry_EnvelopeValue, LFO_Speed);
 		EnableAvailableEncoder("Shape", MenuEntry_EnvelopeValue, LFO_Shape);
 		EnableAvailableEncoder("Reset Phase", MenuEntry_EnvelopeValue, LFO_ResetPhase);
