@@ -153,7 +153,9 @@
     <ClCompile Include="..\libs\gl3w-master\src\gl3w.c" />
     <ClCompile Include="BottomEncoder.cpp" />
     <ClCompile Include="Combine.cpp" />
+    <ClCompile Include="finalpangui.cpp" />
     <ClCompile Include="finalpanguimain.cpp" />
+    <ClCompile Include="HomeScreen.cpp" />
     <ClCompile Include="imgui_es2.cpp" />
     <ClCompile Include="linux_serial.cpp" />
     <ClCompile Include="ModSourceScreen.cpp" />
@@ -162,13 +164,16 @@
     <ClCompile Include="ScreenSetup.cpp" />
     <ClCompile Include="SerialSearcher.cpp" />
     <ClCompile Include="serialtest.cpp" />
+    <ClCompile Include="VCF2StructureScreen.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="gui.h" />
+    <ClInclude Include="HomeScreen.h" />
     <ClInclude Include="imgui_impl_es2.h" />
     <ClInclude Include="ModSourceScreen.h" />
     <ClInclude Include="ModTargetModal.h" />
     <ClInclude Include="uart.hpp" />
+    <ClInclude Include="VCF2Structure.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Makefile" />

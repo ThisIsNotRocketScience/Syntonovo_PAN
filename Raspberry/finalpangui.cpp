@@ -9,6 +9,9 @@
 #include "gui.h"
 
 #include "ModSourceScreen.h"
+#include "HomeScreen.h"
+#include "VCF2Structure.h"
+
 
 PanPreset_t gCurrentPreset;
 PanPreset_t gRevertPreset;
@@ -20,6 +23,18 @@ void cmd_pad_zero();
 void cmd_calibrate();
 void cmd_preset_load(int presetid);
 void cmd_preset_save(int presetid);
+
+FilterTypes_t Decode(bool A, bool B)
+{
+	switch ((A ? 1 : 0) + (B ? 2 : 0))
+	{
+	case 0: return Filt_LP;
+	case 1: return Filt_HP;
+	case 2: return Filt_BP;
+	case 3: return Filt_BR;
+	}
+	return Filt_LP;
+}
 
 bool IsCenterEncoder(FinalEncoderEnum button)
 {
@@ -79,6 +94,16 @@ int ButtonHeight(int idx)
 	return  (int)((idx % 7 + 0.5f) * (600.0f / 7.0f));
 }
 
+
+extern presetnames_t presetnames;
+
+void FinalPan_DefaultPresetNamesInBank()
+{
+	for (int i = 0; i < PRESET_COUNT; i++)
+	{
+		snprintf(presetnames.names[i], PRESET_NAME_LENGTH, "%c%d", 'A' + (i / 8), i % 8);
+	}
+}
 
 void FinalPan_SetupDefaultPreset()
 {
@@ -718,7 +743,7 @@ void FinalPan_LoadResources()
 	gGuiResources.encoderheight = 600;
 	gGuiResources.PageTime = 0;
 	gGuiResources.Highlight = IM_COL32(235, 200, 28, 255);
-	gGuiResources.Normal = IM_COL32(255, 255, 255, 255);
+	gGuiResources.Normal = IM_COL32(200, 200, 200, 255);
 	gGuiResources.BGColor = IM_COL32(0, 58, 66, 255);
 	gGuiResources.ModalBGColor = IM_COL32(0, 58, 66, 140);
 	gGuiResources.GhostBG = IM_COL32(0, 0, 0, 200);
@@ -729,10 +754,19 @@ void FinalPan_LoadResources()
 	gGuiResources.OnOff[2] = Raspberry_LoadTexture("UI_ONOFF_OFF_HI.png");
 	gGuiResources.OnOff[3] = Raspberry_LoadTexture("UI_ONOFF_ON_HI.png");
 
-	gGuiResources.LogoScreen = Raspberry_LoadTexture("PAN_LOGO.png");
-	gGuiResources.RootBG = Raspberry_LoadTexture("UI_ROOTBG.png");
-	gGuiResources.MainBG = Raspberry_LoadTexture("PAN_MAINBG.png");
+	gGuiResources.LogoScreen = Raspberry_LoadTexture("PAN__LOGO.png");
+	gGuiResources.RootBG = Raspberry_LoadTexture("PAN__MAINBG.png");
+	gGuiResources.MainBG = Raspberry_LoadTexture("PAN__MAINBG.png");
 	gGuiResources.TestBG = Raspberry_LoadTexture("PAN_TEST.png");
+
+
+	gGuiResources.VCF2 = Raspberry_LoadTexture("PAN__FILT_BG.png");
+	gGuiResources.F[Filt_LP] = Raspberry_LoadTexture("PAN__FILT_LP.png");
+	gGuiResources.F[Filt_HP] = Raspberry_LoadTexture("PAN__FILT_HP.png");
+	gGuiResources.F[Filt_BP] = Raspberry_LoadTexture("PAN__FILT_BP.png");
+	gGuiResources.F[Filt_BR] = Raspberry_LoadTexture("PAN__FILT_NOTCH.png");
+	gGuiResources.Fs[Filt_Par] = Raspberry_LoadTexture("PAN__FILT_PAR.png");
+	gGuiResources.Fs[Filt_Ser] = Raspberry_LoadTexture("PAN__FILT_SER.png");
 
 	gGuiResources.LeftIndicator = Raspberry_LoadTexture("UI_LEFT.png");
 	gGuiResources.RightIndicator = Raspberry_LoadTexture("UI_RIGHT.png");
@@ -816,7 +850,7 @@ Gui::Gui()
 void Gui::Init()
 {
 	BuildScreens();
-	CurrentScreen = SCREEN_ENVELOPE;
+	CurrentScreen = SCREEN_LOGO;
 }
 
 void Gui::SketchLeftPress()
@@ -1192,6 +1226,9 @@ void Gui::BuildScreens()
 
 	Screens[SCREEN_ENVELOPE] = new ModSourceScreen(SCREEN_ENVELOPE);
 	Screens[SCREEN_ENVELOPE]->LedButtonsThatOpenThisScreen.push_back(ledbutton_BEnv);
+	Screens[SCREEN_VCF2_structure] = new VCF2StructureScreen();
+
+	Screens[SCREEN_HOME] = new HomeScreen();
 
 	for (int i = 0; i < SCREENS_COUNT; i++)
 	{
@@ -1203,6 +1240,13 @@ void Gui::BuildScreens()
 	Screens[SCREEN_HOME]->AddDynamicText(512, 140, gCurrentPreset.Name, PRESET_NAME_LENGTH);
 	Screens[SCREEN_HOME]->EncodersThatOpenThisScreen.push_back(encoder_SketchLeft);
 	Screens[SCREEN_LFO]->LedButtonsThatOpenThisScreen.push_back(ledbutton_BHome);
+
+
+	Screens[SCREEN_VCF2a]->SetTitle("Filter 2a");
+	Screens[SCREEN_VCF2b]->SetTitle("Filter 2b");
+	Screens[SCREEN_VCF2c]->SetTitle("Filter 2c");
+	Screens[SCREEN_VCF2d]->SetTitle("Filter 2d");
+	Screens[SCREEN_VCF2_structure]->SetTitle("Filter 2 routing");
 
 
 	Screens[SCREEN_VCO4]->SetTitle("Oscillator 4");
@@ -1311,12 +1355,19 @@ void Gui::BuildScreens()
 
 	Screens[SCREEN_VCF2a]->SetTitle("Filter 2: A");
 	Screens[SCREEN_VCF2a]->EncodersThatOpenThisScreen.push_back(encoder_VCF2a);
+	Screens[SCREEN_VCF2a]->EnableAvailableButton("Routing", MenuEntry_Action, MenuAction_OpenVCF2Structure);
+
 	Screens[SCREEN_VCF2b]->SetTitle("Filter 2: B");
 	Screens[SCREEN_VCF2b]->EncodersThatOpenThisScreen.push_back(encoder_VCF2b);
+	Screens[SCREEN_VCF2b]->EnableAvailableButton("Routing", MenuEntry_Action, MenuAction_OpenVCF2Structure);
+
 	Screens[SCREEN_VCF2c]->SetTitle("Filter 2: C");
 	Screens[SCREEN_VCF2c]->EncodersThatOpenThisScreen.push_back(encoder_VCF2c);
+	Screens[SCREEN_VCF2c]->EnableAvailableButton("Routing", MenuEntry_Action, MenuAction_OpenVCF2Structure);
+
 	Screens[SCREEN_VCF2d]->SetTitle("Filter 2: D");
 	Screens[SCREEN_VCF2d]->EncodersThatOpenThisScreen.push_back(encoder_VCF2d);
+	Screens[SCREEN_VCF2d]->EnableAvailableButton("Routing", MenuEntry_Action, MenuAction_OpenVCF2Structure);
 
 	
 	Screens[SCREEN_VCF1MIX]->EnableAvailableButton("Effects", MenuEntry_Action, MenuAction_OpenEffects);

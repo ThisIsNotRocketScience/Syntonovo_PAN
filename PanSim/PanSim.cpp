@@ -21,7 +21,11 @@ extern void FinalPan_WindowFrame(float DT);
 extern void FinalPan_LoadResources();
 extern void FinalPan_SetupLeds();
 extern void FinalPan_SetupDefaultPreset();
+extern void FinalPan_DefaultPresetNamesInBank();
+
 extern PanPreset_t gCurrentPreset;
+
+presetnames_t presetnames;
 
 extern PanState_t gPanState;
 class fLedButton
@@ -836,6 +840,7 @@ int main(int argc, char** argv)
 	//Raspberry_Init();
 	FinalPan_SetupDefaultPreset();
 	FinalPan_LoadResources();
+	FinalPan_DefaultPresetNamesInBank();
 	//Raspberry_Reset();
 	
 	setpara_t para;

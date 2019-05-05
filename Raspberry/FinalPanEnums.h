@@ -9,6 +9,12 @@
 #define ParamBoxDim 30
 #define ParamMasterMargin 10
 
+#define PRESET_COUNT 256
+#define NOMODTARGET 0xFF
+#define MODTARGET_COUNT (11)
+#define PRESET_NAME_LENGTH 16
+
+
 #pragma pack(1)
 
 #ifdef WIN32
@@ -77,7 +83,7 @@ enum Screens_t
 	SCREEN_VCF2b,
 	SCREEN_VCF2c,
 	SCREEN_VCF2d,
-
+	SCREEN_VCF2_structure,
 	SCREEN_CLEANMIX,
 	SCREEN_VCF1MIX,
 	SCREEN_VCF2MIX,
@@ -153,9 +159,26 @@ enum
 	MenuAction_EnableTestImage,
 	MenuAction_Home,
 	MenuAction_OpenEffects,
-
+	MenuAction_OpenVCF2Structure,
 	__MenuAction_Count
 };
+
+enum FilterTypes_t
+{
+	Filt_LP,
+	Filt_HP,
+	Filt_BP,
+	Filt_BR,
+	__FILT_COUNT
+};
+enum FilterRoute_t
+{
+	Filt_Par,
+	Filt_Ser,
+	__FILT_STRUCT_COUNT
+};
+
+extern FilterTypes_t Decode(bool A, bool B);
 
 enum LedParameter
 {
@@ -465,6 +488,13 @@ public:
 
 	PanLedState_t s;
 };
+
+struct presetnames_t 
+{
+	char names[PRESET_COUNT][PRESET_NAME_LENGTH];
+};
+
+extern presetnames_t presetnames;
 
 extern PanState_t gPanState;
 #endif

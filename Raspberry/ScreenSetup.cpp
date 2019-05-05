@@ -5,6 +5,7 @@
 
 _screensetup_t::_screensetup_t(_screensetup_t *parent)
 {
+	BG = NULL;
 	currentencoderset = 0;
 	encodersets = 1;
 	Parent = parent;
@@ -211,7 +212,8 @@ void _screensetup_t::Action(int action)
 {
 	switch (action)
 	{
-	case MenuAction_OpenEffects: Modal = gGui.Screens[SCREEN_EFFECTS]; break;
+	case MenuAction_OpenVCF2Structure: Modal = gGui.Screens[SCREEN_VCF2_structure]; Modal->Parent = this; break;
+	case MenuAction_OpenEffects: Modal = gGui.Screens[SCREEN_EFFECTS]; Modal->Parent = this; break;
 	case MenuAction_Home: gGui.GotoPage(SCREEN_HOME); break;
 	case MenuAction_CloseParentModal: if (Parent) ((_screensetup_t*)Parent)->Modal = NULL; break;
 	case MenuAction_CalibratePads: cmd_pad_zero(); break;
@@ -219,6 +221,7 @@ void _screensetup_t::Action(int action)
 	case MenuAction_CloseModal: Modal = NULL; break;
 	case MenuAction_EnableReferenceLines: gGuiResources.referencelines = !gGuiResources.referencelines; break;
 	case MenuAction_EnableTestImage: gGuiResources.testimage = !gGuiResources.testimage; break;
+
 
 	}
 };
@@ -511,7 +514,17 @@ void _screensetup_t::RenderContent(bool active, float DT)
 {
 	if (Parent && ((_screensetup_t*)Parent)->Modal == this)
 	{
-		ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(30, 30), ImVec2(1024 - 30, 600 - 30), gGuiResources.ModalBGColor);
+		if (BG)			
+		{
+			ImGui::SetCursorPos(ImVec2(0, 0));
+			ImGui::Image(BG, ImVec2(1024, 600));
+		}
+		else
+		{
+			ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(30, 30), ImVec2(1024 - 30, 600 - 30), gGuiResources.ModalBGColor);
+		}
+		
+		
 	}
 	else
 	{
@@ -522,7 +535,7 @@ void _screensetup_t::RenderContent(bool active, float DT)
 		}
 		else
 		{
-			ImGui::Image(gGuiResources.MainBG, ImVec2(1024, 600));
+			ImGui::Image(BG?BG:gGuiResources.MainBG, ImVec2(1024, 600));
 		}
 	}
 	if (strlen(title) > 0)

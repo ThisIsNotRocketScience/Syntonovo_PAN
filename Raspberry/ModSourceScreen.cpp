@@ -23,6 +23,7 @@ void ModSourceScreen::TweakParameterValue(int param, int delta)
 	}
 	else
 	{
+
 		gCurrentPreset.TweakModMatrix(modType, ActiveInstance, param, delta);
 	}
 };

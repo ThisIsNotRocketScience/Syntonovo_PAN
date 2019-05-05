@@ -55,6 +55,9 @@ typedef struct FinalPan_GuiResources_t
 	ImTextureID MainBG;
 	ImTextureID RootBG;
 	ImTextureID TestBG;
+	ImTextureID VCF2;
+	ImTextureID F[__FILT_COUNT];
+	ImTextureID Fs[__FILT_STRUCT_COUNT];
 	ImTextureID LogoScreen;
 	ImTextureID LeftIndicator;
 	ImTextureID RightIndicator;
@@ -223,7 +226,7 @@ class _screensetup_t : public _control_t
 {
 public:
 
-
+	ImTextureID BG;
 	//std::vector<_screensetup_t *> SubScreens;
 
 	std::vector<_control_t *> ControlsInOrder;

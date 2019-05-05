@@ -41,7 +41,7 @@ void BuildModulationTargetList()
 	ModulationTargetOutputEntries_t *dummy = new ModulationTargetOutputEntries_t();
 	dummy->targetid = -1;
 	dummy->categoryid = Category_EMPTY;
-	sprintf(dummy->name, "No target");
+	snprintf(dummy->name,100, "No target");
 
 	ModulationTargetList.push_back(dummy);
 

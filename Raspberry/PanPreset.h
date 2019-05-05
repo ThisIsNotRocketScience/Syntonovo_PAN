@@ -13,9 +13,7 @@
 #define PACK  __attribute__((packed))
 #endif
 
-#define PRESET_COUNT 256
-#define NOMODTARGET 0xFF
-#define MODTARGET_COUNT (11)
+
 typedef struct
 {
 	uint16_t depth;
@@ -94,7 +92,6 @@ enum
 	NUM_CONTROLLERS
 };
 
-#define PRESET_NAME_LENGTH 16
 
 class PanPreset_Listener
 {
