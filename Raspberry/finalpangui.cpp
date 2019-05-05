@@ -24,17 +24,7 @@ void cmd_calibrate();
 void cmd_preset_load(int presetid);
 void cmd_preset_save(int presetid);
 
-FilterTypes_t Decode(bool A, bool B)
-{
-	switch ((A ? 1 : 0) + (B ? 2 : 0))
-	{
-	case 0: return Filt_LP;
-	case 1: return Filt_HP;
-	case 2: return Filt_BP;
-	case 3: return Filt_BR;
-	}
-	return Filt_LP;
-}
+
 
 bool IsCenterEncoder(FinalEncoderEnum button)
 {
