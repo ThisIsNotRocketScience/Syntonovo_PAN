@@ -51,6 +51,7 @@ void shiftctrl_clear(int flag)
 	//shiftctrl_update();
 }
 
+__attribute__( ( section(".data") ) )
 int shiftctrl_flag_state(int flag)
 {
 	if (flag < 32) {
@@ -61,6 +62,7 @@ int shiftctrl_flag_state(int flag)
 	}
 }
 
+__attribute__( ( section(".data") ) )
 void shiftctrl_update()
 {
 	if (shiftctrl_update_needed) {

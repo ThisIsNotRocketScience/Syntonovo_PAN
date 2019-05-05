@@ -394,6 +394,7 @@ status_t SPI_MasterTransferCreateHandle(SPI_Type *base,
     return kStatus_Success;
 }
 
+__attribute__( ( section(".data") ) )
 status_t SPI_MasterTransferBlocking(SPI_Type *base, spi_transfer_t *xfer)
 {
     int32_t instance;

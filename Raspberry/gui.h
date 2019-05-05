@@ -243,7 +243,8 @@ public:
 	virtual void TweakParameterValue(int param, int delta) ;
 	virtual void SetupEncoderSet(int n);
 
-
+	void AddVCONextPrev();
+	void AddVCF2NextPrev();
 	void SetupMainUILeds();
 	void SetupEncodersAndButtonsLeds();
 	void SetupKeyboardStateLeds();
@@ -326,6 +327,11 @@ public:
 	void GotoPage(Screens_t s);
 
 	void SetupLeds();
+
+	void NextVCO();
+	void PrevVCO();
+	void NextVCF2();
+	void PrevVCF2();
 
 	Screens_t CurrentScreen;
 };

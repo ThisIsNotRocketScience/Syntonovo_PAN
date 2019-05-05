@@ -46,6 +46,69 @@ bool IsCenterEncoder(FinalEncoderEnum button)
 	return false;
 }
 
+void Gui::NextVCO()
+{
+	switch (CurrentScreen)
+	{
+		
+	case SCREEN_VCO1:	GotoPage(SCREEN_VCO2); break;
+	case SCREEN_VCO2:	GotoPage(SCREEN_VCO3); break;
+	case SCREEN_VCO3:	GotoPage(SCREEN_VCO4); break;
+	case SCREEN_VCO4:	GotoPage(SCREEN_VCO5); break;
+	case SCREEN_VCO5:	GotoPage(SCREEN_VCO6); break;
+	case SCREEN_VCO6:	GotoPage(SCREEN_VCO7); break;
+	case SCREEN_VCO7:	GotoPage(SCREEN_VCO8); break;
+	case SCREEN_VCO8:	GotoPage(SCREEN_VCO1); break;
+	
+	default: GotoPage(SCREEN_VCO1); break;
+	}
+
+}
+void Gui::PrevVCO()
+{
+	switch (CurrentScreen)
+	{
+
+	case SCREEN_VCO1:	GotoPage(SCREEN_VCO8); break;
+	case SCREEN_VCO2:	GotoPage(SCREEN_VCO1); break;
+	case SCREEN_VCO3:	GotoPage(SCREEN_VCO2); break;
+	case SCREEN_VCO4:	GotoPage(SCREEN_VCO3); break;
+	case SCREEN_VCO5:	GotoPage(SCREEN_VCO4); break;
+	case SCREEN_VCO6:	GotoPage(SCREEN_VCO5); break;
+	case SCREEN_VCO7:	GotoPage(SCREEN_VCO6); break;
+	case SCREEN_VCO8:	GotoPage(SCREEN_VCO7); break;
+
+	default: GotoPage(SCREEN_VCO1); break;
+	}
+}
+
+void Gui::NextVCF2()
+{
+	switch (CurrentScreen)
+	{
+
+	case SCREEN_VCF2a:	GotoPage(SCREEN_VCF2b); break;
+	case SCREEN_VCF2b:	GotoPage(SCREEN_VCF2c); break;
+	case SCREEN_VCF2c:	GotoPage(SCREEN_VCF2d); break;
+	case SCREEN_VCF2d:	GotoPage(SCREEN_VCF2a); break;
+
+	default: GotoPage(SCREEN_VCF2a); break;
+	}
+}
+void Gui::PrevVCF2()
+{
+	switch (CurrentScreen)
+	{
+
+	case SCREEN_VCF2a:	GotoPage(SCREEN_VCF2d); break;
+	case SCREEN_VCF2b:	GotoPage(SCREEN_VCF2a); break;
+	case SCREEN_VCF2c:	GotoPage(SCREEN_VCF2b); break;
+	case SCREEN_VCF2d:	GotoPage(SCREEN_VCF2c); break;
+
+	default: GotoPage(SCREEN_VCF2a); break;
+	}
+}
+
 int GetAssociatedParameter(FinalEncoderEnum button)
 {
 	switch (button)
@@ -1188,6 +1251,19 @@ void EncoderLineDisplay::Render(bool active, float dt)
 
 }
 
+void _screensetup_t::AddVCONextPrev()
+{
+	EnableButton(0, "<", MenuEntry_Action, MenuAction_PrevVCO);
+	EnableButton(7, ">", MenuEntry_Action, MenuAction_NextVCO);
+}
+
+void _screensetup_t::AddVCF2NextPrev()
+{
+	EnableButton(0, "<", MenuEntry_Action, MenuAction_PrevVCF2);
+	EnableButton(7, ">", MenuEntry_Action, MenuAction_NextVCF2);
+
+}
+
 void Gui::BuildScreens()
 {
 	for (int i = 0; i < SCREENS_COUNT; i++) Screens[i] = 0;
@@ -1344,6 +1420,21 @@ void Gui::BuildScreens()
 	Screens[SCREEN_ARP]->SetTitle("Arpeggiator");
 	Screens[SCREEN_ARP]->LedButtonsThatOpenThisScreen.push_back(ledbutton_ArpEdit);
 
+	Screens[SCREEN_VCO1]->AddVCONextPrev();
+	Screens[SCREEN_VCO2]->AddVCONextPrev();
+	Screens[SCREEN_VCO3]->AddVCONextPrev();
+	Screens[SCREEN_VCO4]->AddVCONextPrev();
+	Screens[SCREEN_VCO5]->AddVCONextPrev();
+	Screens[SCREEN_VCO6]->AddVCONextPrev();
+	Screens[SCREEN_VCO7]->AddVCONextPrev();
+	Screens[SCREEN_VCO8]->AddVCONextPrev();
+	
+	Screens[SCREEN_VCF2a]->AddVCF2NextPrev();
+	Screens[SCREEN_VCF2b]->AddVCF2NextPrev();
+	Screens[SCREEN_VCF2c]->AddVCF2NextPrev();
+	Screens[SCREEN_VCF2d]->AddVCF2NextPrev();
+
+
 	Screens[SCREEN_VCO1]->SetTitle("Oscillator 1");
 	Screens[SCREEN_VCO1]->EncodersThatOpenThisScreen.push_back(encoder_VCO1);
 
@@ -1379,6 +1470,8 @@ void Gui::BuildScreens()
 	Screens[SCREEN_MASTER]->EnableAvailableButton("Effects", MenuEntry_Action, MenuAction_OpenEffects);
 
 	Screens[SCREEN_EFFECTS]->EnableAvailableButton("Done", MenuEntry_Action, MenuAction_CloseParentModal);
+
+
 
 
 	Screens[SCREEN_TEST]->SetTitle("Test scherm");

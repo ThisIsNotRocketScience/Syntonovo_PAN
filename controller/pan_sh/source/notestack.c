@@ -42,6 +42,7 @@ int notestack_empty()
 	return notestack_top == 0;
 }
 
+//__attribute__( ( section(".data") ) )
 struct note_t notestack_first()
 {
 	if (notestack_top == 0) {
@@ -50,6 +51,7 @@ struct note_t notestack_first()
 	return notestack[notestack_top - 1];
 }
 
+//__attribute__( ( section(".data") ) )
 struct note_t notestack_second()
 {
 	if (notestack_top == 0) {

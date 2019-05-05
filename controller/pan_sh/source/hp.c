@@ -19,6 +19,7 @@ void hp_init(struct hp_state_t* hp)
 	hp_set_speed(hp, 0);
 }
 
+//__attribute__( ( section(".data") ) )
 int32_t hp_update(struct hp_state_t* hp, int32_t value)
 {
 	uint32_t timer_count = timer_value_nonisr();
@@ -63,6 +64,7 @@ void hp_set_speed(struct hp_state_t* hp, uint16_t speed)
 	hp->b = b;
 }
 
+//__attribute__( ( section(".data") ) )
 int32_t lp_update(struct hp_state_t* hp, int32_t value)
 {
 	uint32_t timer_count = timer_value_nonisr();

@@ -13,9 +13,9 @@
 
 extern nor_handle_t norHandle;
 
-struct presetnames_t {
-	unsigned char names[PRESET_COUNT * PRESET_NAME_LENGTH];
-};
+//struct presetnames_t {
+//	unsigned char names[PRESET_COUNT * PRESET_NAME_LENGTH];
+//};
 
 extern presetnames_t presetnames;
 
