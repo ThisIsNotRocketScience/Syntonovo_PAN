@@ -320,10 +320,10 @@ public:
 		for (int i = 0; i < 8; i++)
 		{
 			int presetidx = (*bankid) * 8 + i;
-			int Y = (ImGui::GetTextLineHeight() + ParamMasterMargin)  * i + y;
-			ImGui::SetCursorPos(ImVec2(x, Y));
+			int Y = (ImGui::GetTextLineHeight() + ParamMasterMargin*3)  * i + y;
+			ImGui::SetCursorPos(ImVec2(x+ ParamMasterMargin, Y + ParamMasterMargin));
 			ImGui::Text(presetnames.names[presetidx]);
-			ImGui::GetWindowDrawList()->AddRect(ImVec2(x, Y), ImVec2(x + 300, Y + ImGui::GetTextLineHeight()), gGuiResources.Normal);
+			ImGui::GetWindowDrawList()->AddRect(ImVec2(x, Y), ImVec2(x + 300, Y + ImGui::GetTextLineHeight() + ParamMasterMargin*2), gGuiResources.Normal);
 		}
 		ImGui::PopFont();
 	}

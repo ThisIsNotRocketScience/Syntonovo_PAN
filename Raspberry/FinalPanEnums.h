@@ -7,7 +7,7 @@
 #define ParamBoxWidth 220
 #define ParamVerticalBoxHeight 90
 #define ParamBoxDim 30
-#define ParamMasterMargin 10
+#define ParamMasterMargin 8
 
 #define PRESET_COUNT 256
 #define NOMODTARGET 0xFF
@@ -78,6 +78,7 @@ enum Screens_t
 	SCREEN_VCO8,
 	SCREEN_MASTER,
 	SCREEN_PRESETNAME,
+	SCREEN_PRESETSAVE,
 	SCREEN_LOGO,
 	SCREEN_VCF1,
 	SCREEN_VCF2a,
@@ -174,6 +175,21 @@ enum
 	MenuAction_VCFDMode,
 	MenuAction_VCFAB,
 	MenuAction_VCFCD,
+
+	MenuAction_BankA,
+	MenuAction_BankB,
+	MenuAction_BankC,
+	MenuAction_BankD,
+	MenuAction_BankE,
+	MenuAction_BankF,
+	MenuAction_BankG,
+	MenuAction_BankH,
+	MenuAction_BankI,
+	MenuAction_BankJ,
+	MenuAction_BankK,
+	MenuAction_BankL,
+
+
 	__MenuAction_Count
 };
 

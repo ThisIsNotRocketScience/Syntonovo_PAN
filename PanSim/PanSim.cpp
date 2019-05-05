@@ -78,6 +78,7 @@ void cmd_preset_save(int presetid)
 	{
 		fwrite(&gCurrentPreset, sizeof(PanPreset_t), 1, F);
 		fclose(F);
+		snprintf(presetnames.names[presetid], PRESET_NAME_LENGTH, "%s", gCurrentPreset.Name);
 	}
 }
 
