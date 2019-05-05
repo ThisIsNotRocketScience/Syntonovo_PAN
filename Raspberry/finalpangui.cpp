@@ -573,6 +573,8 @@ void _control_t::RenderBoxVertical(int x, int y, int val, int mode, bool active)
 		ImVec2 tl2 = tl;
 		tl2.y = __min(y1, y2);
 		br2.y = __max(y1, y2);
+		ImGui::SetCursorPos(ImVec2(tl.x, tl.y));
+		ImGui::Text("%d", val);
 		ImGui::GetWindowDrawList()->AddRectFilled(tl, br, CalcFillColor(0, active));
 		ImGui::GetWindowDrawList()->AddRectFilled(tl2, br2, CalcFillColor(1, active));
 		ImGui::GetWindowDrawList()->AddRect(tl2, br2, active ? gGuiResources.Highlight : gGuiResources.Normal, 0, 0, 2);
@@ -1032,12 +1034,12 @@ void RenderLettersInABox(int x, int y, bool active, const char *text, int w, int
 	ImVec2 tl(x, y);
 	ImVec2 br(x + w, y + h);
 
-	ImGui::GetWindowDrawList()->AddRect(tl, br, active ? gGuiResources.Highlight : Dimmed(notghosted?1:5, gGuiResources.Normal), 0, 0, 2);
+	ImGui::GetWindowDrawList()->AddRect(tl, br, active ? gGuiResources.Highlight : Dimmed(notghosted?1:3, gGuiResources.Normal), 0, 0, 2);
 	
 	auto s = ImGui::CalcTextSize(text);
 
 	ImGui::SetCursorPos(ImVec2(x + LetterBoxW / 2 - s.x / 2, y + LetterBoxH / 2 - s.y / 2));
-	ImGui::TextColored((ImVec4)(ImColor)(Dimmed(notghosted ? 1 : 5, gGuiResources.Normal) ),  text);
+	ImGui::TextColored((ImVec4)(ImColor)(Dimmed(notghosted ? 1 : 3, gGuiResources.Normal) ),  text);
 
 }
 
@@ -1180,18 +1182,24 @@ public:
 		Activate();
 	}
 	LeftRight Side;
+	int *mybank;
+	int df;
 	void SetLeftRight(LeftRight lr)
 	{
 
 	}
+
+	BankList* list;
 	BankSelectScreen()
 	{
-
-
+		mybank = &df;
+		list = new BankList(400, 150, mybank, "");
+		ControlsInOrder.push_back(list);
 	}
 	virtual void Activate()
 	{
 		int *CurrentBank = &gPanState.BankLeft;
+		list->bankid = CurrentBank;
 		if (Side == Left)
 		{
 			SetTitle("Select Left Bank");
@@ -1269,7 +1277,7 @@ void Gui::BuildScreens()
 {
 	for (int i = 0; i < SCREENS_COUNT; i++) Screens[i] = 0;
 
-	Screens[SCREEN_PRESET] = new PresetScreen();
+	Screens[SCREEN_PRESETNAME] = new PresetScreen();
 	auto BL = new BankSelectScreen();
 	BL->Side = Left;
 	auto BR = new BankSelectScreen();
@@ -1344,14 +1352,14 @@ void Gui::BuildScreens()
 	Screens[SCREEN_SYSTEM]->EnableAvailableButton("Recalibrate Pads", MenuEntry_Action, MenuAction_CalibratePads);
 	Screens[SCREEN_SYSTEM]->EnableButton(7, "Done", MenuEntry_Action, MenuAction_Home);
 
-	Screens[SCREEN_HOME]->EnableButton(8, "Store", MenuEntry_Page, SCREEN_PRESET);//(512, 40, "Some Sound");
+	Screens[SCREEN_HOME]->EnableButton(8, "Store", MenuEntry_Page, SCREEN_PRESETNAME);//(512, 40, "Some Sound");
 	Screens[SCREEN_HOME]->EnableButton(9, "Revert", MenuEntry_Action, MenuAction_Revert);
 	Screens[SCREEN_HOME]->EnableButton(10, "System", MenuEntry_Page, SCREEN_SYSTEM);
 	Screens[SCREEN_HOME]->EnableButton(12, "Colors", MenuEntry_Page, SCREEN_COLORS);
 	Screens[SCREEN_HOME]->EnableButton(5, "Reference Lines", MenuEntry_Action, MenuAction_EnableReferenceLines);
 	Screens[SCREEN_HOME]->EnableButton(6, "Test-image", MenuEntry_Action, MenuAction_EnableTestImage);
 
-	Screens[SCREEN_PRESET]->SetTitle("Edit Name/Category");
+	Screens[SCREEN_PRESETNAME]->SetTitle("Edit Name/Category");
 
 	Screens[SCREEN_COLORS]->SetTitle("Colors");
 
