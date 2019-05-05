@@ -569,11 +569,11 @@ void _control_t::RenderBoxVertical(int x, int y, int val, int mode, bool active)
 	{
 		ImVec2 br2 = br;
 		float y1 = tl.y + ParamVerticalBoxHeight / 2;
-		float y2 = y1 + ((val) * ParamVerticalBoxHeight/2) / 0x8000;
+		float y2 = y1 - ((val) * ParamVerticalBoxHeight/2) / 0x8000;
 		ImVec2 tl2 = tl;
 		tl2.y = __min(y1, y2);
 		br2.y = __max(y1, y2);
-		ImGui::SetCursorPos(ImVec2(tl.x, tl.y));
+		ImGui::SetCursorPos(ImVec2(tl.x + 40, tl.y));
 		ImGui::Text("%d", val);
 		ImGui::GetWindowDrawList()->AddRectFilled(tl, br, CalcFillColor(0, active));
 		ImGui::GetWindowDrawList()->AddRectFilled(tl2, br2, CalcFillColor(1, active));

@@ -239,9 +239,9 @@ public:
 		uint16_t *p = GetModParamPointer(param, instance);
 		if (p) {
 			int OrigVal = *p;
-			int32_t val = OrigVal + delta ;
-			if (val < 0) val = 0;
-			if (val > 0xffff) val = 0xffff;
+			int32_t val = (int)((int16_t)OrigVal) + delta ;
+			if (val < -0x8000) val = -0x8000;
+			if (val > 0x7fff) val = 0x7fff;
 			*p = val;
 		}
 
