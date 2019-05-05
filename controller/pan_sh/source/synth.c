@@ -1761,9 +1761,9 @@ void synth_init()
     pad_init();
 }
 
-const int negate[12] = { 1, 1, 0,  0, 0, 0,  1, 0, 0,  1, 0, 0 };
+const int negate[12] = { 0, 1, 0,  0, 0, 0,  1, 0, 0,  1, 0, 0 };
 
-__attribute__( ( section(".data") ) )
+//__attribute__( ( section(".data") ) )
 int32_t pad_threshold(int32_t value, int i)
 {
 	int dz = 0;
