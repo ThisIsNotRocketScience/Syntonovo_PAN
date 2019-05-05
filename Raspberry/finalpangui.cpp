@@ -1003,6 +1003,7 @@ void Gui::ButtonPressed(FinalLedButtonEnum Button)
 	case ledbutton_BLFO: GotoPage(SCREEN_LFO); break;
 	case ledbutton_BCV: GotoPage(SCREEN_KEYBOARD); break;
 	case ledbutton_BTouch: GotoPage(SCREEN_TOUCH); break;
+	case ledbutton_BHome: GotoPage(SCREEN_HOME); break;
 
 	}
 
