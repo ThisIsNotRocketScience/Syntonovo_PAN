@@ -222,7 +222,18 @@ public:
 	 
 		case KeyboardParam_DeadzoneZ:return (uint16_t*)&controller[Controller_Z].deadzone;
 		case KeyboardParam_ScaleZ:	 return (uint16_t*)&controller[Controller_Z].scale;
-
+		case KeyboardParam_DeadzoneLMod: return (uint16_t*)&controller[Controller_PadL].deadzone;
+		case KeyboardParam_DeadzoneRMod: return (uint16_t*)&controller[Controller_PadR].deadzone;
+		case KeyboardParam_DeadzoneLSus: return (uint16_t*)&controller[Controller_SustainL].deadzone;
+		case KeyboardParam_DeadzoneRSus: return (uint16_t*)&controller[Controller_SustainR].deadzone;
+		case KeyboardParam_DeadzoneLUna: return (uint16_t*)&controller[Controller_UnaCordaL].deadzone;
+		case KeyboardParam_DeadzoneRUna: return (uint16_t*)&controller[Controller_UnaCordaR].deadzone;
+		case KeyboardParam_ScaleLMod: return (uint16_t*)&controller[Controller_PadL].scale;
+		case KeyboardParam_ScaleRMod: return (uint16_t*)&controller[Controller_PadR].scale;
+		case KeyboardParam_ScaleLSus: return (uint16_t*)&controller[Controller_SustainL].scale;
+		case KeyboardParam_ScaleRSus: return (uint16_t*)&controller[Controller_SustainR].scale;
+		case KeyboardParam_ScaleLUna: return (uint16_t*)&controller[Controller_UnaCordaL].scale;
+		case KeyboardParam_ScaleRUna: return (uint16_t*)&controller[Controller_UnaCordaR].scale;
 
 
 
@@ -305,12 +316,14 @@ public:
 		case Source_Envelope: return &modmatrix[0x10 + instance];
 		case Source_x: return &modmatrix[0x20];
 		case Source_y: return &modmatrix[0x21];
-		case Source_z: return &modmatrix[0x21];	
-		case Source_zprime: return &modmatrix[0x22];
-		case Source_left_mod: return &modmatrix[0x23];
-		case Source_right_mod: return &modmatrix[0x24];
-		case Source_left_unac: return &modmatrix[0x25];
-		case Source_right_unac: return &modmatrix[0x26];
+		case Source_z: return &modmatrix[0x22];	
+		case Source_zprime: return &modmatrix[0x23];
+		case Source_left_mod: return &modmatrix[0x24];
+		case Source_right_mod: return &modmatrix[0x25];
+		case Source_left_unac: return &modmatrix[0x28];
+		case Source_right_unac: return &modmatrix[0x29];
+		case Source_left_sus: return &modmatrix[0x26];
+		case Source_right_sus: return &modmatrix[0x27];
 		case Source_note: return &modmatrix[0x2E];
 		case Source_vel:  return &modmatrix[0x2E];
 			//		case Source_pedal: return &modmatrix[0x22];
