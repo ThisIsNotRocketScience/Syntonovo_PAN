@@ -19,6 +19,8 @@ typedef struct
 	uint16_t depth;
 	uint16_t outputid;
 	uint8_t sourceid;
+	uint8_t __reserved;
+	uint16_t __reserved;
 } PACK ModTargetSpec_t;
 
 typedef struct
