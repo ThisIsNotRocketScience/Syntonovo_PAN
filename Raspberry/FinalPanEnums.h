@@ -146,6 +146,12 @@ enum
 	MenuAction_Store,
 	MenuAction_Yes,
 	MenuAction_No,
+	
+	MenuAction_NextVCO,
+	MenuAction_NextVCF2,
+	MenuAction_PrevVCO,
+	MenuAction_PrevVCF2,
+
 	MenuAction_Next,
 	MenuAction_Prev,
 	MenuAction_Cancel,

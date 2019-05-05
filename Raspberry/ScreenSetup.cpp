@@ -212,6 +212,11 @@ void _screensetup_t::Action(int action)
 {
 	switch (action)
 	{
+	case MenuAction_PrevVCF2: gGui.PrevVCF2(); break;
+	case MenuAction_NextVCF2: gGui.NextVCF2(); break;
+	case MenuAction_PrevVCO: gGui.PrevVCO(); break;
+	case MenuAction_NextVCO: gGui.NextVCO(); break;
+
 	case MenuAction_OpenVCF2Structure: Modal = gGui.Screens[SCREEN_VCF2_structure]; Modal->Parent = this; break;
 	case MenuAction_OpenEffects: Modal = gGui.Screens[SCREEN_EFFECTS]; Modal->Parent = this; break;
 	case MenuAction_Home: gGui.GotoPage(SCREEN_HOME); break;
