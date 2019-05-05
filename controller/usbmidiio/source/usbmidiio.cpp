@@ -838,9 +838,9 @@ extern "C" void SCT0_IRQHandler(void)
 	portEND_SWITCHING_ISR(higherPriorityTaskWoken);
 }
 
-struct presetnames_t {
-	unsigned char names[PRESET_COUNT * PRESET_NAME_LENGTH];
-};
+//struct presetnames_t {
+//	unsigned char names[PRESET_COUNT * PRESET_NAME_LENGTH];
+//};
 
 presetnames_t presetnames = {0};
 
@@ -1009,7 +1009,7 @@ void KeyboardTask(void* pvParameters)
 	dsp_reset();
 	//if (!flash_loadpreset(0, &preset)) {
 		preset_init();
-		flash_savepreset(0, &preset);
+	//	flash_savepreset(0, &preset);
 	//}
 	//else {
 	//	sync_preset_full();

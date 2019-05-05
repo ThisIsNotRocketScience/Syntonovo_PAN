@@ -24,6 +24,7 @@ void ltc2712_init()
 	while (!ready) ;
 }
 
+__attribute__( ( section(".data") ) )
 void ltc2712_write(int ic, int ch, uint16_t value, read_callback_t read_callback)
 {
 	unsigned char out[3];
