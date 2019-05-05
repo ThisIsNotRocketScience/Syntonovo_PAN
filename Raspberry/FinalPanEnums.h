@@ -32,6 +32,7 @@ class hsv
 {
 public:
 	uint16_t h, s, v;
+	uint16_t pad;
 } PACK;
 
 enum LedTheme
