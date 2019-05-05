@@ -50,6 +50,13 @@ ModSource_t ModSourceScreen::ModTypeFromScreen(Screens_t screen)
 	case SCREEN_X: return Source_x;
 	case SCREEN_Y: return Source_y;
 	case SCREEN_Z: return Source_y;
+	
+	case SCREEN_LMOD: return Source_left_mod;
+	case SCREEN_RMOD: return Source_right_mod;
+	case SCREEN_LSUS: return Source_left_sus;
+	case SCREEN_RSUS: return Source_right_sus;
+	case SCREEN_LUNA: return Source_left_unac;
+	case SCREEN_RUNA: return Source_right_unac;
 
 	case SCREEN_TOUCH: return Source_zprime;
 	case SCREEN_KEYBOARD: return Source_note;
@@ -89,6 +96,31 @@ ModSourceScreen::ModSourceScreen(Screens_t screen)
 		EnableAvailableEncoder("Scale", MenuEntry_EnvelopeValue, KeyboardParam_ScaleZ);
 
 		break;
+	case SCREEN_LMOD:
+		EnableAvailableEncoder("Deadzone", MenuEntry_EnvelopeValue, KeyboardParam_DeadzoneLMod);
+		EnableAvailableEncoder("Scale", MenuEntry_EnvelopeValue, KeyboardParam_ScaleLMod);
+		break;
+	case SCREEN_RMOD:
+		EnableAvailableEncoder("Deadzone", MenuEntry_EnvelopeValue, KeyboardParam_DeadzoneRMod);
+		EnableAvailableEncoder("Scale", MenuEntry_EnvelopeValue, KeyboardParam_ScaleRMod);
+		break;
+	case SCREEN_LSUS:
+		EnableAvailableEncoder("Deadzone", MenuEntry_EnvelopeValue, KeyboardParam_DeadzoneLSus);
+		EnableAvailableEncoder("Scale", MenuEntry_EnvelopeValue, KeyboardParam_ScaleLSus);
+		break;
+	case SCREEN_RSUS:
+		EnableAvailableEncoder("Deadzone", MenuEntry_EnvelopeValue, KeyboardParam_DeadzoneRSus);
+		EnableAvailableEncoder("Scale", MenuEntry_EnvelopeValue, KeyboardParam_ScaleRSus);
+		break;
+	case SCREEN_LUNA:
+		EnableAvailableEncoder("Deadzone", MenuEntry_EnvelopeValue, KeyboardParam_DeadzoneLUna);
+		EnableAvailableEncoder("Scale", MenuEntry_EnvelopeValue, KeyboardParam_ScaleLUna);
+		break;
+	case SCREEN_RUNA:
+		EnableAvailableEncoder("Deadzone", MenuEntry_EnvelopeValue, KeyboardParam_DeadzoneRUna);
+		EnableAvailableEncoder("Scale", MenuEntry_EnvelopeValue, KeyboardParam_ScaleRUna);
+		break;
+
 	case SCREEN_ENVELOPE:
 		HasActiveInstanceDisplay = true;
 

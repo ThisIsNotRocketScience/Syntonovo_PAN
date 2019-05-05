@@ -439,15 +439,15 @@ int sync_oobdata_func(uint8_t cmd, uint32_t data)
 #endif
 		break;
 	case OOB_ENCODER_CCW:
-//#ifdef SHOWSYNCPRINTF
+#ifdef SHOWSYNCPRINTF
 		printf("encoder dec %d %d\n", data & 0xff, data >> 8);
-//#endif
+#endif
 		LedEncoderButtonLeft((FinalEncoderEnum)(data & 0xFF), data>>8);
 		break;
 	case OOB_ENCODER_CW:
-//#ifdef SHOWSYNCPRINTF
+#ifdef SHOWSYNCPRINTF
 		printf("encoder inc %d %d\n", data & 0xff, data >> 8);
-//#endif
+#endif
 		LedEncoderButtonRight((FinalEncoderEnum)(data & 0xFF), data>>8);
 		break;
 	case OOB_ENCODER_DOWN:

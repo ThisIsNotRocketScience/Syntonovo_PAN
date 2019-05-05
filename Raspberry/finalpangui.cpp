@@ -1004,6 +1004,12 @@ void Gui::ButtonPressed(FinalLedButtonEnum Button)
 	case ledbutton_BCV: GotoPage(SCREEN_KEYBOARD); break;
 	case ledbutton_BTouch: GotoPage(SCREEN_TOUCH); break;
 	case ledbutton_BHome: GotoPage(SCREEN_HOME); break;
+	case ledbutton_LMod: GotoPage(SCREEN_LMOD); break;
+	case ledbutton_RMod: GotoPage(SCREEN_RMOD); break;
+	case ledbutton_LSus: GotoPage(SCREEN_LSUS); break;
+	case ledbutton_RSus: GotoPage(SCREEN_RSUS); break;
+	case ledbutton_LUna: GotoPage(SCREEN_LUNA); break;
+	case ledbutton_RUna: GotoPage(SCREEN_RUNA); break;
 
 	}
 
@@ -1409,6 +1415,18 @@ void Gui::BuildScreens()
 	Screens[SCREEN_Z]->LedButtonsThatOpenThisScreen.push_back(ledbutton_BZ);
 	Screens[SCREEN_TOUCH] = new ModSourceScreen(SCREEN_TOUCH);
 	Screens[SCREEN_TOUCH]->LedButtonsThatOpenThisScreen.push_back(ledbutton_BTouch);
+	Screens[SCREEN_LMOD] = new ModSourceScreen(SCREEN_LMOD);
+	Screens[SCREEN_LMOD]->LedButtonsThatOpenThisScreen.push_back(ledbutton_LMod);
+	Screens[SCREEN_RMOD] = new ModSourceScreen(SCREEN_RMOD);
+	Screens[SCREEN_RMOD]->LedButtonsThatOpenThisScreen.push_back(ledbutton_RMod);
+	Screens[SCREEN_LSUS] = new ModSourceScreen(SCREEN_LSUS);
+	Screens[SCREEN_LSUS]->LedButtonsThatOpenThisScreen.push_back(ledbutton_LSus);
+	Screens[SCREEN_RSUS] = new ModSourceScreen(SCREEN_RSUS);
+	Screens[SCREEN_RSUS]->LedButtonsThatOpenThisScreen.push_back(ledbutton_RSus);
+	Screens[SCREEN_LUNA] = new ModSourceScreen(SCREEN_LUNA);
+	Screens[SCREEN_LUNA]->LedButtonsThatOpenThisScreen.push_back(ledbutton_LUna);
+	Screens[SCREEN_RUNA] = new ModSourceScreen(SCREEN_RUNA);
+	Screens[SCREEN_RUNA]->LedButtonsThatOpenThisScreen.push_back(ledbutton_RUna);
 
 	Screens[SCREEN_VELOCITY] = new ModSourceScreen(SCREEN_VELOCITY);
 	Screens[SCREEN_VELOCITY]->LedButtonsThatOpenThisScreen.push_back(ledbutton_BVelocity);
@@ -1525,6 +1543,12 @@ void Gui::BuildScreens()
 	Screens[SCREEN_VELOCITY]->SetTitle("Keyboard Velocity");
 	Screens[SCREEN_KEYBOARD]->SetTitle("CV Keytrack");
 
+	Screens[SCREEN_LMOD]->SetTitle("Left Mod");
+	Screens[SCREEN_RMOD]->SetTitle("Right Mod");
+	Screens[SCREEN_LSUS]->SetTitle("Left Sustain");
+	Screens[SCREEN_RSUS]->SetTitle("Right Sustain");
+	Screens[SCREEN_LUNA]->SetTitle("Left Una Corda");
+	Screens[SCREEN_RUNA]->SetTitle("Right Una Corda");
 
 	Screens[SCREEN_ENVELOPE]->SetTitle("Envelopes");
 	Screens[SCREEN_ENVELOPE]->LedButtonsThatOpenThisScreen.push_back(ledbutton_BEnv);

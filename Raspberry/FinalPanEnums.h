@@ -67,6 +67,12 @@ enum Screens_t
 	SCREEN_Z,
 	SCREEN_LFO,
 	SCREEN_ENVELOPE,
+	SCREEN_LSUS,
+	SCREEN_LUNA,
+	SCREEN_LMOD,
+	SCREEN_RSUS,
+	SCREEN_RUNA,
+	SCREEN_RMOD,
 
 	SCREEN_VCO1,
 	SCREEN_VCO2,
@@ -260,6 +266,24 @@ enum ModParameters
 
 	KeyboardParam_DeadzoneZ,
 	KeyboardParam_ScaleZ,
+	
+	KeyboardParam_DeadzoneLMod,
+	KeyboardParam_ScaleLMod,
+	
+	KeyboardParam_DeadzoneRMod,
+	KeyboardParam_ScaleRMod,
+	
+	KeyboardParam_DeadzoneLSus,
+	KeyboardParam_ScaleLSus,
+	
+	KeyboardParam_DeadzoneRSus,
+	KeyboardParam_ScaleRSus,
+	
+	KeyboardParam_DeadzoneLUna,
+	KeyboardParam_ScaleLUna,
+	
+	KeyboardParam_DeadzoneRUna,
+	KeyboardParam_ScaleRUna,
 
 	__Mod_Parameter_Count
 };
