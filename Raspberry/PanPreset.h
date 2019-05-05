@@ -162,15 +162,15 @@ public:
 	}
 	void SetFilterType(VCF2Filter filt, FilterTypes_t newf)
 	{
-		SwitchEnum switchA1 = Switch_SELVCF21A;
-		SwitchEnum switchA2 = Switch_SELVCF21B;
+		SwitchEnum S1 = Switch_SELVCF21A;
+		SwitchEnum S2 = Switch_SELVCF21B;
 
 		switch (filt)
 		{
-		case FilterVCF2A: break;
-		case FilterVCF2B:switchA1 = Switch_SELVCF22A; switchA1 = Switch_SELVCF22B; break;
-		case FilterVCF2C:switchA1 = Switch_SELVCF23A; switchA1 = Switch_SELVCF23B; break;
-		case FilterVCF2D:switchA1 = Switch_SELVCF24A; switchA1 = Switch_SELVCF24B; break;
+		case FilterVCF2A:S1 = Switch_SELVCF22A; S2 = Switch_SELVCF21B; break;
+		case FilterVCF2B:S1 = Switch_SELVCF22A; S2 = Switch_SELVCF22B; break;
+		case FilterVCF2C:S1 = Switch_SELVCF23A; S2 = Switch_SELVCF23B; break;
+		case FilterVCF2D:S1 = Switch_SELVCF24A; S2 = Switch_SELVCF24B; break;
 		}
 		bool B1;
 		bool B2;
@@ -181,8 +181,8 @@ public:
 		case Filt_BP: B1 = false; B2 = true; break;
 		case Filt_BR: B1 = true;  B2 = true; break;
 		}
-		PutSwitch(switchA1, B1);
-		PutSwitch(switchA2, B2);
+		PutSwitch(S1, B1);
+		PutSwitch(S2, B2);
 	}
 	void ToggleSwitch(SwitchEnum SwitchID)
 	{
