@@ -35,7 +35,8 @@ void bottomencoder_t::Turn(int delta)
 
 int GetEncoderX(int id)
 {
-	return ((1024) / 11.0f) * (id + 0.5);
+	return 512 + (id - 5.0)* ((1024) / 12.0f);
+	//return ((1024) / 11.0f) * (id + 0.5);
 }
 void bottomencoder_t::SetupPosition(int id)
 {
@@ -66,7 +67,7 @@ void bottomencoder_t::Render(bool active, float DT)
 
 	ImGui::PushFont(gGuiResources.TinyFont);
 
-	ImGui::SetCursorPos(ImVec2(x2 - ImGui::GetTextLineHeight() - ParamBoxDim/2, y2));
+	ImGui::SetCursorPos(ImVec2(x2 - ImGui::GetTextLineHeight() - ParamBoxDim / 2, y2));
 
 	if (active)
 	{
@@ -77,16 +78,16 @@ void bottomencoder_t::Render(bool active, float DT)
 		VerticalText(title, align_left);
 	}
 	y2 -= ParamVerticalBoxHeight;
-	
+
 	switch (style)
 	{
 	case MenuEntry_Ghosted:
-		RenderBoxVertical(x, y2, Parent->GetParameterValue(target, Set),  BOX_GHOST, active);
+		RenderBoxVertical(x, y2, Parent->GetParameterValue(target, Set), BOX_GHOST, active);
 		break;
 	case MenuEntry_EnvelopeValue:
 	case MenuEntry_LFOValue:
 	{
-		RenderBoxVertical(x, y2, Parent->GetParameterValue(target, Set),BOX_REGULAR, active);
+		RenderBoxVertical(x, y2, Parent->GetParameterValue(target, Set), BOX_REGULAR, active);
 		//	char txt[400];
 		//		gCurrentPreset.DescribeParam((OutputEnum)target, style, txt, 400);
 		//		VerticalText(txt, align_right);
@@ -127,7 +128,7 @@ void bottomencoder_t::Render(bool active, float DT)
 		char txt[400];
 
 		gCurrentPreset.DescribeParam((OutputEnum)target, style, txt, 400);
-	//	VerticalText(txt, align_right);
+		//	VerticalText(txt, align_right);
 	}
 
 	break;
