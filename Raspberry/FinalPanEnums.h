@@ -160,7 +160,23 @@ enum
 	MenuAction_Home,
 	MenuAction_OpenEffects,
 	MenuAction_OpenVCF2Structure,
+
+	MenuAction_VCFAMode,
+	MenuAction_VCFBMode,
+	MenuAction_VCFCMode,
+	MenuAction_VCFDMode,
+	MenuAction_VCFAB,
+	MenuAction_VCFCD,
 	__MenuAction_Count
+};
+
+enum VCF2Filter
+{
+	FilterVCF2A,
+	FilterVCF2B,
+	FilterVCF2C,
+	FilterVCF2D,
+	__VCF2_Filter_Count
 };
 
 enum FilterTypes_t

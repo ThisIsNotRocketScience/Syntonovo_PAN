@@ -148,6 +148,42 @@ public:
 		}
 	}
 
+	FilterTypes_t Decode(bool A, bool B)
+	{
+		switch ((A ? 1 : 0) + (B ? 2 : 0))
+		{
+		case 0: return Filt_LP;
+		case 1: return Filt_HP;
+		case 2: return Filt_BP;
+		case 3: return Filt_BR;
+		}
+		return Filt_LP;
+
+	}
+	void SetFilterType(VCF2Filter filt, FilterTypes_t newf)
+	{
+		SwitchEnum switchA1 = Switch_SELVCF21A;
+		SwitchEnum switchA2 = Switch_SELVCF21B;
+
+		switch (filt)
+		{
+		case FilterVCF2A: break;
+		case FilterVCF2B:switchA1 = Switch_SELVCF22A; switchA1 = Switch_SELVCF22B; break;
+		case FilterVCF2C:switchA1 = Switch_SELVCF23A; switchA1 = Switch_SELVCF23B; break;
+		case FilterVCF2D:switchA1 = Switch_SELVCF24A; switchA1 = Switch_SELVCF24B; break;
+		}
+		bool B1;
+		bool B2;
+		switch (newf)
+		{
+		case Filt_LP: B1 = false; B2 = false; break;
+		case Filt_HP: B1 = true;  B2 = false; break;
+		case Filt_BP: B1 = false; B2 = true; break;
+		case Filt_BR: B1 = true;  B2 = true; break;
+		}
+		PutSwitch(switchA1, B1);
+		PutSwitch(switchA2, B2);
+	}
 	void ToggleSwitch(SwitchEnum SwitchID)
 	{
 		if (GetSwitch(SwitchID))

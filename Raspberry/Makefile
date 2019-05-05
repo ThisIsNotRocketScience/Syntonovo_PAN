@@ -5,11 +5,11 @@ LDFLAGS=-L/opt/vc/lib -L. -lbrcmEGL -lbrcmGLESv2 -lpthread -I/opt/vc/include -L/
 
 .PHONY: default all clean
 
-default: finalpanguimain
+default: pangui
 
 all: default
 
-pangui: finalpanguimain.o Combine.o imgui_es2.o SerialSearcher.o finalpangui.o panstructs.o linux_serial.o BottomEncoder.o ModSourceScreen.o ModTargetModal.o ScreenSetup.o
+pangui: finalpanguimain.o Combine.o imgui_es2.o SerialSearcher.o finalpangui.o panstructs.o linux_serial.o BottomEncoder.o ModSourceScreen.o ModTargetModal.o ScreenSetup.o HomeScreen.o VCF2StructureScreen.o
 	$(CC) -o finalpanguimain *.o $(LDFLAGS)
 
 %.o: %.cpp $(DEPS)
@@ -19,4 +19,4 @@ pangui: finalpanguimain.o Combine.o imgui_es2.o SerialSearcher.o finalpangui.o p
 	gcc -c -o $@ $< $(CFLAGS)
 
 clean:
-	-rm -f finalpanguimain *.o
+	-rm -f finalpanguimain finalpangui.o panstructs.o BottomEncoder.o ModSourceScreen.o ModTargetModal.o ScreenSetup.o HomeScreen.o VCF2StructureScreen.o

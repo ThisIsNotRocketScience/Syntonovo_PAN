@@ -24,17 +24,7 @@ void cmd_calibrate();
 void cmd_preset_load(int presetid);
 void cmd_preset_save(int presetid);
 
-FilterTypes_t Decode(bool A, bool B)
-{
-	switch ((A ? 1 : 0) + (B ? 2 : 0))
-	{
-	case 0: return Filt_LP;
-	case 1: return Filt_HP;
-	case 2: return Filt_BP;
-	case 3: return Filt_BR;
-	}
-	return Filt_LP;
-}
+
 
 bool IsCenterEncoder(FinalEncoderEnum button)
 {
@@ -734,6 +724,14 @@ void PrintFontSpec(ImFont*F, const char* name)
 
 }
 
+void CheckFont(const char*name, ImFont*F)
+{
+	if (F) printf("%s loaded correctly\n", name); else
+	{
+		printf("failed to load %s!!!\n");
+	}
+}
+
 void FinalPan_LoadResources()
 {
 	BuildModulationTargetList();
@@ -779,6 +777,11 @@ void FinalPan_LoadResources()
 	gGuiResources.testimage = false;
 	gGuiResources.BigFont = io.Fonts->AddFontFromFileTTF("Petronius-Roman.ttf", 38.0f);
 	init = true;
+
+	CheckFont("BigFont - PetroniusRoman", gGuiResources.BigFont);
+	CheckFont("TinyFont - Panton", gGuiResources.TinyFont);
+	CheckFont("SmallFont - Panton", gGuiResources.MediumFont);
+	CheckFont("MediunFont - Panton", gGuiResources.SmallFont);
 
 	int X = sizeof(PanPreset_t);
 	printf("Pan preset size: %d (%x) bytes\n", X, X);

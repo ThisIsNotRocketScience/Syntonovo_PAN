@@ -284,7 +284,8 @@ void* SerialThread(void*)
 	return 0;
 }
 
-unsigned char presetnames[PRESET_COUNT * PRESET_NAME_LENGTH] = {0};
+
+char presetnames[PRESET_COUNT ][ PRESET_NAME_LENGTH] = {0};
 
 void sync_data_func(int addr, uint8_t* data)
 {
