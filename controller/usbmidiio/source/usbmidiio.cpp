@@ -863,7 +863,7 @@ public:
 	int run()
 	{
 		if (_resend_full) {
-		//printf("%x - %x @ %x\n", 0, sizeof(T), _address);
+		printf("%x - %x @ %x\n", 0, sizeof(T), _address);
 			_resend_full = false;
 			memcpy(&_prev, _data, sizeof(T));
 			sync_block(&rpi_sync, (uint8_t*)&_prev, _address, sizeof(T), sync_complete);
@@ -879,7 +879,7 @@ public:
 						break;
 					}
 				}
-		//printf("%x - %x (max %x) @ %x\n", i, j, sizeof(T), _address);
+		printf("%x - %x (max %x) @ %x\n", i, j, sizeof(T), _address);
 				memcpy(&((uint8_t*)&_prev)[i], &((uint8_t*)_data)[i], j - i);
 				sync_block(&rpi_sync, &((uint8_t*)&_prev)[i], _address + i, j - i, sync_complete);
 				return 0;
@@ -1435,7 +1435,7 @@ int sync_oobdata_func(uint8_t cmd, uint32_t data)
 	case CMD_PRESET_LOAD: {
 		if (loading) return 0;
 		uint16_t mastervol = preset.paramvalue[Output_MASTER_LEVEL];
-        flash_loadpreset(data, &preset);
+        if (!flash_loadpreset(data, &preset)) preset_init();
 		preset.paramvalue[Output_MASTER_LEVEL] = mastervol;
         sync_preset_full();
 		preset_load_start();
@@ -1444,8 +1444,12 @@ int sync_oobdata_func(uint8_t cmd, uint32_t data)
 	case CMD_PRESET_STORE:
 		if (loading) return 0;
         sync_oob_word(&rpi_sync, OOB_UI_PAUSE, 0, 0);
+        loading = 1;
         flash_savepreset(data, &preset);
-        sync_oob_word(&rpi_sync, OOB_UI_CONTINUE, 0, 0);
+        if (namesync.run()) {
+        	loading = 0;
+        	sync_oob_word(&rpi_sync, OOB_UI_CONTINUE, 0, 0);
+        }
 		return 0;
 	}
 	return 1;

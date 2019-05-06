@@ -376,7 +376,7 @@ public:
       return 2;
     }
     
-    if (newgen > oldgen) {
+    if (newgen >= oldgen) {
       return 1;
     }
 
@@ -403,13 +403,13 @@ public:
       }
     }
   
-    //printf("page %d valid with preset %d\n", page, preset_id);
+    printf("page %d valid with preset %d\n", page, preset_id);
     state[page] = 2;
     index[preset_id].generation = preset->header.generation;
     index[preset_id].page = page;
     index[preset_id].valid = needrefresh ? 2 : 1;
     memcpy(&index[preset_id].name, preset->data.Name, 16);
-    memcpy(&presetnames.names[preset_id * 16], preset->data.Name, 16);
+    memcpy(&presetnames.names[preset_id], preset->data.Name, 16);
   }
 
   void SetDirtyPreset(int page)
