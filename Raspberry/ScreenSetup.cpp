@@ -217,8 +217,19 @@ void _screensetup_t::Action(int action)
 	case MenuAction_PrevVCO: gGui.PrevVCO(); break;
 	case MenuAction_NextVCO: gGui.NextVCO(); break;
 
-	case MenuAction_OpenVCF2Structure: Modal = gGui.Screens[SCREEN_VCF2_structure]; Modal->Parent = this; break;
-	case MenuAction_OpenEffects: Modal = gGui.Screens[SCREEN_EFFECTS]; Modal->Parent = this; break;
+	case MenuAction_OpenVCF2Structure:
+	{
+		Modal = gGui.Screens[SCREEN_VCF2_structure];
+		if (Modal->Parent) ((_screensetup_t*)Modal->Parent)->Modal = NULL;
+		Modal->Parent = this;
+	}
+	break;
+	case MenuAction_OpenEffects: 
+	{	
+		Modal = gGui.Screens[SCREEN_EFFECTS];
+		if (Modal->Parent) ((_screensetup_t*)Modal->Parent)->Modal = NULL;
+		Modal->Parent = this; break;
+	}
 	case MenuAction_Home: gGui.GotoPage(SCREEN_HOME); break;
 	case MenuAction_CloseParentModal: if (Parent) ((_screensetup_t*)Parent)->Modal = NULL; break;
 	case MenuAction_CalibratePads: cmd_pad_zero(); break;
