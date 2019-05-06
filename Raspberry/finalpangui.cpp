@@ -1344,8 +1344,10 @@ public:
 		default:
 			_screensetup_t::Action(action);
 		}
-		Activate();
+		SetNames();
+
 	}
+
 	LeftRight Side;
 	int *mybank;
 	int df;
@@ -1378,20 +1380,25 @@ public:
 			CurrentBank = &gPanState.BankRight;
 			SetTitle("Select Right Bank");
 		}
-		EnableButton(1, (*CurrentBank == 0) ? "A (current)" : "A", MenuEntry_Action, MenuAction_BankA);
-		EnableButton(2, (*CurrentBank == 1) ? "B (current)" : "B", MenuEntry_Action, MenuAction_BankB);
-		EnableButton(3, (*CurrentBank == 2) ? "C (current)" : "C", MenuEntry_Action, MenuAction_BankC);
-		EnableButton(4, (*CurrentBank == 3) ? "D (current)" : "D", MenuEntry_Action, MenuAction_BankD);
-		EnableButton(5, (*CurrentBank == 4) ? "E (current)" : "E", MenuEntry_Action, MenuAction_BankE);
-		EnableButton(6, (*CurrentBank == 5) ? "F (current)" : "F", MenuEntry_Action, MenuAction_BankF);
-
-		EnableButton(8, (*CurrentBank == 6) ? "G (current)" : "G", MenuEntry_Action, MenuAction_BankG);
-		EnableButton(9, (*CurrentBank == 7) ? "H (current)" : "H", MenuEntry_Action, MenuAction_BankH);
-		EnableButton(10, (*CurrentBank == 8) ? "I (current)" : "I", MenuEntry_Action, MenuAction_BankI);
-		EnableButton(11, (*CurrentBank == 9) ? "J (current)" : "J", MenuEntry_Action, MenuAction_BankJ);
-		EnableButton(12, (*CurrentBank == 10) ? "K (current)" : "K", MenuEntry_Action, MenuAction_BankK);
-		EnableButton(13, (*CurrentBank == 11) ? "L (current)" : "L", MenuEntry_Action, MenuAction_BankL);
+		SetNames();
 	};
+
+	void SetNames()
+	{
+
+		EnableButton(1, (df == 0) ? "A (current)" : "A", MenuEntry_Action, MenuAction_BankA);
+		EnableButton(2, (df == 1) ? "B (current)" : "B", MenuEntry_Action, MenuAction_BankB);
+		EnableButton(3, (df == 2) ? "C (current)" : "C", MenuEntry_Action, MenuAction_BankC);
+		EnableButton(4, (df == 3) ? "D (current)" : "D", MenuEntry_Action, MenuAction_BankD);
+		EnableButton(5, (df == 4) ? "E (current)" : "E", MenuEntry_Action, MenuAction_BankE);
+		EnableButton(6, (df == 5) ? "F (current)" : "F", MenuEntry_Action, MenuAction_BankF);
+		EnableButton(8, (df == 6) ? "G (current)" : "G", MenuEntry_Action, MenuAction_BankG);
+		EnableButton(9, (df == 7) ? "H (current)" : "H", MenuEntry_Action, MenuAction_BankH);
+		EnableButton(10, (df == 8) ? "I (current)" : "I", MenuEntry_Action, MenuAction_BankI);
+		EnableButton(11, (df == 9) ? "J (current)" : "J", MenuEntry_Action, MenuAction_BankJ);
+		EnableButton(12, (df == 10) ? "K (current)" : "K", MenuEntry_Action, MenuAction_BankK);
+		EnableButton(13, (df == 11) ? "L (current)" : "L", MenuEntry_Action, MenuAction_BankL);
+	}
 };
 
 class ImageScreen : public _screensetup_t
