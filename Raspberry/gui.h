@@ -322,7 +322,7 @@ public:
 		ImGui::PushFont(gGuiResources.TinyFont);
 		for (int i = 0; i < 8; i++)
 		{
-			int presetidx = (*bankid) * 8 + i;
+			int presetidx = (*bankid) * 16 + i;
 			int Y = (ImGui::GetTextLineHeight() + ParamMasterMargin*3)  * i + y;
 			ImGui::SetCursorPos(ImVec2(x+ ParamMasterMargin, Y + ParamMasterMargin));
 			ImGui::Text(presetnames.names[presetidx]);
