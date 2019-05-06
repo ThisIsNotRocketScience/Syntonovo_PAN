@@ -1961,3 +1961,7 @@ void LedEncoderButtonRight(FinalEncoderEnum Button, int delta)
 	}
 }
 
+void FinalPan_Pause(bool pause)
+{
+	gGui.PauseAll(pause);
+}

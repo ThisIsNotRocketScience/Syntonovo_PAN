@@ -31,6 +31,7 @@ int uart0_filestream = -1;
 extern void FinalPan_WindowFrame(float DT);
 extern void FinalPan_LoadResources();
 extern void FinalPan_SetupLeds();
+extern void FinalPan_Pause(bool pause);
 //void FinalPan_SetupDefaultPreset();
 
 extern PanPreset_t gCurrentPreset;
@@ -412,7 +413,7 @@ int sync_oobdata_func(uint8_t cmd, uint32_t data)
 	switch (cmd) {
 	case OOB_UI_PAUSE:
 
-		gGui.PauseAll(true);
+		FinalPan_Pause(true);
 //#ifdef SHOWSYNCPRINTF
 		printf("OOB_UI_PAUSE\n");
 //#endif
@@ -421,7 +422,7 @@ int sync_oobdata_func(uint8_t cmd, uint32_t data)
 		sync_running = 1;
 		break;
 	case OOB_UI_CONTINUE:
-		gGui.PauseAll(false);
+		FinalPan_Pause(false);
 //#ifdef SHOWSYNCPRINTF
 		printf("OOB_UI_CONTINUE\n");
 //#endif
