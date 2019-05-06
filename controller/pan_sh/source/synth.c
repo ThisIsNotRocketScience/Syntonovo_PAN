@@ -42,6 +42,11 @@ uint16_t pad_adc_value[12];
 uint16_t pad_calibration[12] = {0};
 int32_t pad_value[12];
 
+int32_t pad_adc_value_min[12] = { -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff };;
+int32_t pad_adc_value_max[12] = { -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff };;
+
+int32_t pad_adc_value_range[12];
+
 static volatile int inputcycle_last_port = 12;
 
 static void inputcycle_cb(uint32_t data, void* user)
@@ -50,6 +55,11 @@ static void inputcycle_cb(uint32_t data, void* user)
 
 	if (port >= 0 && port < 12) {
 		pad_adc_value[port] = (data & 0xFFF) << 4;
+
+		if (pad_adc_value_min[port] == -0xffffff || pad_adc_value[port] < pad_adc_value_min[port]) pad_adc_value_min[port] = pad_adc_value[port];
+		if (pad_adc_value_max[port] == -0xffffff || pad_adc_value[port] > pad_adc_value_max[port]) pad_adc_value_max[port] = pad_adc_value[port];
+
+		pad_adc_value_range[port] = pad_adc_value_max[port] - pad_adc_value_min[port];
 
 		inputcycle_last_port = port;
 
@@ -1030,16 +1040,28 @@ void do_output_CLEANF_FX_R(int ctrlid, int port)
 
 void do_output_FX_L_RETURN(int ctrlid, int port)
 {
-	do_smooth(ctrlid);
-	if (process_param_inv(ctrlid)) {
+	//do_smooth(ctrlid);
+	//if (process_param_inv(ctrlid)) {
+	//	ports_value(port, synth_param[ctrlid].last);
+	//}
+
+	int result = (synth_param[FX_L_RETURN].last != synth_param[FX_RET_LEVEL].last) || doing_reset;
+	synth_param[FX_L_RETURN].last = synth_param[FX_RET_LEVEL].last;
+	if (result) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
 }
 
 void do_output_FX_R_RETURN(int ctrlid, int port)
 {
-	do_smooth(ctrlid);
-	if (process_param_inv(ctrlid)) {
+	//do_smooth(ctrlid);
+	//if (process_param_inv(ctrlid)) {
+	//	ports_value(port, synth_param[ctrlid].last);
+	//}
+
+	int result = (synth_param[FX_R_RETURN].last != synth_param[FX_RET_LEVEL].last) || doing_reset;
+	synth_param[FX_R_RETURN].last = synth_param[FX_RET_LEVEL].last;
+	if (result) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
 }
@@ -1404,6 +1426,18 @@ void virt_VCF2_PAN()
 	process_param_lin(VCF2_PAN);
 }
 
+void virt_FX_RET_LEVEL()
+{
+	do_smooth(FX_RET_LEVEL);
+	process_param_log_add(FX_RET_LEVEL, 0/*(int32_t)synth_param[MASTER_LEVEL].last - 0xFFFF*/, 0);
+}
+
+/*void virt_FX_RET_PAN()
+{
+	do_smooth(FX_RET_PAN);
+	process_param_lin(FX_RET_PAN);
+}*/
+
 void virt_VCO4567_DRY_MIX()
 {
 	do_smooth(VCO4567_DRY_MIX);
@@ -1761,7 +1795,7 @@ void synth_init()
     pad_init();
 }
 
-const int negate[12] = { 0, 1, 0,  0, 0, 0,  1, 0, 0,  1, 0, 0 };
+const int negate[12] = { 1, 0, 1,  0, 0, 0,  1, 0, 0,  1, 0, 0 };
 
 //__attribute__( ( section(".data") ) )
 int32_t pad_threshold(int32_t value, int i)
