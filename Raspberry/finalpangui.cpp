@@ -965,44 +965,53 @@ bool IsPatchButton(FinalLedButtonEnum B)
 
 Gui::Gui()
 {
-
+	Waiting = false;
 }
 
 void Gui::Init()
 {
+	Waiting = false;
 	BuildScreens();
 	CurrentScreen = SCREEN_LOGO;
 }
 
 void Gui::SketchLeftPress()
 {
+	if (Waiting) return;
+
 	CS()->SketchLeftPress();
 }
 
 void Gui::SketchRightPress()
 {
+	if (Waiting) return;
+
 	CS()->SketchRightPress();
 }
 
 void Gui::EncoderPress(FinalEncoderEnum button)
 {
 
+	if (Waiting) return;
 	CS()->EncoderPress(button);
 }
 
 void Gui::SketchLeft(int delta)
 {
+	if (Waiting) return;
 	CS()->SketchLeft(delta);
 }
 
 void Gui::SketchRight(int delta)
 {
+	if (Waiting) return;
 	CS()->SketchRight(delta);
 }
 
 
 void Gui::Encoder(FinalEncoderEnum button, int delta)
 {
+	if (Waiting) return;
 	if (IsCenterEncoder(button))
 	{
 		CS()->Encoder(button, delta);
@@ -1029,7 +1038,7 @@ void AddPitch(int add)
 
 void Gui::ButtonPressed(FinalLedButtonEnum Button)
 {
-
+	if (Waiting) return;
 	// insert what to do if selecting modulation source/target here? 
 	switch (Button)
 	{
@@ -1508,6 +1517,9 @@ void Gui::BuildScreens()
 	Screens[SCREEN_LFO]->LedButtonsThatOpenThisScreen.push_back(ledbutton_BHome);
 
 
+	Screens[SCREEN_LOADING]->SetTitle("Loading...");
+
+
 	Screens[SCREEN_VCF2a]->SetTitle("Filter 2a");
 	Screens[SCREEN_VCF2a]->EnableAvailableButton("-> Mixer", MenuEntry_Page, SCREEN_VCF2MIX);
 	Screens[SCREEN_VCF2b]->SetTitle("Filter 2b");
@@ -1704,6 +1716,11 @@ void Gui::BuildScreens()
 
 void Gui::Render(bool active, float dt)
 {
+	if (Waiting)
+	{
+		Screens[SCREEN_LOADING]->Render(active, dt);
+		return;
+	}
 	Screens[CurrentScreen]->Render(active, dt);
 
 	if (gGuiResources.referencelines)
@@ -1744,6 +1761,7 @@ void hsv2rgb(uint16_t h, uint16_t s, uint16_t v, uint16_t *r, uint16_t *g, uint1
 
 void Gui::SetupLeds()
 {
+	if (Waiting) return;
 
 	gPanState.SetLed(Led_Active, gCurrentPreset.active);
 	gPanState.SetLed(Led_High, gCurrentPreset.high);
@@ -1891,11 +1909,13 @@ void FinalPan_WindowFrame(float DT)
 
 void LedButtonPressed(FinalLedButtonEnum Button)
 {
+
 	gGui.ButtonPressed(Button);
 }
 
 void LedEncoderButtonPress(FinalEncoderEnum Button)
 {
+	
 	switch (Button)
 	{
 	case encoder_SketchLeft:

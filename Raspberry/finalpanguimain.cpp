@@ -411,6 +411,8 @@ int sync_oobdata_func(uint8_t cmd, uint32_t data)
 {
 	switch (cmd) {
 	case OOB_UI_PAUSE:
+
+		gGui.PauseAll(true);
 //#ifdef SHOWSYNCPRINTF
 		printf("OOB_UI_PAUSE\n");
 //#endif
@@ -419,6 +421,7 @@ int sync_oobdata_func(uint8_t cmd, uint32_t data)
 		sync_running = 1;
 		break;
 	case OOB_UI_CONTINUE:
+		gGui.PauseAll(false);
 //#ifdef SHOWSYNCPRINTF
 		printf("OOB_UI_CONTINUE\n");
 //#endif

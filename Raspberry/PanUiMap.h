@@ -312,7 +312,7 @@ MENU(EFFECTS, ledbutton_Cleanfeed_FX, "Global Effects")
 CUSTOMENTRY("FXSel 1", MenuEntry_Toggle, Switch_SELEF0)
 CUSTOMENTRY("FXSel 2", MenuEntry_Toggle, Switch_SELEF1)
 CUSTOMENTRY("FXSel 3", MenuEntry_Toggle, Switch_SELEF2)
-CUSTOMENTRY("FXSel 4", MenuEntry_Toggle, Switch_SELEF3)
+//CUSTOMENTRY("FXSel 4", MenuEntry_Toggle, Switch_SELEF3)
 
 
 ENTRY("VCF1 12 -> Effect", MenuEntry_Value, Output_VCF1_FX_12)
@@ -322,10 +322,10 @@ ENTRY("Parameter 2", MenuEntry_Value, Output_VCA_FXPOT2)
 ENTRY("VCF2 L -> Effect", MenuEntry_Value, Output_VCF2_FX_L)
 ENTRY("Parameter 3", MenuEntry_Value, Output_VCA_FXPOT1)
 ENTRY("VCF2 R -> Effect", MenuEntry_Value, Output_VCF2_FX_R)
-ENTRY("Effect L -> Master L", MenuEntry_Value, Output_FX_L_RETURN)
 ENTRY("Cleanfeed L -> Effect", MenuEntry_Value, Output_CLEANF_FX_L)
-ENTRY("Effect R -> Master R", MenuEntry_Value, Output_FX_R_RETURN)
 ENTRY("Cleanfeed R -> Effect", MenuEntry_Value, Output_CLEANF_FX_R)
+ENTRY("Effect Return", MenuEntry_Value, Output_FX_RET_LEVEL)
+
 
 
 //CUSTOMENTRY("CLNFD", MenuEntry_Toggle, Switch_SELEFFECT3)
@@ -368,6 +368,7 @@ ENTRY("Master Level", MenuEntry_RemapValue, Output_MASTER_LEVEL)
 ENTRY("Fx 1", MenuEntry_Value, Output_VCA_FXPOT1)
 ENTRY("Fx 2", MenuEntry_Value, Output_VCA_FXPOT2)
 ENTRY("Fx 3", MenuEntry_Value, Output_VCA_FXPOT3)
+ENTRY("Effect Return", MenuEntry_Value, Output_FX_RET_LEVEL)
 
 ENDMENU()
 
