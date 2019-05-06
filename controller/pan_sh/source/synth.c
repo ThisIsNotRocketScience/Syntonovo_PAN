@@ -42,10 +42,10 @@ uint16_t pad_adc_value[12];
 uint16_t pad_calibration[12] = {0};
 int32_t pad_value[12];
 
-int32_t pad_adc_value_min[12] = { -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff };;
-int32_t pad_adc_value_max[12] = { -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff };;
+//int32_t pad_adc_value_min[12] = { -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff };;
+//int32_t pad_adc_value_max[12] = { -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff };;
 
-int32_t pad_adc_value_range[12];
+//int32_t pad_adc_value_range[12];
 
 static volatile int inputcycle_last_port = 12;
 
@@ -56,10 +56,10 @@ static void inputcycle_cb(uint32_t data, void* user)
 	if (port >= 0 && port < 12) {
 		pad_adc_value[port] = (data & 0xFFF) << 4;
 
-		if (pad_adc_value_min[port] == -0xffffff || pad_adc_value[port] < pad_adc_value_min[port]) pad_adc_value_min[port] = pad_adc_value[port];
-		if (pad_adc_value_max[port] == -0xffffff || pad_adc_value[port] > pad_adc_value_max[port]) pad_adc_value_max[port] = pad_adc_value[port];
+		//if (pad_adc_value_min[port] == -0xffffff || pad_adc_value[port] < pad_adc_value_min[port]) pad_adc_value_min[port] = pad_adc_value[port];
+		//if (pad_adc_value_max[port] == -0xffffff || pad_adc_value[port] > pad_adc_value_max[port]) pad_adc_value_max[port] = pad_adc_value[port];
 
-		pad_adc_value_range[port] = pad_adc_value_max[port] - pad_adc_value_min[port];
+		//pad_adc_value_range[port] = pad_adc_value_max[port] - pad_adc_value_min[port];
 
 		inputcycle_last_port = port;
 
