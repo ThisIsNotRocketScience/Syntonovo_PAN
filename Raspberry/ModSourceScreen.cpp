@@ -197,7 +197,7 @@ void ModSourceScreen::RenderContent(bool active, float DT)
 		ImVec2 S3(x + AW / 2, y );
 		ImVec2 S4(x + AW , y);
 		CumW = x + AW;
-		ImVec2 S5(CumW, y  + H - (1-S)/2 * H );
+		ImVec2 S5(CumW, y  + H - ((S)/2) * H );
 		ImVec2 S6(CumW + DW/2, y + H - S * H);
 		ImVec2 S7(CumW + DW, y + H - S * H);
 		CumW += DW;
