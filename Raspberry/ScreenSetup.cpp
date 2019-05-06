@@ -219,15 +219,17 @@ void _screensetup_t::Action(int action)
 
 	case MenuAction_OpenVCF2Structure:
 	{
-		Modal = gGui.Screens[SCREEN_VCF2_structure];
-		if (Modal->Parent) ((_screensetup_t*)Modal->Parent)->Modal = NULL;
+		_screensetup_t * eff = gGui.Screens[SCREEN_VCF2_structure];;
+		if (eff->Parent) ((_screensetup_t*)eff->Parent)->Modal = NULL;		
+		Modal = eff;		
 		Modal->Parent = this;
 	}
 	break;
 	case MenuAction_OpenEffects: 
 	{	
-		Modal = gGui.Screens[SCREEN_EFFECTS];
-		if (Modal->Parent) ((_screensetup_t*)Modal->Parent)->Modal = NULL;
+		_screensetup_t * eff = gGui.Screens[SCREEN_EFFECTS];;
+		if (eff->Parent) ((_screensetup_t*)eff->Parent)->Modal = NULL;
+		Modal = eff;
 		Modal->Parent = this; break;
 	}
 	case MenuAction_Home: gGui.GotoPage(SCREEN_HOME); break;

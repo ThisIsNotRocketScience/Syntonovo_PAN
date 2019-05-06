@@ -341,7 +341,11 @@ public:
 	void Init();
 	void SketchLeftPress();
 	void SketchRightPress();
-
+	bool Waiting;
+	void PauseAll(bool paused)
+	{
+		Waiting = paused;
+	}
 	void EncoderPress(FinalEncoderEnum button);
 
 	void SketchLeft(int delta);
