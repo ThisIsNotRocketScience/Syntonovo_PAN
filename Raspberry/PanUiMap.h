@@ -309,6 +309,12 @@ EXTRABUTTON(EFFECTS, ledbutton_VCF2_FX)
 
 MENU(EFFECTS, ledbutton_Cleanfeed_FX, "Global Effects")
 //CUSTOMENTRY("Type", MenuEntry_EffectType, Output_VCA_FXPOT1)
+CUSTOMENTRY("FXSel 1", MenuEntry_Toggle, Switch_SELEF0)
+CUSTOMENTRY("FXSel 2", MenuEntry_Toggle, Switch_SELEF1)
+CUSTOMENTRY("FXSel 3", MenuEntry_Toggle, Switch_SELEF2)
+CUSTOMENTRY("FXSel 4", MenuEntry_Toggle, Switch_SELEF3)
+
+
 ENTRY("VCF1 12 -> Effect", MenuEntry_Value, Output_VCF1_FX_12)
 ENTRY("Parameter 1", MenuEntry_Value, Output_VCA_FXPOT3)
 ENTRY("VCF1 24 -> Effect", MenuEntry_Value, Output_VCF1_FX_24)
