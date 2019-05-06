@@ -59,13 +59,13 @@ void adsr_init()
 void adsr_set_a(int adsrid, uint32_t a)
 {
 	adsr_state[adsrid].a = a;
-	adsr_state[adsrid].a_const = (uint32_t)((float)0xFFFFFFFF * (1.0f - expf(-4.0f / (float)(a + 5))));
+	adsr_state[adsrid].a_const = (uint32_t)((float)0xFFFFFFFF * (1.0f - 1.00027f * expf(-20.0f / (float)(a + 5))));
 }
 
 void adsr_set_d(int adsrid, uint32_t d)
 {
 	adsr_state[adsrid].d = d;
-	adsr_state[adsrid].d_const = (uint32_t)((float)0x7FFFFFFF * (1.0f - expf(-4.0f / (float)(d + 5))));
+	adsr_state[adsrid].d_const = (uint32_t)((float)0x7FFFFFFF * (1.0f - 1.00027f * expf(-20.0f / (float)(d + 5))));
 }
 
 void adsr_set_s(int adsrid, uint32_t s)
@@ -76,7 +76,7 @@ void adsr_set_s(int adsrid, uint32_t s)
 void adsr_set_r(int adsrid, uint32_t r)
 {
 	adsr_state[adsrid].r = r;
-	adsr_state[adsrid].r_const = (uint32_t)((float)0xFFFFFFFF * expf(-1.0f / (float)(r + 5)));
+	adsr_state[adsrid].r_const = (uint32_t)((float)0xFFFFFFFF * 1.000149f * expf(-10.0f / (float)(r + 5)));
 }
 
 void adsr_set_gate(int adsrid, int gate, int reset)

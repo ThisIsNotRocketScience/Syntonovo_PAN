@@ -435,6 +435,7 @@ Index i(s);
 preset_t tmp_preset;
 void flash_savepreset(int presetid, PanPreset_t* preset)
 {
+	printf("write preset to id %d\n", presetid);
 	memcpy(&tmp_preset.data, preset, sizeof(PanPreset_t));
 	tmp_preset.header.preset_id = presetid;
 	i.SavePreset(&tmp_preset);
@@ -442,12 +443,15 @@ void flash_savepreset(int presetid, PanPreset_t* preset)
 
 int flash_loadpreset(int presetid, PanPreset_t* preset)
 {
+	printf("load preset from id %d\n", presetid);
 	int status = i.LoadPreset(presetid, &tmp_preset);
 	if (!status) {
+		printf("failed\n", presetid);
 		return 0;
 	}
 
 	memcpy(preset, &tmp_preset.data, sizeof(PanPreset_t));
+	return 1;
 }
 
 void flash_init()

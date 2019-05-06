@@ -1411,6 +1411,7 @@ void sync_data_func(int addr, uint8_t* data)
 	if (addr & 3) return;
 
 	if (addr >= 0 && addr < (int)sizeof(preset)) {
+		if (loading) return;
 		*(uint32_t*)&((uint8_t*)&preset)[addr] = *(uint32_t*)data;
 		sync_preset(addr);
 	}
