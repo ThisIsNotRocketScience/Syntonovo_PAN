@@ -52,7 +52,12 @@ void BuildModulationTargetList()
 #undef OUTPUT_VIRT
 	;
 	
-	std::sort (ModulationTargetList.begin(), ModulationTargetList.end(), [](ModulationTargetOutputEntries_t * a, ModulationTargetOutputEntries_t * b) {return a->categoryid < b->categoryid; });
+	std::sort (ModulationTargetList.begin(), ModulationTargetList.end(), [](ModulationTargetOutputEntries_t * a, ModulationTargetOutputEntries_t * b) 
+	
+		{
+			if (a->categoryid == b->categoryid) return strcmp(a->name, b->name) < 0;
+			return a->categoryid < b->categoryid; 
+		});
 };
 
 
@@ -125,12 +130,12 @@ void TargetList::Render(bool active, float dt)
 			{
 				LastCategory = c->categoryid;
 				auto R = ImGui::CalcTextSize(Categories[c->categoryid].label);
-				ImGui::SetCursorPos(ImVec2(400 - R.x - ParamMasterMargin, i * Line + 40));
+				ImGui::SetCursorPos(ImVec2(400 - R.x - ParamMasterMargin, i * Line + 140));
 				ImGui::TextColored((ImVec4)(ImColor)(c->targetid == Current? gGuiResources.Highlight: gGuiResources.Normal), (Categories[c->categoryid].label));
 				
 
 			}
-			ImGui::SetCursorPos(ImVec2(400, i * Line + 40));
+			ImGui::SetCursorPos(ImVec2(400, i * Line + 140));
 			ImGui::TextColored((ImVec4)(ImColor)(c->targetid == Current ? gGuiResources.Highlight : gGuiResources.Normal), c->name);
 		}
 	}

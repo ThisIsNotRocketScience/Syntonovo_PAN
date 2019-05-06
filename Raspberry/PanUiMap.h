@@ -146,9 +146,8 @@ ENTRY("Resonance", MenuEntry_Value, Output_VCF1_RES)
 ENTRY("Spectrum Mod", MenuEntry_Value, Output_VCF1_CROSSMOD)
 
 
-
-CUSTOMENTRY("SELVCF1AP", MenuEntry_Toggle, Switch_SELVCF1AP)
-CUSTOMENTRY("SELVCF1BP", MenuEntry_Toggle, Switch_SELVCF1BP)
+//CUSTOMENTRY("SELVCF1AP", MenuEntry_Toggle, Switch_SELVCF1AP)
+//CUSTOMENTRY("SELVCF1BP", MenuEntry_Toggle, Switch_SELVCF1BP)
 CUSTOMENTRY("FSM src -> Osc1 / Osc4", MenuEntry_Toggle, Switch_SELFSM1SRC)
 CUSTOMENTRY("Stereo/Mono", MenuEntry_Toggle, Switch_SELVCF1MOST)
 

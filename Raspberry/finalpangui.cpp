@@ -147,6 +147,10 @@ int ButtonHeight(int idx)
 	return  (int)((idx % 7 + 0.5f) * (600.0f / 7.0f));
 }
 
+int MButtonHeight(int idx)
+{
+	return  ButtonHeight(0)+(int)((idx % 7) * (600.0f / 10.0f));
+}
 
 extern presetnames_t presetnames;
 
@@ -610,7 +614,6 @@ void sidebutton_t::UpdateLed(bool active)
 	}
 }
 
-
 void sidebutton_t::Pressed()
 {
 	switch (style)
@@ -627,15 +630,17 @@ void sidebutton_t::SketchRightPressed()
 	Pressed();
 }
 
-
 void sidebutton_t::SetupPosition(int id)
 {
-	y = ButtonHeight(id);
-	x = 10;
+	y2 = ButtonHeight(id);
+	y = MButtonHeight(id);
+	x = 80;
+	lx2 = -10;
 	Align = align_left;
 	if (id > 6)
 	{
-		x = 1024 - 10;
+		lx2 = 1024 + 10;
+		x = 1024 - 80;
 		Align = align_right;
 	}
 }
@@ -644,11 +649,30 @@ void sidebutton_t::Render(bool active, float DT)
 {
 	if (enabled)
 	{
+		ImGui::PushFont(gGuiResources.SmallFont);
 		int x2 = x;
 		if (Align == align_right)
 		{
 			ImVec2 textsize = ImGui::CalcTextSize(title);
 			x2 -= textsize.x;
+//			ImGui::GetWindowDrawList()->AddLine(ImVec2(x+ParamMasterMargin*2, y + ImGui::GetTextLineHeight() / 2), ImVec2(lx2, y2), gGuiResources.Normal, 3);
+			ImVec2 A = ImVec2(x + ParamMasterMargin * 2, y + ImGui::GetTextLineHeight() / 2);
+			ImVec2 B = A;
+			B.x += ParamMasterMargin * 3;
+			ImVec2 C = ImVec2(lx2 - ParamMasterMargin *3, y2);
+			ImVec2 D = ImVec2(lx2, y2);
+			ImGui::GetWindowDrawList()->AddBezierCurve(A, B, C, D, Dimmed(3, gGuiResources.Normal), 3);
+		}
+		else
+		{
+			ImVec2 A = ImVec2(x - ParamMasterMargin * 2, y + ImGui::GetTextLineHeight() / 2);
+			ImVec2 B = A;
+			B.x -= ParamMasterMargin * 3;
+			ImVec2 C = ImVec2(lx2 + ParamMasterMargin * 3, y2);
+			ImVec2 D = ImVec2(lx2, y2);
+			ImGui::GetWindowDrawList()->AddBezierCurve(A, B, C, D, Dimmed(3, gGuiResources.Normal), 3);
+			//ImGui::GetWindowDrawList()->AddLine(ImVec2(x- +ParamMasterMargin * 2, y + ImGui::GetTextLineHeight() / 2), ImVec2(lx2, y2), gGuiResources.Normal, 3);
+
 		}
 		ImGui::SetCursorPos(ImVec2(x2, y));
 		if (active)
@@ -716,6 +740,8 @@ void sidebutton_t::Render(bool active, float DT)
 			}
 			break;
 		}
+	
+		ImGui::PopFont();
 	}
 
 }
@@ -1367,14 +1393,14 @@ void EncoderLineDisplay::Render(bool active, float dt)
 
 void _screensetup_t::AddVCONextPrev()
 {
-	EnableButton(0, "<", MenuEntry_Action, MenuAction_PrevVCO);
-	EnableButton(7, ">", MenuEntry_Action, MenuAction_NextVCO);
+	EnableButton(6, "<", MenuEntry_Action, MenuAction_PrevVCO);
+	EnableButton(13, ">", MenuEntry_Action, MenuAction_NextVCO);
 }
 
 void _screensetup_t::AddVCF2NextPrev()
 {
-	EnableButton(0, "<", MenuEntry_Action, MenuAction_PrevVCF2);
-	EnableButton(7, ">", MenuEntry_Action, MenuAction_NextVCF2);
+	EnableButton(6, "<", MenuEntry_Action, MenuAction_PrevVCF2);
+	EnableButton(13, ">", MenuEntry_Action, MenuAction_NextVCF2);
 
 }
 

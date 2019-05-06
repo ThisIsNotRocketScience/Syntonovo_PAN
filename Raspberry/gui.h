@@ -178,7 +178,9 @@ public:
 	void UpdateLed(bool active);
 
 	int x;
+	int lx2;
 	int y;
+	int y2;
 	int style;
 	int target;
 
