@@ -41,19 +41,17 @@ public:
 
 	virtual void SketchLeft(int delta) {}
 
-	//virtual void SketchRight(int delta) {}
 	virtual void SketchLeftPress() {}
 
 	virtual void SketchRightPress() {}
 
-	virtual void EncoderPress(FinalEncoderEnum button) {}
 
 	virtual void Activate();
 	virtual void SetupLeds();
 		
 	ModSource_t modType;
 	virtual void Action(int action);
-	
+	virtual void EncoderPress(FinalEncoderEnum button);
 	int OriginalModulation;
 	int OriginalOutputID;
 	int OriginalSourceID;

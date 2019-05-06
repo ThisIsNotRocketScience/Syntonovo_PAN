@@ -141,14 +141,15 @@ EXTRABUTTON(VCF1, ledbutton_VCF1_ResonanceBut)
 EXTRABUTTON(VCF1, ledbutton_VCF1_Routing)
 EXTRABUTTON(VCF1, ledbutton_VCF1_Spectrum_ModBut)
 MENU(VCF1, ledbutton_VCF1_FrequencyBut, "VCF1")
-ENTRY("Freq", MenuEntry_Value, Output_VCF1_CV)
+ENTRY("Frequency", MenuEntry_Value, Output_VCF1_CV)
 ENTRY("Resonance", MenuEntry_Value, Output_VCF1_RES)
 ENTRY("Spectrum Mod", MenuEntry_Value, Output_VCF1_CROSSMOD)
 
 
-CUSTOMENTRY("SELVCF1AP", MenuEntry_Toggle, Switch_SELVCF1AP)
-CUSTOMENTRY("SELVCF1BP", MenuEntry_Toggle, Switch_SELVCF1BP)
+//CUSTOMENTRY("SELVCF1AP", MenuEntry_Toggle, Switch_SELVCF1AP)
+//CUSTOMENTRY("SELVCF1BP", MenuEntry_Toggle, Switch_SELVCF1BP)
 CUSTOMENTRY("FSM src -> Osc1 / Osc4", MenuEntry_Toggle, Switch_SELFSM1SRC)
+CUSTOMENTRY("Stereo/Mono", MenuEntry_Toggle, Switch_SELVCF1MOST)
 
 //CUSTOMENTRY("VCF parallel", MenuEntry_Toggle, Switch_SELVCF2POST)
 ENDMENU()
@@ -213,7 +214,7 @@ ENTRY("VCO7", MenuEntry_Value, Output_VCO7_DRY_MIX)
 ENTRY("Purple Noise", MenuEntry_Value, Output_PUN_MIX)
 ENTRY("Brown Noise", MenuEntry_Value, Output_BN_MIX3)
 ENTRY("Ringmod", MenuEntry_Value, Output_RM2_MIX3)
-
+CUSTOMENTRY("Stereo/Mono", MenuEntry_Toggle, Switch_SELVCLEANFMOST)
 //ENTRY("FX left", MenuEntry_Value, Output_CLEANF_FX_L)
 //ENTRY("FX right", MenuEntry_Value, Output_CLEANF_FX_L)
 //CUSTOMENTRY("VCF parallel", MenuEntry_Toggle, Switch_SELVCF2POST)
@@ -233,47 +234,72 @@ EXTRABUTTON(VCF2a, ledbutton_VCF2_RES)
 MENU(VCF2a, ledbutton_LowButton, "VCF2 A")
 
 
-CUSTOMENTRY("FSM to AB", MenuEntry_Toggle, Switch_SELVCF23FSM)
-CUSTOMENTRY("FSM to CD", MenuEntry_Toggle, Switch_SELVCF45FSM)
+CUSTOMENTRY("FSM to A & B", MenuEntry_Toggle, Switch_SELVCF23FSM)
 
 CUSTOMENTRY("FSM src -> Osc1 / Osc5", MenuEntry_Toggle, Switch_SELFSM2SRC)
+CUSTOMENTRY("Stereo/Mono", MenuEntry_Toggle, Switch_SELVCF2MOST)
 
 //ENTRY("Feedback", MenuEntry_Value, Output_VCF2_FB)
 ENTRY("Frequency A", MenuEntry_Value, Output_VCF2_A_CV)
 ENTRY("Resonance A", MenuEntry_Value, Output_VCF2_A_RES)
 ENTRY("Mix A", MenuEntry_Value, Output_VCF2_A_MIX)
 ENTRY("Spectrum Mod", MenuEntry_Value, Output_VCF2_CROSSMOD)
+ENTRY("Negative FB", MenuEntry_Value, Output_VCF2_M_FB)
+ENTRY("Positive FB", MenuEntry_Value, Output_VCF2_P_FB)
 //CUSTOMENTRY("L0", MenuEntry_Toggle, Switch_SELVCF2L0)
 //CUSTOMENTRY("L1", MenuEntry_Toggle, Switch_SELVCF2L1)
 ENDMENU()
 
 
 MENU(VCF2b, ledbutton_LowButton, "VCF2 B")
+CUSTOMENTRY("FSM to A & B", MenuEntry_Toggle, Switch_SELVCF23FSM)
+CUSTOMENTRY("FSM src -> Osc1 / Osc5", MenuEntry_Toggle, Switch_SELFSM2SRC)
+CUSTOMENTRY("Stereo/Mono", MenuEntry_Toggle, Switch_SELVCF2MOST)
+
 //ENTRY("Feedback", MenuEntry_Value, Output_VCF2_FB)
 ENTRY("Frequency B", MenuEntry_Value, Output_VCF2_B_CV)
 ENTRY("Resonance B", MenuEntry_Value, Output_VCF2_B_RES)
 ENTRY("Mix B", MenuEntry_Value, Output_VCF2_B_MIX)
 ENTRY("Spectrum Mod", MenuEntry_Value, Output_VCF2_CROSSMOD)
+ENTRY("Negative FB", MenuEntry_Value, Output_VCF2_M_FB)
+ENTRY("Positive FB", MenuEntry_Value, Output_VCF2_P_FB)
+
 //CUSTOMENTRY("L0", MenuEntry_Toggle, Switch_SELVCF2L0)
 //CUSTOMENTRY("L1", MenuEntry_Toggle, Switch_SELVCF2L1)
 ENDMENU()
 
 MENU(VCF2c, ledbutton_LowButton, "VCF2 C")
+
+CUSTOMENTRY("FSM to C & D", MenuEntry_Toggle, Switch_SELVCF45FSM)
+CUSTOMENTRY("FSM src -> Osc1 / Osc5", MenuEntry_Toggle, Switch_SELFSM2SRC)
+CUSTOMENTRY("Stereo/Mono", MenuEntry_Toggle, Switch_SELVCF2MOST)
+
 //ENTRY("Feedback", MenuEntry_Value, Output_VCF2_FB)
 ENTRY("Frequency C", MenuEntry_Value, Output_VCF2_C_CV)
 ENTRY("Resonance C", MenuEntry_Value, Output_VCF2_C_RES)
 ENTRY("Mix C", MenuEntry_Value, Output_VCF2_C_MIX)
 ENTRY("Spectrum Mod", MenuEntry_Value, Output_VCF2_CROSSMOD)
+ENTRY("Negative FB", MenuEntry_Value, Output_VCF2_M_FB)
+ENTRY("Positive FB", MenuEntry_Value, Output_VCF2_P_FB)
+
 //CUSTOMENTRY("L0", MenuEntry_Toggle, Switch_SELVCF2L0)
 //CUSTOMENTRY("L1", MenuEntry_Toggle, Switch_SELVCF2L1)
 ENDMENU()
 
 MENU(VCF2d, ledbutton_LowButton, "VCF2 D")
+CUSTOMENTRY("FSM to C & D", MenuEntry_Toggle, Switch_SELVCF45FSM)
+
+CUSTOMENTRY("FSM src -> Osc1 / Osc5", MenuEntry_Toggle, Switch_SELFSM2SRC)
+CUSTOMENTRY("Stereo/Mono", MenuEntry_Toggle, Switch_SELVCF2MOST)
+
 //ENTRY("Feedback", MenuEntry_Value, Output_VCF2_FB)
 ENTRY("Frequency D", MenuEntry_Value, Output_VCF2_D_CV)
 ENTRY("Resonancy D", MenuEntry_Value, Output_VCF2_D_RES)
 ENTRY("Mix D", MenuEntry_Value, Output_VCF2_D_MIX)
 ENTRY("Spectrum Mod", MenuEntry_Value, Output_VCF2_CROSSMOD)
+ENTRY("Negative FB", MenuEntry_Value, Output_VCF2_M_FB)
+ENTRY("Positive FB", MenuEntry_Value, Output_VCF2_P_FB)
+
 //CUSTOMENTRY("L0", MenuEntry_Toggle, Switch_SELVCF2L0)
 //CUSTOMENTRY("L1", MenuEntry_Toggle, Switch_SELVCF2L1)
 ENDMENU()
@@ -283,6 +309,12 @@ EXTRABUTTON(EFFECTS, ledbutton_VCF2_FX)
 
 MENU(EFFECTS, ledbutton_Cleanfeed_FX, "Global Effects")
 //CUSTOMENTRY("Type", MenuEntry_EffectType, Output_VCA_FXPOT1)
+CUSTOMENTRY("FXSel 1", MenuEntry_Toggle, Switch_SELEF0)
+CUSTOMENTRY("FXSel 2", MenuEntry_Toggle, Switch_SELEF1)
+CUSTOMENTRY("FXSel 3", MenuEntry_Toggle, Switch_SELEF2)
+CUSTOMENTRY("FXSel 4", MenuEntry_Toggle, Switch_SELEF3)
+
+
 ENTRY("VCF1 12 -> Effect", MenuEntry_Value, Output_VCF1_FX_12)
 ENTRY("Parameter 1", MenuEntry_Value, Output_VCA_FXPOT3)
 ENTRY("VCF1 24 -> Effect", MenuEntry_Value, Output_VCF1_FX_24)

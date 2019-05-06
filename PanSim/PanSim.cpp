@@ -777,7 +777,7 @@ int main(int argc, char** argv)
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
 	SDL_DisplayMode current;
 	SDL_GetCurrentDisplayMode(0, &current);
-	SDL_Window *window = SDL_CreateWindow("Synton PAN Simulator", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 2400, 600, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+	SDL_Window *window = SDL_CreateWindow("Synton PAN Simulator", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 2400, 900, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 	SetupIcon(window);
 	SDL_GLContext glcontext = SDL_GL_CreateContext(window);
 	SDL_GL_SetSwapInterval(1); // Enable vsync
@@ -1029,14 +1029,14 @@ int main(int argc, char** argv)
 					ImGui::SetCursorScreenPos(ImVec2(pos.x + (FinalEncoders[i].x - 3.6) * xscalefac, (pos.y + 0.8) + FinalEncoders[i].y * yscalefac));
 					if (ImGui::ColorButton(name, FinalEncoders[i].ledcolor))
 					{
-						LedEncoderButtonLeft(FinalEncoders[i].id,1);
+						LedEncoderButtonLeft(FinalEncoders[i].id,400);
 					//	Teensy_EncoderRotate(i, -1);
 					}
 					ImGui::SetCursorScreenPos(ImVec2(pos.x + (FinalEncoders[i].x + 3.6)* xscalefac, (pos.y + 0.8) + FinalEncoders[i].y * yscalefac));
 					sprintf(name, "ENCR%d", i);
 					if (ImGui::ColorButton(name, FinalEncoders[i].ledcolor))
 					{
-						 LedEncoderButtonRight(FinalEncoders[i].id,1);
+						 LedEncoderButtonRight(FinalEncoders[i].id,400);
 						//	Teensy_EncoderRotate(i, 1);
 					}
 				}

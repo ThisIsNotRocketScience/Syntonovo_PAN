@@ -145,7 +145,7 @@ ModSourceScreen::ModSourceScreen(Screens_t screen)
 	if (HasActiveInstanceDisplay)
 	{
 		EnableButton(0, "Previous", MenuEntry_Action, MenuAction_Prev);
-		EnableButton(1, "Next", MenuEntry_Action, MenuAction_Next);
+		EnableButton(7, "Next", MenuEntry_Action, MenuAction_Next);
 	}
 	EnableButton(9, "Parameters", MenuEntry_EncoderSet, 0);
 	EnableButton(10, "Targets", MenuEntry_EncoderSet, 1);
@@ -162,6 +162,61 @@ ModSourceScreen::ModSourceScreen(Screens_t screen)
 //		encoders[1][i].SetTitle(GetModulationTargetName(row->targets[i].outputid));		
 	}
 	SetEncoderNames();
+}
+
+void ModSourceScreen::RenderContent(bool active, float DT)
+{
+	_screensetup_t::RenderContent(active, DT);
+	int x = 100;
+	int y = 200;
+	switch (myScreen)
+	{
+	case SCREEN_ENVELOPE:
+	{
+		float A = gCurrentPreset.GetModParameterValue(Envelope_Attack, ActiveInstance)/65535.0f;
+		float D = gCurrentPreset.GetModParameterValue(Envelope_Decay, ActiveInstance) / 65535.0f;
+		float S = gCurrentPreset.GetModParameterValue(Envelope_Sustain, ActiveInstance) / 65535.0f;
+		float R = gCurrentPreset.GetModParameterValue(Envelope_Release, ActiveInstance) / 65535.0f;
+
+
+		float W = 500;
+		float H = 150;
+		float CumW = 0;
+
+		float AW = (W / 4.0) * A;
+		float DW = (W / 4.0) * D;
+		float SW = (W / 4.0);
+		
+		float RW = (W / 4.0) * R;
+
+		float TotalW = AW + DW + SW + RW;
+		x = 512 - TotalW / 2;
+
+		ImVec2 S1(x, y + H);
+		ImVec2 S2(x, y + H - H / 2);
+		ImVec2 S3(x + AW / 2, y );
+		ImVec2 S4(x + AW , y);
+		CumW = x + AW;
+		ImVec2 S5(CumW, y  + H - (((S + 1 ) /2) * H ));
+		ImVec2 S6(CumW + DW/2, y + H - S * H);
+		ImVec2 S7(CumW + DW, y + H - S * H);
+		CumW += DW;
+		CumW += SW; 
+		ImVec2 S8(CumW , y + H - S * H);
+		
+		ImVec2 S9(CumW , y + H - (S/2) * H );
+		ImVec2 S10(CumW + RW/2, y + H);
+		ImVec2 S11(CumW + RW, y + H);
+
+		ImGui::GetWindowDrawList()->AddBezierCurve(S1, S2, S3, S4, gGuiResources.Normal, 5);
+
+		ImGui::GetWindowDrawList()->AddBezierCurve(S4, S5, S6, S7, gGuiResources.Normal, 5);
+		ImGui::GetWindowDrawList()->AddLine(S7, S8, gGuiResources.Normal, 5);
+		ImGui::GetWindowDrawList()->AddBezierCurve(S8, S9, S10, S11, gGuiResources.Normal, 5);
+
+	}
+		break;
+	}
 }
 
 void ModSourceScreen::Deactivate()
@@ -242,8 +297,8 @@ void ModSourceScreen::Render(bool active, float DT)
 				if (row->targets[j].depth != 0 && row->targets[j].outputid !=-1) used = true;
 			};
 
-			int x = (i%8) * 40 + 100;
-			int y = (i / 8) * 40 + ButtonHeight(1);
+			int x = (i-8) * 40 + 512;
+			int y = MButtonHeight(1);
 			RenderLettersInABox(x,y, i == ActiveInstance, txt, 35, 35, used);
 		}
 	}
