@@ -25,6 +25,7 @@ public:
 	
 	ModTargetModal theModTargetModal;
 	virtual void Deactivate();
+	virtual void RenderContent(bool active, float DT);
 	virtual void RepeatGoto();
 	int FindNextUsed(int start);
 

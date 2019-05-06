@@ -147,7 +147,12 @@ void ModTargetModal::SetupLeds()
 {
 	_screensetup_t::SetupLeds();
 }
+void ModTargetModal::EncoderPress(FinalEncoderEnum button)
+{
+	if (button == (FinalEncoderEnum)(encoder_F1 + TargetID)) { Parent->Action(MenuAction_CloseModal); return; }
 
+	_screensetup_t::EncoderPress(button);
+}
 void ModTargetModal::Action(int action)
 {
 	switch (action)

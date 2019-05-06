@@ -24,6 +24,7 @@ enum font_size
 };
 
 extern int ButtonHeight(int idx);
+extern int MButtonHeight(int idx);
 extern int GetEncoderX(int id);
 extern void RenderLettersInABox(int x, int y, bool active, const char *text, int w, int h, bool notghosted = true);
 ImU32 Dimmed(int dim, ImU32 col);
@@ -294,7 +295,7 @@ public:
 	virtual void PatchButton(FinalLedButtonEnum b);
 	void Encoder(FinalEncoderEnum button, int delta);
 	
-	void RenderContent(bool active, float DT);
+	virtual void RenderContent(bool active, float DT);
 	void RenderModalBox(bool active, float DT);
 	virtual void Render(bool active, float DT);
 
@@ -325,7 +326,7 @@ public:
 			int Y = (ImGui::GetTextLineHeight() + ParamMasterMargin*3)  * i + y;
 			ImGui::SetCursorPos(ImVec2(x+ ParamMasterMargin, Y + ParamMasterMargin));
 			ImGui::Text(presetnames.names[presetidx]);
-			ImGui::GetWindowDrawList()->AddRect(ImVec2(x, Y), ImVec2(x + 300, Y + ImGui::GetTextLineHeight() + ParamMasterMargin*2), gGuiResources.Normal);
+			ImGui::GetWindowDrawList()->AddRect(ImVec2(x, Y), ImVec2(x + ParamBankWidth, Y + ImGui::GetTextLineHeight() + ParamMasterMargin*2), gGuiResources.Normal);
 		}
 		ImGui::PopFont();
 	}

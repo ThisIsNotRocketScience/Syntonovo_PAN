@@ -634,13 +634,13 @@ void sidebutton_t::SetupPosition(int id)
 {
 	y2 = ButtonHeight(id);
 	y = MButtonHeight(id);
-	x = 80;
-	lx2 = -10;
+	x = 60;
+	lx2 = 0;
 	Align = align_left;
 	if (id > 6)
 	{
-		lx2 = 1024 + 10;
-		x = 1024 - 80;
+		lx2 = 1024;
+		x = 1024 - 60;
 		Align = align_right;
 	}
 }
@@ -658,8 +658,8 @@ void sidebutton_t::Render(bool active, float DT)
 //			ImGui::GetWindowDrawList()->AddLine(ImVec2(x+ParamMasterMargin*2, y + ImGui::GetTextLineHeight() / 2), ImVec2(lx2, y2), gGuiResources.Normal, 3);
 			ImVec2 A = ImVec2(x + ParamMasterMargin * 2, y + ImGui::GetTextLineHeight() / 2);
 			ImVec2 B = A;
-			B.x += ParamMasterMargin * 3;
-			ImVec2 C = ImVec2(lx2 - ParamMasterMargin *3, y2);
+			B.x += ParamMasterMargin * 2;
+			ImVec2 C = ImVec2(lx2 - ParamMasterMargin *1, y2);
 			ImVec2 D = ImVec2(lx2, y2);
 			ImGui::GetWindowDrawList()->AddBezierCurve(A, B, C, D, Dimmed(3, gGuiResources.Normal), 3);
 		}
@@ -667,24 +667,24 @@ void sidebutton_t::Render(bool active, float DT)
 		{
 			ImVec2 A = ImVec2(x - ParamMasterMargin * 2, y + ImGui::GetTextLineHeight() / 2);
 			ImVec2 B = A;
-			B.x -= ParamMasterMargin * 3;
-			ImVec2 C = ImVec2(lx2 + ParamMasterMargin * 3, y2);
+			B.x -= ParamMasterMargin * 2;
+			ImVec2 C = ImVec2(lx2 + ParamMasterMargin * 1, y2);
 			ImVec2 D = ImVec2(lx2, y2);
 			ImGui::GetWindowDrawList()->AddBezierCurve(A, B, C, D, Dimmed(3, gGuiResources.Normal), 3);
 			//ImGui::GetWindowDrawList()->AddLine(ImVec2(x- +ParamMasterMargin * 2, y + ImGui::GetTextLineHeight() / 2), ImVec2(lx2, y2), gGuiResources.Normal, 3);
 
 		}
-		ImGui::SetCursorPos(ImVec2(x2, y));
-		if (active)
+		
+		int xoff = 0;
+		bool drawline = true;
+		if (Align == align_right)
 		{
-			ImGui::TextColored(ImColor( gGuiResources.Highlight), title);
+			xoff = -15 - ParamMasterMargin;
 		}
 		else
 		{
-			ImGui::Text(title);
+			xoff = 15 + ParamMasterMargin;
 		}
-
-
 		switch (style)
 		{
 
@@ -718,29 +718,58 @@ void sidebutton_t::Render(bool active, float DT)
 		case MenuEntry_Toggle:
 
 			int id = gCurrentPreset.GetSwitch((SwitchEnum)target) ? 1 : 0;
-
+			drawline = false;
 			if (Align == align_right)
 			{
-				ImGui::SetCursorPos(ImVec2(x2 - 128 - 200, y));
+				ImGui::SetCursorPos(ImVec2(x - 15, y));
+				xoff = -15 - ParamMasterMargin;
 			}
 			else
 			{
-				ImGui::SetCursorPos(ImVec2(x2 + 200, y));
-
+				ImGui::SetCursorPos(ImVec2(x  - 15, y));
+				xoff = 15 + ParamMasterMargin;
 			}
 			if (active)
 			{
 				ImColor ic(gGuiResources.Highlight);
-				ImGui::Image(gGuiResources.OnOff[id ], ImVec2(128, 48), ImVec2(0, 0), ImVec2(1, 1), (ImVec4)ic);
+				ImGui::Image(gGuiResources.OnOff[id ], ImVec2(30, 30), ImVec2(0, 0), ImVec2(1, 1), (ImVec4)ic);
 			}
 			else
 			{
-				ImGui::Image(gGuiResources.OnOff[id ], ImVec2(128, 48));
+				ImGui::Image(gGuiResources.OnOff[id ], ImVec2(30, 30));
 
 			}
 			break;
 		}
 	
+
+		ImGui::SetCursorPos(ImVec2(x2 + xoff, y));
+		if (active)
+		{
+			ImGui::TextColored(ImColor(gGuiResources.Highlight), title);
+		}
+		else
+		{
+			ImGui::Text(title);
+		}
+		if (drawline)
+		{
+			if (Align == align_right)
+			{
+				ImVec2 A = ImVec2(x + ParamMasterMargin * 2, y + ImGui::GetTextLineHeight() / 2);
+				ImVec2 B = A;
+				B.x += xoff;
+				ImGui::GetWindowDrawList()->AddLine(A, B, Dimmed(3, gGuiResources.Normal), 3);
+			}
+			else
+			{
+				ImVec2 A = ImVec2(x - ParamMasterMargin * 2, y + ImGui::GetTextLineHeight() / 2);
+				ImVec2 B = A;
+				B.x += xoff;
+				ImGui::GetWindowDrawList()->AddLine(A, B, Dimmed(3, gGuiResources.Normal), 3);
+			}
+		}
+
 		ImGui::PopFont();
 	}
 
@@ -836,8 +865,8 @@ void FinalPan_LoadResources()
 	gGuiResources.GhostBG = IM_COL32(0, 0, 0, 200);
 	//res.BGColor = IM_COL32(0, 0, 0, 255);
 	gGuiResources.FillColor = IM_COL32(0, 137, 127, 255);
-	gGuiResources.OnOff[0] = Raspberry_LoadTexture("UI_ONOFF_OFF.png");
-	gGuiResources.OnOff[1] = Raspberry_LoadTexture("UI_ONOFF_ON.png");
+	gGuiResources.OnOff[0] = Raspberry_LoadTexture("PAN__OFF.png");
+	gGuiResources.OnOff[1] = Raspberry_LoadTexture("PAN__ON.png");
 	gGuiResources.OnOff[2] = Raspberry_LoadTexture("UI_ONOFF_OFF_HI.png");
 	gGuiResources.OnOff[3] = Raspberry_LoadTexture("UI_ONOFF_ON_HI.png");
 
@@ -857,9 +886,9 @@ void FinalPan_LoadResources()
 
 	gGuiResources.LeftIndicator = Raspberry_LoadTexture("UI_LEFT.png");
 	gGuiResources.RightIndicator = Raspberry_LoadTexture("UI_RIGHT.png");
-	gGuiResources.TinyFont = io.Fonts->AddFontFromFileTTF("Fontfabric - Panton.otf", 20.0f);
-	gGuiResources.SmallFont = io.Fonts->AddFontFromFileTTF("Fontfabric - Panton.otf", 30.0f);
-	gGuiResources.MediumFont = io.Fonts->AddFontFromFileTTF("Fontfabric - Panton.otf", 38.0f);
+	gGuiResources.TinyFont = io.Fonts->AddFontFromFileTTF("CORBEL.TTF", 20.0f);
+	gGuiResources.SmallFont = io.Fonts->AddFontFromFileTTF("CORBEL.TTF", 30.0f);
+	gGuiResources.MediumFont = io.Fonts->AddFontFromFileTTF("CORBEL.TTF", 38.0f);
 	//gGuiResources.BigFont = io.Fonts->AddFontFromFileTTF("Fontfabric - Panton ExtraBold.otf", 44.0f);
 
 	gGuiResources.referencelines = false;
@@ -1393,8 +1422,8 @@ void EncoderLineDisplay::Render(bool active, float dt)
 
 void _screensetup_t::AddVCONextPrev()
 {
-	EnableButton(6, "<", MenuEntry_Action, MenuAction_PrevVCO);
-	EnableButton(13, ">", MenuEntry_Action, MenuAction_NextVCO);
+	EnableButton(6, "<< previous", MenuEntry_Action, MenuAction_PrevVCO);
+	EnableButton(13, ">> next", MenuEntry_Action, MenuAction_NextVCO);
 }
 
 void _screensetup_t::AddVCF2NextPrev()
@@ -1582,10 +1611,10 @@ void Gui::BuildScreens()
 	Screens[SCREEN_LUNA]->SetTitle("Left Una Corda");
 	Screens[SCREEN_RUNA]->SetTitle("Right Una Corda");
 
-	Screens[SCREEN_ENVELOPE]->SetTitle("Envelopes");
+	Screens[SCREEN_ENVELOPE]->SetTitle("Envelope");
 	Screens[SCREEN_ENVELOPE]->LedButtonsThatOpenThisScreen.push_back(ledbutton_BEnv);
 
-	Screens[SCREEN_LFO]->SetTitle("LFO's");
+	Screens[SCREEN_LFO]->SetTitle("LFO");
 	Screens[SCREEN_LFO]->LedButtonsThatOpenThisScreen.push_back(ledbutton_BLFO);
 
 	Screens[SCREEN_ARP]->SetTitle("Arpeggiator");

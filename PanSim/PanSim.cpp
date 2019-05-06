@@ -1029,14 +1029,14 @@ int main(int argc, char** argv)
 					ImGui::SetCursorScreenPos(ImVec2(pos.x + (FinalEncoders[i].x - 3.6) * xscalefac, (pos.y + 0.8) + FinalEncoders[i].y * yscalefac));
 					if (ImGui::ColorButton(name, FinalEncoders[i].ledcolor))
 					{
-						LedEncoderButtonLeft(FinalEncoders[i].id,1);
+						LedEncoderButtonLeft(FinalEncoders[i].id,400);
 					//	Teensy_EncoderRotate(i, -1);
 					}
 					ImGui::SetCursorScreenPos(ImVec2(pos.x + (FinalEncoders[i].x + 3.6)* xscalefac, (pos.y + 0.8) + FinalEncoders[i].y * yscalefac));
 					sprintf(name, "ENCR%d", i);
 					if (ImGui::ColorButton(name, FinalEncoders[i].ledcolor))
 					{
-						 LedEncoderButtonRight(FinalEncoders[i].id,1);
+						 LedEncoderButtonRight(FinalEncoders[i].id,400);
 						//	Teensy_EncoderRotate(i, 1);
 					}
 				}

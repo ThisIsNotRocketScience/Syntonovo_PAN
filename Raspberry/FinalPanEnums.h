@@ -8,6 +8,7 @@
 #define ParamVerticalBoxHeight 90
 #define ParamBoxDim 30
 #define ParamMasterMargin 8
+#define ParamBankWidth 200
 
 #define PRESET_COUNT 256
 #define NOMODTARGET 0xFF
