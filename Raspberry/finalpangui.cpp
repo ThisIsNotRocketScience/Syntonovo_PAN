@@ -1320,7 +1320,7 @@ public:
 		case ledbutton_B16:idx = 7; break;
 		}
 
-		cmd_preset_save(idx  + df * 8);
+		cmd_preset_save(idx  + df * 16);
 		gGui.GotoPage(SCREEN_HOME);
 	}
 	virtual void Action(int action)
@@ -1328,7 +1328,7 @@ public:
 		switch (action)
 		{
 
-		case MenuAction_BankA: df = 0; break;
+		case MenuAction_BankA:df = 0; break;
 		case MenuAction_BankB:df = 1; break;
 		case MenuAction_BankC:df = 2; break;
 		case MenuAction_BankD:df = 3; break;
@@ -1368,6 +1368,7 @@ public:
 	{
 		int *CurrentBank = &gPanState.BankLeft;
 		list->bankid = CurrentBank;
+		df = *CurrentBank;
 		if (Side == Left)
 		{
 			SetTitle("Select Left Bank");
@@ -1961,3 +1962,7 @@ void LedEncoderButtonRight(FinalEncoderEnum Button, int delta)
 	}
 }
 
+void FinalPan_Pause(bool pause)
+{
+	gGui.PauseAll(pause);
+}
