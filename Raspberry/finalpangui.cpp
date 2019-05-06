@@ -1246,7 +1246,7 @@ public:
 	{
 
 		if (Side == Left) gPanState.BankLeft = action; else gPanState.BankRight = action;
-		LoadSelectedPreset();
+		//LoadSelectedPreset();
 		Activate();
 	}
 	LeftRight Side;
