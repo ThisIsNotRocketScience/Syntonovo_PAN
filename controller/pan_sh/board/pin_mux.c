@@ -84,8 +84,8 @@ BOARD_InitPins:
   - {pin_num: '57', peripheral: GPIO, signal: 'PIO1, 24', pin_signal: PIO1_24/FC2_RXD_SDA_MOSI/SCT0_OUT1/FC3_SSEL3/EMC_A(12), direction: OUTPUT}
   - {pin_num: '63', peripheral: GPIO, signal: 'PIO1, 26', pin_signal: PIO1_26/FC2_CTS_SDA_SSEL0/SCT0_OUT3/CTIMER0_CAP3/UTICK_CAP1/EMC_A(8), direction: OUTPUT}
   - {pin_num: '67', peripheral: GPIO, signal: 'PIO0, 13', pin_signal: PIO0_13/FC1_CTS_SDA_SSEL0/UTICK_CAP0/CTIMER0_CAP0/SCT0_GPI0/ENET_RXD0, direction: OUTPUT}
-  - {pin_num: '72', peripheral: GPIO, signal: 'PIO0, 18', pin_signal: PIO0_18/FC4_CTS_SDA_SSEL0/SD_WR_PRT/CTIMER1_MAT0/SCT0_OUT1/SCI1_SCLK/EMC_A(0), direction: INPUT,
-    mode: pullUp}
+  - {pin_num: '72', peripheral: GPIO, signal: 'PIO0, 18', pin_signal: PIO0_18/FC4_CTS_SDA_SSEL0/SD_WR_PRT/CTIMER1_MAT0/SCT0_OUT1/SCI1_SCLK/EMC_A(0), direction: OUTPUT,
+    mode: inactive}
   - {pin_num: '82', peripheral: GPIO, signal: 'PIO0, 29', pin_signal: PIO0_29/FC0_RXD_SDA_MOSI/CTIMER2_MAT3/SCT0_OUT8/TRACEDATA(2), direction: INPUT, mode: pullUp}
   - {pin_num: '87', peripheral: FLEXCOMM4, signal: SCK, pin_signal: PIO0_4/CAN0_RD/FC4_SCK/CTIMER3_CAP0/SCT0_GPI4/EMC_D(2)/ENET_MDC}
   - {pin_num: '88', peripheral: GPIO, signal: 'PIO1, 16', pin_signal: PIO1_16/ENET_MDC/FC6_TXD_SCL_MISO_WS/CTIMER1_MAT3/SD_CMD/EMC_A(10), direction: OUTPUT, gpio_init_state: 'false'}
@@ -125,7 +125,7 @@ void BOARD_InitPins(void)
     GPIO_PinInit(BOARD_INITPINS_SLATCH1_GPIO, BOARD_INITPINS_SLATCH1_PORT, BOARD_INITPINS_SLATCH1_PIN, &SLATCH1_config);
 
     gpio_pin_config_t EIN_EXT_config = {
-        .pinDirection = kGPIO_DigitalInput,
+        .pinDirection = kGPIO_DigitalOutput,
         .outputLogic = 0U
     };
     /* Initialize GPIO functionality on pin PIO0_18 (pin 72)  */
@@ -307,9 +307,9 @@ void BOARD_InitPins(void)
                          | IOCON_PIO_FUNC(PIO018_FUNC_ALT0)
 
                          /* Selects function mode (on-chip pull-up/pull-down resistor control).
-                          * : Pull-up.
-                          * Pull-up resistor enabled. */
-                         | IOCON_PIO_MODE(PIO018_MODE_PULL_UP)
+                          * : Inactive.
+                          * Inactive (no pull-down/pull-up resistor enabled). */
+                         | IOCON_PIO_MODE(PIO018_MODE_INACTIVE)
 
                          /* Select Analog/Digital mode.
                           * : Digital mode. */
