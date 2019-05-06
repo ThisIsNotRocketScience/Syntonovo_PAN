@@ -1391,9 +1391,8 @@ public:
 		EnableButton(11, (*CurrentBank == 9) ? "J (current)" : "J", MenuEntry_Action, MenuAction_BankJ);
 		EnableButton(12, (*CurrentBank == 10) ? "K (current)" : "K", MenuEntry_Action, MenuAction_BankK);
 		EnableButton(13, (*CurrentBank == 11) ? "L (current)" : "L", MenuEntry_Action, MenuAction_BankL);
-	}
+	};
 };
-
 
 class ImageScreen : public _screensetup_t
 {
@@ -1746,10 +1745,7 @@ void Gui::GotoPage(Screens_t s)
 		CurrentScreen = s;
 		CS()->Activate();
 	}
-
 }
-
-
 
 void hsv2rgb(uint16_t h, uint16_t s, uint16_t v, uint16_t *r, uint16_t *g, uint16_t *b)
 {
@@ -1773,8 +1769,6 @@ void Gui::SetupLeds()
 	gPanState.ClearLeds();
 	CS()->SetupLeds();
 }
-
-
 
 void FinalPan_PushStyle()
 {
