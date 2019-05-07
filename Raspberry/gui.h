@@ -49,7 +49,8 @@ extern bool IsPatchButton(FinalLedButtonEnum B);
 extern void LoadSelectedPreset();
 extern void LoadPatch(int n);
 extern bool ModulationSourceHasInstances(ModSource_t modType);
-
+extern int DecodeCurrentEffect();
+extern void SetEffect(int effect);
 
 typedef struct FinalPan_GuiResources_t
 {

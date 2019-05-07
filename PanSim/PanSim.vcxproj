@@ -183,7 +183,6 @@
     <ClCompile Include="..\Raspberry\HomeScreen.cpp" />
     <ClCompile Include="..\Raspberry\ModSourceScreen.cpp" />
     <ClCompile Include="..\Raspberry\ModTargetModal.cpp" />
-    <ClCompile Include="..\Raspberry\panstructs.cpp" />
     <ClCompile Include="..\Raspberry\ScreenSetup.cpp" />
     <ClCompile Include="..\Raspberry\VCF2StructureScreen.cpp" />
     <ClCompile Include="PanSim.cpp" />

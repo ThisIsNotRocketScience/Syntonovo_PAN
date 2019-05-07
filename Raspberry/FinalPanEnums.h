@@ -197,6 +197,8 @@ enum
 	MenuAction_BankK,
 	MenuAction_BankL,
 
+	MenuAction_FX_Prev,
+	MenuAction_FX_Next,
 
 	__MenuAction_Count
 };

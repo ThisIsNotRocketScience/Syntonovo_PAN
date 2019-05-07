@@ -233,14 +233,34 @@ void _screensetup_t::Action(int action)
 		Modal->Parent = this; break;
 	}
 	case MenuAction_Home: gGui.GotoPage(SCREEN_HOME); break;
-	case MenuAction_CloseParentModal: if (Parent) ((_screensetup_t*)Parent)->Modal = NULL; break;
+	case MenuAction_CloseParentModal: if (Parent) ((_screensetup_t*)Parent)->Modal = NULL; break;	
 	case MenuAction_CalibratePads: cmd_pad_zero(); break;
 	case MenuAction_CalibrateOscillators: cmd_calibrate(); break;
 	case MenuAction_CloseModal: Modal = NULL; break;
 	case MenuAction_EnableReferenceLines: gGuiResources.referencelines = !gGuiResources.referencelines; break;
 	case MenuAction_EnableTestImage: gGuiResources.testimage = !gGuiResources.testimage; break;
 
+	case MenuAction_FX_Next:
+	{
+		int ef = (DecodeCurrentEffect());
+		int newef = (ef + 1) % 8;
+		printf("effect %d -> %d -> ", ef, newef);
+		SetEffect(newef);
+		ef = (DecodeCurrentEffect());
+		printf("%d\n", ef);
+	}break;
 
+	case MenuAction_FX_Prev: 
+	{
+		int ef = (DecodeCurrentEffect());
+		int newef = (ef + 7) % 8;
+		printf("effect %d -> %d -> ", ef, newef);
+		SetEffect(newef);
+		ef = (DecodeCurrentEffect());
+		printf("%d\n", ef);
+	}break;
+
+	
 	}
 };
 

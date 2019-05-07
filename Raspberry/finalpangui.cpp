@@ -1449,6 +1449,87 @@ void _screensetup_t::AddVCF2NextPrev()
 
 }
 
+
+char EffectChipStrings[8][4][24] = {
+
+	{ "Chorus & Reverb" ,"Reverb mix","Chorus rate","Chorus mix" },
+{ "Flanger & Reverb","Reverb mix","Flange rate","Flange mix" },
+{ "Tremolo & Reverb","Reverb mix","Tremolo rate","Tremolo mix" },
+{ "Pitch shift","Pitch +/- 4 semitones","","" },
+{ "Pitch & echo","Pitch shift","Echo delay","Echo mix" },
+{ "Test","-","-","-" },
+{ "Reverb 1","Reverb time","HF filter","LF filter" },
+{ "Reverb 2","Reverb time","HF filter","LF filter" }
+};
+
+
+int DecodeCurrentEffect()
+{
+	int a = gCurrentPreset.GetSwitch(Switch_SELEF1)  ? 0 : 1;
+	int b = gCurrentPreset.GetSwitch(Switch_SELEF2)  ? 0 : 2;
+	int c = gCurrentPreset.GetSwitch(Switch_SELEF3)  ? 0 : 4;
+
+	return a + b + c;
+}
+
+void SetEffect(int effect)
+{
+	bool a = (effect & 1) == 0;
+	bool b = (effect & 2) == 0;
+	bool c = (effect & 4) == 0;
+	gCurrentPreset.PutSwitch(Switch_SELEF1, a);
+	gCurrentPreset.PutSwitch(Switch_SELEF2, b);
+	gCurrentPreset.PutSwitch(Switch_SELEF3, c);
+}
+
+
+
+class EffectList : public _control_t
+{
+public:
+	
+	EffectList(){}
+
+	virtual void SketchRight(int delta)
+	{
+			while (delta < 0) {
+				delta++; Action(MenuAction_FX_Prev);
+			};
+			while (delta > 0) {
+				delta--; Action(MenuAction_FX_Next);
+			};
+	}
+	
+	virtual void Render(bool active, float dt)
+	{
+		ImGui::PushFont(gGuiResources.MediumFont);
+		
+		char txt[200];
+		float L = ImGui::GetTextLineHeight();
+		snprintf(txt, 200, "Current effect: %s", EffectChipStrings[DecodeCurrentEffect()][0]);
+		ImGui::SetCursorPos(ImVec2(200, 220));
+		ImGui::Text(txt);
+		ImGui::PopFont();
+		ImGui::PushFont(gGuiResources.SmallFont);
+
+		snprintf(txt, 200, "Parameter 1: %s", EffectChipStrings[DecodeCurrentEffect()][1]);
+		ImGui::SetCursorPos(ImVec2(250, 240  + L));
+		ImGui::Text(txt);
+		
+		snprintf(txt, 200, "Parameter 2: %s", EffectChipStrings[DecodeCurrentEffect()][2]);
+		ImGui::SetCursorPos(ImVec2(250, 240 + L *2));
+		ImGui::Text(txt);
+
+		snprintf(txt, 200, "Parameter 3: %s", EffectChipStrings[DecodeCurrentEffect()][3]);
+		ImGui::SetCursorPos(ImVec2(250, 240+ L * 3));
+		ImGui::Text(txt);
+
+		ImGui::PopFont();
+	}
+
+};
+
+
 void Gui::BuildScreens()
 {
 	for (int i = 0; i < SCREENS_COUNT; i++) Screens[i] = 0;
@@ -1526,6 +1607,7 @@ void Gui::BuildScreens()
 
 	Screens[SCREEN_LOADING]->SetTitle("Loading...");
 
+	Screens[SCREEN_EFFECTS]->ControlsInOrder.push_back(new EffectList());
 
 	Screens[SCREEN_VCF2a]->SetTitle("Filter 2a");
 	Screens[SCREEN_VCF2a]->EnableAvailableButton("-> Mixer", MenuEntry_Page, SCREEN_VCF2MIX);

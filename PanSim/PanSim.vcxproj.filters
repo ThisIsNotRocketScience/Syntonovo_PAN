@@ -65,9 +65,6 @@
     <ClCompile Include="..\Raspberry\finalpangui.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Raspberry\panstructs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\Raspberry\ModSourceScreen.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
