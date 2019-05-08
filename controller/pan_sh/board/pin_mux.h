@@ -68,8 +68,12 @@ void BOARD_InitBootPins(void);
  * @brief Selects pin function.: Alternative connection 0. */
 #define PIO018_FUNC_ALT0 0x00u
 /*!
- * @brief Selects function mode (on-chip pull-up/pull-down resistor control).: Pull-up. Pull-up resistor enabled. */
-#define PIO018_MODE_PULL_UP 0x02u
+ * @brief
+ * Selects function mode (on-chip pull-up/pull-down resistor control).
+ * : Inactive.
+ * Inactive (no pull-down/pull-up resistor enabled).
+ */
+#define PIO018_MODE_INACTIVE 0x00u
 /*!
  * @brief Select Analog/Digital mode.: Digital mode. */
 #define PIO019_DIGIMODE_DIGITAL 0x01u
@@ -461,18 +465,18 @@ void BOARD_InitBootPins(void);
 
 /*! @name PIO0_18 (number 72), EIN_EXT
   @{ */
-#define BOARD_INITPINS_EIN_EXT_PERIPHERAL GPIO                   /*!<@brief Device name: GPIO */
-#define BOARD_INITPINS_EIN_EXT_SIGNAL PIO0                       /*!<@brief GPIO signal: PIO0 */
-#define BOARD_INITPINS_EIN_EXT_GPIO GPIO                         /*!<@brief GPIO device name: GPIO */
-#define BOARD_INITPINS_EIN_EXT_GPIO_PIN 18U                      /*!<@brief PIO0 pin index: 18 */
-#define BOARD_INITPINS_EIN_EXT_PORT 0U                           /*!<@brief PORT device name: 0U */
-#define BOARD_INITPINS_EIN_EXT_PIN 18U                           /*!<@brief 0U pin index: 18 */
-#define BOARD_INITPINS_EIN_EXT_CHANNEL 18                        /*!<@brief GPIO PIO0 channel: 18 */
-#define BOARD_INITPINS_EIN_EXT_PIN_NAME PIO0_18                  /*!<@brief Pin name */
-#define BOARD_INITPINS_EIN_EXT_LABEL "EIN_EXT"                   /*!<@brief Label */
-#define BOARD_INITPINS_EIN_EXT_NAME "EIN_EXT"                    /*!<@brief Identifier name */
-#define BOARD_INITPINS_EIN_EXT_DIRECTION kPIN_MUX_DirectionInput /*!<@brief Direction */
-                                                                 /* @} */
+#define BOARD_INITPINS_EIN_EXT_PERIPHERAL GPIO                    /*!<@brief Device name: GPIO */
+#define BOARD_INITPINS_EIN_EXT_SIGNAL PIO0                        /*!<@brief GPIO signal: PIO0 */
+#define BOARD_INITPINS_EIN_EXT_GPIO GPIO                          /*!<@brief GPIO device name: GPIO */
+#define BOARD_INITPINS_EIN_EXT_GPIO_PIN 18U                       /*!<@brief PIO0 pin index: 18 */
+#define BOARD_INITPINS_EIN_EXT_PORT 0U                            /*!<@brief PORT device name: 0U */
+#define BOARD_INITPINS_EIN_EXT_PIN 18U                            /*!<@brief 0U pin index: 18 */
+#define BOARD_INITPINS_EIN_EXT_CHANNEL 18                         /*!<@brief GPIO PIO0 channel: 18 */
+#define BOARD_INITPINS_EIN_EXT_PIN_NAME PIO0_18                   /*!<@brief Pin name */
+#define BOARD_INITPINS_EIN_EXT_LABEL "EIN_EXT"                    /*!<@brief Label */
+#define BOARD_INITPINS_EIN_EXT_NAME "EIN_EXT"                     /*!<@brief Identifier name */
+#define BOARD_INITPINS_EIN_EXT_DIRECTION kPIN_MUX_DirectionOutput /*!<@brief Direction */
+                                                                  /* @} */
 
 /*! @name PIO0_29 (number 82), CODEC_INT
   @{ */

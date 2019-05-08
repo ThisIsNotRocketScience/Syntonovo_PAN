@@ -38,9 +38,9 @@ const int PAD_UNACL = 8;
 const int PAD_MODR = 9;
 const int PAD_SUSR = 10;
 const int PAD_UNACR = 11;
-uint16_t pad_adc_value[12];
-uint16_t pad_calibration[12] = {0};
-int32_t pad_value[12];
+volatile uint16_t pad_adc_value[12];
+volatile uint16_t pad_calibration[12] = {0};
+volatile int32_t pad_value[12];
 
 //int32_t pad_adc_value_min[12] = { -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff };;
 //int32_t pad_adc_value_max[12] = { -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff, -0xffffff };;
@@ -80,7 +80,7 @@ static void inputcycle_flush()
 	while (inputcycle_last_port < 11) ;
 }
 
-static volatile int reset = 0;
+static volatile int reset = 1;
 int doing_reset = 0;
 
 struct peak_state_t
@@ -1957,6 +1957,7 @@ void synth_run()
 {
 	for (;;) {
 		doing_reset = reset;
+		reset = 0;
 
 		inputcycle_start();
 
@@ -1978,5 +1979,5 @@ void synth_run()
 
 void synth_reset()
 {
-	reset = 1;
+	//reset = 1;
 }
