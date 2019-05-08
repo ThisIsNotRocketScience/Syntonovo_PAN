@@ -628,7 +628,8 @@ public:
 
 	virtual void Render(bool active, float DT)
 	{
-		ImGui::SetCursorPos(ImVec2(x, y - ImGui::GetTextLineHeight()));
+		auto R = ImGui::CalcTextSize(title);
+		ImGui::SetCursorPos(ImVec2(x-R.x/2 +20, y - ImGui::GetTextLineHeight()));
 		uint16_t r, g, b;
 		gPanState.GetThemeLed(myLed, &r, &g, &b);
 		ImGui::Text(title);

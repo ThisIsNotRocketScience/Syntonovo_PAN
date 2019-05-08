@@ -46,6 +46,8 @@ void bottomencoder_t::SetupPosition(int id)
 
 }
 
+extern char EffectChipStrings[8][4][24];
+
 void bottomencoder_t::Render(bool active, float DT)
 {
 	if (!enabled) return;
@@ -54,6 +56,26 @@ void bottomencoder_t::Render(bool active, float DT)
 	int x2 = x;
 	int y2 = y;
 	bool ActiveSet = true;
+
+	char finaltitle[255];
+	snprintf(finaltitle, 255, "%s" ,title);
+	switch (style)
+	{
+	case MenuEntry_Value:
+		switch (target)
+		{
+		case Output_VCA_FXPOT1:
+			snprintf(finaltitle, 255, "FX: %s", EffectChipStrings[DecodeCurrentEffect()][1]);
+			break;
+		case Output_VCA_FXPOT2:
+			snprintf(finaltitle, 255, "FX: %s", EffectChipStrings[DecodeCurrentEffect()][2]);
+			break;
+		case Output_VCA_FXPOT3:
+			snprintf(finaltitle, 255, "FX: %s", EffectChipStrings[DecodeCurrentEffect()][3]);
+			break;
+		}
+		break;
+	}
 	if (Set != Parent->currentencoderset)
 	{
 		ActiveSet = false;
@@ -61,7 +83,7 @@ void bottomencoder_t::Render(bool active, float DT)
 	}
 	if (Align == align_right)
 	{
-		ImVec2 textsize = ImGui::CalcTextSize(title);
+		ImVec2 textsize = ImGui::CalcTextSize(finaltitle);
 		x2 -= textsize.x;
 	}
 
@@ -71,11 +93,11 @@ void bottomencoder_t::Render(bool active, float DT)
 
 	if (active)
 	{
-		VerticalText(title, align_left, gGuiResources.Highlight);
+		VerticalText(finaltitle, align_left, gGuiResources.Highlight);
 	}
 	else
 	{
-		VerticalText(title, align_left);
+		VerticalText(finaltitle, align_left);
 	}
 	y2 -= ParamVerticalBoxHeight;
 

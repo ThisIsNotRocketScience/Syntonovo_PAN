@@ -50,7 +50,7 @@ void Gui::NextVCO()
 {
 	switch (CurrentScreen)
 	{
-		
+
 	case SCREEN_VCO1:	GotoPage(SCREEN_VCO2); break;
 	case SCREEN_VCO2:	GotoPage(SCREEN_VCO3); break;
 	case SCREEN_VCO3:	GotoPage(SCREEN_VCO4); break;
@@ -59,7 +59,7 @@ void Gui::NextVCO()
 	case SCREEN_VCO6:	GotoPage(SCREEN_VCO7); break;
 	case SCREEN_VCO7:	GotoPage(SCREEN_VCO8); break;
 	case SCREEN_VCO8:	GotoPage(SCREEN_VCO1); break;
-	
+
 	default: GotoPage(SCREEN_VCO1); break;
 	}
 
@@ -149,7 +149,7 @@ int ButtonHeight(int idx)
 
 int MButtonHeight(int idx)
 {
-	return  ButtonHeight(0)+(int)((idx % 7) * (600.0f / 10.0f));
+	return  ButtonHeight(0) + (int)((idx % 7) * (600.0f / 10.0f));
 }
 
 extern presetnames_t presetnames;
@@ -226,7 +226,7 @@ void FinalPan_SetupDefaultPreset()
 
 
 
-	
+
 };
 
 int GetSideButtonID(FinalLedButtonEnum B);
@@ -351,7 +351,7 @@ ImTextureID Raspberry_LoadTexture(const char *filename)
 	return (ImTextureID)tex;
 };
 
-void VerticalText(char *text, alignment_t align , ImU32 text_color )
+void VerticalText(char *text, alignment_t align, ImU32 text_color)
 {
 	ImFont *font = ImGui::GetFont();
 	char c;
@@ -461,7 +461,7 @@ ImU32 CalcFillColor(uint16_t value, bool active)
 	}
 	else
 	{
-		if (value>0)
+		if (value > 0)
 		{
 			r = gPanState.high_led_r;
 			g = gPanState.high_led_g;
@@ -472,7 +472,7 @@ ImU32 CalcFillColor(uint16_t value, bool active)
 			r = gPanState.low_led_r;
 			g = gPanState.low_led_g;
 			b = gPanState.low_led_b;
-		
+
 		}
 	}
 	return ImColor(r >> 8, g >> 8, b >> 8);
@@ -531,7 +531,7 @@ void _control_t::RenderBox(int x, int y, int val, int mode, bool active)
 void _control_t::RenderBoxVertical(int x, int y, int val, int mode, bool active)
 {
 	ImVec2 p = ImVec2(x, y);// +ImGui::GetTextLineHeight());
-	p.x -= ParamBoxDim/2;
+	p.x -= ParamBoxDim / 2;
 	ImVec2 tl = p;
 	ImVec2 br = tl;
 	br.x += ParamBoxDim;
@@ -562,7 +562,7 @@ void _control_t::RenderBoxVertical(int x, int y, int val, int mode, bool active)
 		ImVec2 br2 = br;
 		ImVec2 tl2 = tl;
 		tl2.y = tl.y + (val * ParamVerticalBoxHeight) / 0xffff;
-		br2.y = tl.y + ParamVerticalBoxHeight/2;
+		br2.y = tl.y + ParamVerticalBoxHeight / 2;
 		ImGui::GetWindowDrawList()->AddRectFilled(tl, br, CalcFillColor(0, active));
 
 		ImGui::GetWindowDrawList()->AddRectFilled(tl, br2, CalcFillColor(1, active));
@@ -573,7 +573,7 @@ void _control_t::RenderBoxVertical(int x, int y, int val, int mode, bool active)
 	{
 		ImVec2 br2 = br;
 		float y1 = tl.y + ParamVerticalBoxHeight / 2;
-		float y2 = y1 - ((val) * ParamVerticalBoxHeight/2) / 0x8000;
+		float y2 = y1 - ((val)* ParamVerticalBoxHeight / 2) / 0x8000;
 		ImVec2 tl2 = tl;
 		tl2.y = __min(y1, y2);
 		br2.y = __max(y1, y2);
@@ -581,12 +581,12 @@ void _control_t::RenderBoxVertical(int x, int y, int val, int mode, bool active)
 		ImGui::GetWindowDrawList()->AddRectFilled(tl2, br2, CalcFillColor(1, active));
 		ImGui::GetWindowDrawList()->AddRect(tl2, br2, active ? gGuiResources.Highlight : gGuiResources.Normal, 0, 0, 2);
 	}
-		break;
+	break;
 	case BOX_MID:
 	{
 		ImVec2 br2 = br;
-		float y1 = tl.y + ParamVerticalBoxHeight/2;
-		float y2 = tl.y + ((0xffff-val) * ParamVerticalBoxHeight) / 0xffff;
+		float y1 = tl.y + ParamVerticalBoxHeight / 2;
+		float y2 = tl.y + ((0xffff - val) * ParamVerticalBoxHeight) / 0xffff;
 		ImVec2 tl2 = tl;
 		tl2.y = __min(y1, y2);
 		br2.y = __max(y1, y2);
@@ -655,11 +655,11 @@ void sidebutton_t::Render(bool active, float DT)
 		{
 			ImVec2 textsize = ImGui::CalcTextSize(title);
 			x2 -= textsize.x;
-//			ImGui::GetWindowDrawList()->AddLine(ImVec2(x+ParamMasterMargin*2, y + ImGui::GetTextLineHeight() / 2), ImVec2(lx2, y2), gGuiResources.Normal, 3);
+			//			ImGui::GetWindowDrawList()->AddLine(ImVec2(x+ParamMasterMargin*2, y + ImGui::GetTextLineHeight() / 2), ImVec2(lx2, y2), gGuiResources.Normal, 3);
 			ImVec2 A = ImVec2(x + ParamMasterMargin * 2, y + ImGui::GetTextLineHeight() / 2);
 			ImVec2 B = A;
 			B.x += ParamMasterMargin * 2;
-			ImVec2 C = ImVec2(lx2 - ParamMasterMargin *1, y2);
+			ImVec2 C = ImVec2(lx2 - ParamMasterMargin * 1, y2);
 			ImVec2 D = ImVec2(lx2, y2);
 			ImGui::GetWindowDrawList()->AddBezierCurve(A, B, C, D, Dimmed(3, gGuiResources.Normal), 3);
 		}
@@ -674,7 +674,7 @@ void sidebutton_t::Render(bool active, float DT)
 			//ImGui::GetWindowDrawList()->AddLine(ImVec2(x- +ParamMasterMargin * 2, y + ImGui::GetTextLineHeight() / 2), ImVec2(lx2, y2), gGuiResources.Normal, 3);
 
 		}
-		
+
 		int xoff = 0;
 		bool drawline = true;
 		if (Align == align_right)
@@ -726,22 +726,22 @@ void sidebutton_t::Render(bool active, float DT)
 			}
 			else
 			{
-				ImGui::SetCursorPos(ImVec2(x  - 15, y));
+				ImGui::SetCursorPos(ImVec2(x - 15, y));
 				xoff = 15 + ParamMasterMargin;
 			}
 			if (active)
 			{
 				ImColor ic(gGuiResources.Highlight);
-				ImGui::Image(gGuiResources.OnOff[id ], ImVec2(30, 30), ImVec2(0, 0), ImVec2(1, 1), (ImVec4)ic);
+				ImGui::Image(gGuiResources.OnOff[id], ImVec2(30, 30), ImVec2(0, 0), ImVec2(1, 1), (ImVec4)ic);
 			}
 			else
 			{
-				ImGui::Image(gGuiResources.OnOff[id ], ImVec2(30, 30));
+				ImGui::Image(gGuiResources.OnOff[id], ImVec2(30, 30));
 
 			}
 			break;
 		}
-	
+
 
 		ImGui::SetCursorPos(ImVec2(x2 + xoff, y));
 		if (active)
@@ -837,7 +837,7 @@ void PrintFontSpec(ImFont*F, const char* name)
 	ImGui::PushFont(F);
 	float H = ImGui::GetTextLineHeight();
 	auto S = ImGui::CalcTextSize("the quick brown fox jumps over the lazy dog THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG");
-	printf("%s: height = %f, box = %f,%f\n",name, H, S.x, S.y);
+	printf("%s: height = %f, box = %f,%f\n", name, H, S.x, S.y);
 	ImGui::PopFont();
 
 }
@@ -1047,12 +1047,12 @@ void Gui::ButtonPressed(FinalLedButtonEnum Button)
 	case ledbutton_OctDownRight:
 		AddPitch(-1);
 		break;
-	
+
 	case ledbutton_OctUpLeft:
 	case ledbutton_OctUpRight:
 		AddPitch(1);
 		break;
-		
+
 	case ledbutton_PortamentoLeft:
 	case ledbutton_PortamentoRight:
 		GotoPage(SCREEN_PORTAMENTO); break;
@@ -1097,17 +1097,17 @@ _screensetup_t *Gui::CS()
 #define LetterBoxH 40
 
 
-void RenderLettersInABox(int x, int y, bool active, const char *text, int w, int h, bool notghosted )
+void RenderLettersInABox(int x, int y, bool active, const char *text, int w, int h, bool notghosted)
 {
 	ImVec2 tl(x, y);
 	ImVec2 br(x + w, y + h);
 
-	ImGui::GetWindowDrawList()->AddRect(tl, br, active ? gGuiResources.Highlight : Dimmed(notghosted?1:3, gGuiResources.Normal), 0, 0, 2);
-	
+	ImGui::GetWindowDrawList()->AddRect(tl, br, active ? gGuiResources.Highlight : Dimmed(notghosted ? 1 : 3, gGuiResources.Normal), 0, 0, 2);
+
 	auto s = ImGui::CalcTextSize(text);
 
 	ImGui::SetCursorPos(ImVec2(x + LetterBoxW / 2 - s.x / 2, y + LetterBoxH / 2 - s.y / 2));
-	ImGui::TextColored((ImVec4)(ImColor)(Dimmed(notghosted ? 1 : 3, gGuiResources.Normal) ),  text);
+	ImGui::TextColored((ImVec4)(ImColor)(Dimmed(notghosted ? 1 : 3, gGuiResources.Normal)), text);
 
 }
 
@@ -1168,7 +1168,7 @@ public:
 				{
 					ImVec2 tl(x, y + i * (LetterBoxH + ParamMasterMargin));
 					ImVec2 br(x + LetterBoxW, y + LetterBoxH + i * (LetterBoxH + ParamMasterMargin));
-					ImGui::GetWindowDrawList()->AddRect(tl, br, Dimmed(abs(i),active ? gGuiResources.Highlight : gGuiResources.Normal), 0, 0, 2);
+					ImGui::GetWindowDrawList()->AddRect(tl, br, Dimmed(abs(i), active ? gGuiResources.Highlight : gGuiResources.Normal), 0, 0, 2);
 					auto s = ImGui::CalcTextSize(&Current, &Current + 1);
 					ImGui::SetCursorPos(ImVec2(x + LetterBoxW / 2 - s.x / 2, y + LetterBoxH / 2 - s.y / 2 + i * (LetterBoxH + ParamMasterMargin)));
 					ImGui::TextColored(ImVec4(ImColor(Dimmed(abs(i), active ? gGuiResources.Highlight : gGuiResources.Normal))), "%c", GetDeltaChar(Current, i));
@@ -1179,7 +1179,7 @@ public:
 		ImVec2 br(x + LetterBoxW, y + LetterBoxH);
 		ImGui::GetWindowDrawList()->AddRect(tl, br, active ? gGuiResources.Highlight : gGuiResources.Normal, 0, 0, 2);
 		auto s = ImGui::CalcTextSize(&Current, &Current + 1);
-		ImGui::SetCursorPos(ImVec2(x + LetterBoxW / 2 - s.x/2, y + LetterBoxH / 2 - s.y / 2 ));
+		ImGui::SetCursorPos(ImVec2(x + LetterBoxW / 2 - s.x / 2, y + LetterBoxH / 2 - s.y / 2));
 		ImGui::Text("%c", Current);
 	}
 };
@@ -1302,15 +1302,15 @@ public:
 		int idx = -1;
 		switch (b)
 		{
-		case ledbutton_B1:idx = 0 ; break;
-		case ledbutton_B2:idx = 1 ; break;
-		case ledbutton_B3:idx = 2 ; break;
-		case ledbutton_B4:idx = 3 ; break;
-		case ledbutton_B5:idx = 4 ; break;
-		case ledbutton_B6:idx = 5 ; break;
-		case ledbutton_B7:idx = 6 ; break;
-		case ledbutton_B8:idx = 7 ; break;
-		case ledbutton_B9:idx = 0 ; break;
+		case ledbutton_B1:idx = 0; break;
+		case ledbutton_B2:idx = 1; break;
+		case ledbutton_B3:idx = 2; break;
+		case ledbutton_B4:idx = 3; break;
+		case ledbutton_B5:idx = 4; break;
+		case ledbutton_B6:idx = 5; break;
+		case ledbutton_B7:idx = 6; break;
+		case ledbutton_B8:idx = 7; break;
+		case ledbutton_B9:idx = 0; break;
 		case ledbutton_B10:idx = 1; break;
 		case ledbutton_B11:idx = 2; break;
 		case ledbutton_B12:idx = 3; break;
@@ -1320,7 +1320,7 @@ public:
 		case ledbutton_B16:idx = 7; break;
 		}
 
-		cmd_preset_save(idx  + df * 16);
+		cmd_preset_save(idx + df * 16);
 		gGui.GotoPage(SCREEN_HOME);
 	}
 	virtual void Action(int action)
@@ -1364,7 +1364,7 @@ public:
 		EnableButton(7, "Cancel", MenuEntry_Action, MenuAction_Home);
 		SetTitle("Save preset");
 		AddText(140, 50, "select bank and press a preset button to save");
-		
+
 	}
 	virtual void Activate()
 	{
@@ -1420,7 +1420,10 @@ public:
 void EncoderLineDisplay::Render(bool active, float dt)
 {
 	float midy = (fromY + 500) / 2;
-	ImGui::GetWindowDrawList()->AddLine(ImVec2(fromX, fromY), ImVec2(fromX, midy), gGuiResources.Normal, 3);
+
+
+
+	//	ImGui::GetWindowDrawList()->AddLine(ImVec2(fromX, fromY), ImVec2(fromX, midy), gGuiResources.Normal, 3);
 	float minx = 1024;
 	float maxx = 0;
 	for (int i = 0; i < this->toEncoders.size(); i++)
@@ -1428,11 +1431,14 @@ void EncoderLineDisplay::Render(bool active, float dt)
 		int x = GetEncoderX(toEncoders[i]);
 		if (x > maxx) maxx = x;
 		if (x < minx) minx = x;
+		//int tox =
+		ImGui::GetWindowDrawList()->AddBezierCurve(ImVec2(fromX, fromY), ImVec2(fromX, fromY + 70), ImVec2(x, 430), ImVec2(x, 600 - ParamVerticalBoxHeight - ParamMasterMargin * 2), gGuiResources.Normal, 3);
 
-		ImGui::GetWindowDrawList()->AddLine(ImVec2(x, midy), ImVec2(x, 500), gGuiResources.Normal, 3);
+
+		//ImGui::GetWindowDrawList()->AddLine(ImVec2(x, midy), ImVec2(x, 500), gGuiResources.Normal, 3);
 
 	}
-	ImGui::GetWindowDrawList()->AddLine(ImVec2(minx, midy), ImVec2(maxx, midy), gGuiResources.Normal, 3);
+	//ImGui::GetWindowDrawList()->AddLine(ImVec2(minx, midy), ImVec2(maxx, midy), gGuiResources.Normal, 3);
 
 }
 
@@ -1465,9 +1471,9 @@ char EffectChipStrings[8][4][24] = {
 
 int DecodeCurrentEffect()
 {
-	int a = gCurrentPreset.GetSwitch(Switch_SELEF1)  ? 0 : 1;
-	int b = gCurrentPreset.GetSwitch(Switch_SELEF2)  ? 0 : 2;
-	int c = gCurrentPreset.GetSwitch(Switch_SELEF3)  ? 0 : 4;
+	int a = gCurrentPreset.GetSwitch(Switch_SELEF1) ? 0 : 1;
+	int b = gCurrentPreset.GetSwitch(Switch_SELEF2) ? 0 : 2;
+	int c = gCurrentPreset.GetSwitch(Switch_SELEF3) ? 0 : 4;
 
 	return a + b + c;
 }
@@ -1487,44 +1493,59 @@ void SetEffect(int effect)
 class EffectList : public _control_t
 {
 public:
-	
-	EffectList(){}
+
+	EffectList() {}
 
 	virtual void SketchRight(int delta)
 	{
-			while (delta < 0) {
-				delta++; Action(MenuAction_FX_Prev);
-			};
-			while (delta > 0) {
-				delta--; Action(MenuAction_FX_Next);
-			};
+		while (delta < 0) {
+			delta++; Action(MenuAction_FX_Prev);
+		};
+		while (delta > 0) {
+			delta--; Action(MenuAction_FX_Next);
+		};
 	}
-	
+
 	virtual void Render(bool active, float dt)
 	{
 		ImGui::PushFont(gGuiResources.MediumFont);
-		
+
 		char txt[200];
 		float L = ImGui::GetTextLineHeight();
 		snprintf(txt, 200, "Current effect: %s", EffectChipStrings[DecodeCurrentEffect()][0]);
-		ImGui::SetCursorPos(ImVec2(200, 220));
+
+		auto S = ImGui::CalcTextSize(txt);
+		ImGui::SetCursorPos(ImVec2(512-S.x/2, MButtonHeight(1)));
 		ImGui::Text(txt);
 		ImGui::PopFont();
 		ImGui::PushFont(gGuiResources.SmallFont);
 
 		snprintf(txt, 200, "Parameter 1: %s", EffectChipStrings[DecodeCurrentEffect()][1]);
-		ImGui::SetCursorPos(ImVec2(250, 240  + L));
+		ImGui::SetCursorPos(ImVec2(250, 240 + L));
 		ImGui::Text(txt);
-		
+
 		snprintf(txt, 200, "Parameter 2: %s", EffectChipStrings[DecodeCurrentEffect()][2]);
-		ImGui::SetCursorPos(ImVec2(250, 240 + L *2));
+		ImGui::SetCursorPos(ImVec2(250, 240 + L * 2));
 		ImGui::Text(txt);
 
 		snprintf(txt, 200, "Parameter 3: %s", EffectChipStrings[DecodeCurrentEffect()][3]);
-		ImGui::SetCursorPos(ImVec2(250, 240+ L * 3));
+		ImGui::SetCursorPos(ImVec2(250, 240 + L * 3));
 		ImGui::Text(txt);
 
 		ImGui::PopFont();
+
+
+		for (int i = 0; i < 8; i++)
+		{
+			char txt[10];
+			snprintf(txt, 10, "%d", i + 1);
+			bool used = false;
+
+			int x = (i - 4 ) * 40 + 512;
+			int y = MButtonHeight(2);
+			RenderLettersInABox(x, y, i == DecodeCurrentEffect(), txt, 35, 35, true);
+		}
+
 	}
 
 };
@@ -1548,13 +1569,13 @@ void Gui::BuildScreens()
 	Screens[SCREEN_PRESETSAVE] = SaveScreen;
 
 	Screens[SCREEN_TEST] = new ImageScreen(gGuiResources.TestBG);
-	Screens[SCREEN_TEST]->AddText(10, 30, "10,30 - tadaa", align_left ,font_small);
+	Screens[SCREEN_TEST]->AddText(10, 30, "10,30 - tadaa", align_left, font_small);
 	Screens[SCREEN_TEST]->AddText(30, 60, "10,60 - tadaa", align_left, font_small);
 	for (int i = 0; i < 100; i += 10)
 	{
-		Screens[SCREEN_TEST]->AddText(50+4*i, 600-i, "Hmm", align_left, font_small);
+		Screens[SCREEN_TEST]->AddText(50 + 4 * i, 600 - i, "Hmm", align_left, font_small);
 	}
-	
+
 	Screens[SCREEN_LOGO] = new ImageScreen(gGuiResources.LogoScreen);
 	BL->LedButtonsThatOpenThisScreen.push_back(ledbutton_BankLeft);
 	BR->LedButtonsThatOpenThisScreen.push_back(ledbutton_BankRight);
@@ -1609,17 +1630,20 @@ void Gui::BuildScreens()
 
 	Screens[SCREEN_EFFECTS]->ControlsInOrder.push_back(new EffectList());
 
+	Screens[SCREEN_EFFECTS]->EnableButton(2, "Previous", MenuEntry_Action, MenuAction_FX_Prev);
+	Screens[SCREEN_EFFECTS]->EnableButton(9, "Next", MenuEntry_Action, MenuAction_FX_Next);
+
 	Screens[SCREEN_VCF2a]->SetTitle("Filter 2a");
-	Screens[SCREEN_VCF2a]->EnableAvailableButton("-> Mixer", MenuEntry_Page, SCREEN_VCF2MIX);
+	Screens[SCREEN_VCF2a]->EnableButton(12,"to VCF2 mixer", MenuEntry_Page, SCREEN_VCF2MIX);
 	Screens[SCREEN_VCF2b]->SetTitle("Filter 2b");
-	Screens[SCREEN_VCF2b]->EnableAvailableButton("-> Mixer", MenuEntry_Page, SCREEN_VCF2MIX);
+	Screens[SCREEN_VCF2b]->EnableButton(12,"to VCF2 mixer", MenuEntry_Page, SCREEN_VCF2MIX);
 	Screens[SCREEN_VCF2c]->SetTitle("Filter 2c");
-	Screens[SCREEN_VCF2c]->EnableAvailableButton("-> Mixer", MenuEntry_Page, SCREEN_VCF2MIX);
+	Screens[SCREEN_VCF2c]->EnableButton(12,"to VCF2 mixer", MenuEntry_Page, SCREEN_VCF2MIX);
 	Screens[SCREEN_VCF2d]->SetTitle("Filter 2d");
-	Screens[SCREEN_VCF2d]->EnableAvailableButton("-> Mixer", MenuEntry_Page, SCREEN_VCF2MIX);
+	Screens[SCREEN_VCF2d]->EnableButton(12,"to VCF2 mixer", MenuEntry_Page, SCREEN_VCF2MIX);
 
 	Screens[SCREEN_VCF2_structure]->SetTitle("Filter 2 routing");
-	Screens[SCREEN_VCF1]->EnableAvailableButton("-> Mixer", MenuEntry_Page, SCREEN_VCF1MIX);
+	Screens[SCREEN_VCF1]->EnableButton(12,"to VCF1 mixer", MenuEntry_Page, SCREEN_VCF1MIX);
 
 
 	Screens[SCREEN_VCO4]->SetTitle("Oscillator 4");
@@ -1651,14 +1675,17 @@ void Gui::BuildScreens()
 
 	Screens[SCREEN_PORTAMENTO]->SetTitle("Portamento");
 
-	Screens[SCREEN_COLORS]->AddLedControl("Low", GetEncoderX(1), 300, Led_Low);
-	Screens[SCREEN_COLORS]->AddLedControl("High", GetEncoderX(5), 300, Led_High);
-	Screens[SCREEN_COLORS]->AddLedControl("Active", GetEncoderX(9), 300, Led_Active);
+	Screens[SCREEN_COLORS]->AddLedControl("Low", GetEncoderX(1)-20, 300, Led_Low);
+	Screens[SCREEN_COLORS]->AddLedControl("High", GetEncoderX(5)-20, 300, Led_High);
+	Screens[SCREEN_COLORS]->AddLedControl("Active", GetEncoderX(9)-20, 300, Led_Active);
 	Screens[SCREEN_COLORS]->EnableButton(7, "Done", MenuEntry_Action, MenuAction_Home);
+
+
+
 
 	auto Lines1 = new EncoderLineDisplay();
 	Lines1->fromX = GetEncoderX(1);
-	Lines1->fromY = 300;
+	Lines1->fromY = 350;
 	Lines1->toEncoders.push_back(0);
 	Lines1->toEncoders.push_back(1);
 	Lines1->toEncoders.push_back(2);
@@ -1666,7 +1693,7 @@ void Gui::BuildScreens()
 
 	auto Lines2 = new EncoderLineDisplay();
 	Lines2->fromX = GetEncoderX(5);
-	Lines2->fromY = 300;
+	Lines2->fromY = 350;
 	Lines2->toEncoders.push_back(4);
 	Lines2->toEncoders.push_back(5);
 	Lines2->toEncoders.push_back(6);
@@ -1674,7 +1701,7 @@ void Gui::BuildScreens()
 
 	auto Lines3 = new EncoderLineDisplay();
 	Lines3->fromX = GetEncoderX(9);
-	Lines3->fromY = 300;
+	Lines3->fromY = 350;
 	Lines3->toEncoders.push_back(8);
 	Lines3->toEncoders.push_back(9);
 	Lines3->toEncoders.push_back(10);
@@ -1729,7 +1756,7 @@ void Gui::BuildScreens()
 	Screens[SCREEN_VCO6]->AddVCONextPrev();
 	Screens[SCREEN_VCO7]->AddVCONextPrev();
 	Screens[SCREEN_VCO8]->AddVCONextPrev();
-	
+
 	Screens[SCREEN_VCF2a]->AddVCF2NextPrev();
 	Screens[SCREEN_VCF2b]->AddVCF2NextPrev();
 	Screens[SCREEN_VCF2c]->AddVCF2NextPrev();
@@ -1764,7 +1791,7 @@ void Gui::BuildScreens()
 	Screens[SCREEN_VCF2d]->EncodersThatOpenThisScreen.push_back(encoder_VCF2d);
 	Screens[SCREEN_VCF2d]->EnableAvailableButton("Routing", MenuEntry_Action, MenuAction_OpenVCF2Structure);
 
-	
+
 	Screens[SCREEN_VCF1MIX]->EnableAvailableButton("Effects", MenuEntry_Action, MenuAction_OpenEffects);
 	Screens[SCREEN_VCF2MIX]->EnableAvailableButton("Effects", MenuEntry_Action, MenuAction_OpenEffects);
 	Screens[SCREEN_CLEANMIX]->EnableAvailableButton("Effects", MenuEntry_Action, MenuAction_OpenEffects);
@@ -1999,7 +2026,7 @@ void LedButtonPressed(FinalLedButtonEnum Button)
 
 void LedEncoderButtonPress(FinalEncoderEnum Button)
 {
-	
+
 	switch (Button)
 	{
 	case encoder_SketchLeft:
