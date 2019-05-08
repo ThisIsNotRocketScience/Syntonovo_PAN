@@ -1634,16 +1634,16 @@ void Gui::BuildScreens()
 	Screens[SCREEN_EFFECTS]->EnableButton(9, "Next", MenuEntry_Action, MenuAction_FX_Next);
 
 	Screens[SCREEN_VCF2a]->SetTitle("Filter 2a");
-	Screens[SCREEN_VCF2a]->EnableButton(12,"to VCF2 mixer", MenuEntry_Page, SCREEN_VCF2MIX);
+	Screens[SCREEN_VCF2a]->EnableButton(12,"to VCF2 Mix", MenuEntry_Page, SCREEN_VCF2MIX);
 	Screens[SCREEN_VCF2b]->SetTitle("Filter 2b");
-	Screens[SCREEN_VCF2b]->EnableButton(12,"to VCF2 mixer", MenuEntry_Page, SCREEN_VCF2MIX);
+	Screens[SCREEN_VCF2b]->EnableButton(12,"to VCF2 Mix", MenuEntry_Page, SCREEN_VCF2MIX);
 	Screens[SCREEN_VCF2c]->SetTitle("Filter 2c");
-	Screens[SCREEN_VCF2c]->EnableButton(12,"to VCF2 mixer", MenuEntry_Page, SCREEN_VCF2MIX);
+	Screens[SCREEN_VCF2c]->EnableButton(12,"to VCF2 Mix", MenuEntry_Page, SCREEN_VCF2MIX);
 	Screens[SCREEN_VCF2d]->SetTitle("Filter 2d");
-	Screens[SCREEN_VCF2d]->EnableButton(12,"to VCF2 mixer", MenuEntry_Page, SCREEN_VCF2MIX);
+	Screens[SCREEN_VCF2d]->EnableButton(12,"to VCF2 Mix", MenuEntry_Page, SCREEN_VCF2MIX);
 
 	Screens[SCREEN_VCF2_structure]->SetTitle("Filter 2 routing");
-	Screens[SCREEN_VCF1]->EnableButton(12,"to VCF1 mixer", MenuEntry_Page, SCREEN_VCF1MIX);
+	Screens[SCREEN_VCF1]->EnableButton(12,"to VCF1 Mix", MenuEntry_Page, SCREEN_VCF1MIX);
 
 
 	Screens[SCREEN_VCO4]->SetTitle("Oscillator 4");
