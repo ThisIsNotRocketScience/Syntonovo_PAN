@@ -392,7 +392,7 @@ public:
 		case Led_Brightness: p = &ledbrightness; break;
 		}
 		int origp = *p;
-		int newp = origp + delta * 200;
+		int newp = origp + delta ;
 		if (newp > 0xffff) *p = 0xffff; else if (newp < 0) *p = 0; else *p = newp;
 		
 	}
