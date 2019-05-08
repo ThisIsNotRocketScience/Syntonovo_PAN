@@ -173,6 +173,8 @@ OUTPUT_VIRT(STASH, VIRT, 0, CTRL, 0xB1, LIN, 0,"", IGNORE)
 OUTPUT_VIRT(VCO4567_DRY_MIX, VIRT, 0, CTRL, 0xCF, LIN, 0,"", IGNORE)
 
 OUTPUT_VIRT(NOTE, VIRT, 0, CTRL, 0xE0, LIN, 0,"",IGNORE)
+OUTPUT_VIRT(NOTE2, VIRT, 0, CTRL, 0xC0, LIN, 0,"",IGNORE)
+OUTPUT_VIRT(NOTE3, VIRT, 0, CTRL, 0xC1, LIN, 0,"",IGNORE)
 
 OUTPUT_VIRT(VCO1_PITCH, VIRT, 0, CTRL, 0xE1, LIN, 0x8000,"Frequency",VCO1)
 OUTPUT_VIRT(VCO2_PITCH, VIRT, 0, CTRL, 0xE2, LIN, 0x8000,"Frequency",VCO2)
@@ -275,6 +277,10 @@ SWITCH(SELSUSTAINR, 55, 0)
 SWITCH(SELUNACL, 56, 0)
 SWITCH(SELUNACR, 57, 0)
 
+SWITCH(POLYMODE1, 58, 0)
+SWITCH(POLYMODE2, 59, 0)
+
+#define LfoParamFlags_LfoRetrigger 0x01
 //struct lfo {
 //	uint16_t flags; // including key range
 //	uint16_t speed;
@@ -282,6 +288,7 @@ SWITCH(SELUNACR, 57, 0)
 //	int16_t shape;
 //	uint16_t reset_phase;
 //};
+
 MODSOURCE(LFO0, 		LFO,			0x00)
 MODSOURCE(LFO1, 		LFO, 			0x01)
 MODSOURCE(LFO2, 		LFO, 			0x02)
@@ -299,6 +306,7 @@ MODSOURCE(LFO13, 		LFO, 			0x0D)
 MODSOURCE(LFO14, 		LFO, 			0x0E)
 MODSOURCE(LFO15, 		LFO, 			0x0F)
 
+#define SubParamFlags_AdsrRetrigger 0x01
 //struct env {
 //	uint16_t flags; // including env type, key range
 //	uint16_t a;
