@@ -200,6 +200,8 @@ enum
 	MenuAction_FX_Prev,
 	MenuAction_FX_Next,
 
+	MenuAction_SpaceBar,
+	MenuAction_Backspace,
 	__MenuAction_Count
 };
 
@@ -248,6 +250,15 @@ enum LedParameter
 
 };
 
+enum NotePrioModes
+{
+	keyboard_mode_low,
+	keyboard_mode_high,
+	keyboard_mode_latest,
+	__keyboard_mode_count
+	//keyboard_mode_first 
+
+};
 enum ModParameters
 {
 	Envelope_Attack,
@@ -255,12 +266,15 @@ enum ModParameters
 	Envelope_Sustain,
 	Envelope_Release,
 	Envelope_Curve,
-	Envelope_Staccato,
+	Envelope_Retrigger,
 
 	LFO_Speed,
 	LFO_Depth,
 	LFO_Shape,
 	LFO_ResetPhase,
+	LFO_ResetOnKey,
+	LFO_Switches,
+	Envelope_Switches,
 
 	KeyboardParam_DeadzoneX,
 	KeyboardParam_ScaleX,

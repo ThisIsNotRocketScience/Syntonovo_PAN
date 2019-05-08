@@ -5,6 +5,7 @@
 #include "gui.h"
 #include "ModSourceScreen.h"
 
+extern int DecodeCurrentEffect();
 
 void bottomencoder_t::Turn(int delta)
 {
@@ -86,6 +87,7 @@ void bottomencoder_t::Render(bool active, float DT)
 		ImVec2 textsize = ImGui::CalcTextSize(finaltitle);
 		x2 -= textsize.x;
 	}
+
 
 	ImGui::PushFont(gGuiResources.TinyFont);
 
