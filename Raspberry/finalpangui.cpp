@@ -1199,11 +1199,13 @@ class PresetScreen : public _screensetup_t
 {
 public:
 	std::vector<LetterControl*> Letters;
+	
 	virtual void Action(int action)
 	{
 		switch (action)
 		{
 		case MenuAction_No:
+			
 			gGui.GotoPage(SCREEN_HOME);
 			break;
 		case MenuAction_Yes:
@@ -1224,7 +1226,7 @@ public:
 			}
 			SetActiveLetter(N - 1);
 			Letters[N]->Current = ' ';
-			gCurrentPreset.Name[N] = ' ';
+			
 		}
 		break;
 		case MenuAction_SpaceBar:
@@ -1236,7 +1238,7 @@ public:
 			}
 			SetActiveLetter(N + 1);
 			Letters[N]->Current = ' ';
-			gCurrentPreset.Name[N] = ' ';
+		
 		}
 		break;
 		}

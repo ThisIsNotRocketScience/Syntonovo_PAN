@@ -49,7 +49,7 @@ ModSource_t ModSourceScreen::ModTypeFromScreen(Screens_t screen)
 
 	case SCREEN_X: return Source_x;
 	case SCREEN_Y: return Source_y;
-	case SCREEN_Z: return Source_y;
+	case SCREEN_Z: return Source_z;
 	
 	case SCREEN_LMOD: return Source_left_mod;
 	case SCREEN_RMOD: return Source_right_mod;
