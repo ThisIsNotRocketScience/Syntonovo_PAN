@@ -603,7 +603,11 @@ int speedup(int encid, int dir)
 	mul = (mul * mul) >> 13;
 	if (mul < 1) mul = 1;
 
-	return dir * mul;
+	int value = dir * mul;
+	if (value < -0x800) value = -0x800;
+	if (value > 0x800) value = 0x800;
+
+	return value;
 }
 
 int encoder_process(int encid, int astate, int cstate)
@@ -863,7 +867,7 @@ public:
 	int run()
 	{
 		if (_resend_full) {
-		printf("%x - %x @ %x\n", 0, sizeof(T), _address);
+		//printf("%x - %x @ %x\n", 0, sizeof(T), _address);
 			_resend_full = false;
 			memcpy(&_prev, _data, sizeof(T));
 			sync_block(&rpi_sync, (uint8_t*)&_prev, _address, sizeof(T), sync_complete);
@@ -879,7 +883,7 @@ public:
 						break;
 					}
 				}
-		printf("%x - %x (max %x) @ %x\n", i, j, sizeof(T), _address);
+		//printf("%x - %x (max %x) @ %x\n", i, j, sizeof(T), _address);
 				memcpy(&((uint8_t*)&_prev)[i], &((uint8_t*)_data)[i], j - i);
 				sync_block(&rpi_sync, &((uint8_t*)&_prev)[i], _address + i, j - i, sync_complete);
 				return 0;
