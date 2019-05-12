@@ -280,6 +280,12 @@ SWITCH(SELUNACR, 57, 0)
 SWITCH(POLYMODE1, 58, 0)
 SWITCH(POLYMODE2, 59, 0)
 
+SWITCH(KEYPRIO1, 60, 0)
+SWITCH(KEYPRIO2, 61, 0)
+
+// 60 key priority mode
+// 61 key priority mode
+
 #define LfoParamFlags_LfoRetrigger 0x01
 //struct lfo {
 //	uint16_t flags; // including key range

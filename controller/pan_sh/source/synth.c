@@ -29,6 +29,7 @@ void ports_value(int portid, uint16_t value);
 
 void pad_zero();
 
+
 const int KEYBOARD_X = 0;
 const int KEYBOARD_Y = 1;
 const int KEYBOARD_Z = 2;
@@ -618,7 +619,9 @@ static void update_note()
 		return;
 	}
 
-	int note_change = (notestack_first().note << 8) != synth_param[NOTE].value;
+	int new_note_value = (notestack_first().note << 8);
+	int is_new_note = new_note_value != synth_param[NOTE].value;
+	int note_change = is_new_note;
 
 	int retrigger = 1;
 	if (synth_param[GATE].value != 0xffff) {
@@ -626,19 +629,24 @@ static void update_note()
 		note_change = 1;
 	}
 
-	synth_param[NOTE].value = notestack_first().note << 8;
-	update_porta_time(retrigger);
-	virt_NOTE();
+	if (is_new_note) {
+		synth_param[NOTE].value = new_note_value;
+		synth_param[NOTE2].value = new_note_value;
+		synth_param[NOTE3].value = new_note_value;
+		update_porta_time(retrigger);
+		virt_NOTE();
+	}
 
-#if FIXME
+	synth_param[NOTE2].value = (notestack_second().note << 8);
+	synth_param[NOTE3].value = (notestack_third().note << 8);
+
 	if (note_change || retrigger) {
-		for (int i = 0; i < SYNTH_PARAM_COUNT; i++) {
-			if (synth_param[i].flags & SubParamFlags_LfoRetrigger) {
-				lfo_reset(i, synth_param[i].lfo_reset_phase);
+		for (int i = 0; i < 16; i++) {
+			if (lfo_param[i].flags & LfoParamFlags_LfoRetrigger) {
+				lfo_reset(i, lfo_param[i].reset_phase);
 			}
 		}
 	}
-#endif
 
 	if (synth_param[GATE].value != 0xffff) {
 		synth_param[GATE].value = 0xffff;
@@ -665,6 +673,11 @@ void control_cb(int param, int subparam, uint16_t value)
 			}
 			else if ((value & 0xFF00) == 0x100) {
 				shiftctrl_clear(value & 0x7f);
+			}
+
+			if ((value & 0x7f) == KEYPRIO1 || (value & 0x7f) == KEYPRIO2) {
+				notestack_init(shiftctrl_flag_state(KEYPRIO1) | (shiftctrl_flag_state(KEYPRIO2) << 1));
+				update_note();
 			}
 		}
 
@@ -1477,6 +1490,16 @@ void virt_NOTE()
 	synth_param[NOTE].last = newvalue;
 }
 
+void virt_NOTE2()
+{
+
+}
+
+void virt_NOTE3()
+{
+
+}
+
 void virt_PORTAMENTO_TIME()
 {
 	do_smooth(PORTAMENTO_TIME);
@@ -1509,10 +1532,27 @@ void virt_VCO1_PITCH()
 	process_param_note(VCO1_PITCH, VCO1_OCTAVE, value, 24);
 }
 
+int32_t note_distance(int notectrl, int polymode)
+{
+	int curmode = shiftctrl_flag_state(POLYMODE1) | (shiftctrl_flag_state(POLYMODE2) << 1);
+	if (curmode != polymode) return 0;
+	return (int32_t)synth_param[notectrl].value - (int32_t)synth_param[NOTE].value;
+}
+
+uint16_t add_clamp_signed(uint16_t a, int16_t b)
+{
+	int value = (int32_t)a + (int32_t)b;
+	if (value < 0) return 0;
+	else if (value > 65535) return 65535;
+	return (uint16_t)value;
+}
+
 void virt_VCO2_PITCH()
 {
 	do_smooth(VCO2_PITCH);
-	int32_t value = signed_scale(synth_param[NOTE].last, synth_param[VCO1_PITCH].note);
+
+	int add = note_distance(NOTE2, 1);
+	int32_t value = signed_scale(add_clamp_signed(synth_param[NOTE].last, add), synth_param[VCO1_PITCH].note);
 	//value = note_add(value, note_scale(synth_param[VCO1_PITCH].value, 24 * 0x4000 / 128));
 	value = note_add(value, note_scale(synth_param[VCO2_PITCH].value, 24 * 0x4000 / 128));
 
@@ -1522,7 +1562,9 @@ void virt_VCO2_PITCH()
 void virt_VCO3_PITCH()
 {
 	do_smooth(VCO3_PITCH);
-	int32_t value = signed_scale(synth_param[NOTE].last, synth_param[VCO1_PITCH].note);
+
+	int add = note_distance(NOTE3, 1);
+	int32_t value = signed_scale(add_clamp_signed(synth_param[NOTE].last, add), synth_param[VCO1_PITCH].note);
 	//value = note_add(value, note_scale(synth_param[VCO1_PITCH].value, 24 * 0x4000 / 128));
 	value = note_add(value, note_scale(synth_param[VCO3_PITCH].value, 24 * 0x4000 / 128));
 
@@ -1653,7 +1695,14 @@ void virt_RETRIGGER()
 void virt_MASTER_PITCH()
 {
 	do_smooth(MASTER_PITCH);
-	synth_param[MASTER_PITCH].last = (((int32_t)synth_param[MASTER_PITCH].value - 0x8000) * 12) / 128 + 0x8000;
+
+	int32_t value = (((int32_t)synth_param[MASTER_PITCH].value - 0x8000) * 12) / 128 + 0x8000;
+	int modvalue = synth_param[MASTER_PITCH].sum;
+	value += modvalue;
+	if (value < 0) value = 0;
+	else if (value > 65535) value = 65535;
+
+	synth_param[MASTER_PITCH].last = value;
 }
 
 void virt_MASTER_PITCH2()
@@ -1819,24 +1868,43 @@ int32_t pad_threshold(int32_t value, int i)
 		scale = controller_param[2].scale >> 3;
 		break;
 	case 3:
-		scale = controller_param[4].scale >> 4;
+		dz = controller_param[3].deadzone >> 3;
+		scale = controller_param[3].scale >> 4;
 		break;
 	case 4:
+		dz = controller_param[6].deadzone >> 3;
 		scale = controller_param[6].scale >> 4;
 		break;
 	case 5:
+		dz = controller_param[8].deadzone >> 3;
 		scale = controller_param[8].scale >> 4;
 		break;
-	case 6:
+	case 6: // modl
+		dz = controller_param[4].deadzone >> 3;
+		scale = controller_param[4].scale >> 4;
+		break;
+	case 7: // susl
+		dz = controller_param[6].deadzone >> 3;
+		scale = controller_param[6].scale >> 4;
+		break;
+	case 8: // unal
+		dz = controller_param[8].deadzone >> 3;
+		scale = controller_param[8].scale >> 4;
+		break;
+	case 9: // modr
+		dz = controller_param[5].deadzone >> 3;
 		scale = controller_param[5].scale >> 4;
 		break;
-	case 7:
+	case 10: // susr
+		dz = controller_param[7].deadzone >> 3;
 		scale = controller_param[7].scale >> 4;
 		break;
-	case 8:
+	case 11: // unar
+		dz = controller_param[9].deadzone >> 3;
 		scale = controller_param[9].scale >> 4;
 		break;
 	}
+
 	if (value < -dz) value += dz;
 	else if (value > dz) value -= dz;
 	else return 0;

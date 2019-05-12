@@ -63,6 +63,20 @@ struct note_t notestack_second()
 	return notestack[notestack_top - 2];
 }
 
+struct note_t notestack_third()
+{
+	if (notestack_top == 0) {
+		return notestack[0];
+	}
+	else if (notestack_top == 1) {
+		return notestack[0];
+	}
+	else if (notestack_top == 2) {
+		return notestack[0];
+	}
+	return notestack[notestack_top - 3];
+}
+
 static struct note_t makenote(int note, uint32_t velocity)
 {
 	static uint32_t noteindex = 0;

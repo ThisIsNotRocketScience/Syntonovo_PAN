@@ -35,5 +35,6 @@ struct note_t
 int notestack_empty();
 struct note_t notestack_first();
 struct note_t notestack_second();
+struct note_t notestack_third();
 
 #endif /* NOTESTACK_H_ */

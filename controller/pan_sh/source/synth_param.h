@@ -22,15 +22,16 @@ typedef struct _param_t
 	int16_t note;
 } param_t;
 
-enum SubParamFlags_t
-{
-	SubParamFlags_AdsrRetrigger = 1,
-	SubParamFlags_AdRetrigger = 2,
-	SubParamFlags_LfoRetrigger = 4,
-	SubParamFlags_SmoothUpdate = 8,
+//enum SubParamFlags_t
+//{
+//	SubParamFlags_AdsrRetrigger = 1,
+//	SubParamFlags_AdRetrigger = 2,
+//	SubParamFlags_LfoRetrigger = 4,
 
-	SubParamFlags_max = 0xffff
-};
+#define SubParamFlags_SmoothUpdate 8
+
+//	SubParamFlags_max = 0xffff
+//};
 
 #define SYNTH_PARAM_COUNT (256)
 extern param_t synth_param[SYNTH_PARAM_COUNT];
