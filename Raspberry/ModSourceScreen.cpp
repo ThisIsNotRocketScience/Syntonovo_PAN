@@ -49,7 +49,7 @@ ModSource_t ModSourceScreen::ModTypeFromScreen(Screens_t screen)
 
 	case SCREEN_X: return Source_x;
 	case SCREEN_Y: return Source_y;
-	case SCREEN_Z: return Source_y;
+	case SCREEN_Z: return Source_z;
 	
 	case SCREEN_LMOD: return Source_left_mod;
 	case SCREEN_RMOD: return Source_right_mod;
@@ -124,21 +124,21 @@ ModSourceScreen::ModSourceScreen(Screens_t screen)
 	case SCREEN_ENVELOPE:
 		HasActiveInstanceDisplay = true;
 
-		EnableButton(3, "Legato", MenuEntry_EnvelopeToggle, Envelope_Staccato);
+		EnableButton(3, "Legato", MenuEntry_EnvelopeToggle, Envelope_Retrigger);
 
 		EnableAvailableEncoder("Attack", MenuEntry_EnvelopeValue, Envelope_Attack);
 		EnableAvailableEncoder("Decay", MenuEntry_EnvelopeValue, Envelope_Decay);
 		EnableAvailableEncoder("Sustain", MenuEntry_EnvelopeValue, Envelope_Sustain);
 		EnableAvailableEncoder("Release", MenuEntry_EnvelopeValue, Envelope_Release);
-		EnableAvailableEncoder("Curve", MenuEntry_EnvelopeValue, Envelope_Curve);
+//		EnableAvailableEncoder("Curve", MenuEntry_EnvelopeValue, Envelope_Curve);
 
 		break;
 	case SCREEN_LFO:
-		EnableButton(3, "Reset on key", MenuEntry_EnvelopeToggle, Envelope_Staccato);
+		EnableButton(3, "Reset on key", MenuEntry_EnvelopeToggle, LFO_ResetOnKey);
 		EnableAvailableEncoder("Speed", MenuEntry_EnvelopeValue, LFO_Speed);
-		EnableAvailableEncoder("Shape", MenuEntry_EnvelopeValue, LFO_Shape);
+	//	EnableAvailableEncoder("Shape", MenuEntry_EnvelopeValue, LFO_Shape);
 		EnableAvailableEncoder("Reset Phase", MenuEntry_EnvelopeValue, LFO_ResetPhase);
-		EnableAvailableEncoder("Depth", MenuEntry_EnvelopeValue, LFO_Depth);
+		//EnableAvailableEncoder("Depth", MenuEntry_EnvelopeValue, LFO_Depth);
 		HasActiveInstanceDisplay = true;
 		break;
 	}
@@ -236,6 +236,10 @@ void ModSourceScreen::SetEncoderNames()
 		encoders[1][i].style = row->targets[i].outputid!= NOMODTARGET ? MenuEntry_ModMatrixValue: MenuEntry_Ghosted;
 		
 		encoders[1][i].SetTitle(GetModulationTargetName(row->targets[i].outputid));
+	}
+	for (int i = 0; i < 14; i++)
+	{
+		buttons[i].Instance = ActiveInstance;
 	}
 }
 

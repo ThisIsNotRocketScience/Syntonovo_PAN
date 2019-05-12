@@ -56,6 +56,9 @@ typedef struct FinalPan_GuiResources_t
 {
 	ImTextureID MainBG;
 	ImTextureID RootBG;
+	ImTextureID GotoIconLeft;
+	ImTextureID GotoIconRight;
+
 	ImTextureID TestBG;
 	ImTextureID VCF2;
 	ImTextureID F[__FILT_COUNT];
@@ -174,17 +177,29 @@ public:
 
 };
 
+enum icons
+{
+	Icon_NO,
+	Icon_ON,
+	Icon_OFF,
+	Icon_GOTOL,
+	Icon_GOTOR,
+	Icon___ICONCOUNT
+};
+
 class sidebutton_t : public _control_t
 {
 public:
 	void UpdateLed(bool active);
-
+	icons myIcon;
+	sidebutton_t();
 	int x;
 	int lx2;
 	int y;
 	int y2;
 	int style;
 	int target;
+	int Instance;
 
 	ledmodes ledmode;
 

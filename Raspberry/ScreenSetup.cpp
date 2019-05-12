@@ -2,6 +2,10 @@
 #include "gui.h"
 #include "PanPreset.h"
 
+extern int DecodeCurrentEffect();
+extern void SetEffect(int effect);
+
+
 
 _screensetup_t::_screensetup_t(_screensetup_t *parent)
 {
@@ -244,20 +248,20 @@ void _screensetup_t::Action(int action)
 	{
 		int ef = (DecodeCurrentEffect());
 		int newef = (ef + 1) % 8;
-		printf("effect %d -> %d -> ", ef, newef);
+//		printf("effect %d -> %d -> ", ef, newef);
 		SetEffect(newef);
 		ef = (DecodeCurrentEffect());
-		printf("%d\n", ef);
+	//	printf("%d\n", ef);
 	}break;
 
 	case MenuAction_FX_Prev: 
 	{
 		int ef = (DecodeCurrentEffect());
 		int newef = (ef + 7) % 8;
-		printf("effect %d -> %d -> ", ef, newef);
+//		printf("effect %d -> %d -> ", ef, newef);
 		SetEffect(newef);
 		ef = (DecodeCurrentEffect());
-		printf("%d\n", ef);
+	//	printf("%d\n", ef);
 	}break;
 
 	

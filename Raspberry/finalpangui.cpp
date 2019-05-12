@@ -445,6 +445,11 @@ void _control_t::SketchRightDelta(int delta)
 	}
 }
 
+sidebutton_t::sidebutton_t()
+{
+	myIcon = Icon_NO;
+}
+
 void _control_t::Activate() {
 	SetupEncoderSet(currentencoderset);
 }
@@ -622,6 +627,8 @@ void sidebutton_t::Pressed()
 	case MenuEntry_Action: Parent->Action(target); break;
 	case MenuEntry_EncoderSet: Parent->SetupEncoderSet(target); break;
 	case MenuEntry_Toggle: gCurrentPreset.ToggleSwitch((SwitchEnum)target); break;
+
+	case MenuEntry_EnvelopeToggle: gCurrentPreset.ToggleModulationSwitch(target, Instance);
 	}
 }
 
@@ -649,6 +656,10 @@ void sidebutton_t::Render(bool active, float DT)
 {
 	if (enabled)
 	{
+		icons icon = myIcon;
+
+
+
 		ImGui::PushFont(gGuiResources.SmallFont);
 		int x2 = x;
 		if (Align == align_right)
@@ -715,9 +726,21 @@ void sidebutton_t::Render(bool active, float DT)
 
 		break;
 
+		case MenuEntry_Page:
+			if (Align == align_right) icon = Icon_GOTOR; else icon = Icon_GOTOL;
+			break;
+		case MenuEntry_EnvelopeToggle:
+			if (gCurrentPreset.GetModulationSwitch(target, Instance)) icon = Icon_ON; else icon = Icon_OFF;
+			break;
 		case MenuEntry_Toggle:
 
 			int id = gCurrentPreset.GetSwitch((SwitchEnum)target) ? 1 : 0;
+			if (id) icon = Icon_ON; else icon = Icon_OFF;
+			break;
+		}
+
+		if (icon != Icon_NO)
+		{
 			drawline = false;
 			if (Align == align_right)
 			{
@@ -729,19 +752,28 @@ void sidebutton_t::Render(bool active, float DT)
 				ImGui::SetCursorPos(ImVec2(x - 15, y));
 				xoff = 15 + ParamMasterMargin;
 			}
+			ImTextureID icim;
+			switch (icon)
+			{
+			case Icon_ON:icim = gGuiResources.OnOff[1]; break;
+			case Icon_OFF:icim = gGuiResources.OnOff[0]; break;
+
+			case Icon_GOTOL:icim = gGuiResources.GotoIconLeft; break;
+			case Icon_GOTOR:icim = gGuiResources.GotoIconRight; break;
+			}
+
 			if (active)
 			{
 				ImColor ic(gGuiResources.Highlight);
-				ImGui::Image(gGuiResources.OnOff[id], ImVec2(30, 30), ImVec2(0, 0), ImVec2(1, 1), (ImVec4)ic);
+				ImGui::Image(icim, ImVec2(30, 30), ImVec2(0, 0), ImVec2(1, 1), (ImVec4)ic);
 			}
 			else
 			{
-				ImGui::Image(gGuiResources.OnOff[id], ImVec2(30, 30));
+				ImGui::Image(icim, ImVec2(30, 30));
 
 			}
-			break;
-		}
 
+		}
 
 		ImGui::SetCursorPos(ImVec2(x2 + xoff, y));
 		if (active)
@@ -875,6 +907,8 @@ void FinalPan_LoadResources()
 	gGuiResources.MainBG = Raspberry_LoadTexture("PAN__MAINBG.png");
 	gGuiResources.TestBG = Raspberry_LoadTexture("PAN_TEST.png");
 
+	gGuiResources.GotoIconLeft = Raspberry_LoadTexture("PAN__GOTOL.png");
+	gGuiResources.GotoIconRight = Raspberry_LoadTexture("PAN__GOTOR.png");
 
 	gGuiResources.VCF2 = Raspberry_LoadTexture("PAN__FILT_BG.png");
 	gGuiResources.F[Filt_LP] = Raspberry_LoadTexture("PAN__FILT_LP.png");
@@ -1157,42 +1191,21 @@ public:
 		}
 	}
 	char Current;
-
-	virtual void Render(bool active, float DT)
-	{
-		if (active)
-		{
-			for (int i = -2; i < 3; i++)
-			{
-				if (i != 0)
-				{
-					ImVec2 tl(x, y + i * (LetterBoxH + ParamMasterMargin));
-					ImVec2 br(x + LetterBoxW, y + LetterBoxH + i * (LetterBoxH + ParamMasterMargin));
-					ImGui::GetWindowDrawList()->AddRect(tl, br, Dimmed(abs(i), active ? gGuiResources.Highlight : gGuiResources.Normal), 0, 0, 2);
-					auto s = ImGui::CalcTextSize(&Current, &Current + 1);
-					ImGui::SetCursorPos(ImVec2(x + LetterBoxW / 2 - s.x / 2, y + LetterBoxH / 2 - s.y / 2 + i * (LetterBoxH + ParamMasterMargin)));
-					ImGui::TextColored(ImVec4(ImColor(Dimmed(abs(i), active ? gGuiResources.Highlight : gGuiResources.Normal))), "%c", GetDeltaChar(Current, i));
-				}
-			}
-		}
-		ImVec2 tl(x, y);
-		ImVec2 br(x + LetterBoxW, y + LetterBoxH);
-		ImGui::GetWindowDrawList()->AddRect(tl, br, active ? gGuiResources.Highlight : gGuiResources.Normal, 0, 0, 2);
-		auto s = ImGui::CalcTextSize(&Current, &Current + 1);
-		ImGui::SetCursorPos(ImVec2(x + LetterBoxW / 2 - s.x / 2, y + LetterBoxH / 2 - s.y / 2));
-		ImGui::Text("%c", Current);
-	}
+	
+	void Render(bool active, float DT);
 };
 
 class PresetScreen : public _screensetup_t
 {
 public:
 	std::vector<LetterControl*> Letters;
+	
 	virtual void Action(int action)
 	{
 		switch (action)
 		{
 		case MenuAction_No:
+			
 			gGui.GotoPage(SCREEN_HOME);
 			break;
 		case MenuAction_Yes:
@@ -1203,8 +1216,52 @@ public:
 			}
 			gGui.GotoPage(SCREEN_HOME);
 			break;
+		case MenuAction_Backspace:
+		{
+			int N = GetActiveLetter();
+			if (N < 0)
+			{
+				N = Letters.size() - 1;
+				
+			}
+			SetActiveLetter(N - 1);
+			Letters[N]->Current = ' ';
+			
+		}
+		break;
+		case MenuAction_SpaceBar:
+		{
+			int N = GetActiveLetter();
+			if (N < 0)
+			{
+				N = 0;
+			}
+			SetActiveLetter(N + 1);
+			Letters[N]->Current = ' ';
+		
+		}
+		break;
 		}
 	}
+	int LastActiveLetter;
+	void SetActiveLetter(int N)
+	{
+		if (N >= Letters.size()) N = Letters.size() - 1;
+		_control_t *c = Letters[N];
+		for (int i = 0; i < ControlsInOrder.size(); i++)
+		{
+			if (ControlsInOrder[i] == c)
+			{
+				ActiveControl =  i;
+				return;
+			}
+		}
+	}
+	int GetActiveLetter()
+	{
+		return LastActiveLetter;
+	}
+
 	PresetScreen()
 	{
 
@@ -1214,6 +1271,9 @@ public:
 		}
 
 		EnableButton(10, "Cancel", MenuEntry_Action, MenuAction_No);
+
+		EnableButton(5, "Space", MenuEntry_Action, MenuAction_SpaceBar);
+		EnableButton(6, "Backspace", MenuEntry_Action, MenuAction_Backspace);
 
 		EnableButton(11, "OK", MenuEntry_Action, MenuAction_Yes);
 	}
@@ -1232,12 +1292,38 @@ public:
 	void AddLetterControl(int x, int y, int id)
 	{
 		auto L = new LetterControl(x, y, id);
+		L->Parent = this;
 		Letters.push_back(L);
 		ControlsInOrder.push_back(L);
 	}
 };
 
+void LetterControl::Render(bool active, float DT)
+{
 
+	if (active)
+	{
+		((PresetScreen*)Parent)->LastActiveLetter = id;
+		for (int i = -2; i < 3; i++)
+		{
+			if (i != 0)
+			{
+				ImVec2 tl(x, y + i * (LetterBoxH + ParamMasterMargin));
+				ImVec2 br(x + LetterBoxW, y + LetterBoxH + i * (LetterBoxH + ParamMasterMargin));
+				ImGui::GetWindowDrawList()->AddRect(tl, br, Dimmed(abs(i), active ? gGuiResources.Highlight : gGuiResources.Normal), 0, 0, 2);
+				auto s = ImGui::CalcTextSize(&Current, &Current + 1);
+				ImGui::SetCursorPos(ImVec2(x + LetterBoxW / 2 - s.x / 2, y + LetterBoxH / 2 - s.y / 2 + i * (LetterBoxH + ParamMasterMargin)));
+				ImGui::TextColored(ImVec4(ImColor(Dimmed(abs(i), active ? gGuiResources.Highlight : gGuiResources.Normal))), "%c", GetDeltaChar(Current, i));
+			}
+		}
+	}
+	ImVec2 tl(x, y);
+	ImVec2 br(x + LetterBoxW, y + LetterBoxH);
+	ImGui::GetWindowDrawList()->AddRect(tl, br, active ? gGuiResources.Highlight : gGuiResources.Normal, 0, 0, 2);
+	auto s = ImGui::CalcTextSize(&Current, &Current + 1);
+	ImGui::SetCursorPos(ImVec2(x + LetterBoxW / 2 - s.x / 2, y + LetterBoxH / 2 - s.y / 2));
+	ImGui::Text("%c", Current);
+}
 class BankSelectScreen : public _screensetup_t
 {
 public:
@@ -1359,11 +1445,15 @@ public:
 	BankList* list;
 	SavePresetScreen()
 	{
-		mybank = &df;
-		list = new BankList(400, 150, mybank, "");
+		
+		list = new BankList(400, 150, &df, "");
+		ControlsInOrder.push_back(list);
 		EnableButton(7, "Cancel", MenuEntry_Action, MenuAction_Home);
 		SetTitle("Save preset");
 		AddText(140, 50, "select bank and press a preset button to save");
+
+
+
 
 	}
 	virtual void Activate()
@@ -1371,7 +1461,7 @@ public:
 		int *CurrentBank = &gPanState.BankLeft;
 		list->bankid = CurrentBank;
 		df = *CurrentBank;
-		if (Side == Left)
+		/*if (Side == Left)
 		{
 			SetTitle("Select Left Bank");
 		}
@@ -1379,13 +1469,13 @@ public:
 		{
 			CurrentBank = &gPanState.BankRight;
 			SetTitle("Select Right Bank");
-		}
+		}*/
 		SetNames();
 	};
 
 	void SetNames()
 	{
-
+		list->bankid = &df;
 		EnableButton(1, (df == 0) ? "A (current)" : "A", MenuEntry_Action, MenuAction_BankA);
 		EnableButton(2, (df == 1) ? "B (current)" : "B", MenuEntry_Action, MenuAction_BankB);
 		EnableButton(3, (df == 2) ? "C (current)" : "C", MenuEntry_Action, MenuAction_BankC);
@@ -1444,15 +1534,18 @@ void EncoderLineDisplay::Render(bool active, float dt)
 
 void _screensetup_t::AddVCONextPrev()
 {
-	EnableButton(6, "<< previous", MenuEntry_Action, MenuAction_PrevVCO);
-	EnableButton(13, ">> next", MenuEntry_Action, MenuAction_NextVCO);
+	EnableButton(6, "previous", MenuEntry_Action, MenuAction_PrevVCO);
+	buttons[6].myIcon = Icon_GOTOL;
+	EnableButton(13, "next", MenuEntry_Action, MenuAction_NextVCO);
+	buttons[13].myIcon = Icon_GOTOR;
 }
 
 void _screensetup_t::AddVCF2NextPrev()
 {
-	EnableButton(6, "<", MenuEntry_Action, MenuAction_PrevVCF2);
-	EnableButton(13, ">", MenuEntry_Action, MenuAction_NextVCF2);
-
+	EnableButton(6, "previous", MenuEntry_Action, MenuAction_PrevVCF2);
+	buttons[6].myIcon = Icon_GOTOL;
+	EnableButton(13, "next", MenuEntry_Action, MenuAction_NextVCF2);
+	buttons[13].myIcon = Icon_GOTOR;
 }
 
 
@@ -1515,7 +1608,7 @@ public:
 		snprintf(txt, 200, "Current effect: %s", EffectChipStrings[DecodeCurrentEffect()][0]);
 
 		auto S = ImGui::CalcTextSize(txt);
-		ImGui::SetCursorPos(ImVec2(512-S.x/2, MButtonHeight(1)));
+		ImGui::SetCursorPos(ImVec2(512 - S.x / 2, MButtonHeight(1)));
 		ImGui::Text(txt);
 		ImGui::PopFont();
 		ImGui::PushFont(gGuiResources.SmallFont);
@@ -1541,7 +1634,7 @@ public:
 			snprintf(txt, 10, "%d", i + 1);
 			bool used = false;
 
-			int x = (i - 4 ) * 40 + 512;
+			int x = (i - 4) * 40 + 512;
 			int y = MButtonHeight(2);
 			RenderLettersInABox(x, y, i == DecodeCurrentEffect(), txt, 35, 35, true);
 		}
@@ -1633,23 +1726,23 @@ void Gui::BuildScreens()
 	Screens[SCREEN_EFFECTS]->EnableButton(2, "Previous", MenuEntry_Action, MenuAction_FX_Prev);
 	Screens[SCREEN_EFFECTS]->EnableButton(9, "Next", MenuEntry_Action, MenuAction_FX_Next);
 
-	Screens[SCREEN_VCF2a]->SetTitle("Filter 2a");
-	Screens[SCREEN_VCF2a]->EnableButton(12,"to VCF2 Mix", MenuEntry_Page, SCREEN_VCF2MIX);
-	Screens[SCREEN_VCF2b]->SetTitle("Filter 2b");
-	Screens[SCREEN_VCF2b]->EnableButton(12,"to VCF2 Mix", MenuEntry_Page, SCREEN_VCF2MIX);
-	Screens[SCREEN_VCF2c]->SetTitle("Filter 2c");
-	Screens[SCREEN_VCF2c]->EnableButton(12,"to VCF2 Mix", MenuEntry_Page, SCREEN_VCF2MIX);
-	Screens[SCREEN_VCF2d]->SetTitle("Filter 2d");
-	Screens[SCREEN_VCF2d]->EnableButton(12,"to VCF2 Mix", MenuEntry_Page, SCREEN_VCF2MIX);
+	Screens[SCREEN_VCF2a]->SetTitle("VCF2 A");
+	Screens[SCREEN_VCF2a]->EnableButton(12, "to VCF2 Mix", MenuEntry_Page, SCREEN_VCF2MIX);
+	Screens[SCREEN_VCF2b]->SetTitle("VCF2 B");
+	Screens[SCREEN_VCF2b]->EnableButton(12, "to VCF2 Mix", MenuEntry_Page, SCREEN_VCF2MIX);
+	Screens[SCREEN_VCF2c]->SetTitle("VCF2 C");
+	Screens[SCREEN_VCF2c]->EnableButton(12, "to VCF2 Mix", MenuEntry_Page, SCREEN_VCF2MIX);
+	Screens[SCREEN_VCF2d]->SetTitle("VCF2 D");
+	Screens[SCREEN_VCF2d]->EnableButton(12, "to VCF2 Mix", MenuEntry_Page, SCREEN_VCF2MIX);
 
-	Screens[SCREEN_VCF2_structure]->SetTitle("Filter 2 routing");
-	Screens[SCREEN_VCF1]->EnableButton(12,"to VCF1 Mix", MenuEntry_Page, SCREEN_VCF1MIX);
+	Screens[SCREEN_VCF2_structure]->SetTitle("VCF2 routing");
+	Screens[SCREEN_VCF1]->EnableButton(12, "to VCF1 Mix", MenuEntry_Page, SCREEN_VCF1MIX);
 
 
-	Screens[SCREEN_VCO4]->SetTitle("Oscillator 4");
-	Screens[SCREEN_VCO5]->SetTitle("Oscillator 5");
-	Screens[SCREEN_VCO6]->SetTitle("Oscillator 6");
-	Screens[SCREEN_VCO7]->SetTitle("Oscillator 7");
+	Screens[SCREEN_VCO4]->SetTitle("VCO 5");
+	Screens[SCREEN_VCO5]->SetTitle("VCO 6");
+	Screens[SCREEN_VCO6]->SetTitle("VCO 7");
+	Screens[SCREEN_VCO7]->SetTitle("VCO 8");
 	Screens[SCREEN_VCO4]->EncodersThatOpenThisScreen.push_back(encoder_VCO4);
 	Screens[SCREEN_VCO5]->EncodersThatOpenThisScreen.push_back(encoder_VCO5);
 	Screens[SCREEN_VCO6]->EncodersThatOpenThisScreen.push_back(encoder_VCO6);
@@ -1660,6 +1753,12 @@ void Gui::BuildScreens()
 	Screens[SCREEN_SYSTEM]->EnableAvailableButton("Recalibrate Oscillators", MenuEntry_Action, MenuAction_CalibrateOscillators);
 	Screens[SCREEN_SYSTEM]->EnableAvailableButton("Recalibrate Pads", MenuEntry_Action, MenuAction_CalibratePads);
 	Screens[SCREEN_SYSTEM]->EnableButton(7, "Done", MenuEntry_Action, MenuAction_Home);
+	Screens[SCREEN_SYSTEM]->EnableAvailableButton("Polymode bit 0", MenuEntry_Toggle, Switch_POLYMODE1);
+	Screens[SCREEN_SYSTEM]->EnableAvailableButton("Polymode bit 1", MenuEntry_Toggle, Switch_POLYMODE2);
+	Screens[SCREEN_SYSTEM]->EnableAvailableButton("KeyPrio bit 0", MenuEntry_Toggle, Switch_KEYPRIO1);
+	Screens[SCREEN_SYSTEM]->EnableAvailableButton("KeyPrio bit 1", MenuEntry_Toggle, Switch_KEYPRIO2);
+
+	Screens[SCREEN_SYSTEM]->EnableAvailableButton("Headphone enable", MenuEntry_Toggle, Switch_SELVCF1MOST);
 
 	Screens[SCREEN_HOME]->EnableButton(7, "Change name", MenuEntry_Page, SCREEN_PRESETNAME);//(512, 40, "Some Sound");
 	Screens[SCREEN_HOME]->EnableButton(8, "Save preset", MenuEntry_Page, SCREEN_PRESETSAVE);//(512, 40, "Some Sound");
@@ -1675,9 +1774,9 @@ void Gui::BuildScreens()
 
 	Screens[SCREEN_PORTAMENTO]->SetTitle("Portamento");
 
-	Screens[SCREEN_COLORS]->AddLedControl("Low", GetEncoderX(1)-20, 300, Led_Low);
-	Screens[SCREEN_COLORS]->AddLedControl("High", GetEncoderX(5)-20, 300, Led_High);
-	Screens[SCREEN_COLORS]->AddLedControl("Active", GetEncoderX(9)-20, 300, Led_Active);
+	Screens[SCREEN_COLORS]->AddLedControl("Low", GetEncoderX(1) - 20, 300, Led_Low);
+	Screens[SCREEN_COLORS]->AddLedControl("High", GetEncoderX(5) - 20, 300, Led_High);
+	Screens[SCREEN_COLORS]->AddLedControl("Active", GetEncoderX(9) - 20, 300, Led_Active);
 	Screens[SCREEN_COLORS]->EnableButton(7, "Done", MenuEntry_Action, MenuAction_Home);
 
 
@@ -1763,31 +1862,31 @@ void Gui::BuildScreens()
 	Screens[SCREEN_VCF2d]->AddVCF2NextPrev();
 
 
-	Screens[SCREEN_VCO1]->SetTitle("Oscillator 1");
+	Screens[SCREEN_VCO1]->SetTitle("VCO1");
 	Screens[SCREEN_VCO1]->EncodersThatOpenThisScreen.push_back(encoder_VCO1);
 
-	Screens[SCREEN_VCO2]->SetTitle("Oscillator 2");
+	Screens[SCREEN_VCO2]->SetTitle("VCO2");
 	Screens[SCREEN_VCO2]->EncodersThatOpenThisScreen.push_back(encoder_VCO2);
 
-	Screens[SCREEN_VCO3]->SetTitle("Oscillator 3");
+	Screens[SCREEN_VCO3]->SetTitle("VCO3");
 	Screens[SCREEN_VCO3]->EncodersThatOpenThisScreen.push_back(encoder_VCO3);
 
-	Screens[SCREEN_VCF1]->SetTitle("Filter 1");
+	Screens[SCREEN_VCF1]->SetTitle("VCF1");
 	Screens[SCREEN_VCF1]->EncodersThatOpenThisScreen.push_back(encoder_VCF1Freq);
 
-	Screens[SCREEN_VCF2a]->SetTitle("Filter 2: A");
+	Screens[SCREEN_VCF2a]->SetTitle("VCF2: A");
 	Screens[SCREEN_VCF2a]->EncodersThatOpenThisScreen.push_back(encoder_VCF2a);
 	Screens[SCREEN_VCF2a]->EnableAvailableButton("Routing", MenuEntry_Action, MenuAction_OpenVCF2Structure);
 
-	Screens[SCREEN_VCF2b]->SetTitle("Filter 2: B");
+	Screens[SCREEN_VCF2b]->SetTitle("VCF2: B");
 	Screens[SCREEN_VCF2b]->EncodersThatOpenThisScreen.push_back(encoder_VCF2b);
 	Screens[SCREEN_VCF2b]->EnableAvailableButton("Routing", MenuEntry_Action, MenuAction_OpenVCF2Structure);
 
-	Screens[SCREEN_VCF2c]->SetTitle("Filter 2: C");
+	Screens[SCREEN_VCF2c]->SetTitle("VCF2: C");
 	Screens[SCREEN_VCF2c]->EncodersThatOpenThisScreen.push_back(encoder_VCF2c);
 	Screens[SCREEN_VCF2c]->EnableAvailableButton("Routing", MenuEntry_Action, MenuAction_OpenVCF2Structure);
 
-	Screens[SCREEN_VCF2d]->SetTitle("Filter 2: D");
+	Screens[SCREEN_VCF2d]->SetTitle("VCF2: D");
 	Screens[SCREEN_VCF2d]->EncodersThatOpenThisScreen.push_back(encoder_VCF2d);
 	Screens[SCREEN_VCF2d]->EnableAvailableButton("Routing", MenuEntry_Action, MenuAction_OpenVCF2Structure);
 

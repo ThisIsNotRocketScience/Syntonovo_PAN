@@ -109,6 +109,42 @@ public:
 class PanPreset_t {
 public:
 	char Name[PRESET_NAME_LENGTH];
+	bool GetModulationSwitch(int switchid, int instance)
+	{
+		switch (switchid)
+		{
+		case Envelope_Retrigger:
+		{
+			uint16_t *s = GetModParamPointer(Envelope_Switches, instance);
+			return ((*s) & SubParamFlags_AdsrRetrigger) > 0;
+
+		}break;
+		case LFO_ResetOnKey:
+		{
+			uint16_t *s = GetModParamPointer(LFO_Switches, instance);
+			return ((*s) & SubParamFlags_AdsrRetrigger) > 0;
+		}break;
+		}
+		return false;
+
+	}
+	void ToggleModulationSwitch(int switchid, int instance)
+	{
+		switch (switchid)
+		{
+		case Envelope_Retrigger:
+		{	
+			uint16_t *s = GetModParamPointer(Envelope_Switches, instance);
+			*s = ((*s) & ~SubParamFlags_AdsrRetrigger) | (~(*s) & SubParamFlags_AdsrRetrigger);
+
+		}break;
+		case LFO_ResetOnKey:
+		{
+			uint16_t *s = GetModParamPointer(LFO_Switches, instance);
+			*s = ((*s) & ~LfoParamFlags_LfoRetrigger) | (~(*s) & LfoParamFlags_LfoRetrigger);
+		}break;
+		}
+	}
 
 	void PutSwitch(SwitchEnum SwitchID, bool v)
 	{
@@ -235,7 +271,8 @@ public:
 		case KeyboardParam_ScaleLUna: return (uint16_t*)&controller[Controller_UnaCordaL].scale;
 		case KeyboardParam_ScaleRUna: return (uint16_t*)&controller[Controller_UnaCordaR].scale;
 
-
+		case Envelope_Switches:  return (uint16_t*)&env[instance].flags;
+		case LFO_Switches:  return (uint16_t*)&lfo[instance].flags;
 
 
 

@@ -81,7 +81,7 @@ CUSTOMENTRY("Octave", MenuEntry_Octave, Output_VCO3_OCTAVE)
 
 ENDMENU()
 
-MENU(VCO8, ledbutton_VCO3, "Noise VCO")
+MENU(VCO8, ledbutton_VCO3, "NSEf4")
 
 ENTRY("Color", MenuEntry_Pitch, Output_NOISE_COLOR)
 ENTRY("Saw -> VCF1", MenuEntry_Value, Output_DNSSAW_MIX1)
@@ -92,7 +92,7 @@ ENTRY("Noise -> VCF2", MenuEntry_Value, Output_DIGINS_MIX2)
 
 ENDMENU()
 
-MENU(VCO4, ledbutton_VCO4, "VCO 4")
+MENU(VCO4, ledbutton_VCO4, "VCO5")
 ENTRY("Pitch", MenuEntry_Pitch, Output_VCO4_PITCH)
 ENTRY("Pulsewidth", MenuEntry_Value, Output_VCO4_PW)
 CUSTOMENTRY("Square Output", MenuEntry_Toggle, Switch_SEL4SQR)
@@ -104,7 +104,7 @@ ENTRY("4567 Square -> VCF2", MenuEntry_Value, Output_VCO4567_MIX2)
 
 ENDMENU()
 
-MENU(VCO5, ledbutton_VCO4, "VCO 5")
+MENU(VCO5, ledbutton_VCO4, "VCO6")
 ENTRY("Pitch", MenuEntry_Pitch, Output_VCO5_PITCH)
 ENTRY("Pulsewidth", MenuEntry_Value, Output_VCO5_PW)
 CUSTOMENTRY("Square Output", MenuEntry_Toggle, Switch_SEL5SQR)
@@ -115,7 +115,7 @@ ENTRY("4567 Square -> VCF2", MenuEntry_Value, Output_VCO4567_MIX2)
 
 ENDMENU()
 
-MENU(VCO6, ledbutton_VCO4, "VCO 6")
+MENU(VCO6, ledbutton_VCO4, "VCO7")
 ENTRY("Pitch", MenuEntry_Pitch, Output_VCO6_PITCH)
 ENTRY("Pulsewidth", MenuEntry_Value, Output_VCO6_PW)
 CUSTOMENTRY("Square Output", MenuEntry_Toggle, Switch_SEL6SQR)
@@ -126,7 +126,7 @@ ENTRY("4567 Square -> VCF2", MenuEntry_Value, Output_VCO4567_MIX2)
 
 ENDMENU()
 
-MENU(VCO7, ledbutton_VCO4, "VCO 7")
+MENU(VCO7, ledbutton_VCO4, "VCO8")
 ENTRY("Pitch", MenuEntry_Pitch, Output_VCO7_PITCH)
 ENTRY("Pulsewidth", MenuEntry_Value, Output_VCO7_PW)
 CUSTOMENTRY("Square Output", MenuEntry_Toggle, Switch_SEL7SQR)
