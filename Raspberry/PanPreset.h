@@ -95,6 +95,27 @@ enum
 };
 
 
+#define NUM_LFOS (16)
+#define NUM_ENVS (16)
+#define NUM_OPERATORS (16)
+#define SYNTH_MODSOURCE_COUNT (64)
+
+typedef struct
+{
+	int16_t depth;
+	uint16_t sourceid;
+	uint8_t subsourceid;
+} PACK ModSourceSpec_t;
+
+
+class ModSourcesForOutputStruct
+{
+public:
+	int Sources;
+	ModSourceSpec_t SourceDetails[MODTARGET_COUNT * SYNTH_MODSOURCE_COUNT];
+	
+};
+
 class PanPreset_Listener
 {
 public:
@@ -325,11 +346,41 @@ public:
 		default: snprintf(targetbuffer, bufferlength, ""); break;
 		}
 	}
+	OutputEnum GetModulationOutput(OutputEnum inparam)
+	{
+		switch (inparam)
+		{
+		case Output_VCF1_LEVEL: return Output_VCF1_LIN;
+		case Output_VCF2_LEVEL: return Output_VCF2_LIN;
+		case Output_CLEANF_LEVEL: return Output_CLEANF_LIN;
+		}
+
+		return inparam;
+	}
+	void FillModSourcesForOutput(OutputEnum param, ModSourcesForOutputStruct *ModSources)
+	{
+		ModSources->Sources = 0;
+		for (int i = 0; i < SYNTH_MODSOURCE_COUNT; i++)
+		{
+			ModMatrixRow_t *mm = &modmatrix[i];
+			for (int j = 0; j < 11; j++)
+			{
+				ModTargetSpec_t *tt = &mm->targets[j];
+				if (tt->outputid == param && tt->depth != 0)
+				{
+					ModSourceSpec_t *mss = &ModSources->SourceDetails[ModSources->Sources];
+					mss->depth = tt->depth;
+					mss->sourceid = i;
+					mss->subsourceid = tt->sourceid;
+					ModSources->Sources++;
+				}
+			}
+		}
+	}
 
 	uint32_t switches[2];
 	uint16_t paramvalue[256];
 
-#define SYNTH_MODSOURCE_COUNT (64)
 	ModMatrixRow_t modmatrix[SYNTH_MODSOURCE_COUNT];
 
 	void TweakModMatrix(ModSource_t mod, int instance, int id, int delta, int deltamod = 1)
@@ -368,17 +419,14 @@ public:
 		return 0;
 	}
 
-#define NUM_LFOS (16)
 	LfoParam_t lfo[NUM_LFOS];
 
-#define NUM_ENVS (16)
 	EnvParam_t env[NUM_ENVS];
 
 //#define NUM_CONTROLLERS (11)
 
 	ControllerParam_t controller[NUM_CONTROLLERS];
 
-#define NUM_OPERATORS (16)
 	OperatorParam_t op[NUM_OPERATORS];
 
 	uint16_t ledbrightness;

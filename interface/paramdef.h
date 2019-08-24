@@ -282,8 +282,7 @@ SWITCH(POLYMODE2, 59, 0)
 SWITCH(KEYPRIO1, 60, 0)
 SWITCH(KEYPRIO2, 61, 0)
 
-SWITCH(KEYPRIO1, 60, 0)
-SWITCH(KEYPRIO2, 61, 0)
+
 
 // 60 key priority mode
 // 61 key priority mode

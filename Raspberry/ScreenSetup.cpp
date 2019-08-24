@@ -302,7 +302,7 @@ bool _screensetup_t::EnableButton(int i, const char *text, int style, int target
 	return false;
 }
 
-int _screensetup_t::EnableAvailableEncoder(char *text, int style, int target)
+int _screensetup_t::EnableAvailableEncoder(char *text, int style, int target, bool isdirectoutput)
 {
 	for (int i = 0; i < 11; i++)
 	{
@@ -311,6 +311,8 @@ int _screensetup_t::EnableAvailableEncoder(char *text, int style, int target)
 			encoders[currentencoderset][i].SetTitle(text);
 			encoders[currentencoderset][i].enabled = true;
 			encoders[currentencoderset][i].style = style;
+			encoders[currentencoderset][i].IsDirectOutput = isdirectoutput;
+
 			encoders[currentencoderset][i].target = target;
 			encoders[currentencoderset][i].ledmode = ledmode_solid;
 			return i;
@@ -442,6 +444,34 @@ void _screensetup_t::EncoderPress(FinalEncoderEnum button)
 		Modal->EncoderPress(button);
 		return;
 	}
+
+	int bottomencoderid = -1;
+
+	switch (button)
+	{
+	case encoder_F1: bottomencoderid = 0; break;
+	case encoder_F2: bottomencoderid = 1; break;
+	case encoder_F3: bottomencoderid = 2; break;
+	case encoder_F4: bottomencoderid = 3; break;
+	case encoder_F5: bottomencoderid = 4; break;
+	case encoder_F6: bottomencoderid = 5; break;
+	case encoder_F7: bottomencoderid = 6; break;
+	case encoder_F8: bottomencoderid = 7; break;
+	case encoder_F9: bottomencoderid = 8; break;
+	case encoder_F10: bottomencoderid = 9; break;
+	case encoder_F11: bottomencoderid = 10; break;
+	}
+
+	if (bottomencoderid > -1)
+	{
+		if (encoders[currentencoderset][bottomencoderid].IsDirectOutput)
+		{
+			
+			Modal = theParameterBindingModal;
+			Modal->Activate(); 
+			
+		}
+	}
 }
 
 int _screensetup_t::GetControlIndex(_control_t *c)
@@ -491,6 +521,18 @@ void _screensetup_t::SetupEncoderSet(int n)
 		{
 			encoders[i][j].skipencodercycling = doskip;
 		}
+	}
+
+	ModSourcesForOutputStruct MSFOS;
+	for (int i = 0; i < 11; i++)
+	{
+		if (encoders[n][i].enabled && encoders[n][i].IsDirectOutput)
+		{
+			OutputEnum targetparam = gCurrentPreset.GetModulationOutput((OutputEnum)encoders[n][i].target);
+			gCurrentPreset.FillModSourcesForOutput(targetparam, &MSFOS);
+			encoders[n][i].ModSourceCount = MSFOS.Sources;
+		}
+
 	}
 }
 

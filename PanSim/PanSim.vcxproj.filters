@@ -13,6 +13,15 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\PlatformRelated">
+      <UniqueIdentifier>{5e7eca55-8cb3-4a29-a5e1-5dde9fa0c820}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Screens">
+      <UniqueIdentifier>{f8143824-6e9e-476e-9025-b192521e9e7c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Controls">
+      <UniqueIdentifier>{708e01c5-a1ff-441e-9233-f85ccc0b1c18}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Image Include="ms-icon-150x150.png">
@@ -44,44 +53,47 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\libs\imgui-master\imgui.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\libs\imgui-master\imgui_draw.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\libs\lodepng-master\lodepng.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="PanSim.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\libs\gl3w-master\src\gl3w.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\libs\imgui-master\examples\sdl_opengl3_example\imgui_impl_sdl_gl3.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\Raspberry\finalpangui.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\libs\gl3w-master\src\gl3w.c">
+      <Filter>Source Files\PlatformRelated</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libs\imgui-master\imgui.cpp">
+      <Filter>Source Files\PlatformRelated</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libs\imgui-master\imgui_draw.cpp">
+      <Filter>Source Files\PlatformRelated</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libs\imgui-master\examples\sdl_opengl3_example\imgui_impl_sdl_gl3.cpp">
+      <Filter>Source Files\PlatformRelated</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libs\lodepng-master\lodepng.cpp">
+      <Filter>Source Files\PlatformRelated</Filter>
+    </ClCompile>
     <ClCompile Include="..\Raspberry\ModSourceScreen.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Screens</Filter>
     </ClCompile>
-    <ClCompile Include="..\Raspberry\BottomEncoder.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Raspberry\ScreenSetup.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\Raspberry\ModSourceSelectorModal.cpp">
+      <Filter>Source Files\Screens</Filter>
     </ClCompile>
     <ClCompile Include="..\Raspberry\ModTargetModal.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Raspberry\HomeScreen.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Screens</Filter>
     </ClCompile>
     <ClCompile Include="..\Raspberry\VCF2StructureScreen.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Screens</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Raspberry\BottomEncoder.cpp">
+      <Filter>Source Files\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Raspberry\ScreenSetup.cpp">
+      <Filter>Source Files\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Raspberry\HomeScreen.cpp">
+      <Filter>Source Files\Screens</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

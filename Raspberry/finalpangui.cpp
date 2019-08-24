@@ -450,7 +450,13 @@ sidebutton_t::sidebutton_t()
 	myIcon = Icon_NO;
 }
 
-void _control_t::Activate() {
+void _control_t::SetupEncoderSet(int n)
+{
+	currentencoderset = n; 
+};
+
+void _control_t::Activate() 
+{
 	SetupEncoderSet(currentencoderset);
 }
 void _control_t::Deactivate() {}
@@ -917,6 +923,11 @@ void FinalPan_LoadResources()
 	gGuiResources.F[Filt_BR] = Raspberry_LoadTexture("PAN__FILT_NOTCH.png");
 	gGuiResources.Fs[Filt_Par] = Raspberry_LoadTexture("PAN__FILT_PAR.png");
 	gGuiResources.Fs[Filt_Ser] = Raspberry_LoadTexture("PAN__FILT_SER.png");
+
+
+	gGuiResources.Plugs[Plugs_OnePlug] = Raspberry_LoadTexture("PAN__ONEPLUG.png");
+	gGuiResources.Plugs[Plugs_TwoPlug] = Raspberry_LoadTexture("PAN__TWOPLUG.png");
+	gGuiResources.Plugs[Plugs_ManyPlug] = Raspberry_LoadTexture("PAN__MANYPLUG.png");
 
 	gGuiResources.LeftIndicator = Raspberry_LoadTexture("UI_LEFT.png");
 	gGuiResources.RightIndicator = Raspberry_LoadTexture("UI_RIGHT.png");
@@ -1646,7 +1657,7 @@ public:
 
 void Gui::BuildScreens()
 {
-	for (int i = 0; i < SCREENS_COUNT; i++) Screens[i] = 0;
+	for (int i = 0; i < __SCREENS_COUNT; i++) Screens[i] = 0;
 
 
 
@@ -1707,7 +1718,7 @@ void Gui::BuildScreens()
 
 	Screens[SCREEN_HOME] = new HomeScreen();
 
-	for (int i = 0; i < SCREENS_COUNT; i++)
+	for (int i = 0; i < __SCREENS_COUNT; i++)
 	{
 		if (Screens[i] == 0) Screens[i] = new _screensetup_t();
 	}
@@ -1912,7 +1923,7 @@ void Gui::BuildScreens()
 	int lastbutton = 0;
 	int lastencoder = 0;
 #define MENU(a,b,c) current = Screens[SCREEN_##a];current->SetTitle(c);lastbutton = 0;lastencoder = 0;
-#define ENTRY(a,b,c)  lastencoder = current->EnableAvailableEncoder( a,b,c);
+#define ENTRY(a,b,c)  lastencoder = current->EnableAvailableEncoder( a,b,c, true);
 #define CUSTOMENTRY(name, style, target) lastbutton = current->EnableAvailableButton(name ,style, target);
 	//ENTRY("Spectrum Mod", MenuEntry_Value, Output_VCF2_CROSSMOD) 
 #include "PanUiMap.h"
@@ -1921,7 +1932,7 @@ void Gui::BuildScreens()
 
 
 
-	for (int i = 0; i < SCREENS_COUNT; i++)
+	for (int i = 0; i < __SCREENS_COUNT; i++)
 	{
 		Screens[i]->SetFirstEnabledControlActive();
 		Screens[i]->SetupEncoderSet(0);

@@ -63,6 +63,7 @@ typedef struct FinalPan_GuiResources_t
 	ImTextureID VCF2;
 	ImTextureID F[__FILT_COUNT];
 	ImTextureID Fs[__FILT_STRUCT_COUNT];
+	ImTextureID Plugs[__PLUGS_COUNT];
 	ImTextureID LogoScreen;
 	ImTextureID LeftIndicator;
 	ImTextureID RightIndicator;
@@ -123,7 +124,7 @@ public:
 
 	int encodersets;
 	int currentencoderset;
-	virtual void SetupEncoderSet(int n) { currentencoderset = n; };
+	virtual void SetupEncoderSet(int n);
 
 	virtual void Render(bool active, float DT);
 	virtual void Action(int action);
@@ -222,6 +223,7 @@ public:
 	bottomencoder_t()
 	{
 		Set = 0;
+		IsDirectOutput = false;
 	}
 	alignment_t Align;
 	ledmodes ledmode;
@@ -229,9 +231,12 @@ public:
 	
 	int Set;
 	
-	int ParameterID;
+	//int ParameterID;
 	int x, y;
-
+	
+	bool IsDirectOutput;
+	int ModSourceCount;
+	
 	void SetupPosition(int id);
 	void Turn(int delta);
 	
@@ -278,7 +283,7 @@ public:
 
 	bool EnableButton(int i, const char *text, int style = MenuEntry_NoStyle, int target = -1, bool active = true, ledmodes l = ledmode_solid);
 
-	int EnableAvailableEncoder(char *text, int style, int target);
+	int EnableAvailableEncoder(char *text, int style, int target, bool isdirectoutput = false);
 
 	int EnableAvailableButton(char *text, int style, int target);
 
@@ -374,7 +379,7 @@ public:
 
 	_screensetup_t *CS();
 
-	_screensetup_t *Screens[SCREENS_COUNT];
+	_screensetup_t *Screens[__SCREENS_COUNT];
 
 	void BuildScreens();
 
@@ -393,4 +398,11 @@ public:
 };
 
 extern Gui gGui;
+
+class ParameterModal : public _screensetup_t
+{
+
+};
+
+extern ParameterModal  *theParameterBindingModal;
 #endif

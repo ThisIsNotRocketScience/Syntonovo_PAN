@@ -1061,7 +1061,7 @@ int main(int argc, char** argv)
 		ImGui_ImplSdlGL3_RenderDrawData(ImGui::GetDrawData());
 		//ImGui::PopFont();
 		SDL_GL_SwapWindow(window);
-		SDL_Delay(0);
+		SDL_Delay(5);
 	}
 
 	for (int i = 0; i < midiInGetNumDevs(); i++)

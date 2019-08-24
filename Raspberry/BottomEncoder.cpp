@@ -58,21 +58,22 @@ void bottomencoder_t::Render(bool active, float DT)
 	int y2 = y;
 	bool ActiveSet = true;
 
-	char finaltitle[255];
-	snprintf(finaltitle, 255, "%s" ,title);
+	char finaltitle[300];
+	char finaltemptitle[300];
+	snprintf(finaltitle, 300, "%s" ,title);
 	switch (style)
 	{
 	case MenuEntry_Value:
 		switch (target)
 		{
 		case Output_VCA_FXPOT1:
-			snprintf(finaltitle, 255, "FX: %s", EffectChipStrings[DecodeCurrentEffect()][1]);
+			snprintf(finaltitle, 300, "FX: %s", EffectChipStrings[DecodeCurrentEffect()][1]);
 			break;
 		case Output_VCA_FXPOT2:
-			snprintf(finaltitle, 255, "FX: %s", EffectChipStrings[DecodeCurrentEffect()][2]);
+			snprintf(finaltitle, 300, "FX: %s", EffectChipStrings[DecodeCurrentEffect()][2]);
 			break;
 		case Output_VCA_FXPOT3:
-			snprintf(finaltitle, 255, "FX: %s", EffectChipStrings[DecodeCurrentEffect()][3]);
+			snprintf(finaltitle, 300, "FX: %s", EffectChipStrings[DecodeCurrentEffect()][3]);
 			break;
 		}
 		break;
@@ -87,8 +88,7 @@ void bottomencoder_t::Render(bool active, float DT)
 		ImVec2 textsize = ImGui::CalcTextSize(finaltitle);
 		x2 -= textsize.x;
 	}
-
-
+	
 	ImGui::PushFont(gGuiResources.TinyFont);
 
 	ImGui::SetCursorPos(ImVec2(x2 - ImGui::GetTextLineHeight() - ParamBoxDim / 2, y2));
@@ -152,6 +152,28 @@ void bottomencoder_t::Render(bool active, float DT)
 		char txt[400];
 
 		gCurrentPreset.DescribeParam((OutputEnum)target, style, txt, 400);
+
+		if (IsDirectOutput)
+		{
+			ImTextureID t = 0;
+			switch(ModSourceCount)
+			{
+			case 0: break;
+			case 1:t = gGuiResources.Plugs[Plugs_OnePlug]; break;
+			case 2:t = gGuiResources.Plugs[Plugs_TwoPlug]; break;
+			default: t = gGuiResources.Plugs[Plugs_ManyPlug]; break;
+			}
+
+			if (t)
+			{
+				ImGui::SetCursorPos(ImVec2(x - 60, y2));
+				ImGui::Image(t, ImVec2(22, 76));
+
+			}
+		}
+
+
+
 		//	VerticalText(txt, align_right);
 	}
 
