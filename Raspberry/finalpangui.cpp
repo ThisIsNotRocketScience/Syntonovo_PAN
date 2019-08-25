@@ -11,12 +11,12 @@
 #include "ModSourceScreen.h"
 #include "HomeScreen.h"
 #include "VCF2Structure.h"
-
+#include "ParameterModal.h"
 
 PanPreset_t gCurrentPreset;
 PanPreset_t gRevertPreset;
 PanState_t gPanState;
-
+class ParameterModal * theParameterBindingModal;
 Gui gGui;
 
 void cmd_pad_zero();
@@ -1654,6 +1654,26 @@ public:
 
 };
 
+ModSourceScreen *Gui::AddModSourceScreen(Screens_t screen, ModSource_t mod)
+{
+	ModSourceScreen *MSS = new ModSourceScreen(screen, mod);
+	ModSourceScreens.push_back(MSS);
+	return MSS;
+}
+
+
+void Gui::GotoPageForMod(ModSource_t mod, int instance)
+{
+	for (int i = 0; i < ModSourceScreens.size(); i++)
+	{
+		if (ModSourceScreens[i]->ModSource == mod)
+		{
+			GotoPage(ModSourceScreens[i]->myScreen);
+			ModSourceScreens[i]->SetActiveInstance(instance);
+			return;
+		}
+	}
+}
 
 void Gui::BuildScreens()
 {
@@ -1684,35 +1704,38 @@ void Gui::BuildScreens()
 	BL->LedButtonsThatOpenThisScreen.push_back(ledbutton_BankLeft);
 	BR->LedButtonsThatOpenThisScreen.push_back(ledbutton_BankRight);
 
-	Screens[SCREEN_X] = new ModSourceScreen(SCREEN_X);
+	theParameterBindingModal = new ParameterModal();
+
+	Screens[SCREEN_X] = AddModSourceScreen(SCREEN_X, Source_x);
 	Screens[SCREEN_X]->LedButtonsThatOpenThisScreen.push_back(ledbutton_BX);
-	Screens[SCREEN_Y] = new ModSourceScreen(SCREEN_Y);
+	Screens[SCREEN_Y] = AddModSourceScreen(SCREEN_Y, Source_y);
 	Screens[SCREEN_Y]->LedButtonsThatOpenThisScreen.push_back(ledbutton_BY);
-	Screens[SCREEN_Z] = new ModSourceScreen(SCREEN_Z);
+	Screens[SCREEN_Z] = AddModSourceScreen(SCREEN_Z, Source_z);
 	Screens[SCREEN_Z]->LedButtonsThatOpenThisScreen.push_back(ledbutton_BZ);
-	Screens[SCREEN_TOUCH] = new ModSourceScreen(SCREEN_TOUCH);
+	// TODO ??? what is touch ook al weer????
+	Screens[SCREEN_TOUCH] = AddModSourceScreen(SCREEN_TOUCH, Source_zprime);
 	Screens[SCREEN_TOUCH]->LedButtonsThatOpenThisScreen.push_back(ledbutton_BTouch);
-	Screens[SCREEN_LMOD] = new ModSourceScreen(SCREEN_LMOD);
+	Screens[SCREEN_LMOD] = AddModSourceScreen(SCREEN_LMOD, Source_left_mod);
 	Screens[SCREEN_LMOD]->LedButtonsThatOpenThisScreen.push_back(ledbutton_LMod);
-	Screens[SCREEN_RMOD] = new ModSourceScreen(SCREEN_RMOD);
+	Screens[SCREEN_RMOD] = AddModSourceScreen(SCREEN_RMOD, Source_right_mod);
 	Screens[SCREEN_RMOD]->LedButtonsThatOpenThisScreen.push_back(ledbutton_RMod);
-	Screens[SCREEN_LSUS] = new ModSourceScreen(SCREEN_LSUS);
+	Screens[SCREEN_LSUS] = AddModSourceScreen(SCREEN_LSUS, Source_left_sus);
 	Screens[SCREEN_LSUS]->LedButtonsThatOpenThisScreen.push_back(ledbutton_LSus);
-	Screens[SCREEN_RSUS] = new ModSourceScreen(SCREEN_RSUS);
+	Screens[SCREEN_RSUS] = AddModSourceScreen(SCREEN_RSUS, Source_right_sus);
 	Screens[SCREEN_RSUS]->LedButtonsThatOpenThisScreen.push_back(ledbutton_RSus);
-	Screens[SCREEN_LUNA] = new ModSourceScreen(SCREEN_LUNA);
+	Screens[SCREEN_LUNA] = AddModSourceScreen(SCREEN_LUNA, Source_left_unac);
 	Screens[SCREEN_LUNA]->LedButtonsThatOpenThisScreen.push_back(ledbutton_LUna);
-	Screens[SCREEN_RUNA] = new ModSourceScreen(SCREEN_RUNA);
+	Screens[SCREEN_RUNA] = AddModSourceScreen(SCREEN_RUNA, Source_right_unac);
 	Screens[SCREEN_RUNA]->LedButtonsThatOpenThisScreen.push_back(ledbutton_RUna);
 
-	Screens[SCREEN_VELOCITY] = new ModSourceScreen(SCREEN_VELOCITY);
+	Screens[SCREEN_VELOCITY] = AddModSourceScreen(SCREEN_VELOCITY,Source_vel);
 	Screens[SCREEN_VELOCITY]->LedButtonsThatOpenThisScreen.push_back(ledbutton_BVelocity);
-	Screens[SCREEN_KEYBOARD] = new ModSourceScreen(SCREEN_KEYBOARD);
+	Screens[SCREEN_KEYBOARD] = AddModSourceScreen(SCREEN_KEYBOARD, Source_note);
 	Screens[SCREEN_KEYBOARD]->LedButtonsThatOpenThisScreen.push_back(ledbutton_BCV);
-	Screens[SCREEN_LFO] = new ModSourceScreen(SCREEN_LFO);
+	Screens[SCREEN_LFO] = AddModSourceScreen(SCREEN_LFO, Source_LFO);
 	Screens[SCREEN_LFO]->LedButtonsThatOpenThisScreen.push_back(ledbutton_BLFO);
 
-	Screens[SCREEN_ENVELOPE] = new ModSourceScreen(SCREEN_ENVELOPE);
+	Screens[SCREEN_ENVELOPE] = AddModSourceScreen(SCREEN_ENVELOPE, Source_Envelope);
 	Screens[SCREEN_ENVELOPE]->LedButtonsThatOpenThisScreen.push_back(ledbutton_BEnv);
 	Screens[SCREEN_VCF2_structure] = new VCF2StructureScreen();
 

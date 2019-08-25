@@ -185,6 +185,7 @@
     <ClCompile Include="..\Raspberry\ModSourceSelectorModal.cpp" />
     <ClCompile Include="..\Raspberry\ModTargetModal.cpp" />
     <ClCompile Include="..\Raspberry\ScreenSetup.cpp" />
+    <ClCompile Include="..\Raspberry\ParameterModal.cpp" />
     <ClCompile Include="..\Raspberry\VCF2StructureScreen.cpp" />
     <ClCompile Include="PanSim.cpp" />
   </ItemGroup>
@@ -204,6 +205,7 @@
     <ClInclude Include="..\Raspberry\PanHeader.h" />
     <ClInclude Include="..\Raspberry\PanPreset.h" />
     <ClInclude Include="..\Raspberry\PanUiMap.h" />
+    <ClInclude Include="..\Raspberry\ParameterModal.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

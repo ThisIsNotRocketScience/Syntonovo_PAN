@@ -69,9 +69,17 @@ ModSource_t ModSourceScreen::ModTypeFromScreen(Screens_t screen)
 
 	return Source_none;
 }
-
-ModSourceScreen::ModSourceScreen(Screens_t screen)
+void ModSourceScreen::SetActiveInstance(int id)
 {
+	if (HasActiveInstanceDisplay)
+	{
+		ActiveInstance = id;
+	}
+}
+
+ModSourceScreen::ModSourceScreen(Screens_t screen, ModSource_t modsourcetype)
+{
+	ModSource = modsourcetype;
 	MaxInstances = 16;
 	ActiveInstance = 0;
 	theModTargetModal.Parent = this;

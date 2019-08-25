@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include "gui.h"
 #include "PanPreset.h"
+#include "ParameterModal.h"
+
 
 extern int DecodeCurrentEffect();
 extern void SetEffect(int effect);
@@ -385,7 +387,7 @@ void _screensetup_t::AddDynamicText(float x, float y, char *t, int len, alignmen
 
 }
 
-void _screensetup_t::AddText(float x, float y, char *t, alignment_t align, font_size fontsize)
+_textcontrol_t * _screensetup_t::AddText(float x, float y, char *t, alignment_t align, font_size fontsize)
 {
 
 	_textcontrol_t *T = new _textcontrol_t();
@@ -395,6 +397,7 @@ void _screensetup_t::AddText(float x, float y, char *t, alignment_t align, font_
 	T->x = x;
 	T->y = y;
 	ControlsInOrder.push_back(T);
+	return T;
 }
 
 void _screensetup_t::ChangeActiveControl(int delta)
@@ -468,8 +471,10 @@ void _screensetup_t::EncoderPress(FinalEncoderEnum button)
 		{
 			
 			Modal = theParameterBindingModal;
+			Modal->Parent = this;
+			theParameterBindingModal->Setup( (OutputEnum) encoders[currentencoderset][bottomencoderid].target);			
 			Modal->Activate(); 
-			
+		
 		}
 	}
 }

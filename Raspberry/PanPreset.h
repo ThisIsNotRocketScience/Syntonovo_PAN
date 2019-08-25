@@ -395,6 +395,66 @@ public:
 
 		
 	}
+	
+	void RowIntToModSourceAndInstance(int id, ModSource_t *mod, int *instance)
+	{
+		if (id < 0x10)
+		{
+			*mod = Source_LFO;
+			*instance = id;
+			return;
+		}
+		if (id < 0x20)
+		{
+			*mod = Source_Envelope;
+			*instance = id - 0x10;
+			return;
+		}
+		*instance = 0;
+		switch (id)
+		{
+		case 0x20:  *mod = Source_x; return;
+		case 0x21:  *mod = Source_y; return;
+		case 0x22:  *mod = Source_z; return;
+		case 0x23:  *mod = Source_zprime; return;
+		case 0x24:  *mod = Source_left_mod; return;
+		case 0x25:  *mod = Source_right_mod; return;
+		case 0x26:  *mod = Source_left_sus; return;
+		case 0x27:  *mod = Source_right_sus; return;
+		case 0x28:  *mod = Source_left_unac; return;
+		case 0x29:  *mod = Source_right_unac; return;
+		case 0x2a:  *mod = Source_note; return;
+		case 0x2b:  *mod = Source_vel; return;
+		}
+		*mod = Source_none;
+	}
+
+	void GetModSourceName(int id, char *txt, int len)
+	{
+		int instance = 0;
+		ModSource_t mod = Source_none;
+
+		RowIntToModSourceAndInstance(id, &mod, &instance);
+
+		switch (mod)
+		{
+			case Source_LFO:snprintf(txt, len, "LFO %d", instance); return;
+			case Source_Envelope:snprintf(txt, len, "Envelope %d", instance); return;
+			case Source_x:snprintf(txt, len, "X", instance); return;
+			case Source_y:snprintf(txt, len, "Y", instance); return;
+			case Source_z:snprintf(txt, len, "Z", instance); return;
+			case Source_zprime:snprintf(txt, len, "Z'", instance); return;
+			case Source_left_mod:snprintf(txt, len, "Left pad", instance); return;
+			case Source_right_mod:snprintf(txt, len, "Right pad", instance); return;
+			case Source_left_sus:snprintf(txt, len, "Left sustain", instance); return;
+			case Source_right_sus:snprintf(txt, len, "Right sustain", instance); return;
+			case Source_left_unac:snprintf(txt, len, "Left una corda", instance); return;
+			case Source_right_unac:snprintf(txt, len, "Right una corda", instance); return;
+			case Source_note:snprintf(txt, len, "Keyboard", instance); return;
+			case Source_vel:snprintf(txt, len, "Velocity", instance); return;			
+		}
+		snprintf(txt, len, "unknown?");
+	}
 
 	ModMatrixRow_t *GetModSourceRow(ModSource_t mod, int instance)
 	{
@@ -408,12 +468,12 @@ public:
 		case Source_zprime: return &modmatrix[0x23];
 		case Source_left_mod: return &modmatrix[0x24];
 		case Source_right_mod: return &modmatrix[0x25];
-		case Source_left_unac: return &modmatrix[0x28];
-		case Source_right_unac: return &modmatrix[0x29];
 		case Source_left_sus: return &modmatrix[0x26];
 		case Source_right_sus: return &modmatrix[0x27];
-		case Source_note: return &modmatrix[0x2E];
-		case Source_vel:  return &modmatrix[0x2E];
+		case Source_left_unac: return &modmatrix[0x28];
+		case Source_right_unac: return &modmatrix[0x29];
+		case Source_note: return &modmatrix[0x2a];
+		case Source_vel:  return &modmatrix[0x2b];
 			//		case Source_pedal: return &modmatrix[0x22];
 		}
 		return 0;

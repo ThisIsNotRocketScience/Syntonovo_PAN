@@ -77,6 +77,14 @@ const char *GetModulationTargetName(int Output)
 	if (idx < 0) idx = 0;
 	return ModulationTargetList[idx]->name;
 }
+
+void GetModulationTargetLongName(int Output, char *txt, int len)
+{
+	int idx = FindModulationListIndex(Output);
+	if (idx < 0) idx = 0;
+	snprintf(txt, len, "%s: %s", Categories[ModulationTargetList[idx]->categoryid].label, ModulationTargetList[idx]->name);
+}
+
 void TargetList::SetCurrent(int c)
 {
 	Current = c;
@@ -147,12 +155,14 @@ void ModTargetModal::SetupLeds()
 {
 	_screensetup_t::SetupLeds();
 }
+
 void ModTargetModal::EncoderPress(FinalEncoderEnum button)
 {
 	if (button == (FinalEncoderEnum)(encoder_F1 + TargetID)) { Parent->Action(MenuAction_CloseModal); return; }
 
 	_screensetup_t::EncoderPress(button);
 }
+
 void ModTargetModal::Action(int action)
 {
 	switch (action)

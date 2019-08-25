@@ -95,6 +95,9 @@
     <ClCompile Include="..\Raspberry\HomeScreen.cpp">
       <Filter>Source Files\Screens</Filter>
     </ClCompile>
+    <ClCompile Include="..\Raspberry\ParameterModal.cpp">
+      <Filter>Source Files\Screens</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\libs\SDL2-2.0.7\lib\x86\SDL2main.lib" />
@@ -121,6 +124,9 @@
     </ClInclude>
     <ClInclude Include="..\Raspberry\FinalPanHeader.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Raspberry\ParameterModal.h">
+      <Filter>Source Files\Screens</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

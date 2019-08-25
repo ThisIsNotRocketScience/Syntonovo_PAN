@@ -198,12 +198,14 @@ enum
 	MenuAction_BankJ,
 	MenuAction_BankK,
 	MenuAction_BankL,
-
 	MenuAction_FX_Prev,
 	MenuAction_FX_Next,
-
 	MenuAction_SpaceBar,
 	MenuAction_Backspace,
+	MenuAction_NewModulation,
+	MenuAction_RemoveModulation,
+	MenuAction_GotoModulation,
+
 	__MenuAction_Count
 };
 

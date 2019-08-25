@@ -34,7 +34,8 @@ extern void LedLerp(bool active, uint16_t value, uint16_t *r, uint16_t *g, uint1
 extern void VerticalText(char *text, alignment_t align = align_left, ImU32 text_color = 0xffffffff);
 
 extern void BuildModulationTargetList();
-const char *GetModulationTargetName(int Output);
+extern const char *GetModulationTargetName(int Output);
+extern void GetModulationTargetLongName(int Output, char *txt, int len);
 
 extern bool IsCenterEncoder(FinalEncoderEnum button);
 extern int GetAssociatedParameter(FinalEncoderEnum button);
@@ -252,9 +253,16 @@ public:
 
 	ImTextureID BG;
 	//std::vector<_screensetup_t *> SubScreens;
-
+	virtual void Deactivate()
+	{
+		if (Modal) Modal = NULL;
+	}
 	std::vector<_control_t *> ControlsInOrder;
-	virtual void RepeatGoto() {};
+	virtual void RepeatGoto() 
+	{
+		if (Modal) Modal = NULL;
+	};
+
 	virtual void RegisterNewChild(_control_t *newcontrol) { ControlsInOrder.push_back(newcontrol); }
 	int ActiveControl;
 	_screensetup_t *Modal;
@@ -293,7 +301,7 @@ public:
 
 	bottomencoder_t encoders[MAXENCODERSETS][11];
 
-	void AddText(float x, float y, char *t, alignment_t align = align_left, font_size fontsize = font_small);
+	_textcontrol_t *AddText(float x, float y, char *t, alignment_t align = align_left, font_size fontsize = font_small);
 	void AddDynamicText(float x, float y, char *t, int len, alignment_t align = align_left, font_size fontsize = font_small);
 	
 	void AddLedControl(const char *name, int x, int y, LedTheme whichled);
@@ -354,11 +362,13 @@ public:
 };
 
 
-
+class ModSourceScreen;
 class Gui
 {
 public:
 	Gui();
+	ModSourceScreen *AddModSourceScreen(Screens_t screen, ModSource_t mod);
+	void GotoPageForMod(ModSource_t mod, int instance);
 	void Init();
 	void SketchLeftPress();
 	void SketchRightPress();
@@ -394,15 +404,12 @@ public:
 	void NextVCF2();
 	void PrevVCF2();
 
+	std::vector< ModSourceScreen *> ModSourceScreens;
+
 	Screens_t CurrentScreen;
 };
 
 extern Gui gGui;
-
-class ParameterModal : public _screensetup_t
-{
-
-};
-
+class ParameterModal;
 extern ParameterModal  *theParameterBindingModal;
 #endif
