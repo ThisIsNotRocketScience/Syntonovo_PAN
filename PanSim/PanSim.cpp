@@ -1026,13 +1026,13 @@ int main(int argc, char** argv)
 
 					char name[300];
 					sprintf(name, "ENCL%d", i);
-					ImGui::SetCursorScreenPos(ImVec2(pos.x + (FinalEncoders[i].x - 3.6) * xscalefac, (pos.y + 0.8) + FinalEncoders[i].y * yscalefac));
+					ImGui::SetCursorScreenPos(ImVec2(pos.x + (FinalEncoders[i].x - 4.6) * xscalefac, (pos.y + 0.8) + FinalEncoders[i].y * yscalefac));
 					if (ImGui::ColorButton(name, FinalEncoders[i].ledcolor))
 					{
 						LedEncoderButtonLeft(FinalEncoders[i].id,400);
 					//	Teensy_EncoderRotate(i, -1);
 					}
-					ImGui::SetCursorScreenPos(ImVec2(pos.x + (FinalEncoders[i].x + 3.6)* xscalefac, (pos.y + 0.8) + FinalEncoders[i].y * yscalefac));
+					ImGui::SetCursorScreenPos(ImVec2(pos.x + (FinalEncoders[i].x + 4.6)* xscalefac, (pos.y + 0.8) + FinalEncoders[i].y * yscalefac));
 					sprintf(name, "ENCR%d", i);
 					if (ImGui::ColorButton(name, FinalEncoders[i].ledcolor))
 					{

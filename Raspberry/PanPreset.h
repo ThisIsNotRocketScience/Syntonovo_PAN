@@ -94,7 +94,7 @@ enum
 	NUM_CONTROLLERS
 };
 
-
+#define MAX_MODULATION_SOURCE (6)
 #define NUM_LFOS (16)
 #define NUM_ENVS (16)
 #define NUM_OPERATORS (16)
@@ -107,13 +107,11 @@ typedef struct
 	uint8_t subsourceid;
 } PACK ModSourceSpec_t;
 
-
 class ModSourcesForOutputStruct
 {
 public:
 	int Sources;
 	ModSourceSpec_t SourceDetails[MODTARGET_COUNT * SYNTH_MODSOURCE_COUNT];
-	
 };
 
 class PanPreset_Listener
@@ -366,7 +364,7 @@ public:
 			for (int j = 0; j < 11; j++)
 			{
 				ModTargetSpec_t *tt = &mm->targets[j];
-				if (tt->outputid == param && tt->depth != 0)
+				if (tt->outputid == param)
 				{
 					ModSourceSpec_t *mss = &ModSources->SourceDetails[ModSources->Sources];
 					mss->depth = tt->depth;
@@ -376,6 +374,27 @@ public:
 				}
 			}
 		}
+	}
+
+	int GetModSourceCountForOutput(OutputEnum param)
+	{
+		ModSourcesForOutputStruct S;
+		FillModSourcesForOutput(param, &S);
+		return S.Sources;
+	}
+
+	void RemoveModulation(int sourceid, int subsourceid, OutputEnum target)
+	{
+		for (int i = 0; i < 11; i++)
+		{
+			if (modmatrix[sourceid].targets[i].outputid == target && modmatrix[sourceid].targets[i].sourceid == subsourceid)
+			{
+				// remove it! 
+				modmatrix[sourceid].targets[i].outputid = NOMODTARGET;
+				modmatrix[sourceid].targets[i].depth = 0;
+				modmatrix[sourceid].targets[i].sourceid = 0;
+			}
+		}	
 	}
 
 	uint32_t switches[2];
@@ -438,8 +457,8 @@ public:
 
 		switch (mod)
 		{
-			case Source_LFO:snprintf(txt, len, "LFO %d", instance); return;
-			case Source_Envelope:snprintf(txt, len, "Envelope %d", instance); return;
+			case Source_LFO:snprintf(txt, len, "LFO %d", instance + 1); return;
+			case Source_Envelope:snprintf(txt, len, "Envelope %d", instance + 1); return;
 			case Source_x:snprintf(txt, len, "X", instance); return;
 			case Source_y:snprintf(txt, len, "Y", instance); return;
 			case Source_z:snprintf(txt, len, "Z", instance); return;
@@ -455,6 +474,8 @@ public:
 		}
 		snprintf(txt, len, "unknown?");
 	}
+
+
 
 	ModMatrixRow_t *GetModSourceRow(ModSource_t mod, int instance)
 	{

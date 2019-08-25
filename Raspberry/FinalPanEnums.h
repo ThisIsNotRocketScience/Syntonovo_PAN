@@ -203,8 +203,18 @@ enum
 	MenuAction_SpaceBar,
 	MenuAction_Backspace,
 	MenuAction_NewModulation,
-	MenuAction_RemoveModulation,
-	MenuAction_GotoModulation,
+	MenuAction_RemoveModulation1,
+	MenuAction_RemoveModulation2,
+	MenuAction_RemoveModulation3,
+	MenuAction_RemoveModulation4,
+	MenuAction_RemoveModulation5,
+	MenuAction_RemoveModulation6,
+	MenuAction_GotoModulation1,
+	MenuAction_GotoModulation2,
+	MenuAction_GotoModulation3,
+	MenuAction_GotoModulation4,
+	MenuAction_GotoModulation5,
+	MenuAction_GotoModulation6,
 
 	__MenuAction_Count
 };

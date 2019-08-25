@@ -40,9 +40,9 @@ ENTRY("PW", MenuEntry_Percentage, Output_VCO1_PW)
 CUSTOMENTRY("Octave", MenuEntry_Octave, Output_VCO1_OCTAVE)
 
 
-ENTRY("-> VCF1", MenuEntry_Value, Output_VCO1_MIX1)
-ENTRY("-> VCF2", MenuEntry_Value, Output_VCO1_MIX2)
-ENTRY("Sine -> Cleanfeed ", MenuEntry_Value, Output_VCO1SIN_MIX3)
+ENTRY("> VCF1", MenuEntry_Value, Output_VCO1_MIX1)
+ENTRY("> VCF2", MenuEntry_Value, Output_VCO1_MIX2)
+ENTRY("Sine >\n Cleanfeed ", MenuEntry_Value, Output_VCO1SIN_MIX3)
 
 ENDMENU()
 

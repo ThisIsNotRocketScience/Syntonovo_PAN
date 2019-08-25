@@ -255,12 +255,20 @@ public:
 	//std::vector<_screensetup_t *> SubScreens;
 	virtual void Deactivate()
 	{
-		if (Modal) Modal = NULL;
+		if (Modal)
+		{
+			Modal->Deactivate();
+			Modal = NULL;
+		}
 	}
 	std::vector<_control_t *> ControlsInOrder;
 	virtual void RepeatGoto() 
 	{
-		if (Modal) Modal = NULL;
+		if (Modal)
+		{
+			Modal->Deactivate();
+			Modal = NULL;
+		}
 	};
 
 	virtual void RegisterNewChild(_control_t *newcontrol) { ControlsInOrder.push_back(newcontrol); }

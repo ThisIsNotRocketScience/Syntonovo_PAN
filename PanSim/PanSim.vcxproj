@@ -184,6 +184,7 @@
     <ClCompile Include="..\Raspberry\ModSourceScreen.cpp" />
     <ClCompile Include="..\Raspberry\ModSourceSelectorModal.cpp" />
     <ClCompile Include="..\Raspberry\ModTargetModal.cpp" />
+    <ClCompile Include="..\Raspberry\NewModulationModal.cpp" />
     <ClCompile Include="..\Raspberry\ScreenSetup.cpp" />
     <ClCompile Include="..\Raspberry\ParameterModal.cpp" />
     <ClCompile Include="..\Raspberry\VCF2StructureScreen.cpp" />
@@ -202,6 +203,7 @@
     <ClInclude Include="..\Raspberry\FinalPanEnums.h" />
     <ClInclude Include="..\Raspberry\FinalPanHeader.h" />
     <ClInclude Include="..\Raspberry\Gui.h" />
+    <ClInclude Include="..\Raspberry\NewModulationModal.h" />
     <ClInclude Include="..\Raspberry\PanHeader.h" />
     <ClInclude Include="..\Raspberry\PanPreset.h" />
     <ClInclude Include="..\Raspberry\PanUiMap.h" />

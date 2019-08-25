@@ -12,6 +12,7 @@
 #include "HomeScreen.h"
 #include "VCF2Structure.h"
 #include "ParameterModal.h"
+#include "NewModulationModal.h"
 
 PanPreset_t gCurrentPreset;
 PanPreset_t gRevertPreset;
@@ -1705,6 +1706,7 @@ void Gui::BuildScreens()
 	BR->LedButtonsThatOpenThisScreen.push_back(ledbutton_BankRight);
 
 	theParameterBindingModal = new ParameterModal();
+	TheNewModulationModal = new NewModulationModal();
 
 	Screens[SCREEN_X] = AddModSourceScreen(SCREEN_X, Source_x);
 	Screens[SCREEN_X]->LedButtonsThatOpenThisScreen.push_back(ledbutton_BX);

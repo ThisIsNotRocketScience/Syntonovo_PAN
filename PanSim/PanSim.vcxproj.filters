@@ -98,6 +98,9 @@
     <ClCompile Include="..\Raspberry\ParameterModal.cpp">
       <Filter>Source Files\Screens</Filter>
     </ClCompile>
+    <ClCompile Include="..\Raspberry\NewModulationModal.cpp">
+      <Filter>Source Files\Screens</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\libs\SDL2-2.0.7\lib\x86\SDL2main.lib" />
@@ -126,6 +129,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\Raspberry\ParameterModal.h">
+      <Filter>Source Files\Screens</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Raspberry\NewModulationModal.h">
       <Filter>Source Files\Screens</Filter>
     </ClInclude>
   </ItemGroup>

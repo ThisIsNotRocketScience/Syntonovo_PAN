@@ -91,15 +91,17 @@ void bottomencoder_t::Render(bool active, float DT)
 	
 	ImGui::PushFont(gGuiResources.TinyFont);
 
-	ImGui::SetCursorPos(ImVec2(x2 - ImGui::GetTextLineHeight() - ParamBoxDim / 2, y2));
+	ImGui::SetCursorPos(ImVec2(x2 - ImGui::GetTextLineHeight() - ParamBoxDim / 2, y-150));
 
 	if (active)
 	{
-		VerticalText(finaltitle, align_left, gGuiResources.Highlight);
+		ImGui::Text(finaltitle);
+		//VerticalText(finaltitle, align_left, gGuiResources.Highlight);
 	}
 	else
 	{
-		VerticalText(finaltitle, align_left);
+		ImGui::Text(finaltitle);
+//		VerticalText(finaltitle, align_left);
 	}
 	y2 -= ParamVerticalBoxHeight;
 

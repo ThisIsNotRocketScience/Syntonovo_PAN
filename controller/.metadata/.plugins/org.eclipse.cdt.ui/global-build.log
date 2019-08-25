@@ -1428,3 +1428,53 @@ arm-none-eabi-size "usbmidiio.axf"; # arm-none-eabi-objcopy -v -O binary "usbmid
    text	   data	    bss	    dec	    hex	filename
   66000	   1684	  29692	  97376	  17c60	usbmidiio.axf
  
+22:01:03 **** Incremental Build of configuration Debug for project usbmidiio ****
+make -r -j4 all 
+Building file: ../usb/osa/usb_osa_freertos.c
+Building file: ../source/usb/usb_device_cdc_acm.c
+Building file: ../usb/device/usb_device_dci.c
+Building file: ../usb/device/usb_device_lpcip3511.c
+Invoking: MCU C Compiler
+Invoking: MCU C Compiler
+Invoking: MCU C Compiler
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"usb/device/usb_device_dci.d" -MT"usb/device/usb_device_dci.o" -MT"usb/device/usb_device_dci.d" -o "usb/device/usb_device_dci.o" "../usb/device/usb_device_dci.c"
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/usb/usb_device_cdc_acm.d" -MT"source/usb/usb_device_cdc_acm.o" -MT"source/usb/usb_device_cdc_acm.d" -o "source/usb/usb_device_cdc_acm.o" "../source/usb/usb_device_cdc_acm.c"
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"usb/osa/usb_osa_freertos.d" -MT"usb/osa/usb_osa_freertos.o" -MT"usb/osa/usb_osa_freertos.d" -o "usb/osa/usb_osa_freertos.o" "../usb/osa/usb_osa_freertos.c"
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"usb/device/usb_device_lpcip3511.d" -MT"usb/device/usb_device_lpcip3511.o" -MT"usb/device/usb_device_lpcip3511.d" -o "usb/device/usb_device_lpcip3511.o" "../usb/device/usb_device_lpcip3511.c"
+Finished building: ../usb/osa/usb_osa_freertos.c
+ 
+Finished building: ../usb/device/usb_device_dci.c
+Finished building: ../source/usb/usb_device_cdc_acm.c
+Building file: ../source/usb/usb_device_ch9.c
+ 
+ 
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/usb/usb_device_ch9.d" -MT"source/usb/usb_device_ch9.o" -MT"source/usb/usb_device_ch9.d" -o "source/usb/usb_device_ch9.o" "../source/usb/usb_device_ch9.c"
+Building file: ../source/usb/usb_device_class.c
+Building file: ../source/usb/usb_device_descriptor.c
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/usb/usb_device_class.d" -MT"source/usb/usb_device_class.o" -MT"source/usb/usb_device_class.d" -o "source/usb/usb_device_class.o" "../source/usb/usb_device_class.c"
+Invoking: MCU C Compiler
+Finished building: ../usb/device/usb_device_lpcip3511.c
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/usb/usb_device_descriptor.d" -MT"source/usb/usb_device_descriptor.o" -MT"source/usb/usb_device_descriptor.d" -o "source/usb/usb_device_descriptor.o" "../source/usb/usb_device_descriptor.c"
+ 
+Building file: ../source/usb/virtual_com.c
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/usb/virtual_com.d" -MT"source/usb/virtual_com.o" -MT"source/usb/virtual_com.d" -o "source/usb/virtual_com.o" "../source/usb/virtual_com.c"
+Finished building: ../source/usb/usb_device_descriptor.c
+Finished building: ../source/usb/usb_device_class.c
+ 
+ 
+Building file: ../source/control.c
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/control.d" -MT"source/control.o" -MT"source/control.d" -o "source/control.o" "../source/control.c"
+Finished building: ../source/usb/usb_device_ch9.c
+ 
+../source/control.c:77:12: warning: 'fifo_tx_full' defined but not used [-Wunused-function]
+ static int fifo_tx_full()
+            ^~~~~~~~~~~~
+Finished building: ../source/usb/virtual_com.c
+ 
+Finished building: ../source/control.c
+ 
