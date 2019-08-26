@@ -228,6 +228,7 @@ public:
 	}
 	alignment_t Align;
 	ledmodes ledmode;
+	int EncoderID;
 	uint16_t r, g, b;
 	
 	int Set;

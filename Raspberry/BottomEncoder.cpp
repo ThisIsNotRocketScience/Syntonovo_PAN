@@ -39,23 +39,62 @@ int GetEncoderX(int id)
 	return 512 + (id - 5.0)* ((1024) / 12.0f);
 	//return ((1024) / 11.0f) * (id + 0.5);
 }
+
 void bottomencoder_t::SetupPosition(int id)
 {
+	EncoderID = id;
 	y = 600 - ParamMasterMargin;
 	x = GetEncoderX(id);
 	Align = align_left;
-
 }
 
+
 extern char EffectChipStrings[8][4][24];
+
+
+void TextHorizontal(float x, float y, char *txt, bool active, alignment_t align = align_left, font_size fontsize = font_small)
+{
+	bool nopop = false;
+	switch (fontsize)
+	{
+	case font_medium: ImGui::PushFont(gGuiResources.MediumFont); break;
+	case font_large: ImGui::PushFont(gGuiResources.BigFont); break;
+	case font_small: ImGui::PushFont(gGuiResources.SmallFont); break;
+	default:
+		nopop = true;
+	}
+	
+	float x2 = x;
+	
+	switch (align)
+	{
+	case align_right:
+	{
+		ImVec2 textsize = ImGui::CalcTextSize(txt);
+		x2 -= textsize.x;
+	}
+	break;
+	case align_center:
+	{
+		ImVec2 textsize = ImGui::CalcTextSize(txt);
+		x2 -= textsize.x / 2;
+	}
+	break;
+	}
+
+	ImGui::SetCursorPos(ImVec2(x2, y));
+	ImGui::Text(txt);
+	if (!nopop) ImGui::PopFont();
+}
+
 
 void bottomencoder_t::Render(bool active, float DT)
 {
 	if (!enabled) return;
-
-
+	
 	int x2 = x;
 	int y2 = y;
+	int textjump =  (((EncoderID % 2) == 0) ? -30 : 0);
 	bool ActiveSet = true;
 
 	char finaltitle[300];
@@ -78,11 +117,20 @@ void bottomencoder_t::Render(bool active, float DT)
 		}
 		break;
 	}
+
 	if (Set != Parent->currentencoderset)
 	{
 		ActiveSet = false;
 		y2 -= 100;
 	}
+	else
+	{
+		if (textjump != 0)
+		{
+			ImGui::GetWindowDrawList()->AddLine(ImVec2(x2, y2 - 90), ImVec2(x2, y2 - 90 + textjump), active ? gGuiResources.Highlight : gGuiResources.Normal, 2.0);
+		}
+	}
+
 	if (Align == align_right)
 	{
 		ImVec2 textsize = ImGui::CalcTextSize(finaltitle);
@@ -91,18 +139,21 @@ void bottomencoder_t::Render(bool active, float DT)
 	
 	ImGui::PushFont(gGuiResources.TinyFont);
 
-	ImGui::SetCursorPos(ImVec2(x2 - ImGui::GetTextLineHeight() - ParamBoxDim / 2, y-150));
+	ImGui::SetCursorPos(ImVec2(x2 - ImGui::GetTextLineHeight() - ParamBoxDim / 2, y2-120 + textjump ));
 
+	
 	if (active)
 	{
-		ImGui::Text(finaltitle);
-		//VerticalText(finaltitle, align_left, gGuiResources.Highlight);
+		TextHorizontal(x2 , y2 - 120 + textjump, finaltitle, false, align_center, font_tiny);
+		// VerticalText(finaltitle, align_left, gGuiResources.Highlight);
 	}
 	else
 	{
-		ImGui::Text(finaltitle);
-//		VerticalText(finaltitle, align_left);
+		TextHorizontal(x2 , y2 - 120 + textjump, finaltitle, false, align_center, font_tiny);
+		// ImGui::Text(finaltitle);
+		// VerticalText(finaltitle, align_left);
 	}
+
 	y2 -= ParamVerticalBoxHeight;
 
 	switch (style)
@@ -168,13 +219,10 @@ void bottomencoder_t::Render(bool active, float DT)
 
 			if (t)
 			{
-				ImGui::SetCursorPos(ImVec2(x - 60, y2));
+				ImGui::SetCursorPos(ImVec2(x - ImGui::GetTextLineHeight()-19, y2+8));
 				ImGui::Image(t, ImVec2(22, 76));
-
 			}
 		}
-
-
 
 		//	VerticalText(txt, align_right);
 	}
