@@ -1,4 +1,8 @@
+#define _CRT_SECURE_NO_WARNINGS
+#define WINDOWS_IGNORE_PACKING_MISMATCH 
+#include <atlbase.h>
 #include <Windows.h>
+#pragma warning( disable : 4244)
 #pragma comment(lib, "winmm.lib")
 
 #include "../Raspberry/FinalPanEnums.h"
@@ -322,7 +326,7 @@ void WriteWithSubKnob(int id, int subid, uint32_t value)
 void WritePadZero()
 {
 	if (DSPSerial.IsOpen() == false) return;
-	char b[4];
+	unsigned char b[4];
 	b[0] = 0xfe;
 	b[1] = 0xfb;
 	b[2] = 0;
@@ -731,6 +735,10 @@ int HandleSerial(unsigned char c)
 	return 1;
 }
 
+#define __SERIALINBUFFERSIZE 100000
+unsigned char buffer[__SERIALINBUFFERSIZE];
+
+HMIDIIN hMidiDevice[255] = { 0 };
 int main(int argc, char** argv)
 {
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) != 0)
@@ -739,7 +747,6 @@ int main(int argc, char** argv)
 		return -1;
 	}
 
-	HMIDIIN hMidiDevice[255] = { 0 };
 	DWORD nMidiPort = 0;
 	MMRESULT rv;
 
@@ -757,7 +764,7 @@ int main(int argc, char** argv)
 
 	if (midiInGetNumDevs() > 0)
 	{
-		for (int i = 0; i < midiInGetNumDevs(); i++)
+		for (int i = 0; i < (int)midiInGetNumDevs(); i++)
 		{
 			rv = midiInOpen(&hMidiDevice[i], i, (DWORD)(void*)MidiInProc, 0, CALLBACK_FUNCTION);
 			if (rv != MMSYSERR_NOERROR) {
@@ -812,13 +819,12 @@ int main(int argc, char** argv)
 	int32_t beatlinecolor = ImColor::HSV(0.5, 1, 1, 0.5);
 	int32_t looplinecolor = ImColor::HSV(0.75, 1, 1, 0.5);
 
-	int32_t gatecolor = ImColor::HSV(0, 0, 0.3);
+	int32_t gatecolor = ImColor::HSV(0, 0, 0.3f);
 	int32_t accentcolor = ImColor::HSV(0, 0, 1);
 
 	ImFont* pFont = io.Fonts->AddFontFromFileTTF("ProggyTiny.ttf", 8.0f);
 	ImFont* pFontBold = io.Fonts->AddFontFromFileTTF("ProggyTiny.ttf", 10.0f);
 
-	unsigned char * pixels;
 	
 
 	ImGui::GetStyle().ItemInnerSpacing = ImVec2(5, 5);;
@@ -849,8 +855,6 @@ int main(int argc, char** argv)
 	para.value = 3;
 	set(para);
 	auto t = SDL_GetTicks();
-#define __SERIALINBUFFERSIZE 100000
-	unsigned char buffer[__SERIALINBUFFERSIZE];
 	while (!done)
 	{
 
@@ -970,7 +974,7 @@ int main(int argc, char** argv)
 			{
 				
 			}
-			ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(1, 1, 1, 0.1));
+			ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(1, 1, 1, 0.1f));
 			ImGui::PushFont(pFontBold);
 			{
 				ImGui::Begin("FinalPan Parameters", &finalparameters, ImGuiWindowFlags_AlwaysAutoResize);
@@ -1064,7 +1068,7 @@ int main(int argc, char** argv)
 		SDL_Delay(5);
 	}
 
-	for (int i = 0; i < midiInGetNumDevs(); i++)
+	for (int i = 0; i < (int)midiInGetNumDevs(); i++)
 	{
 		if (hMidiDevice[i])
 		{

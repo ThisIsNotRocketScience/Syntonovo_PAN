@@ -1,4 +1,8 @@
+#include <windows.h>
 #include <stdint.h>
+
+#pragma warning( disable : 4244)
+
 #include "../interface/paramdef.h"
 #include <stdio.h>
 #include "../libs/imgui-master/imgui.h"
@@ -204,11 +208,11 @@ void FinalPan_SetupDefaultPreset()
 			gCurrentPreset.modmatrix[i].targets[j].sourceid = 0;
 		}
 	}
-	gCurrentPreset.modmatrix[0x10].targets[0].depth = 0xffff;
+	gCurrentPreset.modmatrix[0x10].targets[0].depth = (uint16_t)0xffff;
 	gCurrentPreset.modmatrix[0x10].targets[0].outputid = 0;
 	gCurrentPreset.modmatrix[0x10].targets[0].sourceid = Output_VCF1_LEVEL;
 
-	gCurrentPreset.modmatrix[0x20].targets[0].depth = 0xffff;
+	gCurrentPreset.modmatrix[0x20].targets[0].depth = (uint16_t)0xffff;
 	gCurrentPreset.modmatrix[0x20].targets[0].outputid = 0;
 	gCurrentPreset.modmatrix[0x20].targets[0].sourceid = Output_MASTER_PITCH;
 
@@ -762,6 +766,7 @@ void sidebutton_t::Render(bool active, float DT)
 			ImTextureID icim;
 			switch (icon)
 			{
+			default: icim = 0; break;
 			case Icon_ON:icim = gGuiResources.OnOff[1]; break;
 			case Icon_OFF:icim = gGuiResources.OnOff[0]; break;
 
@@ -885,7 +890,7 @@ void CheckFont(const char*name, ImFont*F)
 {
 	if (F) printf("%s loaded correctly\n", name); else
 	{
-		printf("failed to load %s!!!\n");
+		printf("failed to load %s!!!\n", name);
 	}
 }
 
@@ -910,8 +915,8 @@ void FinalPan_LoadResources()
 	gGuiResources.OnOff[3] = Raspberry_LoadTexture("UI_ONOFF_ON_HI.png");
 
 	gGuiResources.LogoScreen = Raspberry_LoadTexture("PAN__LOGO.png");
-	gGuiResources.RootBG = Raspberry_LoadTexture("PAN__MAINBG.png");
-	gGuiResources.MainBG = Raspberry_LoadTexture("PAN__MAINBG.png");
+	gGuiResources.RootBG = Raspberry_LoadTexture("PAN__MAIN_BG.png");
+	gGuiResources.MainBG = Raspberry_LoadTexture("PAN__MAIN_BG.png");
 	gGuiResources.TestBG = Raspberry_LoadTexture("PAN_TEST.png");
 
 	gGuiResources.GotoIconLeft = Raspberry_LoadTexture("PAN__GOTOL.png");
@@ -939,7 +944,8 @@ void FinalPan_LoadResources()
 
 	gGuiResources.referencelines = false;
 	gGuiResources.testimage = false;
-	gGuiResources.BigFont = io.Fonts->AddFontFromFileTTF("Petronius-Roman.ttf", 38.0f);
+//	gGuiResources.BigFont = io.Fonts->AddFontFromFileTTF("Petronius-Roman.ttf", 38.0f);
+	gGuiResources.BigFont = io.Fonts->AddFontFromFileTTF("CORBEL.TTF", 38.0f);
 	init = true;
 
 	CheckFont("BigFont - PetroniusRoman", gGuiResources.BigFont);
@@ -1258,9 +1264,9 @@ public:
 	int LastActiveLetter;
 	void SetActiveLetter(int N)
 	{
-		if (N >= Letters.size()) N = Letters.size() - 1;
+		if (N >= (int)Letters.size()) N = Letters.size() - 1;
 		_control_t *c = Letters[N];
-		for (int i = 0; i < ControlsInOrder.size(); i++)
+		for (int i = 0; i < (int)ControlsInOrder.size(); i++)
 		{
 			if (ControlsInOrder[i] == c)
 			{
@@ -1528,7 +1534,7 @@ void EncoderLineDisplay::Render(bool active, float dt)
 	//	ImGui::GetWindowDrawList()->AddLine(ImVec2(fromX, fromY), ImVec2(fromX, midy), gGuiResources.Normal, 3);
 	float minx = 1024;
 	float maxx = 0;
-	for (int i = 0; i < this->toEncoders.size(); i++)
+	for (int i = 0; i < (int)this->toEncoders.size(); i++)
 	{
 		int x = GetEncoderX(toEncoders[i]);
 		if (x > maxx) maxx = x;
@@ -1665,7 +1671,7 @@ ModSourceScreen *Gui::AddModSourceScreen(Screens_t screen, ModSource_t mod)
 
 void Gui::GotoPageForMod(ModSource_t mod, int instance)
 {
-	for (int i = 0; i < ModSourceScreens.size(); i++)
+	for (int i = 0; i < (int)ModSourceScreens.size(); i++)
 	{
 		if (ModSourceScreens[i]->ModSource == mod)
 		{

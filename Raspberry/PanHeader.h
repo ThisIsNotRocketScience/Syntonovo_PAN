@@ -10,7 +10,6 @@
 
 #include "PanPreset.h"
 
-#pragma pack()
 /*
 inline GuiState_t ButtonToMenu(int buttonid)
 {

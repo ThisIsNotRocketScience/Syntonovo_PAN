@@ -98,7 +98,6 @@ void bottomencoder_t::Render(bool active, float DT)
 	bool ActiveSet = true;
 
 	char finaltitle[300];
-	char finaltemptitle[300];
 	snprintf(finaltitle, 300, "%s" ,title);
 	switch (style)
 	{
@@ -176,7 +175,7 @@ void bottomencoder_t::Render(bool active, float DT)
 	{
 
 		RenderBoxVertical(x, y2, gCurrentPreset.GetLedParameter((LedParameter)target), BOX_REGULAR, active);
-		char txt[400];
+		//char txt[400];
 		//gCurrentPreset.DescribeParam((OutputEnum)target, style, txt, 400);
 		//VerticalText(txt, align_right);
 	}

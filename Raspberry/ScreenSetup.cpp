@@ -141,7 +141,7 @@ void _screensetup_t::SetupMainUILeds()
 
 
 
-	for (int i = 0; i < LedButtonsThatOpenThisScreen.size(); i++)
+	for (int i = 0; i < (int)LedButtonsThatOpenThisScreen.size(); i++)
 	{
 		gPanState.SetButtonLed((FinalLedButtonEnum)LedButtonsThatOpenThisScreen[i], ledmode_solid);
 	}
@@ -154,7 +154,7 @@ void _screensetup_t::SetupMainUILeds()
 			V = 0;
 			int idx = GetAssociatedParameter(enc);
 			bool active = false;
-			for (int k = 0; k < EncodersThatOpenThisScreen.size(); k++) if (EncodersThatOpenThisScreen[k] == i) active = true;
+			for (int k = 0; k < (int)EncodersThatOpenThisScreen.size(); k++) if (EncodersThatOpenThisScreen[k] == i) active = true;
 
 			if (idx > -1)
 			{
@@ -180,7 +180,7 @@ void _screensetup_t::SetupMainUILeds()
 		}
 	}
 
-	for (int i = 0; i < EncodersThatOpenThisScreen.size(); i++)
+	for (int i = 0; i < (int)EncodersThatOpenThisScreen.size(); i++)
 	{
 		gPanState.SetEncoderLed((FinalEncoderEnum)EncodersThatOpenThisScreen[i], ledmode_solid, gPanState.active_led_r, gPanState.active_led_g, gPanState.active_led_r);
 	}
@@ -272,7 +272,7 @@ void _screensetup_t::Action(int action)
 
 void _screensetup_t::SetFirstEnabledControlActive()
 {
-	for (int i = 0; i < ControlsInOrder.size(); i++)
+	for (int i = 0; i < (int)ControlsInOrder.size(); i++)
 	{
 		if (ControlsInOrder[i]->enabled)
 		{
@@ -320,6 +320,8 @@ int _screensetup_t::EnableAvailableEncoder(char *text, int style, int target, bo
 			return i;
 		}
 	}
+
+	return -1;
 }
 
 int _screensetup_t::EnableAvailableButton(char *text, int style, int target)
@@ -336,6 +338,8 @@ int _screensetup_t::EnableAvailableButton(char *text, int style, int target)
 			return i;
 		}
 	}
+
+	return -1;
 }
 
 void _screensetup_t::ButtonStyle(int i, int style, int target)
@@ -403,7 +407,7 @@ _textcontrol_t * _screensetup_t::AddText(float x, float y, char *t, alignment_t 
 void _screensetup_t::ChangeActiveControl(int delta)
 {
 	int Start = (ActiveControl + delta + ControlsInOrder.size()) % ControlsInOrder.size();
-	for (int i = 0; i < ControlsInOrder.size(); i++)
+	for (int i = 0; i < (int)ControlsInOrder.size(); i++)
 	{
 		if (ControlsInOrder[Start]->enabled == true && ControlsInOrder[Start]->skipencodercycling == false)
 		{
@@ -481,7 +485,7 @@ void _screensetup_t::EncoderPress(FinalEncoderEnum button)
 
 int _screensetup_t::GetControlIndex(_control_t *c)
 {
-	for (int i = 0; i < ControlsInOrder.size(); i++)
+	for (int i = 0; i < (int)ControlsInOrder.size(); i++)
 	{
 		if (c == ControlsInOrder[i]) return i;
 	}
@@ -636,7 +640,7 @@ void _screensetup_t::RenderContent(bool active, float DT)
 		ImGui::PopFont();
 	}
 
-	for (int i = 0; i < ControlsInOrder.size(); i++)
+	for (int i = 0; i < (int)ControlsInOrder.size(); i++)
 	{
 		ControlsInOrder[i]->Render((i == ActiveControl) && (Modal == NULL), DT);
 	}

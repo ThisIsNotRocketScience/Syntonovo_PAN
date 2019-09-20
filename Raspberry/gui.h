@@ -4,6 +4,8 @@
 #include "FinalPanEnums.h"
 #include "FinalPanHeader.h"
 
+#pragma warning( disable : 4244)
+
 #ifndef PANGUIH
 #define PANGUIH
 
@@ -167,10 +169,13 @@ public:
 	font_size fontsize;
 	_textcontrol_t(bool dyn = false, char *dynpointer = 0)
 	{
+		x = y = 0;
 		dynamic = dyn;
 		src = dynpointer;
 		Color = ImVec4(1, 1, 1, 1);
 		skipencodercycling = true;
+		Align = alignment_t::align_left;
+		fontsize = font_size::font_small;
 	}
 	float x, y;
 		alignment_t Align;
@@ -225,6 +230,12 @@ public:
 	{
 		Set = 0;
 		IsDirectOutput = false;
+		ledmode = ledmodes::ledmode_off;
+		r = g = b = 255;
+		ModSourceCount = 0;
+		EncoderID = 0;
+		x = y = 0;
+		Align = alignment_t::align_left;
 	}
 	alignment_t Align;
 	ledmodes ledmode;

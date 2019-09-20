@@ -63,7 +63,7 @@ void BuildModulationTargetList()
 
 int FindModulationListIndex(int c)
 {
-	for (int i = 0; i < ModulationTargetList.size(); i++)
+	for (int i = 0; i < (int)ModulationTargetList.size(); i++)
 	{
 
 		if (ModulationTargetList[i]->targetid == c) return i;
@@ -131,7 +131,7 @@ void TargetList::Render(bool active, float dt)
 	{
 		
 		int idx = PageStart + i;
-		if (idx < ModulationTargetList.size() && idx >= 0)
+		if (idx < (int)ModulationTargetList.size() && idx >= 0)
 		{
 			auto c = ModulationTargetList[idx];
 			if (c->categoryid != LastCategory)

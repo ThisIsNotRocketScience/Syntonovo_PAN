@@ -5,12 +5,14 @@
 #include <stdint.h>
 #include <vector>
 #include "FinalPanEnums.h"
+
+#pragma pack(push)
 #pragma pack(1)
 
 #ifdef WIN32
-#define PACK
+#define PACKED
 #else
-#define PACK  __attribute__((packed))
+#define PACKED  __attribute__((packed))
 #endif
 
 
@@ -21,12 +23,12 @@ typedef struct
 	uint8_t sourceid;
 	uint8_t __reserved1;
 	uint16_t __reserved2;
-} PACK ModTargetSpec_t;
+} PACKED ModTargetSpec_t;
 
 typedef struct
 {
 	ModTargetSpec_t targets[MODTARGET_COUNT];
-} PACK ModMatrixRow_t;
+} PACKED ModMatrixRow_t;
 
 typedef struct
 {
@@ -36,7 +38,7 @@ typedef struct
 	int16_t shape;
 	uint16_t reset_phase;
 	uint16_t ___reserved[3];
-} PACK LfoParam_t;
+} PACKED LfoParam_t;
 
 typedef struct
 {
@@ -47,14 +49,14 @@ typedef struct
 	uint16_t r;
 	uint16_t curve;
 	uint16_t ___reserved[2];
-} PACK EnvParam_t;
+} PACKED EnvParam_t;
 
 typedef struct
 {
 	int16_t scale;
 	int16_t deadzone;
 	//int16_t shape;
-} PACK ControllerParam_t;
+} PACKED ControllerParam_t;
 
 typedef struct
 {
@@ -63,7 +65,7 @@ typedef struct
 	uint16_t op; // tbd plus, minus, mul, diff, sh, lag, etc.
 	uint16_t parameter; // parameter for selected op
 	uint16_t ___reserved;
-} PACK OperatorParam_t;
+} PACKED OperatorParam_t;
 
 
 enum PresetCategoryEnum
@@ -105,7 +107,7 @@ typedef struct
 	int16_t depth;
 	uint16_t sourceid;
 	uint8_t subsourceid;
-} PACK ModSourceSpec_t;
+} PACKED ModSourceSpec_t;
 
 class ModSourcesForOutputStruct
 {
@@ -229,10 +231,11 @@ public:
 		case FilterVCF2C:S1 = Switch_SELVCF23A; S2 = Switch_SELVCF23B; break;
 		case FilterVCF2D:S1 = Switch_SELVCF24A; S2 = Switch_SELVCF24B; break;
 		}
-		bool B1;
-		bool B2;
+		bool B1 = false;
+		bool B2 = false;
 		switch (newf)
 		{
+		default: B1 = B2 = false; break;
 		case Filt_LP: B1 = false; B2 = false; break;
 		case Filt_HP: B1 = true;  B2 = false; break;
 		case Filt_BP: B1 = false; B2 = true; break;
@@ -459,18 +462,18 @@ public:
 		{
 			case Source_LFO:snprintf(txt, len, "LFO %d", instance + 1); return;
 			case Source_Envelope:snprintf(txt, len, "Envelope %d", instance + 1); return;
-			case Source_x:snprintf(txt, len, "X", instance); return;
-			case Source_y:snprintf(txt, len, "Y", instance); return;
-			case Source_z:snprintf(txt, len, "Z", instance); return;
-			case Source_zprime:snprintf(txt, len, "Z'", instance); return;
-			case Source_left_mod:snprintf(txt, len, "Left pad", instance); return;
-			case Source_right_mod:snprintf(txt, len, "Right pad", instance); return;
-			case Source_left_sus:snprintf(txt, len, "Left sustain", instance); return;
-			case Source_right_sus:snprintf(txt, len, "Right sustain", instance); return;
-			case Source_left_unac:snprintf(txt, len, "Left una corda", instance); return;
-			case Source_right_unac:snprintf(txt, len, "Right una corda", instance); return;
-			case Source_note:snprintf(txt, len, "Keyboard", instance); return;
-			case Source_vel:snprintf(txt, len, "Velocity", instance); return;			
+			case Source_x:snprintf(txt, len, "X"); return;
+			case Source_y:snprintf(txt, len, "Y"); return;
+			case Source_z:snprintf(txt, len, "Z"); return;
+			case Source_zprime:snprintf(txt, len, "Z'"); return;
+			case Source_left_mod:snprintf(txt, len, "Left pad"); return;
+			case Source_right_mod:snprintf(txt, len, "Right pad"); return;
+			case Source_left_sus:snprintf(txt, len, "Left sustain"); return;
+			case Source_right_sus:snprintf(txt, len, "Right sustain"); return;
+			case Source_left_unac:snprintf(txt, len, "Left una corda"); return;
+			case Source_right_unac:snprintf(txt, len, "Right una corda"); return;
+			case Source_note:snprintf(txt, len, "Keyboard"); return;
+			case Source_vel:snprintf(txt, len, "Velocity"); return;			
 		}
 		snprintf(txt, len, "unknown?");
 	}
@@ -565,8 +568,8 @@ public:
 	hsv low;
 	hsv high;
 	hsv active;
-} PACK;
+} PACKED;
 
 extern PanPreset_t gCurrentPreset;
-
+#pragma pack(pop)
 #endif

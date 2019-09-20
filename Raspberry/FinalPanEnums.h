@@ -16,15 +16,16 @@
 #define PRESET_NAME_LENGTH 16
 
 
+#pragma pack(push)
 #pragma pack(1)
 
 #ifdef WIN32
-	#ifndef PACK 
-		#define PACK
+	#ifndef PACKED 
+		#define PACKED
 	#endif
 #else
-	#ifndef PACK 
-		#define PACK  __attribute__((packed))
+	#ifndef PACKED 
+		#define PACKED  __attribute__((packed))
 	#endif
 #endif
 
@@ -34,7 +35,7 @@ class hsv
 public:
 	uint16_t h, s, v;
 	uint16_t pad;
-} PACK;
+} PACKED;
 
 enum LedTheme
 {
@@ -437,7 +438,7 @@ enum ledmodes
 	ledmode_blinkslow,
 	ledmode_blinkfast,
 	ledmode_off
-} PACK;
+} PACKED;
 
 typedef struct LedState_t
 {
@@ -446,7 +447,7 @@ typedef struct LedState_t
 	uint16_t g;
 	uint16_t b;
 	ledmodes mode;
-} PACK LedState_t;
+} PACKED LedState_t;
 
 
 typedef struct ButtonState_t
@@ -458,7 +459,7 @@ typedef struct
 {
 	LedState_t ledbuttons[__FINALLEDBUTTON_COUNT];
 	LedState_t encoders[__FINALENCODER_COUNT];
-} PACK PanLedState_t;
+} PACKED PanLedState_t;
 
 extern void hsv2rgb(uint16_t h, uint16_t s, uint16_t v, uint16_t *r, uint16_t *g, uint16_t *b);
 
@@ -600,4 +601,7 @@ struct presetnames_t
 extern presetnames_t presetnames;
 
 extern PanState_t gPanState;
+
+#pragma pack(pop)
+
 #endif

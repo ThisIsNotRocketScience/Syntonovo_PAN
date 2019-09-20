@@ -103,10 +103,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Library Include="..\libs\SDL2-2.0.7\lib\x86\SDL2main.lib" />
-    <Library Include="..\libs\SDL2-2.0.7\lib\x86\SDL2.lib" />
-  </ItemGroup>
-  <ItemGroup>
     <Font Include="ProggyTiny.ttf" />
   </ItemGroup>
   <ItemGroup>
@@ -134,5 +130,9 @@
     <ClInclude Include="..\Raspberry\NewModulationModal.h">
       <Filter>Source Files\Screens</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="..\libs\SDL2-2.0.7\lib\x86\SDL2.lib" />
+    <Library Include="..\libs\SDL2-2.0.7\lib\x86\SDL2main.lib" />
   </ItemGroup>
 </Project>
