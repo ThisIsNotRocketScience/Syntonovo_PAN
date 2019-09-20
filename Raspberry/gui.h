@@ -295,6 +295,8 @@ public:
 	virtual void TweakParameterValue(int param, int delta) ;
 	virtual void SetupEncoderSet(int n);
 
+	void RenderPatchBox();
+
 	void AddVCONextPrev();
 	void AddVCF2NextPrev();
 	void SetupMainUILeds();
@@ -311,7 +313,8 @@ public:
 
 	bool EnableButton(int i, const char *text, int style = MenuEntry_NoStyle, int target = -1, bool active = true, ledmodes l = ledmode_solid);
 
-	int EnableAvailableEncoder(char *text, int style, int target, bool isdirectoutput = false);
+	int EnableAvailableEncoder(char *text, int style, int target, int startidx, bool isdirectoutput = false);
+	int SkipAvailableEncoder(int startidx);
 
 	int EnableAvailableButton(char *text, int style, int target);
 

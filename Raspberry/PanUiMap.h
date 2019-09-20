@@ -18,6 +18,11 @@
 #define ENTRY(name,entryid,knob)
 #endif
 
+#ifndef SKIPENTRY
+#define REDEFINEDSKIPENTRY
+#define SKIPENTRY
+#endif
+
 #ifndef CUSTOMENTRY
 #define REDEFINEDCUSTOMENTRY
 #define CUSTOMENTRY(name,entryid,ctrl)
@@ -30,53 +35,68 @@
 
 
 MENU(VCO1, ledbutton_VCO1, "VCO1")
-ENTRY("Pitch", MenuEntry_Pitch, Output_VCO1_PITCH)
 CUSTOMENTRY("Triangle", MenuEntry_Toggle, Switch_SEL1TRI)
 CUSTOMENTRY("Pulse", MenuEntry_Toggle, Switch_SEL1SQR)
 CUSTOMENTRY("Saw", MenuEntry_Toggle, Switch_SEL1SAW)
 CUSTOMENTRY("Subosc", MenuEntry_Toggle, Switch_SEL1SUB)
 CUSTOMENTRY("Sync", MenuEntry_Toggle, Switch_SELVCOSYNC3)
-ENTRY("PW", MenuEntry_Percentage, Output_VCO1_PW)
 CUSTOMENTRY("Octave", MenuEntry_Octave, Output_VCO1_OCTAVE)
 
-
+ENTRY("Pitch", MenuEntry_Pitch, Output_VCO1_PITCH)
+SKIPENTRY
+ENTRY("PW", MenuEntry_Percentage, Output_VCO1_PW)
+SKIPENTRY
 ENTRY("> VCF1", MenuEntry_Value, Output_VCO1_MIX1)
+SKIPENTRY
 ENTRY("> VCF2", MenuEntry_Value, Output_VCO1_MIX2)
+SKIPENTRY
 ENTRY("Sine >\n Cleanfeed ", MenuEntry_Value, Output_VCO1SIN_MIX3)
+
 
 ENDMENU()
 
 MENU(VCO2, ledbutton_VCO2, "VCO2")
-ENTRY("Pitch", MenuEntry_Pitch, Output_VCO2_PITCH)
 CUSTOMENTRY("Triangle", MenuEntry_Toggle, Switch_SEL2TRI)
 CUSTOMENTRY("Pulse", MenuEntry_Toggle, Switch_SEL2SQR)
 CUSTOMENTRY("Saw", MenuEntry_Toggle, Switch_SEL2SAW)
 CUSTOMENTRY("Subosc", MenuEntry_Toggle, Switch_SEL2SUB)
 CUSTOMENTRY("Sync", MenuEntry_Toggle, Switch_SELVCOSYNC1)
-ENTRY("PW", MenuEntry_Percentage, Output_VCO2_PW)
-ENTRY("FM (from VCO1)", MenuEntry_Value, Output_VCO123_FM2)
-ENTRY("-> VCF1", MenuEntry_Value, Output_VCO2_MIX1)
-ENTRY("-> VCF2", MenuEntry_Value, Output_VCO2_MIX2)
-ENTRY("Sine -> Cleanfeed ", MenuEntry_Value, Output_VCO2SIN_MIX3)
 CUSTOMENTRY("Octave", MenuEntry_Octave, Output_VCO2_OCTAVE)
+
+ENTRY("Pitch", MenuEntry_Pitch, Output_VCO2_PITCH)
+SKIPENTRY
+ENTRY("PW", MenuEntry_Percentage, Output_VCO2_PW)
+SKIPENTRY
+ENTRY("FM (from VCO1)", MenuEntry_Value, Output_VCO123_FM2)
+SKIPENTRY
+ENTRY("-> VCF1", MenuEntry_Value, Output_VCO2_MIX1)
+SKIPENTRY
+ENTRY("-> VCF2", MenuEntry_Value, Output_VCO2_MIX2)
+SKIPENTRY
+ENTRY("Sine -> Cleanfeed ", MenuEntry_Value, Output_VCO2SIN_MIX3)
+
 
 ENDMENU()
 
 MENU(VCO3, ledbutton_VCO3, "VCO3")
-ENTRY("Pitch", MenuEntry_Pitch, Output_VCO3_PITCH)
 CUSTOMENTRY("Triangle", MenuEntry_Toggle, Switch_SEL3TRI)
 CUSTOMENTRY("Pulse", MenuEntry_Toggle, Switch_SEL3SQR)
 CUSTOMENTRY("Saw", MenuEntry_Toggle, Switch_SEL3SAW)
 CUSTOMENTRY("Subosc", MenuEntry_Toggle, Switch_SEL3SUB)
 CUSTOMENTRY("Sync", MenuEntry_Toggle, Switch_SELVCOSYNC2)
-
-ENTRY("PW", MenuEntry_Percentage, Output_VCO3_PW)
-ENTRY("FM (from VCO1)", MenuEntry_Value, Output_VCO123_FM3)
-
-ENTRY("-> VCF1", MenuEntry_Value, Output_VCO3_MIX1)
-ENTRY("-> VCF2", MenuEntry_Value, Output_VCO3_MIX2)
-ENTRY("Sine -> Cleanfeed ", MenuEntry_Value, Output_VCO3SIN_MIX3)
 CUSTOMENTRY("Octave", MenuEntry_Octave, Output_VCO3_OCTAVE)
+
+ENTRY("Pitch", MenuEntry_Pitch, Output_VCO3_PITCH)
+SKIPENTRY
+ENTRY("PW", MenuEntry_Percentage, Output_VCO3_PW)
+SKIPENTRY
+ENTRY("FM (from VCO1)", MenuEntry_Value, Output_VCO123_FM3)
+SKIPENTRY
+ENTRY("-> VCF1", MenuEntry_Value, Output_VCO3_MIX1)
+SKIPENTRY
+ENTRY("-> VCF2", MenuEntry_Value, Output_VCO3_MIX2)
+SKIPENTRY
+ENTRY("Sine -> Cleanfeed ", MenuEntry_Value, Output_VCO3SIN_MIX3)
 
 
 ENDMENU()
@@ -84,55 +104,76 @@ ENDMENU()
 MENU(VCO8, ledbutton_VCO3, "NSEf4")
 
 ENTRY("Color", MenuEntry_Pitch, Output_NOISE_COLOR)
+SKIPENTRY
 ENTRY("Saw -> VCF1", MenuEntry_Value, Output_DNSSAW_MIX1)
+SKIPENTRY
 ENTRY("Saw -> VCF2", MenuEntry_Value, Output_DNSSAW_MIX2)
+SKIPENTRY
 ENTRY("Noise -> VCF1", MenuEntry_Value, Output_DIGINS_MIX1)
+SKIPENTRY
 ENTRY("Noise -> VCF2", MenuEntry_Value, Output_DIGINS_MIX2)
 
 
 ENDMENU()
 
 MENU(VCO4, ledbutton_VCO4, "VCO5")
-ENTRY("Pitch", MenuEntry_Pitch, Output_VCO4_PITCH)
-ENTRY("Pulsewidth", MenuEntry_Value, Output_VCO4_PW)
 CUSTOMENTRY("Square Output", MenuEntry_Toggle, Switch_SEL4SQR)
 CUSTOMENTRY("Octave", MenuEntry_Octave, Output_VCO4_OCTAVE)
 
+ENTRY("Pitch", MenuEntry_Pitch, Output_VCO4_PITCH)
+SKIPENTRY
+ENTRY("Pulsewidth", MenuEntry_Value, Output_VCO4_PW)
+SKIPENTRY
 ENTRY("-> Cleanfeed", MenuEntry_Value, Output_VCO4_DRY_MIX)
+SKIPENTRY
 ENTRY("4567 Square -> VCF1", MenuEntry_Value, Output_VCO4567_MIX1)
+SKIPENTRY
 ENTRY("4567 Square -> VCF2", MenuEntry_Value, Output_VCO4567_MIX2)
 
 ENDMENU()
 
 MENU(VCO5, ledbutton_VCO4, "VCO6")
-ENTRY("Pitch", MenuEntry_Pitch, Output_VCO5_PITCH)
-ENTRY("Pulsewidth", MenuEntry_Value, Output_VCO5_PW)
 CUSTOMENTRY("Square Output", MenuEntry_Toggle, Switch_SEL5SQR)
 CUSTOMENTRY("Octave", MenuEntry_Octave, Output_VCO5_OCTAVE)
+
+ENTRY("Pitch", MenuEntry_Pitch, Output_VCO5_PITCH)
+SKIPENTRY
+ENTRY("Pulsewidth", MenuEntry_Value, Output_VCO5_PW)
+SKIPENTRY
 ENTRY("-> Cleanfeed", MenuEntry_Value, Output_VCO5_DRY_MIX)
+SKIPENTRY
 ENTRY("4567 Square -> VCF1", MenuEntry_Value, Output_VCO4567_MIX1)
+SKIPENTRY
 ENTRY("4567 Square -> VCF2", MenuEntry_Value, Output_VCO4567_MIX2)
 
 ENDMENU()
 
 MENU(VCO6, ledbutton_VCO4, "VCO7")
-ENTRY("Pitch", MenuEntry_Pitch, Output_VCO6_PITCH)
-ENTRY("Pulsewidth", MenuEntry_Value, Output_VCO6_PW)
 CUSTOMENTRY("Square Output", MenuEntry_Toggle, Switch_SEL6SQR)
 CUSTOMENTRY("Octave", MenuEntry_Octave, Output_VCO6_OCTAVE)
+ENTRY("Pitch", MenuEntry_Pitch, Output_VCO6_PITCH)
+SKIPENTRY
+ENTRY("Pulsewidth", MenuEntry_Value, Output_VCO6_PW)
+SKIPENTRY
 ENTRY("-> Cleanfeed", MenuEntry_Value, Output_VCO6_DRY_MIX)
+SKIPENTRY
 ENTRY("4567 Square -> VCF1", MenuEntry_Value, Output_VCO4567_MIX1)
+SKIPENTRY
 ENTRY("4567 Square -> VCF2", MenuEntry_Value, Output_VCO4567_MIX2)
 
 ENDMENU()
 
 MENU(VCO7, ledbutton_VCO4, "VCO8")
-ENTRY("Pitch", MenuEntry_Pitch, Output_VCO7_PITCH)
-ENTRY("Pulsewidth", MenuEntry_Value, Output_VCO7_PW)
 CUSTOMENTRY("Square Output", MenuEntry_Toggle, Switch_SEL7SQR)
 CUSTOMENTRY("Octave", MenuEntry_Octave, Output_VCO7_OCTAVE)
+ENTRY("Pitch", MenuEntry_Pitch, Output_VCO7_PITCH)
+SKIPENTRY
+ENTRY("Pulsewidth", MenuEntry_Value, Output_VCO7_PW)
+SKIPENTRY
 ENTRY("-> Cleanfeed", MenuEntry_Value, Output_VCO7_DRY_MIX)
+SKIPENTRY
 ENTRY("4567 Square -> VCF1", MenuEntry_Value, Output_VCO4567_MIX1)
+SKIPENTRY
 ENTRY("4567 Square -> VCF2", MenuEntry_Value, Output_VCO4567_MIX2)
 
 ENDMENU()
@@ -140,9 +181,12 @@ ENDMENU()
 EXTRABUTTON(VCF1, ledbutton_VCF1_ResonanceBut)
 EXTRABUTTON(VCF1, ledbutton_VCF1_Routing)
 EXTRABUTTON(VCF1, ledbutton_VCF1_Spectrum_ModBut)
+
 MENU(VCF1, ledbutton_VCF1_FrequencyBut, "VCF1")
 ENTRY("Frequency", MenuEntry_Value, Output_VCF1_CV)
+SKIPENTRY
 ENTRY("Resonance", MenuEntry_Value, Output_VCF1_RES)
+SKIPENTRY
 ENTRY("Spectrum Mod", MenuEntry_Value, Output_VCF1_CROSSMOD)
 
 
@@ -204,10 +248,10 @@ ENDMENU()
 
 MENU(CLEANMIX, ledbutton_VCF1_FrequencyBut, "Cleanfeed Mix")
 ENTRY("VCO1 Sine", MenuEntry_Value, Output_VCO1SIN_MIX3)
-ENTRY("VCO2 Sine", MenuEntry_Value, Output_VCO2SIN_MIX3)
-ENTRY("VCO3 Sine", MenuEntry_Value, Output_VCO3SIN_MIX3)
 ENTRY("VCO4", MenuEntry_Value, Output_VCO4_DRY_MIX)
+ENTRY("VCO2 Sine", MenuEntry_Value, Output_VCO2SIN_MIX3)
 ENTRY("VCO5", MenuEntry_Value, Output_VCO5_DRY_MIX)
+ENTRY("VCO3 Sine", MenuEntry_Value, Output_VCO3SIN_MIX3)
 ENTRY("VCO6", MenuEntry_Value, Output_VCO6_DRY_MIX)
 ENTRY("VCO7", MenuEntry_Value, Output_VCO7_DRY_MIX)
 ENTRY("Purple Noise", MenuEntry_Value, Output_PUN_MIX)
@@ -241,10 +285,15 @@ CUSTOMENTRY("Stereo/Mono", MenuEntry_Toggle, Switch_SELVCF2MOST)
 
 //ENTRY("Feedback", MenuEntry_Value, Output_VCF2_FB)
 ENTRY("Frequency A", MenuEntry_Value, Output_VCF2_A_CV)
+SKIPENTRY
 ENTRY("Resonance A", MenuEntry_Value, Output_VCF2_A_RES)
+SKIPENTRY
 ENTRY("Mix A", MenuEntry_Value, Output_VCF2_A_MIX)
+SKIPENTRY
 ENTRY("Spectrum Mod", MenuEntry_Value, Output_VCF2_CROSSMOD)
+SKIPENTRY
 ENTRY("Negative FB", MenuEntry_Value, Output_VCF2_M_FB)
+SKIPENTRY
 ENTRY("Positive FB", MenuEntry_Value, Output_VCF2_P_FB)
 //CUSTOMENTRY("L0", MenuEntry_Toggle, Switch_SELVCF2L0)
 //CUSTOMENTRY("L1", MenuEntry_Toggle, Switch_SELVCF2L1)
@@ -258,10 +307,15 @@ CUSTOMENTRY("Stereo/Mono", MenuEntry_Toggle, Switch_SELVCF2MOST)
 
 //ENTRY("Feedback", MenuEntry_Value, Output_VCF2_FB)
 ENTRY("Frequency B", MenuEntry_Value, Output_VCF2_B_CV)
+SKIPENTRY
 ENTRY("Resonance B", MenuEntry_Value, Output_VCF2_B_RES)
+SKIPENTRY
 ENTRY("Mix B", MenuEntry_Value, Output_VCF2_B_MIX)
+SKIPENTRY
 ENTRY("Spectrum Mod", MenuEntry_Value, Output_VCF2_CROSSMOD)
+SKIPENTRY
 ENTRY("Negative FB", MenuEntry_Value, Output_VCF2_M_FB)
+SKIPENTRY
 ENTRY("Positive FB", MenuEntry_Value, Output_VCF2_P_FB)
 
 //CUSTOMENTRY("L0", MenuEntry_Toggle, Switch_SELVCF2L0)
@@ -276,10 +330,15 @@ CUSTOMENTRY("Stereo/Mono", MenuEntry_Toggle, Switch_SELVCF2MOST)
 
 //ENTRY("Feedback", MenuEntry_Value, Output_VCF2_FB)
 ENTRY("Frequency C", MenuEntry_Value, Output_VCF2_C_CV)
+SKIPENTRY
 ENTRY("Resonance C", MenuEntry_Value, Output_VCF2_C_RES)
+SKIPENTRY
 ENTRY("Mix C", MenuEntry_Value, Output_VCF2_C_MIX)
+SKIPENTRY
 ENTRY("Spectrum Mod", MenuEntry_Value, Output_VCF2_CROSSMOD)
+SKIPENTRY
 ENTRY("Negative FB", MenuEntry_Value, Output_VCF2_M_FB)
+SKIPENTRY
 ENTRY("Positive FB", MenuEntry_Value, Output_VCF2_P_FB)
 
 //CUSTOMENTRY("L0", MenuEntry_Toggle, Switch_SELVCF2L0)
@@ -294,10 +353,15 @@ CUSTOMENTRY("Stereo/Mono", MenuEntry_Toggle, Switch_SELVCF2MOST)
 
 //ENTRY("Feedback", MenuEntry_Value, Output_VCF2_FB)
 ENTRY("Frequency D", MenuEntry_Value, Output_VCF2_D_CV)
-ENTRY("Resonancy D", MenuEntry_Value, Output_VCF2_D_RES)
+SKIPENTRY
+ENTRY("Resonance D", MenuEntry_Value, Output_VCF2_D_RES)
+SKIPENTRY
 ENTRY("Mix D", MenuEntry_Value, Output_VCF2_D_MIX)
+SKIPENTRY
 ENTRY("Spectrum Mod", MenuEntry_Value, Output_VCF2_CROSSMOD)
+SKIPENTRY
 ENTRY("Negative FB", MenuEntry_Value, Output_VCF2_M_FB)
+SKIPENTRY
 ENTRY("Positive FB", MenuEntry_Value, Output_VCF2_P_FB)
 
 //CUSTOMENTRY("L0", MenuEntry_Toggle, Switch_SELVCF2L0)
@@ -386,6 +450,11 @@ ENDMENU()
 #ifdef REDEFINEDENTRY
 #undef ENTRY
 #undef REDEFINEDENTRY
+#endif
+
+#ifdef REDEFINEDSKIPENTRY
+#undef SKIPENTRY
+#undef REDEFINEDSKIPENTRY
 #endif
 
 #ifdef REDEFINEDCUSTOMENTRY

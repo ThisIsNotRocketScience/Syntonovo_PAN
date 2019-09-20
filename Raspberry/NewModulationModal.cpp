@@ -25,10 +25,13 @@ NewModulationModal::NewModulationModal()
 	EnableButton(7, "Velocity");
 	EnableButton(8, "Mod left");
 
-	EnableButton(7, "Mod Right");
-	EnableButton(8, "Sustain Rihgt");
-	EnableButton(9, "Una corda Left");
+	EnableButton(9, "Mod Right");
+	EnableButton(10, "Sustain Right");
+	EnableButton(11, "Una corda Left");
 		
+	EnableButton(12, "X");
+	EnableButton(13, "Y");
+	//EnableButton(14, "Z");
 }
 
 void NewModulationModal::Setup(OutputEnum target)

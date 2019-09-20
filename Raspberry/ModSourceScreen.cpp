@@ -90,43 +90,43 @@ ModSourceScreen::ModSourceScreen(Screens_t screen, ModSource_t modsourcetype)
 	{
 
 	case SCREEN_X:
-		EnableAvailableEncoder("Deadzone", MenuEntry_EnvelopeValue, KeyboardParam_DeadzoneX);
-		EnableAvailableEncoder("Scale", MenuEntry_EnvelopeValue, KeyboardParam_ScaleX);
+		EnableAvailableEncoder("Deadzone", MenuEntry_EnvelopeValue, KeyboardParam_DeadzoneX,-1);
+		EnableAvailableEncoder("Scale", MenuEntry_EnvelopeValue, KeyboardParam_ScaleX,-1);
 
 		break;
 	case SCREEN_Y:
-		EnableAvailableEncoder("Deadzone", MenuEntry_EnvelopeValue, KeyboardParam_DeadzoneY);
-		EnableAvailableEncoder("Scale", MenuEntry_EnvelopeValue, KeyboardParam_ScaleY);
+		EnableAvailableEncoder("Deadzone", MenuEntry_EnvelopeValue, KeyboardParam_DeadzoneY,-1);
+		EnableAvailableEncoder("Scale", MenuEntry_EnvelopeValue, KeyboardParam_ScaleY,-1);
 
 		break;
 	case SCREEN_Z:
-		EnableAvailableEncoder("Deadzone", MenuEntry_EnvelopeValue, KeyboardParam_DeadzoneZ);
-		EnableAvailableEncoder("Scale", MenuEntry_EnvelopeValue, KeyboardParam_ScaleZ);
+		EnableAvailableEncoder("Deadzone", MenuEntry_EnvelopeValue, KeyboardParam_DeadzoneZ,-1);
+		EnableAvailableEncoder("Scale", MenuEntry_EnvelopeValue, KeyboardParam_ScaleZ,-1);
 
 		break;
 	case SCREEN_LMOD:
-		EnableAvailableEncoder("Deadzone", MenuEntry_EnvelopeValue, KeyboardParam_DeadzoneLMod);
-		EnableAvailableEncoder("Scale", MenuEntry_EnvelopeValue, KeyboardParam_ScaleLMod);
+		EnableAvailableEncoder("Deadzone", MenuEntry_EnvelopeValue, KeyboardParam_DeadzoneLMod,-1);
+		EnableAvailableEncoder("Scale", MenuEntry_EnvelopeValue, KeyboardParam_ScaleLMod,-1);
 		break;
 	case SCREEN_RMOD:
-		EnableAvailableEncoder("Deadzone", MenuEntry_EnvelopeValue, KeyboardParam_DeadzoneRMod);
-		EnableAvailableEncoder("Scale", MenuEntry_EnvelopeValue, KeyboardParam_ScaleRMod);
+		EnableAvailableEncoder("Deadzone", MenuEntry_EnvelopeValue, KeyboardParam_DeadzoneRMod,-1);
+		EnableAvailableEncoder("Scale", MenuEntry_EnvelopeValue, KeyboardParam_ScaleRMod,-1);
 		break;
 	case SCREEN_LSUS:
-		EnableAvailableEncoder("Deadzone", MenuEntry_EnvelopeValue, KeyboardParam_DeadzoneLSus);
-		EnableAvailableEncoder("Scale", MenuEntry_EnvelopeValue, KeyboardParam_ScaleLSus);
+		EnableAvailableEncoder("Deadzone", MenuEntry_EnvelopeValue, KeyboardParam_DeadzoneLSus,-1);
+		EnableAvailableEncoder("Scale", MenuEntry_EnvelopeValue, KeyboardParam_ScaleLSus,-1);
 		break;
 	case SCREEN_RSUS:
-		EnableAvailableEncoder("Deadzone", MenuEntry_EnvelopeValue, KeyboardParam_DeadzoneRSus);
-		EnableAvailableEncoder("Scale", MenuEntry_EnvelopeValue, KeyboardParam_ScaleRSus);
+		EnableAvailableEncoder("Deadzone", MenuEntry_EnvelopeValue, KeyboardParam_DeadzoneRSus,-1);
+		EnableAvailableEncoder("Scale", MenuEntry_EnvelopeValue, KeyboardParam_ScaleRSus,-1);
 		break;
 	case SCREEN_LUNA:
-		EnableAvailableEncoder("Deadzone", MenuEntry_EnvelopeValue, KeyboardParam_DeadzoneLUna);
-		EnableAvailableEncoder("Scale", MenuEntry_EnvelopeValue, KeyboardParam_ScaleLUna);
+		EnableAvailableEncoder("Deadzone", MenuEntry_EnvelopeValue, KeyboardParam_DeadzoneLUna,-1);
+		EnableAvailableEncoder("Scale", MenuEntry_EnvelopeValue, KeyboardParam_ScaleLUna,-1);
 		break;
 	case SCREEN_RUNA:
-		EnableAvailableEncoder("Deadzone", MenuEntry_EnvelopeValue, KeyboardParam_DeadzoneRUna);
-		EnableAvailableEncoder("Scale", MenuEntry_EnvelopeValue, KeyboardParam_ScaleRUna);
+		EnableAvailableEncoder("Deadzone", MenuEntry_EnvelopeValue, KeyboardParam_DeadzoneRUna,-1);
+		EnableAvailableEncoder("Scale", MenuEntry_EnvelopeValue, KeyboardParam_ScaleRUna,-1);
 		break;
 
 	case SCREEN_ENVELOPE:
@@ -134,18 +134,19 @@ ModSourceScreen::ModSourceScreen(Screens_t screen, ModSource_t modsourcetype)
 
 		EnableButton(3, "Legato", MenuEntry_EnvelopeToggle, Envelope_Retrigger);
 
-		EnableAvailableEncoder("Attack", MenuEntry_EnvelopeValue, Envelope_Attack);
-		EnableAvailableEncoder("Decay", MenuEntry_EnvelopeValue, Envelope_Decay);
-		EnableAvailableEncoder("Sustain", MenuEntry_EnvelopeValue, Envelope_Sustain);
-		EnableAvailableEncoder("Release", MenuEntry_EnvelopeValue, Envelope_Release);
+		EnableAvailableEncoder("Attack", MenuEntry_EnvelopeValue, Envelope_Attack,-1);
+		EnableAvailableEncoder("Decay", MenuEntry_EnvelopeValue, Envelope_Decay,-1);
+		EnableAvailableEncoder("Sustain", MenuEntry_EnvelopeValue, Envelope_Sustain,-1);
+		EnableAvailableEncoder("Release", MenuEntry_EnvelopeValue, Envelope_Release,-1);
 //		EnableAvailableEncoder("Curve", MenuEntry_EnvelopeValue, Envelope_Curve);
 
 		break;
 	case SCREEN_LFO:
 		EnableButton(3, "Reset on key", MenuEntry_EnvelopeToggle, LFO_ResetOnKey);
-		EnableAvailableEncoder("Speed", MenuEntry_EnvelopeValue, LFO_Speed);
+		int LE = EnableAvailableEncoder("Speed", MenuEntry_EnvelopeValue, LFO_Speed,-1);
 	//	EnableAvailableEncoder("Shape", MenuEntry_EnvelopeValue, LFO_Shape);
-		EnableAvailableEncoder("Reset Phase", MenuEntry_EnvelopeValue, LFO_ResetPhase);
+		LE = SkipAvailableEncoder(LE);
+		EnableAvailableEncoder("Reset Phase", MenuEntry_EnvelopeValue, LFO_ResetPhase,LE );
 		//EnableAvailableEncoder("Depth", MenuEntry_EnvelopeValue, LFO_Depth);
 		HasActiveInstanceDisplay = true;
 		break;
