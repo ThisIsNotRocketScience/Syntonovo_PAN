@@ -101,7 +101,7 @@ ENTRY("Sine -> Cleanfeed ", MenuEntry_Value, Output_VCO3SIN_MIX3)
 
 ENDMENU()
 
-MENU(VCO8, ledbutton_VCO3, "NSEf4")
+MENU(VCO8, ledbutton_VCO3, "Noise")
 
 ENTRY("Color", MenuEntry_Pitch, Output_NOISE_COLOR)
 SKIPENTRY
@@ -116,7 +116,7 @@ ENTRY("Noise -> VCF2", MenuEntry_Value, Output_DIGINS_MIX2)
 
 ENDMENU()
 
-MENU(VCO4, ledbutton_VCO4, "VCO5")
+MENU(VCO4, ledbutton_VCO4, "VCO4")
 CUSTOMENTRY("Square Output", MenuEntry_Toggle, Switch_SEL4SQR)
 CUSTOMENTRY("Octave", MenuEntry_Octave, Output_VCO4_OCTAVE)
 
@@ -132,7 +132,7 @@ ENTRY("4567 Square -> VCF2", MenuEntry_Value, Output_VCO4567_MIX2)
 
 ENDMENU()
 
-MENU(VCO5, ledbutton_VCO4, "VCO6")
+MENU(VCO5, ledbutton_VCO4, "VCO5")
 CUSTOMENTRY("Square Output", MenuEntry_Toggle, Switch_SEL5SQR)
 CUSTOMENTRY("Octave", MenuEntry_Octave, Output_VCO5_OCTAVE)
 
@@ -148,7 +148,7 @@ ENTRY("4567 Square -> VCF2", MenuEntry_Value, Output_VCO4567_MIX2)
 
 ENDMENU()
 
-MENU(VCO6, ledbutton_VCO4, "VCO7")
+MENU(VCO6, ledbutton_VCO4, "VCO6")
 CUSTOMENTRY("Square Output", MenuEntry_Toggle, Switch_SEL6SQR)
 CUSTOMENTRY("Octave", MenuEntry_Octave, Output_VCO6_OCTAVE)
 ENTRY("Pitch", MenuEntry_Pitch, Output_VCO6_PITCH)
@@ -163,7 +163,7 @@ ENTRY("4567 Square -> VCF2", MenuEntry_Value, Output_VCO4567_MIX2)
 
 ENDMENU()
 
-MENU(VCO7, ledbutton_VCO4, "VCO8")
+MENU(VCO7, ledbutton_VCO4, "VCO7")
 CUSTOMENTRY("Square Output", MenuEntry_Toggle, Switch_SEL7SQR)
 CUSTOMENTRY("Octave", MenuEntry_Octave, Output_VCO7_OCTAVE)
 ENTRY("Pitch", MenuEntry_Pitch, Output_VCO7_PITCH)

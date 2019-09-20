@@ -218,7 +218,7 @@ void bottomencoder_t::Render(bool active, float DT)
 
 			if (t)
 			{
-				ImGui::SetCursorPos(ImVec2(x - ImGui::GetTextLineHeight()-19, y2+8));
+				ImGui::SetCursorPos(ImVec2(x - ImGui::GetTextLineHeight()-21, y2+8));
 				ImGui::Image(t, ImVec2(22, 76));
 			}
 		}

@@ -629,7 +629,7 @@ void _screensetup_t::RenderContent(bool active, float DT)
 		}
 		else
 		{
-			ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(30, 30), ImVec2(1024 - 30, 600 - 30), gGuiResources.ModalBGColor);
+			ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(0, 0), ImVec2(1024 , 600 ), gGuiResources.ModalBGColor);
 		}
 		
 		
@@ -643,15 +643,41 @@ void _screensetup_t::RenderContent(bool active, float DT)
 		}
 		else
 		{
+			ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(0, 0), ImVec2(1024, 600), ImColor(0,0,0));
 			ImGui::Image(BG?BG:gGuiResources.MainBG, ImVec2(1024, 600));
 		}
 	}
 	if (strlen(title) > 0)
 	{
 		ImGui::PushFont(gGuiResources.BigFont);
-		auto R = ImGui::CalcTextSize(title);
-		ImGui::SetCursorPos(ImVec2(ParamMasterMargin, ParamMasterMargin));
-		ImGui::Text(title);
+		ImGui::SetCursorPos(ImVec2(300+ParamMasterMargin, ParamMasterMargin));
+
+		if (Parent && ((_screensetup_t*)Parent)->Modal == this)
+		{
+			char titletext[2][1000];
+			sprintf_s(titletext[1], 1000, "%s", title);
+//			sprintf_s(titletext[0], 1000, "%s", title);
+			int idx = 0;
+			_screensetup_t* M = (_screensetup_t*)Parent;
+			while (M)
+			{
+				int idx2 = (idx + 1) % 2;
+				sprintf_s(titletext[idx], 1000, "%s -> %s", M->title, titletext[idx2]);
+				idx = idx2;
+				M = (_screensetup_t * )M->Parent;
+			}
+			int idx2 = (idx + 1) % 2;
+			auto R = ImGui::CalcTextSize(titletext[idx2]);
+			ImGui::Text(titletext[idx2]);
+
+		}
+		else
+		{
+			auto R = ImGui::CalcTextSize(title);
+			ImGui::Text(title);
+		}
+		
+		
 		ImGui::PopFont();
 	}
 

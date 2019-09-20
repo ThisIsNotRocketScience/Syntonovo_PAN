@@ -8,3 +8,13 @@ C:\Projects\Synton\PAN\Syntonovo_PAN\SliderTest\obj\Release\SliderTest.csproj.Ge
 C:\Projects\Synton\PAN\Syntonovo_PAN\SliderTest\obj\Release\SliderTest.csproj.CoreCompileInputs.cache
 C:\Projects\Synton\PAN\Syntonovo_PAN\SliderTest\obj\Release\SliderTest.exe
 C:\Projects\Synton\PAN\Syntonovo_PAN\SliderTest\obj\Release\SliderTest.pdb
+C:\Users\Root\Documents\GitHub\Syntonovo_PAN\SliderTest\bin\Release\SliderTest.exe.config
+C:\Users\Root\Documents\GitHub\Syntonovo_PAN\SliderTest\bin\Release\SliderTest.exe
+C:\Users\Root\Documents\GitHub\Syntonovo_PAN\SliderTest\bin\Release\SliderTest.pdb
+C:\Users\Root\Documents\GitHub\Syntonovo_PAN\SliderTest\obj\Release\SliderTest.csprojAssemblyReference.cache
+C:\Users\Root\Documents\GitHub\Syntonovo_PAN\SliderTest\obj\Release\SliderTest.Form1.resources
+C:\Users\Root\Documents\GitHub\Syntonovo_PAN\SliderTest\obj\Release\SliderTest.Properties.Resources.resources
+C:\Users\Root\Documents\GitHub\Syntonovo_PAN\SliderTest\obj\Release\SliderTest.csproj.GenerateResource.cache
+C:\Users\Root\Documents\GitHub\Syntonovo_PAN\SliderTest\obj\Release\SliderTest.csproj.CoreCompileInputs.cache
+C:\Users\Root\Documents\GitHub\Syntonovo_PAN\SliderTest\obj\Release\SliderTest.exe
+C:\Users\Root\Documents\GitHub\Syntonovo_PAN\SliderTest\obj\Release\SliderTest.pdb
