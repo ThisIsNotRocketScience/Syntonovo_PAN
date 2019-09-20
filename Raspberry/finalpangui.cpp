@@ -932,14 +932,14 @@ void FinalPan_LoadResources()
 
 	gGuiResources.LeftIndicator = Raspberry_LoadTexture("UI_LEFT.png");
 	gGuiResources.RightIndicator = Raspberry_LoadTexture("UI_RIGHT.png");
-	gGuiResources.TinyFont = io.Fonts->AddFontFromFileTTF("CORBEL.TTF", 20.0f);
-	gGuiResources.SmallFont = io.Fonts->AddFontFromFileTTF("CORBEL.TTF", 30.0f);
-	gGuiResources.MediumFont = io.Fonts->AddFontFromFileTTF("CORBEL.TTF", 38.0f);
+	gGuiResources.TinyFont = io.Fonts->AddFontFromFileTTF("CORBEL.TTF", 16.0f);
+	gGuiResources.SmallFont = io.Fonts->AddFontFromFileTTF("CORBEL.TTF", 20.0f);
+	gGuiResources.MediumFont = io.Fonts->AddFontFromFileTTF("CORBEL.TTF", 28.0f);
 	//gGuiResources.BigFont = io.Fonts->AddFontFromFileTTF("Fontfabric - Panton ExtraBold.otf", 44.0f);
 
 	gGuiResources.referencelines = false;
 	gGuiResources.testimage = false;
-	gGuiResources.BigFont = io.Fonts->AddFontFromFileTTF("Petronius-Roman.ttf", 38.0f);
+	gGuiResources.BigFont = io.Fonts->AddFontFromFileTTF("CORBEL.TTF", 30.0f);
 	init = true;
 
 	CheckFont("BigFont - PetroniusRoman", gGuiResources.BigFont);
@@ -1748,9 +1748,9 @@ void Gui::BuildScreens()
 		if (Screens[i] == 0) Screens[i] = new _screensetup_t();
 	}
 
-	Screens[SCREEN_HOME]->SetTitle("Syntonovo Pan");
-	Screens[SCREEN_HOME]->AddText(512, 50, "Current preset: ", align_right);
-	Screens[SCREEN_HOME]->AddDynamicText(512, 50, gCurrentPreset.Name, PRESET_NAME_LENGTH);
+	Screens[SCREEN_HOME]->SetTitle("");
+//	Screens[SCREEN_HOME]->AddText(512, 50, "Current preset: ", align_right);
+	//Screens[SCREEN_HOME]->AddDynamicText(512, 50, gCurrentPreset.Name, PRESET_NAME_LENGTH);
 	Screens[SCREEN_HOME]->EncodersThatOpenThisScreen.push_back(encoder_SketchLeft);
 	Screens[SCREEN_LFO]->LedButtonsThatOpenThisScreen.push_back(ledbutton_BHome);
 
@@ -1844,21 +1844,21 @@ void Gui::BuildScreens()
 	Lines3->AddTo(Screens[SCREEN_COLORS]);
 
 
-	Screens[SCREEN_COLORS]->EnableAvailableEncoder("Low: Hue", MenuEntry_LedValue, Led_Low_Hue);
-	Screens[SCREEN_COLORS]->EnableAvailableEncoder("Low: Sat", MenuEntry_LedValue, Led_Low_Sat);
-	Screens[SCREEN_COLORS]->EnableAvailableEncoder("Low: Bright", MenuEntry_LedValue, Led_Low_Bright);
+	Screens[SCREEN_COLORS]->EnableAvailableEncoder("Low: Hue", MenuEntry_LedValue, Led_Low_Hue,-1);
+	Screens[SCREEN_COLORS]->EnableAvailableEncoder("Low: Sat", MenuEntry_LedValue, Led_Low_Sat,-1);
+	Screens[SCREEN_COLORS]->EnableAvailableEncoder("Low: Bright", MenuEntry_LedValue, Led_Low_Bright,-1);
 
-	Screens[SCREEN_COLORS]->EnableAvailableEncoder("BlinkSpeed", MenuEntry_LedValue, Led_BlinkSpeed);
+	Screens[SCREEN_COLORS]->EnableAvailableEncoder("BlinkSpeed", MenuEntry_LedValue, Led_BlinkSpeed,-1);
 
-	Screens[SCREEN_COLORS]->EnableAvailableEncoder("High: Hue", MenuEntry_LedValue, Led_High_Hue);
-	Screens[SCREEN_COLORS]->EnableAvailableEncoder("High: Sat", MenuEntry_LedValue, Led_High_Sat);
-	Screens[SCREEN_COLORS]->EnableAvailableEncoder("High: Bright", MenuEntry_LedValue, Led_High_Bright);
+	Screens[SCREEN_COLORS]->EnableAvailableEncoder("High: Hue", MenuEntry_LedValue, Led_High_Hue,-1);
+	Screens[SCREEN_COLORS]->EnableAvailableEncoder("High: Sat", MenuEntry_LedValue, Led_High_Sat,-1);
+	Screens[SCREEN_COLORS]->EnableAvailableEncoder("High: Bright", MenuEntry_LedValue, Led_High_Bright,-1);
 
-	Screens[SCREEN_COLORS]->EnableAvailableEncoder("Brightness", MenuEntry_LedValue, Led_Brightness);
+	Screens[SCREEN_COLORS]->EnableAvailableEncoder("Brightness", MenuEntry_LedValue, Led_Brightness,-1);
 
-	Screens[SCREEN_COLORS]->EnableAvailableEncoder("Active: Hue", MenuEntry_LedValue, Led_Active_Hue);
-	Screens[SCREEN_COLORS]->EnableAvailableEncoder("Active: Sat", MenuEntry_LedValue, Led_Active_Sat);
-	Screens[SCREEN_COLORS]->EnableAvailableEncoder("Active: Bright", MenuEntry_LedValue, Led_Active_Bright);
+	Screens[SCREEN_COLORS]->EnableAvailableEncoder("Active: Hue", MenuEntry_LedValue, Led_Active_Hue,-1);
+	Screens[SCREEN_COLORS]->EnableAvailableEncoder("Active: Sat", MenuEntry_LedValue, Led_Active_Sat,-1);
+	Screens[SCREEN_COLORS]->EnableAvailableEncoder("Active: Bright", MenuEntry_LedValue, Led_Active_Bright,-1);
 
 	Screens[SCREEN_X]->SetTitle("Keyboard X");
 	Screens[SCREEN_Y]->SetTitle("Keyboard Y");
@@ -1948,12 +1948,14 @@ void Gui::BuildScreens()
 	int lastbutton = 0;
 	int lastencoder = 0;
 #define MENU(a,b,c) current = Screens[SCREEN_##a];current->SetTitle(c);lastbutton = 0;lastencoder = 0;
-#define ENTRY(a,b,c)  lastencoder = current->EnableAvailableEncoder( a,b,c, true);
+#define ENTRY(a,b,c)  lastencoder = current->EnableAvailableEncoder( a,b,c, lastencoder, true);
+#define SKIPENTRY   lastencoder = current->SkipAvailableEncoder(lastencoder+1);
 #define CUSTOMENTRY(name, style, target) lastbutton = current->EnableAvailableButton(name ,style, target);
 	//ENTRY("Spectrum Mod", MenuEntry_Value, Output_VCF2_CROSSMOD) 
 #include "PanUiMap.h"
 #undef MENU
 #undef ENTRY
+#undef SKIPENTRY
 
 
 

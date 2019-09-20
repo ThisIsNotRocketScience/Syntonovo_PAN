@@ -304,9 +304,10 @@ bool _screensetup_t::EnableButton(int i, const char *text, int style, int target
 	return false;
 }
 
-int _screensetup_t::EnableAvailableEncoder(char *text, int style, int target, bool isdirectoutput)
+int _screensetup_t::EnableAvailableEncoder(char *text, int style, int target, int start, bool isdirectoutput)
 {
-	for (int i = 0; i < 11; i++)
+	if (start == -1) start = 0;
+	for (int i = start; i < 11; i++)
 	{
 		if (encoders[currentencoderset][i].enabled == false)
 		{
@@ -317,6 +318,20 @@ int _screensetup_t::EnableAvailableEncoder(char *text, int style, int target, bo
 
 			encoders[currentencoderset][i].target = target;
 			encoders[currentencoderset][i].ledmode = ledmode_solid;
+			return i;
+		}
+	}
+}
+
+int _screensetup_t::SkipAvailableEncoder(int start)
+{
+	start++;
+	if (start == -1) start = 0;
+
+	for (int i = start; i < 11; i++)
+	{
+		if (encoders[currentencoderset][i].enabled == false)
+		{
 			return i;
 		}
 	}
@@ -631,7 +646,7 @@ void _screensetup_t::RenderContent(bool active, float DT)
 	{
 		ImGui::PushFont(gGuiResources.BigFont);
 		auto R = ImGui::CalcTextSize(title);
-		ImGui::SetCursorPos(ImVec2(1024 / 2 - R.x / 2, ParamMasterMargin));
+		ImGui::SetCursorPos(ImVec2(ParamMasterMargin, ParamMasterMargin));
 		ImGui::Text(title);
 		ImGui::PopFont();
 	}
@@ -640,6 +655,25 @@ void _screensetup_t::RenderContent(bool active, float DT)
 	{
 		ControlsInOrder[i]->Render((i == ActiveControl) && (Modal == NULL), DT);
 	}
+
+	RenderPatchBox();
+
+}
+void _screensetup_t::RenderPatchBox()
+{
+	char txt[100];
+	sprintf_s(txt, 100, "current patch : %s", gCurrentPreset.Name);
+
+	auto R = ImGui::CalcTextSize(txt);
+
+
+	ImGui::SetCursorPos(ImVec2(1024-ParamMasterMargin-R.x, ParamMasterMargin));
+	ImGui::Text(txt);
+	ImGui::GetWindowDrawList()->AddRect(ImVec2(1024 - ParamMasterMargin * 2 - R.x, -1), ImVec2(1025, R.y + ParamMasterMargin * 2), IM_COL32(255, 255, 255, 255));
+
+	//	Screens[SCREEN_HOME]->AddText(512, 50, "Current preset: ", align_right);
+	//Screens[SCREEN_HOME]->AddDynamicText(512, 50, gCurrentPreset.Name, PRESET_NAME_LENGTH);
+
 
 }
 

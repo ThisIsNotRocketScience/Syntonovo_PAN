@@ -8,12 +8,12 @@ ParameterModal::ParameterModal()
 
 	ControlsInOrder.push_back(&this->TitleText);
 
-	AddText(200, 20, "Parameter Details");
+	AddText(200, 50, "Parameter Details");
 	TitleText.SetTitle("....");
 	TitleText.x = 200;
-	TitleText.y = 60;
+	TitleText.y = 80;
 
-	AddText(200, 300, "This is a small text to explain ALL the\ngood stuff about this parameter.", align_left, font_tiny);
+	AddText(200, 500, "This is a small text to explain ALL the\ngood stuff about this parameter.", align_left, font_tiny);
 }
 
 void ParameterModal::Action(int action)
