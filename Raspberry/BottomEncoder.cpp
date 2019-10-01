@@ -14,6 +14,7 @@ void bottomencoder_t::Turn(int delta)
 	{
 	case MenuEntry_Toggle: gCurrentPreset.PutSwitch((SwitchEnum)target, delta > 0); break;
 
+
 	case MenuEntry_MidValue:
 	case MenuEntry_Percentage:
 	case MenuEntry_Pitch:

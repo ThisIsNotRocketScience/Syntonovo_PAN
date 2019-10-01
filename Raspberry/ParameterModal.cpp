@@ -7,9 +7,9 @@ ParameterModal::ParameterModal()
 	EnableButton(0, "Back", MenuEntry_Action, MenuAction_Ok);
 
 	ControlsInOrder.push_back(&this->TitleText);
-
-	AddText(200, 50, "Parameter Details");
-	TitleText.SetTitle("....");
+	SetTitle("...");
+	//AddText(200, 50, "Parameter Details");
+	TitleText.SetTitle("");
 	TitleText.x = 200;
 	TitleText.y = 80;
 
@@ -74,8 +74,8 @@ void ParameterModal::Setup(OutputEnum target)
 	CurrentTarget = target;
 	char txt[300];
 	GetModulationTargetLongName(target, txt, 300);
-	TitleText.SetTitle(txt);
-
+	//TitleText.SetTitle(txt);
+	SetTitle(txt);
 	//ModSourcesForOutputStruct MSFOS;
 	OutputEnum targetparam = gCurrentPreset.GetModulationOutput(target);
 	gCurrentPreset.FillModSourcesForOutput(targetparam, &this->SourcesForCurrentTarget);
