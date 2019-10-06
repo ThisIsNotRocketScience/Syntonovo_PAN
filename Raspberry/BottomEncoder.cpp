@@ -12,26 +12,23 @@ void bottomencoder_t::Turn(int delta)
 	if (Set != Parent->currentencoderset) return;
 	switch (style)
 	{
-	case MenuEntry_Toggle: gCurrentPreset.PutSwitch((SwitchEnum)target, delta > 0); break;
+		case MenuEntry_Toggle: gCurrentPreset.PutSwitch((SwitchEnum)target, delta > 0); break;
+		case MenuEntry_MidValue:
+		case MenuEntry_Percentage:
+		case MenuEntry_Pitch:
+		case MenuEntry_EffectParam1:
+		case MenuEntry_EffectParam2:
+		case MenuEntry_EffectParam3:
+		case MenuEntry_FilterMix:
+		case MenuEntry_RemapValue:
+		case MenuEntry_Value: Parent->TweakParameterValue((OutputEnum)target, delta); break;
 
+		default: Parent->TweakParameterValue((OutputEnum)target, delta); break;
 
-	case MenuEntry_MidValue:
-	case MenuEntry_Percentage:
-	case MenuEntry_Pitch:
-	case MenuEntry_EffectParam1:
-	case MenuEntry_EffectParam2:
-	case MenuEntry_EffectParam3:
-	case MenuEntry_FilterMix:
-	case MenuEntry_RemapValue:
-	case MenuEntry_Value: Parent->TweakParameterValue((OutputEnum)target, delta); break;
-	default: Parent->TweakParameterValue((OutputEnum)target, delta); break;
-
-	case MenuEntry_LedValue:
-	{
-		gCurrentPreset.TweakLed((LedParameter)target, delta); break;
-
-	}
-
+		case MenuEntry_LedValue:
+		{
+			gCurrentPreset.TweakLed((LedParameter)target, delta); break;
+		}
 	}
 }
 

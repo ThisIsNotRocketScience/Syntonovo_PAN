@@ -8,6 +8,7 @@
 
 #ifndef PANGUIH
 #define PANGUIH
+#define HEADERHEIGHT 30
 
 enum alignment_t
 {
@@ -24,6 +25,40 @@ enum font_size
 	font_medium,
 	font_large
 };
+
+enum
+{
+	LB1,
+	LB2,
+	LB3,
+	LB4,
+	LB5,
+	LB6,
+	LB7,
+	LB8,
+	LB9,
+	LB10,
+	RB1,
+	RB2,
+	RB3,
+	RB4,
+	RB5,
+	RB6,
+	RB7,
+	RB8,
+	RB9,
+	RB10,
+	SIDEBUTTON_COUNT
+};
+
+
+#define SIDEBUTTON_PER_COLUMN 10
+
+extern void cmd_pad_zero();
+extern void cmd_calibrate();
+extern void cmd_preset_load(int presetid);
+extern void cmd_preset_save(int presetid);
+
 
 extern int ButtonHeight(int idx);
 extern int MButtonHeight(int idx);
@@ -313,18 +348,18 @@ public:
 
 	bool EnableButton(int i, const char *text, int style = MenuEntry_NoStyle, int target = -1, bool active = true, ledmodes l = ledmode_solid);
 
-	int EnableAvailableEncoder(char *text, int style, int target, int startidx, bool isdirectoutput = false);
+	int EnableAvailableEncoder(const char *text, int style, int target, int startidx, bool isdirectoutput = false);
 	int SkipAvailableEncoder(int startidx);
 
-	int EnableAvailableButton(char *text, int style, int target);
+	int EnableAvailableButton(const char *text, int style, int target);
 
 	void ButtonStyle(int i, int style, int target);
 
-	sidebutton_t buttons[14];
+	sidebutton_t buttons[SIDEBUTTON_COUNT];
 
 	bottomencoder_t encoders[MAXENCODERSETS][11];
 
-	_textcontrol_t *AddText(float x, float y, char *t, alignment_t align = align_left, font_size fontsize = font_small);
+	_textcontrol_t *AddText(float x, float y, const char *t, alignment_t align = align_left, font_size fontsize = font_small);
 	void AddDynamicText(float x, float y, char *t, int len, alignment_t align = align_left, font_size fontsize = font_small);
 	
 	void AddLedControl(const char *name, int x, int y, LedTheme whichled);
@@ -356,9 +391,14 @@ public:
 
 class BankList : public _control_t
 {
+	int* bankid;
+
 public:
 	int x, y;
-	int *bankid;
+	void SetBankPointer(int* p)
+	{
+		bankid = p;
+	}
 	char Title[100];
 	BankList(int _x, int _y, int* _bank, const char *title)
 	{
@@ -435,4 +475,6 @@ public:
 extern Gui gGui;
 class ParameterModal;
 extern ParameterModal  *theParameterBindingModal;
+
+
 #endif

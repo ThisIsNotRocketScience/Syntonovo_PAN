@@ -172,7 +172,7 @@ public:
 		if (v) SetSwitch(SwitchID); else ClearSwitch(SwitchID);
 	}
 
-	void SetName(char *name)
+	void SetName(const char *name)
 	{
 		snprintf(Name, PRESET_NAME_LENGTH, "%s", name);
 	}

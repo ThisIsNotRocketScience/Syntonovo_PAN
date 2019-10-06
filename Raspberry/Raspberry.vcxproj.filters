@@ -60,6 +60,15 @@
     <ClCompile Include="VCF2StructureScreen.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="NewModulationModal.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ExtraScreenDefinitions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BuildScreens.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui_impl_es2.h">

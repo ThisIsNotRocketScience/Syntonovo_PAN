@@ -101,6 +101,12 @@
     <ClCompile Include="..\Raspberry\NewModulationModal.cpp">
       <Filter>Source Files\Screens</Filter>
     </ClCompile>
+    <ClCompile Include="..\Raspberry\BuildScreens.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Raspberry\ExtraScreenDefinitions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Font Include="ProggyTiny.ttf" />
@@ -129,6 +135,9 @@
     </ClInclude>
     <ClInclude Include="..\Raspberry\NewModulationModal.h">
       <Filter>Source Files\Screens</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Raspberry\ExtraScreenDefinitions.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -2,6 +2,10 @@
 #define WINDOWS_IGNORE_PACKING_MISMATCH 
 #include <atlbase.h>
 #include <Windows.h>
+#include <sstream>
+#include <iostream>
+#include <fstream>
+#include <string>
 #pragma warning( disable : 4244)
 #pragma comment(lib, "winmm.lib")
 
@@ -22,10 +26,14 @@
 #include "../Raspberry/PanPreset.h"
 
 extern void FinalPan_WindowFrame(float DT);
+extern void FinalPan_RenderSpecificScreen(float DT, int screen);
 extern void FinalPan_LoadResources();
 extern void FinalPan_SetupLeds();
 extern void FinalPan_SetupDefaultPreset();
 extern void FinalPan_DefaultPresetNamesInBank();
+extern float gImguiScale ;
+extern float gImguiOffY ;
+extern float gImguiOffX;
 
 extern PanPreset_t gCurrentPreset;
 
@@ -259,6 +267,66 @@ void GetSerialPorts(int port, int uiport)
 	catch (CSerialException e)
 	{
 
+	}
+
+}
+#include "..//Raspberry/gui.h"
+
+extern Gui gGui;
+
+void DumpKnownScreens(SDL_Window* window)
+{
+	for (int i = 0; i < __SCREENS_COUNT; i++)
+	{
+		ImGui_ImplSdlGL3_NewFrame(window);
+		ImGui::SetNextWindowPos(ImVec2(0, 0));
+
+		FinalPan_RenderSpecificScreen(1, i);
+		FinalPan_SetupLeds();
+
+
+		glViewport(0, 0, (int)ImGui::GetIO().DisplaySize.x, (int)ImGui::GetIO().DisplaySize.y);
+		glClearColor(0, 0, 0, 1);
+		glClear(GL_COLOR_BUFFER_BIT);
+
+		gImguiScale = 1.0f;
+		gImguiOffY = 0;
+		gImguiOffX = 0;
+
+		ImGui::Render();
+		ImGui_ImplSdlGL3_RenderDrawData(ImGui::GetDrawData());
+		std::stringstream filename;
+		filename << "screen_" << i << ".png";
+
+		unsigned int *buffer = new unsigned int[1024 * 600 * 4];
+
+		glReadPixels(0, ImGui::GetIO().DisplaySize.y-600, 1024, 600, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+		for (int i = 0; i < 300; i++)
+		{
+			for (int x = 0; x < 1024; x++)
+			{
+				unsigned int T = buffer[1024 * ( 599 - i)  + x];
+				buffer[1024 * (599 - i) + x] = buffer[1024 * i + x];
+				buffer[1024 * i + x] = T;
+			}
+
+		}
+
+		lodepng::encode(filename.str(), (const unsigned char*)buffer, 1024, 600);
+		delete buffer;
+	}
+
+	std::ofstream ofs("screens.html");
+	if (ofs)
+	{
+		ofs << "<HTML><HEAD><TITLE>Syntonovo PAN Screens</TITLE></HEAD><BODY>" << std::endl;
+		for (int i = 0; i < __SCREENS_COUNT; i++)
+		{
+			ofs << "<IMG SRC=\"screen_"<< i <<".png\" WIDTH=\"512\"/>" << std::endl;
+		}
+		
+		ofs << "</BODY></HTML>";
+		ofs.close();
 	}
 
 }
@@ -850,6 +918,9 @@ int main(int argc, char** argv)
 	FinalPan_DefaultPresetNamesInBank();
 	//Raspberry_Reset();
 	
+
+
+	
 	setpara_t para;
 	para.paramid = 0xfcfe;
 	para.value = 3;
@@ -955,17 +1026,7 @@ int main(int argc, char** argv)
 			ImGui::PopFont();
 		}
 		
-		if (finalpan)
-		{
-			ImGui::SetNextWindowPos(ImVec2(0, 0));
-			auto nt = SDL_GetTicks();
-			auto diff = nt - t;
-			t = nt;
-			FinalPan_WindowFrame(diff * 0.001);
-			FinalPan_SetupLeds();
-			blinktime++;
-			blinkon = ((blinktime % 30) > 15) ? 1 : 0;
-		}
+		
 		
 
 		if (finalparameters)
@@ -1046,6 +1107,12 @@ int main(int argc, char** argv)
 				}
 
 
+		
+				if (ImGui::Button("dump"))
+				{
+					DumpKnownScreens(window);
+				}
+
 
 				ImGui::PopFont();
 
@@ -1057,12 +1124,35 @@ int main(int argc, char** argv)
 		}
 
 
+		if (finalpan)
+		{
+			//			ImGui_ImplSdlGL3_NewFrame(window);
+			ImGui::SetNextWindowPos(ImVec2(0, 0));
+			auto nt = SDL_GetTicks();
+			auto diff = nt - t;
+			t = nt;
+			FinalPan_WindowFrame(diff * 0.001);
+			FinalPan_SetupLeds();
+			blinktime++;
+			blinkon = ((blinktime % 30) > 15) ? 1 : 0;
 
+		
+		}
+	
 		glViewport(0, 0, (int)ImGui::GetIO().DisplaySize.x, (int)ImGui::GetIO().DisplaySize.y);
 		glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
 		glClear(GL_COLOR_BUFFER_BIT);
+
+		gImguiScale = 1.0f;
+		gImguiOffY = 0;
+		gImguiOffX = 0;
+
 		ImGui::Render();
 		ImGui_ImplSdlGL3_RenderDrawData(ImGui::GetDrawData());
+
+
+		
+
 		//ImGui::PopFont();
 		SDL_GL_SwapWindow(window);
 		SDL_Delay(5);

@@ -13,7 +13,7 @@ ParameterModal::ParameterModal()
 	TitleText.x = 200;
 	TitleText.y = 80;
 
-	AddText(200, 500, "This is a small text to explain ALL the\ngood stuff about this parameter.", align_left, font_tiny);
+	AddText(512, 200, "This is a small text to explain ALL the\ngood stuff about this parameter.", align_center, font_tiny);
 }
 
 void ParameterModal::Action(int action)
@@ -153,13 +153,13 @@ void ParameterModal::SetupTargetButton()
 		char buttontxt[400];
 		gCurrentPreset.GetModSourceName(SourcesForCurrentTarget.SourceDetails[i].sourceid, txt, 400);
 		snprintf(buttontxt, 400, "Go to %s", txt);
-		EnableButton(8 + i, buttontxt, MenuEntry_Action, MenuAction_GotoModulation1 + i);
+		EnableButton(RB1 + i, buttontxt, MenuEntry_Action, MenuAction_GotoModulation1 + i);
 
 	}
 
 	if (SourcesForCurrentTarget.Sources < MAX_MODULATION_SOURCE)
 	{
-		EnableButton(8+SourcesForCurrentTarget.Sources, "New Modulation", MenuEntry_Action, MenuAction_NewModulation);
+		EnableButton(RB1 +SourcesForCurrentTarget.Sources, "New Modulation", MenuEntry_Action, MenuAction_NewModulation);
 
 	}
 	else

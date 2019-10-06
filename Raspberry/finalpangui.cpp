@@ -24,10 +24,6 @@ PanState_t gPanState;
 class ParameterModal * theParameterBindingModal;
 Gui gGui;
 
-void cmd_pad_zero();
-void cmd_calibrate();
-void cmd_preset_load(int presetid);
-void cmd_preset_save(int presetid);
 
 
 
@@ -149,12 +145,12 @@ int GetAssociatedParameter(FinalEncoderEnum button)
 }
 int ButtonHeight(int idx)
 {
-	return  (int)((idx % 7 + 0.5f) * (600.0f / 7.0f));
+	return  HEADERHEIGHT +  (int)((idx % SIDEBUTTON_PER_COLUMN ) * (500.0f / SIDEBUTTON_PER_COLUMN));
 }
 
 int MButtonHeight(int idx)
 {
-	return  ButtonHeight(0) + (int)((idx % 7) * (600.0f / 10.0f));
+	return  ButtonHeight(idx);
 }
 
 extern presetnames_t presetnames;
@@ -655,7 +651,7 @@ void sidebutton_t::SetupPosition(int id)
 	x = 60;
 	lx2 = 0;
 	Align = align_left;
-	if (id > 6)
+	if (id >= RB1)
 	{
 		lx2 = 1024;
 		x = 1024 - 60;
@@ -1145,23 +1141,7 @@ _screensetup_t *Gui::CS()
 {
 	return Screens[CurrentScreen];
 }
-#define LetterBoxW 40
-#define LetterBoxH 40
 
-
-void RenderLettersInABox(int x, int y, bool active, const char *text, int w, int h, bool notghosted)
-{
-	ImVec2 tl(x, y);
-	ImVec2 br(x + w, y + h);
-
-	ImGui::GetWindowDrawList()->AddRect(tl, br, active ? gGuiResources.Highlight : Dimmed(notghosted ? 1 : 3, gGuiResources.Normal), 0, 0, 2);
-
-	auto s = ImGui::CalcTextSize(text);
-
-	ImGui::SetCursorPos(ImVec2(x + LetterBoxW / 2 - s.x / 2, y + LetterBoxH / 2 - s.y / 2));
-	ImGui::TextColored((ImVec4)(ImColor)(Dimmed(notghosted ? 1 : 3, gGuiResources.Normal)), text);
-
-}
 
 ImU32 Dimmed(int dim, ImU32 col)
 {
@@ -1173,356 +1153,6 @@ ImU32 Dimmed(int dim, ImU32 col)
 
 
 	return ImColor(cc);
-};
-
-class LetterControl : public _control_t
-{
-public:
-	int id;
-	int x;
-	int y;
-	virtual void SketchRightDelta(int delta)
-	{
-		Current = GetDeltaChar(Current, delta);// ((Current + delta - 32 + 96) % 96) + 32;
-	}
-
-	char GetDeltaChar(char base, int delta)
-	{
-		return ((base + delta - 32 + 96) % 96) + 32;
-	}
-	virtual void SketchRightPressed()
-	{
-		Current = ((Current + 32 - 64 + 64) % 64) + 64;
-
-	}
-
-	LetterControl(int _x, int _y, int _id)
-	{
-
-		x = _x;
-		y = _y;
-		id = _id;
-		Current = gCurrentPreset.Name[id];
-		if (!(Current >= ' ' || Current <= '~'))
-		{
-			Current = ' ';
-		}
-	}
-	char Current;
-	
-	void Render(bool active, float DT);
-};
-
-class PresetScreen : public _screensetup_t
-{
-public:
-	std::vector<LetterControl*> Letters;
-	
-	virtual void Action(int action)
-	{
-		switch (action)
-		{
-		case MenuAction_No:
-			
-			gGui.GotoPage(SCREEN_HOME);
-			break;
-		case MenuAction_Yes:
-
-			for (int i = 0; i < PRESET_NAME_LENGTH - 1; i++)
-			{
-				gCurrentPreset.Name[i] = Letters[i]->Current;
-			}
-			gGui.GotoPage(SCREEN_HOME);
-			break;
-		case MenuAction_Backspace:
-		{
-			int N = GetActiveLetter();
-			if (N < 0)
-			{
-				N = Letters.size() - 1;
-				
-			}
-			SetActiveLetter(N - 1);
-			Letters[N]->Current = ' ';
-			
-		}
-		break;
-		case MenuAction_SpaceBar:
-		{
-			int N = GetActiveLetter();
-			if (N < 0)
-			{
-				N = 0;
-			}
-			SetActiveLetter(N + 1);
-			Letters[N]->Current = ' ';
-		
-		}
-		break;
-		}
-	}
-	int LastActiveLetter;
-	void SetActiveLetter(int N)
-	{
-		if (N >= (int)Letters.size()) N = Letters.size() - 1;
-		_control_t *c = Letters[N];
-		for (int i = 0; i < (int)ControlsInOrder.size(); i++)
-		{
-			if (ControlsInOrder[i] == c)
-			{
-				ActiveControl =  i;
-				return;
-			}
-		}
-	}
-	int GetActiveLetter()
-	{
-		return LastActiveLetter;
-	}
-
-	PresetScreen()
-	{
-
-		for (int i = 0; i < PRESET_NAME_LENGTH - 1; i++)
-		{
-			AddLetterControl(1024 / 2 - (LetterBoxW + 5)*((PRESET_NAME_LENGTH - 1.5) / 2) + i * (LetterBoxW + 5), 300 - LetterBoxH / 2, i);
-		}
-
-		EnableButton(10, "Cancel", MenuEntry_Action, MenuAction_No);
-
-		EnableButton(5, "Space", MenuEntry_Action, MenuAction_SpaceBar);
-		EnableButton(6, "Backspace", MenuEntry_Action, MenuAction_Backspace);
-
-		EnableButton(11, "OK", MenuEntry_Action, MenuAction_Yes);
-	}
-
-	virtual void Activate()
-	{
-		for (int i = 0; i < PRESET_NAME_LENGTH - 1; i++)
-		{
-			Letters[i]->Current = gCurrentPreset.Name[i];
-		}
-
-		SetActiveControl(Letters[0]);
-	}
-
-
-	void AddLetterControl(int x, int y, int id)
-	{
-		auto L = new LetterControl(x, y, id);
-		L->Parent = this;
-		Letters.push_back(L);
-		ControlsInOrder.push_back(L);
-	}
-};
-
-void LetterControl::Render(bool active, float DT)
-{
-
-	if (active)
-	{
-		((PresetScreen*)Parent)->LastActiveLetter = id;
-		for (int i = -2; i < 3; i++)
-		{
-			if (i != 0)
-			{
-				ImVec2 tl(x, y + i * (LetterBoxH + ParamMasterMargin));
-				ImVec2 br(x + LetterBoxW, y + LetterBoxH + i * (LetterBoxH + ParamMasterMargin));
-				ImGui::GetWindowDrawList()->AddRect(tl, br, Dimmed(abs(i), active ? gGuiResources.Highlight : gGuiResources.Normal), 0, 0, 2);
-				auto s = ImGui::CalcTextSize(&Current, &Current + 1);
-				ImGui::SetCursorPos(ImVec2(x + LetterBoxW / 2 - s.x / 2, y + LetterBoxH / 2 - s.y / 2 + i * (LetterBoxH + ParamMasterMargin)));
-				ImGui::TextColored(ImVec4(ImColor(Dimmed(abs(i), active ? gGuiResources.Highlight : gGuiResources.Normal))), "%c", GetDeltaChar(Current, i));
-			}
-		}
-	}
-	ImVec2 tl(x, y);
-	ImVec2 br(x + LetterBoxW, y + LetterBoxH);
-	ImGui::GetWindowDrawList()->AddRect(tl, br, active ? gGuiResources.Highlight : gGuiResources.Normal, 0, 0, 2);
-	auto s = ImGui::CalcTextSize(&Current, &Current + 1);
-	ImGui::SetCursorPos(ImVec2(x + LetterBoxW / 2 - s.x / 2, y + LetterBoxH / 2 - s.y / 2));
-	ImGui::Text("%c", Current);
-}
-class BankSelectScreen : public _screensetup_t
-{
-public:
-
-	virtual void Action(int action)
-	{
-
-		if (Side == Left) gPanState.BankLeft = action; else gPanState.BankRight = action;
-		//LoadSelectedPreset();
-		Activate();
-	}
-	LeftRight Side;
-	int *mybank;
-	int df;
-	void SetLeftRight(LeftRight lr)
-	{
-
-	}
-
-	BankList* list;
-	BankSelectScreen()
-	{
-		mybank = &df;
-		list = new BankList(400, 150, mybank, "");
-		ControlsInOrder.push_back(list);
-	}
-	virtual void Activate()
-	{
-		int *CurrentBank = &gPanState.BankLeft;
-		list->bankid = CurrentBank;
-		if (Side == Left)
-		{
-			SetTitle("Select Left Bank");
-		}
-		else
-		{
-			CurrentBank = &gPanState.BankRight;
-			SetTitle("Select Right Bank");
-		}
-		EnableButton(1, (*CurrentBank == 0) ? "A (current)" : "A", MenuEntry_Action, 0);
-		EnableButton(2, (*CurrentBank == 1) ? "B (current)" : "B", MenuEntry_Action, 1);
-		EnableButton(3, (*CurrentBank == 2) ? "C (current)" : "C", MenuEntry_Action, 2);
-		EnableButton(4, (*CurrentBank == 3) ? "D (current)" : "D", MenuEntry_Action, 3);
-		EnableButton(5, (*CurrentBank == 4) ? "E (current)" : "E", MenuEntry_Action, 4);
-		EnableButton(6, (*CurrentBank == 5) ? "F (current)" : "F", MenuEntry_Action, 5);
-
-		EnableButton(8, (*CurrentBank == 6) ? "G (current)" : "G", MenuEntry_Action, 6);
-		EnableButton(9, (*CurrentBank == 7) ? "H (current)" : "H", MenuEntry_Action, 7);
-		EnableButton(10, (*CurrentBank == 8) ? "I (current)" : "I", MenuEntry_Action, 8);
-		EnableButton(11, (*CurrentBank == 9) ? "J (current)" : "J", MenuEntry_Action, 9);
-		EnableButton(12, (*CurrentBank == 10) ? "K (current)" : "K", MenuEntry_Action, 10);
-		EnableButton(13, (*CurrentBank == 11) ? "L (current)" : "L", MenuEntry_Action, 11);
-	}
-};
-
-
-class SavePresetScreen : public _screensetup_t
-{
-public:
-	virtual void PatchButton(FinalLedButtonEnum b)
-	{
-		int idx = -1;
-		switch (b)
-		{
-		case ledbutton_B1:idx = 0; break;
-		case ledbutton_B2:idx = 1; break;
-		case ledbutton_B3:idx = 2; break;
-		case ledbutton_B4:idx = 3; break;
-		case ledbutton_B5:idx = 4; break;
-		case ledbutton_B6:idx = 5; break;
-		case ledbutton_B7:idx = 6; break;
-		case ledbutton_B8:idx = 7; break;
-		case ledbutton_B9:idx = 0; break;
-		case ledbutton_B10:idx = 1; break;
-		case ledbutton_B11:idx = 2; break;
-		case ledbutton_B12:idx = 3; break;
-		case ledbutton_B13:idx = 4; break;
-		case ledbutton_B14:idx = 5; break;
-		case ledbutton_B15:idx = 6; break;
-		case ledbutton_B16:idx = 7; break;
-		}
-
-		cmd_preset_save(idx + df * 16);
-		gGui.GotoPage(SCREEN_HOME);
-	}
-	virtual void Action(int action)
-	{
-		switch (action)
-		{
-
-		case MenuAction_BankA:df = 0; break;
-		case MenuAction_BankB:df = 1; break;
-		case MenuAction_BankC:df = 2; break;
-		case MenuAction_BankD:df = 3; break;
-		case MenuAction_BankE:df = 4; break;
-		case MenuAction_BankF:df = 5; break;
-		case MenuAction_BankG:df = 6; break;
-		case MenuAction_BankH:df = 7; break;
-		case MenuAction_BankI:df = 8; break;
-		case MenuAction_BankJ:df = 9; break;
-		case MenuAction_BankK:df = 10; break;
-		case MenuAction_BankL:df = 11; break;
-
-		default:
-			_screensetup_t::Action(action);
-		}
-		SetNames();
-
-	}
-
-	LeftRight Side;
-	int *mybank;
-	int df;
-	void SetLeftRight(LeftRight lr)
-	{
-
-	}
-
-	BankList* list;
-	SavePresetScreen()
-	{
-		
-		list = new BankList(400, 150, &df, "");
-		ControlsInOrder.push_back(list);
-		EnableButton(7, "Cancel", MenuEntry_Action, MenuAction_Home);
-		SetTitle("Save preset");
-		AddText(140, 50, "select bank and press a preset button to save");
-
-
-
-
-	}
-	virtual void Activate()
-	{
-		int *CurrentBank = &gPanState.BankLeft;
-		list->bankid = CurrentBank;
-		df = *CurrentBank;
-		/*if (Side == Left)
-		{
-			SetTitle("Select Left Bank");
-		}
-		else
-		{
-			CurrentBank = &gPanState.BankRight;
-			SetTitle("Select Right Bank");
-		}*/
-		SetNames();
-	};
-
-	void SetNames()
-	{
-		list->bankid = &df;
-		EnableButton(1, (df == 0) ? "A (current)" : "A", MenuEntry_Action, MenuAction_BankA);
-		EnableButton(2, (df == 1) ? "B (current)" : "B", MenuEntry_Action, MenuAction_BankB);
-		EnableButton(3, (df == 2) ? "C (current)" : "C", MenuEntry_Action, MenuAction_BankC);
-		EnableButton(4, (df == 3) ? "D (current)" : "D", MenuEntry_Action, MenuAction_BankD);
-		EnableButton(5, (df == 4) ? "E (current)" : "E", MenuEntry_Action, MenuAction_BankE);
-		EnableButton(6, (df == 5) ? "F (current)" : "F", MenuEntry_Action, MenuAction_BankF);
-		EnableButton(8, (df == 6) ? "G (current)" : "G", MenuEntry_Action, MenuAction_BankG);
-		EnableButton(9, (df == 7) ? "H (current)" : "H", MenuEntry_Action, MenuAction_BankH);
-		EnableButton(10, (df == 8) ? "I (current)" : "I", MenuEntry_Action, MenuAction_BankI);
-		EnableButton(11, (df == 9) ? "J (current)" : "J", MenuEntry_Action, MenuAction_BankJ);
-		EnableButton(12, (df == 10) ? "K (current)" : "K", MenuEntry_Action, MenuAction_BankK);
-		EnableButton(13, (df == 11) ? "L (current)" : "L", MenuEntry_Action, MenuAction_BankL);
-	}
-};
-
-class ImageScreen : public _screensetup_t
-{
-public:
-	ImTextureID theImg;
-	ImageScreen(ImTextureID img)
-	{
-		theImg = img;
-	}
-	virtual void Render(bool active, float dt)
-	{
-		_screensetup_t::Render(active, dt);
-		ImGui::SetCursorPos(ImVec2(0, 0));
-		ImGui::Image(theImg, ImVec2(1024, 600));
-	}
 };
 
 void EncoderLineDisplay::Render(bool active, float dt)
@@ -1552,32 +1182,19 @@ void EncoderLineDisplay::Render(bool active, float dt)
 
 void _screensetup_t::AddVCONextPrev()
 {
-	EnableButton(6, "previous", MenuEntry_Action, MenuAction_PrevVCO);
+	EnableButton(LB6, "previous", MenuEntry_Action, MenuAction_PrevVCO);
 	buttons[6].myIcon = Icon_GOTOL;
-	EnableButton(13, "next", MenuEntry_Action, MenuAction_NextVCO);
+	EnableButton(RB6, "next", MenuEntry_Action, MenuAction_NextVCO);
 	buttons[13].myIcon = Icon_GOTOR;
 }
 
 void _screensetup_t::AddVCF2NextPrev()
 {
-	EnableButton(6, "previous", MenuEntry_Action, MenuAction_PrevVCF2);
+	EnableButton(LB6, "previous", MenuEntry_Action, MenuAction_PrevVCF2);
 	buttons[6].myIcon = Icon_GOTOL;
-	EnableButton(13, "next", MenuEntry_Action, MenuAction_NextVCF2);
+	EnableButton(RB6, "next", MenuEntry_Action, MenuAction_NextVCF2);
 	buttons[13].myIcon = Icon_GOTOR;
 }
-
-
-char EffectChipStrings[8][4][24] = {
-
-	{ "Chorus & Reverb" ,"Reverb mix","Chorus rate","Chorus mix" },
-{ "Flanger & Reverb","Reverb mix","Flange rate","Flange mix" },
-{ "Tremolo & Reverb","Reverb mix","Tremolo rate","Tremolo mix" },
-{ "Pitch shift","Pitch +/- 4 semitones","","" },
-{ "Pitch & echo","Pitch shift","Echo delay","Echo mix" },
-{ "Test","-","-","-" },
-{ "Reverb 1","Reverb time","HF filter","LF filter" },
-{ "Reverb 2","Reverb time","HF filter","LF filter" }
-};
 
 
 int DecodeCurrentEffect()
@@ -1601,65 +1218,6 @@ void SetEffect(int effect)
 
 
 
-class EffectList : public _control_t
-{
-public:
-
-	EffectList() {}
-
-	virtual void SketchRight(int delta)
-	{
-		while (delta < 0) {
-			delta++; Action(MenuAction_FX_Prev);
-		};
-		while (delta > 0) {
-			delta--; Action(MenuAction_FX_Next);
-		};
-	}
-
-	virtual void Render(bool active, float dt)
-	{
-		ImGui::PushFont(gGuiResources.MediumFont);
-
-		char txt[200];
-		float L = ImGui::GetTextLineHeight();
-		snprintf(txt, 200, "Current effect: %s", EffectChipStrings[DecodeCurrentEffect()][0]);
-
-		auto S = ImGui::CalcTextSize(txt);
-		ImGui::SetCursorPos(ImVec2(512 - S.x / 2, MButtonHeight(1)));
-		ImGui::Text(txt);
-		ImGui::PopFont();
-		ImGui::PushFont(gGuiResources.SmallFont);
-
-		snprintf(txt, 200, "Parameter 1: %s", EffectChipStrings[DecodeCurrentEffect()][1]);
-		ImGui::SetCursorPos(ImVec2(250, 240 + L));
-		ImGui::Text(txt);
-
-		snprintf(txt, 200, "Parameter 2: %s", EffectChipStrings[DecodeCurrentEffect()][2]);
-		ImGui::SetCursorPos(ImVec2(250, 240 + L * 2));
-		ImGui::Text(txt);
-
-		snprintf(txt, 200, "Parameter 3: %s", EffectChipStrings[DecodeCurrentEffect()][3]);
-		ImGui::SetCursorPos(ImVec2(250, 240 + L * 3));
-		ImGui::Text(txt);
-
-		ImGui::PopFont();
-
-
-		for (int i = 0; i < 8; i++)
-		{
-			char txt[10];
-			snprintf(txt, 10, "%d", i + 1);
-			bool used = false;
-
-			int x = (i - 4) * 40 + 512;
-			int y = MButtonHeight(2);
-			RenderLettersInABox(x, y, i == DecodeCurrentEffect(), txt, 35, 35, true);
-		}
-
-	}
-
-};
 
 ModSourceScreen *Gui::AddModSourceScreen(Screens_t screen, ModSource_t mod)
 {
@@ -1681,297 +1239,6 @@ void Gui::GotoPageForMod(ModSource_t mod, int instance)
 		}
 	}
 }
-
-void Gui::BuildScreens()
-{
-	for (int i = 0; i < __SCREENS_COUNT; i++) Screens[i] = 0;
-
-
-
-	Screens[SCREEN_PRESETNAME] = new PresetScreen();
-	auto BL = new BankSelectScreen();
-	BL->Side = Left;
-	auto BR = new BankSelectScreen();
-	BR->Side = Right;
-	Screens[SCREEN_SELECTBANKL] = BL;
-	Screens[SCREEN_SELECTBANKR] = BR;
-
-	auto SaveScreen = new SavePresetScreen();
-	Screens[SCREEN_PRESETSAVE] = SaveScreen;
-
-	Screens[SCREEN_TEST] = new ImageScreen(gGuiResources.TestBG);
-	Screens[SCREEN_TEST]->AddText(10, 30, "10,30 - tadaa", align_left, font_small);
-	Screens[SCREEN_TEST]->AddText(30, 60, "10,60 - tadaa", align_left, font_small);
-	for (int i = 0; i < 100; i += 10)
-	{
-		Screens[SCREEN_TEST]->AddText(50 + 4 * i, 600 - i, "Hmm", align_left, font_small);
-	}
-
-	Screens[SCREEN_LOGO] = new ImageScreen(gGuiResources.LogoScreen);
-	BL->LedButtonsThatOpenThisScreen.push_back(ledbutton_BankLeft);
-	BR->LedButtonsThatOpenThisScreen.push_back(ledbutton_BankRight);
-
-	theParameterBindingModal = new ParameterModal();
-	TheNewModulationModal = new NewModulationModal();
-
-	Screens[SCREEN_X] = AddModSourceScreen(SCREEN_X, Source_x);
-	Screens[SCREEN_X]->LedButtonsThatOpenThisScreen.push_back(ledbutton_BX);
-	Screens[SCREEN_Y] = AddModSourceScreen(SCREEN_Y, Source_y);
-	Screens[SCREEN_Y]->LedButtonsThatOpenThisScreen.push_back(ledbutton_BY);
-	Screens[SCREEN_Z] = AddModSourceScreen(SCREEN_Z, Source_z);
-	Screens[SCREEN_Z]->LedButtonsThatOpenThisScreen.push_back(ledbutton_BZ);
-	// TODO ??? what is touch ook al weer????
-	Screens[SCREEN_TOUCH] = AddModSourceScreen(SCREEN_TOUCH, Source_zprime);
-	Screens[SCREEN_TOUCH]->LedButtonsThatOpenThisScreen.push_back(ledbutton_BTouch);
-	Screens[SCREEN_LMOD] = AddModSourceScreen(SCREEN_LMOD, Source_left_mod);
-	Screens[SCREEN_LMOD]->LedButtonsThatOpenThisScreen.push_back(ledbutton_LMod);
-	Screens[SCREEN_RMOD] = AddModSourceScreen(SCREEN_RMOD, Source_right_mod);
-	Screens[SCREEN_RMOD]->LedButtonsThatOpenThisScreen.push_back(ledbutton_RMod);
-	Screens[SCREEN_LSUS] = AddModSourceScreen(SCREEN_LSUS, Source_left_sus);
-	Screens[SCREEN_LSUS]->LedButtonsThatOpenThisScreen.push_back(ledbutton_LSus);
-	Screens[SCREEN_RSUS] = AddModSourceScreen(SCREEN_RSUS, Source_right_sus);
-	Screens[SCREEN_RSUS]->LedButtonsThatOpenThisScreen.push_back(ledbutton_RSus);
-	Screens[SCREEN_LUNA] = AddModSourceScreen(SCREEN_LUNA, Source_left_unac);
-	Screens[SCREEN_LUNA]->LedButtonsThatOpenThisScreen.push_back(ledbutton_LUna);
-	Screens[SCREEN_RUNA] = AddModSourceScreen(SCREEN_RUNA, Source_right_unac);
-	Screens[SCREEN_RUNA]->LedButtonsThatOpenThisScreen.push_back(ledbutton_RUna);
-
-	Screens[SCREEN_VELOCITY] = AddModSourceScreen(SCREEN_VELOCITY,Source_vel);
-	Screens[SCREEN_VELOCITY]->LedButtonsThatOpenThisScreen.push_back(ledbutton_BVelocity);
-	Screens[SCREEN_KEYBOARD] = AddModSourceScreen(SCREEN_KEYBOARD, Source_note);
-	Screens[SCREEN_KEYBOARD]->LedButtonsThatOpenThisScreen.push_back(ledbutton_BCV);
-	Screens[SCREEN_LFO] = AddModSourceScreen(SCREEN_LFO, Source_LFO);
-	Screens[SCREEN_LFO]->LedButtonsThatOpenThisScreen.push_back(ledbutton_BLFO);
-
-	Screens[SCREEN_ENVELOPE] = AddModSourceScreen(SCREEN_ENVELOPE, Source_Envelope);
-	Screens[SCREEN_ENVELOPE]->LedButtonsThatOpenThisScreen.push_back(ledbutton_BEnv);
-	Screens[SCREEN_VCF2_structure] = new VCF2StructureScreen();
-
-	Screens[SCREEN_HOME] = new HomeScreen();
-
-	for (int i = 0; i < __SCREENS_COUNT; i++)
-	{
-		if (Screens[i] == 0) Screens[i] = new _screensetup_t();
-	}
-
-	Screens[SCREEN_HOME]->SetTitle("");
-//	Screens[SCREEN_HOME]->AddText(512, 50, "Current preset: ", align_right);
-	//Screens[SCREEN_HOME]->AddDynamicText(512, 50, gCurrentPreset.Name, PRESET_NAME_LENGTH);
-	Screens[SCREEN_HOME]->EncodersThatOpenThisScreen.push_back(encoder_SketchLeft);
-	Screens[SCREEN_LFO]->LedButtonsThatOpenThisScreen.push_back(ledbutton_BHome);
-
-
-	Screens[SCREEN_LOADING]->SetTitle("Loading...");
-
-	Screens[SCREEN_EFFECTS]->ControlsInOrder.push_back(new EffectList());
-
-	Screens[SCREEN_EFFECTS]->EnableButton(2, "Previous", MenuEntry_Action, MenuAction_FX_Prev);
-	Screens[SCREEN_EFFECTS]->EnableButton(9, "Next", MenuEntry_Action, MenuAction_FX_Next);
-
-	Screens[SCREEN_VCF2a]->SetTitle("VCF2 A");
-	Screens[SCREEN_VCF2a]->EnableButton(12, "to VCF2 Mix", MenuEntry_Page, SCREEN_VCF2MIX);
-	Screens[SCREEN_VCF2b]->SetTitle("VCF2 B");
-	Screens[SCREEN_VCF2b]->EnableButton(12, "to VCF2 Mix", MenuEntry_Page, SCREEN_VCF2MIX);
-	Screens[SCREEN_VCF2c]->SetTitle("VCF2 C");
-	Screens[SCREEN_VCF2c]->EnableButton(12, "to VCF2 Mix", MenuEntry_Page, SCREEN_VCF2MIX);
-	Screens[SCREEN_VCF2d]->SetTitle("VCF2 D");
-	Screens[SCREEN_VCF2d]->EnableButton(12, "to VCF2 Mix", MenuEntry_Page, SCREEN_VCF2MIX);
-
-	Screens[SCREEN_VCF2_structure]->SetTitle("VCF2 routing");
-	Screens[SCREEN_VCF1]->EnableButton(12, "to VCF1 Mix", MenuEntry_Page, SCREEN_VCF1MIX);
-
-
-	Screens[SCREEN_VCO4]->SetTitle("VCO 5");
-	Screens[SCREEN_VCO5]->SetTitle("VCO 6");
-	Screens[SCREEN_VCO6]->SetTitle("VCO 7");
-	Screens[SCREEN_VCO7]->SetTitle("VCO 8");
-	Screens[SCREEN_VCO4]->EncodersThatOpenThisScreen.push_back(encoder_VCO4);
-	Screens[SCREEN_VCO5]->EncodersThatOpenThisScreen.push_back(encoder_VCO5);
-	Screens[SCREEN_VCO6]->EncodersThatOpenThisScreen.push_back(encoder_VCO6);
-	Screens[SCREEN_VCO7]->EncodersThatOpenThisScreen.push_back(encoder_VCO7);
-
-
-	Screens[SCREEN_SYSTEM]->SetTitle("System Settings");
-	Screens[SCREEN_SYSTEM]->EnableAvailableButton("Recalibrate Oscillators", MenuEntry_Action, MenuAction_CalibrateOscillators);
-	Screens[SCREEN_SYSTEM]->EnableAvailableButton("Recalibrate Pads", MenuEntry_Action, MenuAction_CalibratePads);
-	Screens[SCREEN_SYSTEM]->EnableButton(7, "Done", MenuEntry_Action, MenuAction_Home);
-	Screens[SCREEN_SYSTEM]->EnableAvailableButton("Polymode bit 0", MenuEntry_Toggle, Switch_POLYMODE1);
-	Screens[SCREEN_SYSTEM]->EnableAvailableButton("Polymode bit 1", MenuEntry_Toggle, Switch_POLYMODE2);
-	Screens[SCREEN_SYSTEM]->EnableAvailableButton("KeyPrio bit 0", MenuEntry_Toggle, Switch_KEYPRIO1);
-	Screens[SCREEN_SYSTEM]->EnableAvailableButton("KeyPrio bit 1", MenuEntry_Toggle, Switch_KEYPRIO2);
-
-	Screens[SCREEN_SYSTEM]->EnableAvailableButton("Headphone enable", MenuEntry_Toggle, Switch_SELVCF1MOST);
-
-	Screens[SCREEN_HOME]->EnableButton(7, "Change name", MenuEntry_Page, SCREEN_PRESETNAME);//(512, 40, "Some Sound");
-	Screens[SCREEN_HOME]->EnableButton(8, "Save preset", MenuEntry_Page, SCREEN_PRESETSAVE);//(512, 40, "Some Sound");
-	Screens[SCREEN_HOME]->EnableButton(9, "Revert", MenuEntry_Action, MenuAction_Revert);
-	Screens[SCREEN_HOME]->EnableButton(10, "System", MenuEntry_Page, SCREEN_SYSTEM);
-	Screens[SCREEN_HOME]->EnableButton(12, "Colors", MenuEntry_Page, SCREEN_COLORS);
-	Screens[SCREEN_HOME]->EnableButton(5, "Reference Lines", MenuEntry_Action, MenuAction_EnableReferenceLines);
-	Screens[SCREEN_HOME]->EnableButton(6, "Test-image", MenuEntry_Action, MenuAction_EnableTestImage);
-
-	Screens[SCREEN_PRESETNAME]->SetTitle("Edit Name/Category");
-
-	Screens[SCREEN_COLORS]->SetTitle("Colors");
-
-	Screens[SCREEN_PORTAMENTO]->SetTitle("Portamento");
-
-	Screens[SCREEN_COLORS]->AddLedControl("Low", GetEncoderX(1) - 20, 300, Led_Low);
-	Screens[SCREEN_COLORS]->AddLedControl("High", GetEncoderX(5) - 20, 300, Led_High);
-	Screens[SCREEN_COLORS]->AddLedControl("Active", GetEncoderX(9) - 20, 300, Led_Active);
-	Screens[SCREEN_COLORS]->EnableButton(7, "Done", MenuEntry_Action, MenuAction_Home);
-
-
-
-
-	auto Lines1 = new EncoderLineDisplay();
-	Lines1->fromX = GetEncoderX(1);
-	Lines1->fromY = 350;
-	Lines1->toEncoders.push_back(0);
-	Lines1->toEncoders.push_back(1);
-	Lines1->toEncoders.push_back(2);
-	Lines1->AddTo(Screens[SCREEN_COLORS]);
-
-	auto Lines2 = new EncoderLineDisplay();
-	Lines2->fromX = GetEncoderX(5);
-	Lines2->fromY = 350;
-	Lines2->toEncoders.push_back(4);
-	Lines2->toEncoders.push_back(5);
-	Lines2->toEncoders.push_back(6);
-	Lines2->AddTo(Screens[SCREEN_COLORS]);
-
-	auto Lines3 = new EncoderLineDisplay();
-	Lines3->fromX = GetEncoderX(9);
-	Lines3->fromY = 350;
-	Lines3->toEncoders.push_back(8);
-	Lines3->toEncoders.push_back(9);
-	Lines3->toEncoders.push_back(10);
-
-	Lines3->AddTo(Screens[SCREEN_COLORS]);
-
-
-	Screens[SCREEN_COLORS]->EnableAvailableEncoder("Low: Hue", MenuEntry_LedValue, Led_Low_Hue,-1);
-	Screens[SCREEN_COLORS]->EnableAvailableEncoder("Low: Sat", MenuEntry_LedValue, Led_Low_Sat,-1);
-	Screens[SCREEN_COLORS]->EnableAvailableEncoder("Low: Bright", MenuEntry_LedValue, Led_Low_Bright,-1);
-
-	Screens[SCREEN_COLORS]->EnableAvailableEncoder("BlinkSpeed", MenuEntry_LedValue, Led_BlinkSpeed,-1);
-
-	Screens[SCREEN_COLORS]->EnableAvailableEncoder("High: Hue", MenuEntry_LedValue, Led_High_Hue,-1);
-	Screens[SCREEN_COLORS]->EnableAvailableEncoder("High: Sat", MenuEntry_LedValue, Led_High_Sat,-1);
-	Screens[SCREEN_COLORS]->EnableAvailableEncoder("High: Bright", MenuEntry_LedValue, Led_High_Bright,-1);
-
-	Screens[SCREEN_COLORS]->EnableAvailableEncoder("Brightness", MenuEntry_LedValue, Led_Brightness,-1);
-
-	Screens[SCREEN_COLORS]->EnableAvailableEncoder("Active: Hue", MenuEntry_LedValue, Led_Active_Hue,-1);
-	Screens[SCREEN_COLORS]->EnableAvailableEncoder("Active: Sat", MenuEntry_LedValue, Led_Active_Sat,-1);
-	Screens[SCREEN_COLORS]->EnableAvailableEncoder("Active: Bright", MenuEntry_LedValue, Led_Active_Bright,-1);
-
-	Screens[SCREEN_X]->SetTitle("Keyboard X");
-	Screens[SCREEN_Y]->SetTitle("Keyboard Y");
-	Screens[SCREEN_Z]->SetTitle("Keyboard Z");
-	Screens[SCREEN_TOUCH]->SetTitle("Keyboard Touch");
-	Screens[SCREEN_VELOCITY]->SetTitle("Keyboard Velocity");
-	Screens[SCREEN_KEYBOARD]->SetTitle("CV Keytrack");
-
-	Screens[SCREEN_LMOD]->SetTitle("Left Mod");
-	Screens[SCREEN_RMOD]->SetTitle("Right Mod");
-	Screens[SCREEN_LSUS]->SetTitle("Left Sustain");
-	Screens[SCREEN_RSUS]->SetTitle("Right Sustain");
-	Screens[SCREEN_LUNA]->SetTitle("Left Una Corda");
-	Screens[SCREEN_RUNA]->SetTitle("Right Una Corda");
-
-	Screens[SCREEN_ENVELOPE]->SetTitle("Envelope");
-	Screens[SCREEN_ENVELOPE]->LedButtonsThatOpenThisScreen.push_back(ledbutton_BEnv);
-
-	Screens[SCREEN_LFO]->SetTitle("LFO");
-	Screens[SCREEN_LFO]->LedButtonsThatOpenThisScreen.push_back(ledbutton_BLFO);
-
-	Screens[SCREEN_ARP]->SetTitle("Arpeggiator");
-	Screens[SCREEN_ARP]->LedButtonsThatOpenThisScreen.push_back(ledbutton_ArpEdit);
-
-	Screens[SCREEN_VCO1]->AddVCONextPrev();
-	Screens[SCREEN_VCO2]->AddVCONextPrev();
-	Screens[SCREEN_VCO3]->AddVCONextPrev();
-	Screens[SCREEN_VCO4]->AddVCONextPrev();
-	Screens[SCREEN_VCO5]->AddVCONextPrev();
-	Screens[SCREEN_VCO6]->AddVCONextPrev();
-	Screens[SCREEN_VCO7]->AddVCONextPrev();
-	Screens[SCREEN_VCO8]->AddVCONextPrev();
-
-	Screens[SCREEN_VCF2a]->AddVCF2NextPrev();
-	Screens[SCREEN_VCF2b]->AddVCF2NextPrev();
-	Screens[SCREEN_VCF2c]->AddVCF2NextPrev();
-	Screens[SCREEN_VCF2d]->AddVCF2NextPrev();
-
-
-	Screens[SCREEN_VCO1]->SetTitle("VCO1");
-	Screens[SCREEN_VCO1]->EncodersThatOpenThisScreen.push_back(encoder_VCO1);
-
-	Screens[SCREEN_VCO2]->SetTitle("VCO2");
-	Screens[SCREEN_VCO2]->EncodersThatOpenThisScreen.push_back(encoder_VCO2);
-
-	Screens[SCREEN_VCO3]->SetTitle("VCO3");
-	Screens[SCREEN_VCO3]->EncodersThatOpenThisScreen.push_back(encoder_VCO3);
-
-	Screens[SCREEN_VCF1]->SetTitle("VCF1");
-	Screens[SCREEN_VCF1]->EncodersThatOpenThisScreen.push_back(encoder_VCF1Freq);
-
-	Screens[SCREEN_VCF2a]->SetTitle("VCF2: A");
-	Screens[SCREEN_VCF2a]->EncodersThatOpenThisScreen.push_back(encoder_VCF2a);
-	Screens[SCREEN_VCF2a]->EnableAvailableButton("Routing", MenuEntry_Action, MenuAction_OpenVCF2Structure);
-
-	Screens[SCREEN_VCF2b]->SetTitle("VCF2: B");
-	Screens[SCREEN_VCF2b]->EncodersThatOpenThisScreen.push_back(encoder_VCF2b);
-	Screens[SCREEN_VCF2b]->EnableAvailableButton("Routing", MenuEntry_Action, MenuAction_OpenVCF2Structure);
-
-	Screens[SCREEN_VCF2c]->SetTitle("VCF2: C");
-	Screens[SCREEN_VCF2c]->EncodersThatOpenThisScreen.push_back(encoder_VCF2c);
-	Screens[SCREEN_VCF2c]->EnableAvailableButton("Routing", MenuEntry_Action, MenuAction_OpenVCF2Structure);
-
-	Screens[SCREEN_VCF2d]->SetTitle("VCF2: D");
-	Screens[SCREEN_VCF2d]->EncodersThatOpenThisScreen.push_back(encoder_VCF2d);
-	Screens[SCREEN_VCF2d]->EnableAvailableButton("Routing", MenuEntry_Action, MenuAction_OpenVCF2Structure);
-
-
-	Screens[SCREEN_VCF1MIX]->EnableAvailableButton("Effects", MenuEntry_Action, MenuAction_OpenEffects);
-	Screens[SCREEN_VCF2MIX]->EnableAvailableButton("Effects", MenuEntry_Action, MenuAction_OpenEffects);
-	Screens[SCREEN_CLEANMIX]->EnableAvailableButton("Effects", MenuEntry_Action, MenuAction_OpenEffects);
-	Screens[SCREEN_MASTER]->EnableAvailableButton("Effects", MenuEntry_Action, MenuAction_OpenEffects);
-
-	Screens[SCREEN_EFFECTS]->EnableAvailableButton("Done", MenuEntry_Action, MenuAction_CloseParentModal);
-
-
-
-
-	Screens[SCREEN_TEST]->SetTitle("Test scherm");
-	//Screens[SCREEN_TEST]->EnableButton(2, "Button1!");
-	//Screens[SCREEN_TEST]->EnableButton(5, "Button2!");
-	//Screens[SCREEN_TEST]->EnableButton(11, "Button3!");
-
-
-
-	_screensetup_t *current = Screens[SCREEN_TEST];
-	int lastbutton = 0;
-	int lastencoder = 0;
-#define MENU(a,b,c) current = Screens[SCREEN_##a];current->SetTitle(c);lastbutton = 0;lastencoder = 0;
-#define ENTRY(a,b,c)  lastencoder = current->EnableAvailableEncoder( a,b,c, lastencoder, true);
-#define SKIPENTRY   lastencoder = current->SkipAvailableEncoder(lastencoder+1);
-#define CUSTOMENTRY(name, style, target) lastbutton = current->EnableAvailableButton(name ,style, target);
-	//ENTRY("Spectrum Mod", MenuEntry_Value, Output_VCF2_CROSSMOD) 
-#include "PanUiMap.h"
-#undef MENU
-#undef ENTRY
-#undef SKIPENTRY
-
-
-
-	for (int i = 0; i < __SCREENS_COUNT; i++)
-	{
-		Screens[i]->SetFirstEnabledControlActive();
-		Screens[i]->SetupEncoderSet(0);
-	}
-}
-
 
 void Gui::Render(bool active, float dt)
 {
@@ -2099,20 +1366,28 @@ Screens_t GetPage(FinalEncoderEnum Button)
 }
 bool dumpspec = true;
 
-void RenderMain(float DT)
+
+void FinalPan_RenderMain(float DT, int specificscreen = -1)
 {
 	if (!init)
 	{
 
 		FinalPan_LoadResources();
 	}
+	
 	FinalPan_PushStyle();
 	ImVec2 pos = ImGui::GetCursorPos();
 	pos = ImGui::GetCursorScreenPos();
 	ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(pos.x, pos.y), ImVec2(1024 + pos.x, 600 + pos.y), gGuiResources.BGColor);
 
-	gGui.Render(true, DT);
-
+	if (specificscreen >= 0)
+	{
+		gGui.Screens[specificscreen]->Render(true, DT);
+	}
+	else
+	{
+		gGui.Render(true, DT);
+	}
 	if (dumpspec)
 	{
 		dumpspec = false;
@@ -2135,8 +1410,10 @@ void FinalPan_SetupLeds()
 }
 
 
-void FinalPan_WindowFrame(float DT)
+void FinalPan_RenderSpecificScreen(float DT, int screen)
 {
+	
+
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0);
 	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
@@ -2148,7 +1425,37 @@ void FinalPan_WindowFrame(float DT)
 
 	ImGui::SetWindowSize(ImVec2(1024, 600));
 
-	RenderMain(DT);
+	FinalPan_RenderMain(DT, screen);
+
+	ImGui::End();
+	ImGui::PopStyleVar();
+	ImGui::PopStyleVar();
+	ImGui::PopStyleVar();
+	ImGui::PopStyleVar();
+	ImGui::PopStyleVar();
+
+}
+
+void FinalPan_WindowFrame(float DT)
+{
+	if (!init)
+	{
+
+		FinalPan_LoadResources();
+	}
+
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0);
+	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
+	ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 0);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
+
+
+	ImGui::Begin("screen", 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoTitleBar);
+
+	ImGui::SetWindowSize(ImVec2(1024, 600));
+
+	FinalPan_RenderMain(DT);
 
 	ImGui::End();
 	ImGui::PopStyleVar();

@@ -73,7 +73,7 @@ void ModSourceScreen::SetActiveInstance(int id)
 {
 	if (HasActiveInstanceDisplay)
 	{
-		ActiveInstance = id;
+		ActiveInstance = id % MaxInstances;
 	}
 }
 
@@ -86,78 +86,96 @@ ModSourceScreen::ModSourceScreen(Screens_t screen, ModSource_t modsourcetype)
 	myScreen = screen;
 	modType = ModTypeFromScreen(screen);
 	HasActiveInstanceDisplay = ModulationSourceHasInstances(modType);
+	int cur = 0;
 	switch (myScreen)
 	{
-
+	case SCREEN_KEYZONES:
+	case SCREEN_KEYBOARD:
+		HasActiveInstanceDisplay = true;
+		MaxInstances = 4;
+		break;
 	case SCREEN_X:
-		EnableAvailableEncoder("Deadzone", MenuEntry_EnvelopeValue, KeyboardParam_DeadzoneX,-1);
-		EnableAvailableEncoder("Scale", MenuEntry_EnvelopeValue, KeyboardParam_ScaleX,-1);
+		cur = EnableAvailableEncoder("Deadzone", MenuEntry_EnvelopeValue, KeyboardParam_DeadzoneX,cur);
+		cur = SkipAvailableEncoder(cur+1);
+		cur = EnableAvailableEncoder("Scale", MenuEntry_EnvelopeValue, KeyboardParam_ScaleX,cur);
 
 		break;
 	case SCREEN_Y:
-		EnableAvailableEncoder("Deadzone", MenuEntry_EnvelopeValue, KeyboardParam_DeadzoneY,-1);
-		EnableAvailableEncoder("Scale", MenuEntry_EnvelopeValue, KeyboardParam_ScaleY,-1);
+		cur = EnableAvailableEncoder("Deadzone", MenuEntry_EnvelopeValue, KeyboardParam_DeadzoneY,cur);
+		cur = SkipAvailableEncoder(cur+1);
+		cur = EnableAvailableEncoder("Scale", MenuEntry_EnvelopeValue, KeyboardParam_ScaleY,cur);
 
 		break;
 	case SCREEN_Z:
-		EnableAvailableEncoder("Deadzone", MenuEntry_EnvelopeValue, KeyboardParam_DeadzoneZ,-1);
-		EnableAvailableEncoder("Scale", MenuEntry_EnvelopeValue, KeyboardParam_ScaleZ,-1);
+		cur = EnableAvailableEncoder("Deadzone", MenuEntry_EnvelopeValue, KeyboardParam_DeadzoneZ,cur);
+		cur = SkipAvailableEncoder(cur+1);
+		cur = EnableAvailableEncoder("Scale", MenuEntry_EnvelopeValue, KeyboardParam_ScaleZ,cur);
 
 		break;
 	case SCREEN_LMOD:
-		EnableAvailableEncoder("Deadzone", MenuEntry_EnvelopeValue, KeyboardParam_DeadzoneLMod,-1);
-		EnableAvailableEncoder("Scale", MenuEntry_EnvelopeValue, KeyboardParam_ScaleLMod,-1);
+		cur = EnableAvailableEncoder("Deadzone", MenuEntry_EnvelopeValue, KeyboardParam_DeadzoneLMod,cur);
+		cur = SkipAvailableEncoder(cur+1);
+		cur = EnableAvailableEncoder("Scale", MenuEntry_EnvelopeValue, KeyboardParam_ScaleLMod,cur);
 		break;
 	case SCREEN_RMOD:
-		EnableAvailableEncoder("Deadzone", MenuEntry_EnvelopeValue, KeyboardParam_DeadzoneRMod,-1);
-		EnableAvailableEncoder("Scale", MenuEntry_EnvelopeValue, KeyboardParam_ScaleRMod,-1);
+		cur = EnableAvailableEncoder("Deadzone", MenuEntry_EnvelopeValue, KeyboardParam_DeadzoneRMod,-1);
+		cur = SkipAvailableEncoder(cur+1);
+		cur = EnableAvailableEncoder("Scale", MenuEntry_EnvelopeValue, KeyboardParam_ScaleRMod,cur);
 		break;
 	case SCREEN_LSUS:
-		EnableAvailableEncoder("Deadzone", MenuEntry_EnvelopeValue, KeyboardParam_DeadzoneLSus,-1);
-		EnableAvailableEncoder("Scale", MenuEntry_EnvelopeValue, KeyboardParam_ScaleLSus,-1);
+		cur = EnableAvailableEncoder("Deadzone", MenuEntry_EnvelopeValue, KeyboardParam_DeadzoneLSus,cur);
+		cur = SkipAvailableEncoder(cur+1);
+		cur = EnableAvailableEncoder("Scale", MenuEntry_EnvelopeValue, KeyboardParam_ScaleLSus,cur);
 		break;
 	case SCREEN_RSUS:
-		EnableAvailableEncoder("Deadzone", MenuEntry_EnvelopeValue, KeyboardParam_DeadzoneRSus,-1);
-		EnableAvailableEncoder("Scale", MenuEntry_EnvelopeValue, KeyboardParam_ScaleRSus,-1);
+		cur = EnableAvailableEncoder("Deadzone", MenuEntry_EnvelopeValue, KeyboardParam_DeadzoneRSus,cur);
+		cur = SkipAvailableEncoder(cur+1);
+		cur = EnableAvailableEncoder("Scale", MenuEntry_EnvelopeValue, KeyboardParam_ScaleRSus,cur);
 		break;
 	case SCREEN_LUNA:
-		EnableAvailableEncoder("Deadzone", MenuEntry_EnvelopeValue, KeyboardParam_DeadzoneLUna,-1);
-		EnableAvailableEncoder("Scale", MenuEntry_EnvelopeValue, KeyboardParam_ScaleLUna,-1);
+		cur = EnableAvailableEncoder("Deadzone", MenuEntry_EnvelopeValue, KeyboardParam_DeadzoneLUna,cur);
+		cur = SkipAvailableEncoder(cur+1);
+		cur = EnableAvailableEncoder("Scale", MenuEntry_EnvelopeValue, KeyboardParam_ScaleLUna,cur);
 		break;
 	case SCREEN_RUNA:
-		EnableAvailableEncoder("Deadzone", MenuEntry_EnvelopeValue, KeyboardParam_DeadzoneRUna,-1);
-		EnableAvailableEncoder("Scale", MenuEntry_EnvelopeValue, KeyboardParam_ScaleRUna,-1);
+		cur = EnableAvailableEncoder("Deadzone", MenuEntry_EnvelopeValue, KeyboardParam_DeadzoneRUna,cur);
+		cur = SkipAvailableEncoder(cur+1);
+		cur = EnableAvailableEncoder("Scale", MenuEntry_EnvelopeValue, KeyboardParam_ScaleRUna,cur);
 		break;
 
 	case SCREEN_ENVELOPE:
 		HasActiveInstanceDisplay = true;
 
-		EnableButton(3, "Legato", MenuEntry_EnvelopeToggle, Envelope_Retrigger);
+		EnableButton(LB3, "Legato", MenuEntry_EnvelopeToggle, Envelope_Retrigger);
 
-		EnableAvailableEncoder("Attack", MenuEntry_EnvelopeValue, Envelope_Attack,-1);
-		EnableAvailableEncoder("Decay", MenuEntry_EnvelopeValue, Envelope_Decay,-1);
-		EnableAvailableEncoder("Sustain", MenuEntry_EnvelopeValue, Envelope_Sustain,-1);
-		EnableAvailableEncoder("Release", MenuEntry_EnvelopeValue, Envelope_Release,-1);
+		cur = EnableAvailableEncoder("Attack", MenuEntry_EnvelopeValue, Envelope_Attack,cur);
+		cur = SkipAvailableEncoder(cur+1);
+		cur = EnableAvailableEncoder("Decay", MenuEntry_EnvelopeValue, Envelope_Decay,cur);
+		cur = SkipAvailableEncoder(cur+1);
+		cur = EnableAvailableEncoder("Sustain", MenuEntry_EnvelopeValue, Envelope_Sustain,cur);
+		cur = SkipAvailableEncoder(cur+1);
+		cur = EnableAvailableEncoder("Release", MenuEntry_EnvelopeValue, Envelope_Release,cur);
 //		EnableAvailableEncoder("Curve", MenuEntry_EnvelopeValue, Envelope_Curve);
 
 		break;
 	case SCREEN_LFO:
-		EnableButton(3, "Reset on key", MenuEntry_EnvelopeToggle, LFO_ResetOnKey);
-		int LE = EnableAvailableEncoder("Speed", MenuEntry_EnvelopeValue, LFO_Speed,-1);
-	//	EnableAvailableEncoder("Shape", MenuEntry_EnvelopeValue, LFO_Shape);
-		LE = SkipAvailableEncoder(LE);
-		EnableAvailableEncoder("Reset Phase", MenuEntry_EnvelopeValue, LFO_ResetPhase,LE );
+		EnableButton(LB3, "Reset on key", MenuEntry_EnvelopeToggle, LFO_ResetOnKey);
+		cur = EnableAvailableEncoder("Speed", MenuEntry_EnvelopeValue, LFO_Speed,cur);
+		cur = SkipAvailableEncoder(cur+1);
+		cur = EnableAvailableEncoder("Shape", MenuEntry_EnvelopeValue, LFO_Shape, cur);
+		cur = SkipAvailableEncoder(cur+1);
+		cur = EnableAvailableEncoder("Reset Phase", MenuEntry_EnvelopeValue, LFO_ResetPhase,cur );
 		//EnableAvailableEncoder("Depth", MenuEntry_EnvelopeValue, LFO_Depth);
 		HasActiveInstanceDisplay = true;
 		break;
 	}
 	if (HasActiveInstanceDisplay)
 	{
-		EnableButton(0, "Previous", MenuEntry_Action, MenuAction_Prev);
-		EnableButton(7, "Next", MenuEntry_Action, MenuAction_Next);
+		EnableButton(LB1, "Previous", MenuEntry_Action, MenuAction_Prev);
+		EnableButton(RB1, "Next", MenuEntry_Action, MenuAction_Next);
 	}
-	EnableButton(9, "Parameters", MenuEntry_EncoderSet, 0);
-	EnableButton(10, "Targets", MenuEntry_EncoderSet, 1);
+	EnableButton(RB3, "Parameters", MenuEntry_EncoderSet, 0);
+	EnableButton(RB4, "Targets", MenuEntry_EncoderSet, 1);
 	
 	auto row = gCurrentPreset.GetModSourceRow(modType, ActiveInstance);
 	
@@ -178,8 +196,32 @@ void ModSourceScreen::RenderContent(bool active, float DT)
 	_screensetup_t::RenderContent(active, DT);
 	int x = 100;
 	int y = 200;
+
+	float W = 500;
+	float H = 100;
+
 	switch (myScreen)
 	{
+	case SCREEN_KEYBOARD:
+	case SCREEN_KEYZONES:
+		break;
+	case SCREEN_LFO:
+	{
+		ImVec2 Pts[100];
+		float Speed  = 0.1f  + gCurrentPreset.GetModParameterValue(LFO_Speed, ActiveInstance) / 65535.0f;
+		float Ps = 6.283f* (gCurrentPreset.GetModParameterValue(LFO_ResetPhase, ActiveInstance) / 65535.0f);
+		x = 512 - W/2;
+		for (int i = 0; i < 100; i++)
+		{
+			Pts[i].x = W * i * 0.01 + x;
+			Pts[i].y = -sin(Ps + (float)i * Speed)  * H/2 + y + H/2;
+		}
+
+		ImGui::GetWindowDrawList()->AddLine(ImVec2(0, y + H/2), ImVec2(1024, y + H/2), IM_COL32(255, 255, 255, 20), 3);
+		ImGui::GetWindowDrawList()->AddPolyline(Pts, 100, gGuiResources.Normal,false, 5);
+
+		break;
+	};
 	case SCREEN_ENVELOPE:
 	{
 		float A = gCurrentPreset.GetModParameterValue(Envelope_Attack, ActiveInstance)/65535.0f;
@@ -188,8 +230,6 @@ void ModSourceScreen::RenderContent(bool active, float DT)
 		float R = gCurrentPreset.GetModParameterValue(Envelope_Release, ActiveInstance) / 65535.0f;
 
 
-		float W = 500;
-		float H = 150;
 		float CumW = 0;
 
 		float AW = (W / 4.0) * A;
@@ -217,11 +257,17 @@ void ModSourceScreen::RenderContent(bool active, float DT)
 		ImVec2 S10(CumW + RW/2, y + H);
 		ImVec2 S11(CumW + RW, y + H);
 
-		ImGui::GetWindowDrawList()->AddBezierCurve(S1, S2, S3, S4, gGuiResources.Normal, 5);
+		ImGui::GetWindowDrawList()->AddLine(ImVec2(0, y + H), ImVec2(1024, y + H), IM_COL32(255, 255, 255, 20), 3);
 
+		ImGui::GetWindowDrawList()->AddBezierCurve(S1, S2, S3, S4, gGuiResources.Normal, 5);
+		ImGui::GetWindowDrawList()->AddCircleFilled (S1, 2.5, gGuiResources.Normal);
+		ImGui::GetWindowDrawList()->AddCircleFilled(S4, 2.5, gGuiResources.Normal);
 		ImGui::GetWindowDrawList()->AddBezierCurve(S4, S5, S6, S7, gGuiResources.Normal, 5);
+		ImGui::GetWindowDrawList()->AddCircleFilled(S7, 2.5, gGuiResources.Normal);
 		ImGui::GetWindowDrawList()->AddLine(S7, S8, gGuiResources.Normal, 5);
+		ImGui::GetWindowDrawList()->AddCircleFilled(S8, 2.5, gGuiResources.Normal);
 		ImGui::GetWindowDrawList()->AddBezierCurve(S8, S9, S10, S11, gGuiResources.Normal, 5);
+		ImGui::GetWindowDrawList()->AddCircleFilled(S11, 2.5, gGuiResources.Normal);
 
 	}
 		break;
@@ -270,7 +316,7 @@ int ModSourceScreen::FindNextUsed(int start)
 
 void ModSourceScreen::RepeatGoto()
 {
-	ActiveInstance = FindNextUsed(ActiveInstance);
+	SetActiveInstance( FindNextUsed(ActiveInstance));
 	SetEncoderNames();
 }
 
@@ -310,8 +356,8 @@ void ModSourceScreen::Render(bool active, float DT)
 				if (row->targets[j].depth != 0 && row->targets[j].outputid !=-1) used = true;
 			};
 
-			int x = (i-8) * 40 + 512;
-			int y = MButtonHeight(1);
+			int x = (i-MaxInstances/2) * 40 + 512;
+			int y = 60;
 			RenderLettersInABox(x,y, i == ActiveInstance, txt, 35, 35, used);
 		}
 	}

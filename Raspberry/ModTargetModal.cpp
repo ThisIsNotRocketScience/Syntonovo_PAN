@@ -14,7 +14,7 @@ typedef struct ModulationTargetOutputEntries_t
 typedef struct CategoryDesc_t
 {
 	int id;
-	char *label;
+	const char *label;
 } CategoryDesc_t;
 
 const CategoryDesc_t Categories[]=

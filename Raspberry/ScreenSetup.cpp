@@ -17,7 +17,7 @@ _screensetup_t::_screensetup_t(_screensetup_t *parent)
 	Parent = parent;
 	Modal = NULL;
 	SetTitle("");
-	for (int i = 0; i < 14; i++)
+	for (int i = 0; i < SIDEBUTTON_COUNT; i++)
 	{
 		EnableButton(i, "", false, ledmode_off);
 		DisableButton(i);
@@ -44,6 +44,9 @@ _screensetup_t::_screensetup_t(_screensetup_t *parent)
 	ControlsInOrder.push_back(&buttons[4]);
 	ControlsInOrder.push_back(&buttons[5]);
 	ControlsInOrder.push_back(&buttons[6]);
+	ControlsInOrder.push_back(&buttons[7]);
+	ControlsInOrder.push_back(&buttons[8]);
+	ControlsInOrder.push_back(&buttons[9]);
 
 	for (int i = 0; i < MAXENCODERSETS; i++)
 	{
@@ -53,13 +56,16 @@ _screensetup_t::_screensetup_t(_screensetup_t *parent)
 		}
 	}
 
+	ControlsInOrder.push_back(&buttons[19]);
+	ControlsInOrder.push_back(&buttons[18]);
+	ControlsInOrder.push_back(&buttons[17]);
+	ControlsInOrder.push_back(&buttons[16]);
+	ControlsInOrder.push_back(&buttons[15]);
+	ControlsInOrder.push_back(&buttons[14]);
 	ControlsInOrder.push_back(&buttons[13]);
 	ControlsInOrder.push_back(&buttons[12]);
 	ControlsInOrder.push_back(&buttons[11]);
 	ControlsInOrder.push_back(&buttons[10]);
-	ControlsInOrder.push_back(&buttons[9]);
-	ControlsInOrder.push_back(&buttons[8]);
-	ControlsInOrder.push_back(&buttons[7]);
 
 
 	SetFirstEnabledControlActive();
@@ -79,7 +85,7 @@ void _screensetup_t::TweakParameterValue(int param, int delta)
 
 void _screensetup_t::SetupEncodersAndButtonsLeds()
 {
-	for (int i = 0; i < 14; i++)
+	for (int i = 0; i < SIDEBUTTON_COUNT; i++)
 	{
 		buttons[i].UpdateLed(ControlsInOrder[ActiveControl] == &buttons[i]);
 	}
@@ -113,13 +119,20 @@ void _screensetup_t::SetupMainUILeds()
 	gPanState.SetButtonLed(ledbutton_L5, buttons[4].ledmode);
 	gPanState.SetButtonLed(ledbutton_L6, buttons[5].ledmode);
 	gPanState.SetButtonLed(ledbutton_L7, buttons[6].ledmode);
-	gPanState.SetButtonLed(ledbutton_R1, buttons[7].ledmode);
-	gPanState.SetButtonLed(ledbutton_R2, buttons[8].ledmode);
-	gPanState.SetButtonLed(ledbutton_R3, buttons[9].ledmode);
-	gPanState.SetButtonLed(ledbutton_R4, buttons[10].ledmode);
-	gPanState.SetButtonLed(ledbutton_R5, buttons[11].ledmode);
-	gPanState.SetButtonLed(ledbutton_R6, buttons[12].ledmode);
-	gPanState.SetButtonLed(ledbutton_R7, buttons[13].ledmode);
+	gPanState.SetButtonLed(ledbutton_L8, buttons[7].ledmode);
+	gPanState.SetButtonLed(ledbutton_L9, buttons[8].ledmode);
+	gPanState.SetButtonLed(ledbutton_L10, buttons[9].ledmode);
+
+	gPanState.SetButtonLed(ledbutton_R1, buttons[10].ledmode);
+	gPanState.SetButtonLed(ledbutton_R2, buttons[11].ledmode);
+	gPanState.SetButtonLed(ledbutton_R3, buttons[12].ledmode);
+	gPanState.SetButtonLed(ledbutton_R4, buttons[13].ledmode);
+	gPanState.SetButtonLed(ledbutton_R5, buttons[14].ledmode);
+	gPanState.SetButtonLed(ledbutton_R6, buttons[15].ledmode);
+	gPanState.SetButtonLed(ledbutton_R7, buttons[16].ledmode);
+	gPanState.SetButtonLed(ledbutton_R8, buttons[17].ledmode);
+	gPanState.SetButtonLed(ledbutton_R9, buttons[18].ledmode);
+	gPanState.SetButtonLed(ledbutton_R10, buttons[19].ledmode);
 
 
 	gPanState.SetButtonLed(ledbutton_B1, gPanState.CurrentPatch == 0 ? ledmode_solid : ledmode_off);
@@ -304,7 +317,7 @@ bool _screensetup_t::EnableButton(int i, const char *text, int style, int target
 	return false;
 }
 
-int _screensetup_t::EnableAvailableEncoder(char *text, int style, int target, int start, bool isdirectoutput)
+int _screensetup_t::EnableAvailableEncoder(const char *text, int style, int target, int start, bool isdirectoutput)
 {
 	if (start == -1) start = 0;
 	for (int i = start; i < 11; i++)
@@ -339,9 +352,9 @@ int _screensetup_t::SkipAvailableEncoder(int start)
 	}
 }
 
-int _screensetup_t::EnableAvailableButton(char *text, int style, int target)
+int _screensetup_t::EnableAvailableButton(const char *text, int style, int target)
 {
-	for (int i = 0; i < 14; i++)
+	for (int i = 0; i < SIDEBUTTON_COUNT; i++)
 	{
 		if (buttons[i].enabled == false)
 		{
@@ -406,7 +419,7 @@ void _screensetup_t::AddDynamicText(float x, float y, char *t, int len, alignmen
 
 }
 
-_textcontrol_t * _screensetup_t::AddText(float x, float y, char *t, alignment_t align, font_size fontsize)
+_textcontrol_t * _screensetup_t::AddText(float x, float y, const char *t, alignment_t align, font_size fontsize)
 {
 
 	_textcontrol_t *T = new _textcontrol_t();
@@ -668,12 +681,15 @@ void _screensetup_t::RenderContent(bool active, float DT)
 			}
 			int idx2 = (idx + 1) % 2;
 			auto R = ImGui::CalcTextSize(titletext[idx2]);
+			ImGui::SetCursorPos(ImVec2(512 - R.x / 2, R.y * 3));
 			ImGui::Text(titletext[idx2]);
 
 		}
 		else
 		{
 			auto R = ImGui::CalcTextSize(title);
+
+			ImGui::SetCursorPos(ImVec2(512 - R.x / 2, R.y * 3));
 			ImGui::Text(title);
 		}
 		
@@ -689,6 +705,7 @@ void _screensetup_t::RenderContent(bool active, float DT)
 	RenderPatchBox();
 
 }
+
 void _screensetup_t::RenderPatchBox()
 {
 	char txt[100];
@@ -697,9 +714,19 @@ void _screensetup_t::RenderPatchBox()
 	auto R = ImGui::CalcTextSize(txt);
 
 
-	ImGui::SetCursorPos(ImVec2(1024-ParamMasterMargin-R.x, ParamMasterMargin));
+	ImGui::SetCursorPos(ImVec2(1024/2 -R.x / 2, ParamMasterMargin));
 	ImGui::Text(txt);
-	ImGui::GetWindowDrawList()->AddRect(ImVec2(1024 - ParamMasterMargin * 2 - R.x, -1), ImVec2(1025, R.y + ParamMasterMargin * 2), IM_COL32(255, 255, 255, 255));
+	ImVec2 Pts[4];
+	Pts[0] = Pts[1] = ImVec2(512 - ParamMasterMargin - R.x / 2, R.y + ParamMasterMargin * 2);
+	Pts[2] = Pts[3] = ImVec2(512 + ParamMasterMargin + R.x / 2, R.y + ParamMasterMargin * 2);
+
+
+	Pts[0].y = Pts[3].y = -1;
+	Pts[0].x -= ParamMasterMargin * 2;
+	Pts[3].x += ParamMasterMargin * 2;
+
+	ImGui::GetWindowDrawList()->AddPolyline(Pts, 4, IM_COL32(255, 255, 255, 255), false, 1);
+	
 
 	//	Screens[SCREEN_HOME]->AddText(512, 50, "Current preset: ", align_right);
 	//Screens[SCREEN_HOME]->AddDynamicText(512, 50, gCurrentPreset.Name, PRESET_NAME_LENGTH);

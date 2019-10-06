@@ -152,7 +152,9 @@
   <ItemGroup>
     <ClCompile Include="..\libs\gl3w-master\src\gl3w.c" />
     <ClCompile Include="BottomEncoder.cpp" />
+    <ClCompile Include="BuildScreens.cpp" />
     <ClCompile Include="Combine.cpp" />
+    <ClCompile Include="ExtraScreenDefinitions.cpp" />
     <ClCompile Include="finalpangui.cpp" />
     <ClCompile Include="finalpanguimain.cpp" />
     <ClCompile Include="HomeScreen.cpp" />
@@ -160,6 +162,7 @@
     <ClCompile Include="linux_serial.cpp" />
     <ClCompile Include="ModSourceScreen.cpp" />
     <ClCompile Include="ModTargetModal.cpp" />
+    <ClCompile Include="NewModulationModal.cpp" />
     <ClCompile Include="Raspberry.cpp" />
     <ClCompile Include="ScreenSetup.cpp" />
     <ClCompile Include="SerialSearcher.cpp" />

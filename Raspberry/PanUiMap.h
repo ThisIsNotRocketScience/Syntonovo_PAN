@@ -33,6 +33,21 @@
 #define ENDMENU()
 #endif
 
+MENU(HOME, ledbutton_L10, "HOME")
+
+ENTRY("VCF1 Level", MenuEntry_Value, Output_VCF1_LEVEL)
+ENTRY("VCF1 -> FX", MenuEntry_Value, Output_VCF1_FX_12)
+ENTRY("VCF2 Level", MenuEntry_Value, Output_VCF2_LEVEL)
+ENTRY("VCF2 -> FX", MenuEntry_Value, Output_VCF2_FX_L)
+ENTRY("Cleanfeed Level", MenuEntry_Value, Output_CLEANF_LEVEL)
+ENTRY("Cleanfeed FXSend", MenuEntry_Value, Output_CLEANF_LEVEL)
+ENTRY("Effect Return ", MenuEntry_Value, Output_FX_RET_LEVEL)
+SKIPENTRY
+ENTRY("Volume Line", MenuEntry_Value, Output_MASTER_LEVEL)
+SKIPENTRY
+ENTRY("Volume Headphone", MenuEntry_Value, Output_MASTER_LEVEL)
+
+ENDMENU()
 
 MENU(VCO1, ledbutton_VCO1, "VCO1")
 CUSTOMENTRY("Triangle", MenuEntry_Toggle, Switch_SEL1TRI)
