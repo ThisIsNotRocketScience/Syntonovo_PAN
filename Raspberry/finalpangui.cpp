@@ -25,7 +25,7 @@ class ParameterModal * theParameterBindingModal;
 Gui gGui;
 
 
-
+bool GotoPageOnTurn = true;
 
 bool IsCenterEncoder(FinalEncoderEnum button)
 {
@@ -1504,6 +1504,13 @@ void LedEncoderButtonPress(FinalEncoderEnum Button)
 
 void LedEncoderButtonLeft(FinalEncoderEnum Button, int delta)
 {
+	if (GotoPageOnTurn)
+	if (isPageEncoder(Button))
+	{
+		Screens_t Page = GetPage(Button);
+		gGui.GotoPage(Page);
+	}
+
 	switch (Button)
 	{
 	case encoder_SketchLeft: gGui.SketchLeft(-1); break;
@@ -1514,6 +1521,12 @@ void LedEncoderButtonLeft(FinalEncoderEnum Button, int delta)
 
 void LedEncoderButtonRight(FinalEncoderEnum Button, int delta)
 {
+	if (GotoPageOnTurn)
+	if (isPageEncoder(Button))
+	{
+		Screens_t Page = GetPage(Button);
+		gGui.GotoPage(Page);
+	}
 	switch (Button)
 	{
 	case encoder_SketchLeft: gGui.SketchLeft(1); break;

@@ -852,7 +852,7 @@ int main(int argc, char** argv)
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
 	SDL_DisplayMode current;
 	SDL_GetCurrentDisplayMode(0, &current);
-	SDL_Window *window = SDL_CreateWindow("Synton PAN Simulator", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 2400, 900, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+	SDL_Window *window = SDL_CreateWindow("Synton PAN Simulator", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 900, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 	SetupIcon(window);
 	SDL_GLContext glcontext = SDL_GL_CreateContext(window);
 	SDL_GL_SetSwapInterval(1); // Enable vsync
@@ -1045,8 +1045,8 @@ int main(int argc, char** argv)
 				ImVec2 pos = ImGui::GetCursorScreenPos();
 				ImGui::SetCursorScreenPos(pos);
 
-				float xscalefac = 2.0f;
-				float yscalefac = 3.3f;
+				float xscalefac = 2.0f  * 0.7f;
+				float yscalefac = 3.3f * 0.7f;
 				
 
 				for (int i = 0; i < __FINALLEDBUTTON_COUNT; i++)
@@ -1107,11 +1107,7 @@ int main(int argc, char** argv)
 				}
 
 
-		
-				if (ImGui::Button("dump"))
-				{
-					DumpKnownScreens(window);
-				}
+				
 
 
 				ImGui::PopFont();
@@ -1122,6 +1118,11 @@ int main(int argc, char** argv)
 			}
 			ImGui::PopStyleColor();
 		}
+
+		/*if (ImGui::Button("dump"))
+		{
+			DumpKnownScreens(window);
+		}*/
 
 
 		if (finalpan)
