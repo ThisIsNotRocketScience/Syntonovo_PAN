@@ -185,10 +185,11 @@ void sync_in_read_complete(int status, void* stateptr)
 		memcpy((void*)&state->in_dst, &data[1], 4);
 		sync_out_write_ack(state, state->in_running_checksum);
 		break;
+	case 6: // WRITE NO ACK
 	case 2: { // WRITE
 			int in_dst = state->in_dst;
 			state->in_dst += 4;
-			sync_out_write_ack(state, state->in_running_checksum);
+			if (cmd == 2) sync_out_write_ack(state, state->in_running_checksum);
 			state->uart->rx.waitfor(6);
 		    LEAVE_CRITICAL_SECTION();
 			state->data(in_dst, &data[1]);
@@ -363,17 +364,25 @@ void sync_out_write_complete(int status, void* stateptr)
 
   uint8_t* volatile data = state->ptr;
 
+  int expect_ack = 1;
   if (state->size > 4) {
     state->ptr += 4;
     state->out_dst += 4;
     state->size -= 4;
+    state->sent_no_ack += 4;
+    if (state->sent_no_ack < 120) {
+    	expect_ack = 0;
+    } else {
+    	state->sent_no_ack = 0;
+    }
   }
   else {
     state->size = 0;
+	state->sent_no_ack = 0;
   }
 
   state->transmit_active = 1;
-  sync_out_write_begin(state, 2, data, 1);
+  sync_out_write_begin(state, expect_ack ? 2 : 6, data, expect_ack);
 
   LEAVE_CRITICAL_SECTION();
 }
@@ -474,6 +483,7 @@ void sync_block(sync_state_t* state, uint8_t* block, int offset, int size, sync_
 	state->size = size;
 	state->complete = complete_cb;
 	state->transmit_active = 1;
+	state->sent_no_ack = 0;
 	sync_out_write_complete(0, state);
 	LEAVE_CRITICAL_SECTION();
 }

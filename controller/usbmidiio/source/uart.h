@@ -84,6 +84,7 @@ struct sync_state_t
 	uint8_t* volatile ptr;
 	volatile uint32_t out_dst;
 	volatile uint32_t size;
+	volatile uint32_t sent_no_ack;
 	volatile uint8_t out_running_checksum;
 	sync_complete_cb complete;
 	volatile int ack_send_pending;
