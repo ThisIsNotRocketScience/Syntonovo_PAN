@@ -1,4 +1,4 @@
-
+#include <stdio.h>
 #include "ParameterModal.h"
 #include "NewModulationModal.h"
 

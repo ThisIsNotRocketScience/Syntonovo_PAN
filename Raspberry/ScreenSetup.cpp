@@ -668,14 +668,14 @@ void _screensetup_t::RenderContent(bool active, float DT)
 		if (Parent && ((_screensetup_t*)Parent)->Modal == this)
 		{
 			char titletext[2][1000];
-			sprintf_s(titletext[1], 1000, "%s", title);
-//			sprintf_s(titletext[0], 1000, "%s", title);
+			snprintf(titletext[1], 1000, "%s", title);
+//			snprintf(titletext[0], 1000, "%s", title);
 			int idx = 0;
 			_screensetup_t* M = (_screensetup_t*)Parent;
 			while (M)
 			{
 				int idx2 = (idx + 1) % 2;
-				sprintf_s(titletext[idx], 1000, "%s -> %s", M->title, titletext[idx2]);
+				snprintf(titletext[idx], 1000, "%s -> %s", M->title, titletext[idx2]);
 				idx = idx2;
 				M = (_screensetup_t * )M->Parent;
 			}
@@ -709,7 +709,7 @@ void _screensetup_t::RenderContent(bool active, float DT)
 void _screensetup_t::RenderPatchBox()
 {
 	char txt[100];
-	sprintf_s(txt, 100, "current patch : %s", gCurrentPreset.Name);
+	snprintf(txt, 100, "current patch : %s", gCurrentPreset.Name);
 
 	auto R = ImGui::CalcTextSize(txt);
 

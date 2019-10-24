@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "FinalPanEnums.h"
 #include "PanPreset.h"
 

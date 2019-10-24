@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "NewModulationModal.h"
 
 NewModulationModal *TheNewModulationModal;

@@ -1,3 +1,4 @@
+#include <math.h>
 #include "../libs/imgui-master/imgui.h"
 #include <stdio.h>
 #include "ModSourceScreen.h"
