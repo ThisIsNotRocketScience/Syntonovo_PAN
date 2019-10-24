@@ -152,6 +152,7 @@ void sync_in_read_complete(int status, void* stateptr)
 
 	uint8_t* data = &sync_read_buf[3];
 	state->uart->rx.read(data, 6);
+		//printf("%x %x %x %x %x %x\n", data[0], data[1], data[2], data[3], data[4], data[5]);
 	if (data[0] == 0xFF
 			&& data[1] == 0xFF
 			&& data[2] == 0xFF
@@ -187,11 +188,12 @@ void sync_in_read_complete(int status, void* stateptr)
 		memcpy((void*)&state->in_dst, &data[1], 4);
 		sync_out_write_ack(state, state->in_running_checksum);
 		break;
+	case 6: // WRITE NO ACK
 	case 2: { // WRITE
 			int in_dst = state->in_dst;
 			state->in_dst += 4;
 			state->data(in_dst, &data[1]);
-			sync_out_write_ack(state, state->in_running_checksum);
+			if (cmd == 2) sync_out_write_ack(state, state->in_running_checksum);
 		}
 		break;
 	case 3: // ACK
