@@ -723,10 +723,12 @@ void ScanButtonsAndEncoders()
 		int move = switch_process(&switch_state[i], sw[switch_sw[i]]);
 
 		if (move > 0) {
+			//printf("sw %d up\n", i);
 			data[0] = i;
 			sync_oob_word(&rpi_sync, OOB_BUTTON_UP, *(uint32_t*)data, 0);
 		}
 		else if (move < 0) {
+			//printf("sw %d down\n", i);
 			data[0] = i;
 			sync_oob_word(&rpi_sync, OOB_BUTTON_DOWN, *(uint32_t*)data, 0);
 		}
@@ -900,10 +902,30 @@ private:
 	bool _resend_full;
 };
 
-volatile int sync_running = 1;
+//volatile int sync_running = 1;
 DiffSyncer<presetnames_t> namesync(&presetnames, 0x1000000);
 
-void sync_complete_presetnames(int status);
+uint8_t mod_fb[48] = {0};
+volatile int mod_fb_count = sizeof(mod_fb);
+volatile int mod_sync_done = 1;
+volatile int mod_data_ready = 0;
+
+//void sync_complete_presetnames(int status);
+
+void sync_mod_data_complete(int status)
+{
+	mod_data_ready = 0;
+	mod_sync_done = 1;
+	sync_complete(status);
+}
+
+void sync_mod_data_start()
+{
+	if (loading) {
+		return;
+	}
+    sync_block(&rpi_sync, mod_fb, 0x2000000, sizeof(mod_fb), sync_mod_data_complete);
+}
 
 int preset_load_start()
 {
@@ -932,6 +954,9 @@ void sync_complete(int status)
 		        LedsOn();
 				loading = 0;
 			}
+		}
+		if (!loading && mod_data_ready) {
+			sync_mod_data_start();
 		}
 	}
 }
@@ -1042,6 +1067,8 @@ void KeyboardTask(void* pvParameters)
 
 #define SWITCH_ON(sw) FULLVALUE(0xfe, 0xfd, 0x200 | (sw));
 #define SWITCH_OFF(sw) FULLVALUE(0xfe, 0xfd, 0x100 | (sw));
+
+#define REQUEST_MODVALUES() dsp_cmd(0xfe, 0xfa, 0);
 
 void preset_init()
 {
@@ -1187,11 +1214,59 @@ void USBTask(void* pvParameters)
 	}
 }
 
+void control_cb(uint8_t data)
+{
+	if (mod_fb_count < sizeof(mod_fb)) {
+		mod_fb[mod_fb_count] = data;
+		mod_fb_count++;
+	}
+}
+
+void mod_data_loop()
+{
+	static int no_mod_reply_count = 0;
+
+	if (mod_data_ready) {
+		return;
+	}
+
+	if (mod_sync_done) {
+		mod_fb_count = 0;
+		mod_sync_done = 0;
+		REQUEST_MODVALUES();
+		no_mod_reply_count = 0;
+	}
+	else {
+		control_process();
+
+		if (mod_fb_count == sizeof(mod_fb)) {
+			mod_sync_done = 0;
+			mod_data_ready = 1;
+			sync_mod_data_start();
+		}
+		else {
+			no_mod_reply_count++;
+			if (no_mod_reply_count > 5) {
+				mod_fb_count = sizeof(mod_fb);
+				mod_data_ready = 0;
+				mod_sync_done = 1;
+			}
+		}
+	}
+}
+
 void IdleTask(void* pvParameters)
 {
+	int count = 0;
 	while(1) {
-		rpi_uart.config.timer_tick(rpi_uart.config.timer_tick_data);
-		vTaskDelay(50);
+		mod_data_loop();
+
+		count++;
+		if (count > 10) {
+			rpi_uart.config.timer_tick(rpi_uart.config.timer_tick_data);
+			count = 0;
+		}
+		vTaskDelay(5);
 	}
 }
 
@@ -1628,6 +1703,7 @@ int main(void) {
     /* Enter an infinite loop, just incrementing a counter. */
     while(1) {
         i++ ;
+        __NOP();
     }
     return 0 ;
 }

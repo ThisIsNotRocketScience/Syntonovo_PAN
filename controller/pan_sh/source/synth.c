@@ -30,6 +30,9 @@ void ports_value(int portid, uint16_t value);
 void pad_zero();
 
 
+volatile int mod_data_done = 0;
+volatile uint8_t mod_data[48] = {0};
+
 const int KEYBOARD_X = 0;
 const int KEYBOARD_Y = 1;
 const int KEYBOARD_Z = 2;
@@ -688,6 +691,12 @@ void control_cb(int param, int subparam, uint16_t value)
 
 		if (subparam == 0xfb) {
 			pad_zero();
+		}
+
+		if (subparam == 0xfa) {
+			if (!mod_data_done) {
+				mod_data_done = 1;
+			}
 		}
 		return;
 	}
@@ -1996,9 +2005,13 @@ int32_t controller_update(int ctrlid)
 
 void synth_modulation_run()
 {
+	int read_mods = mod_data_done;
 	for (int i = 0; i < NUM_LFOS; i++) {
 		int modid = 0x00 + i;
 		int32_t lfo = (int32_t)lfo_update(i) - 0x8000;
+		if (read_mods) {
+			mod_data[modid] = (uint8_t)(lfo >> 8);
+		}
 		add_mod_targets(modid, lfo);
 	}
 	for (int i = 0; i < NUM_ENVS; i++) {
@@ -2008,17 +2021,28 @@ void synth_modulation_run()
 		//ad_set_gate(ctrlid, synth_param[GATE].value, synth_param[ctrlid].flags & SubParamFlags_AdRetrigger);
 
 		int32_t adsr = adsr_update(i, una_corda_release);
+		if (read_mods) {
+			mod_data[modid] = (uint8_t)(adsr >> 8);
+		}
 		add_mod_targets(modid, adsr);
 		//uint16_t ad = ad_update(ctrlid, una_corda_release);
 	}
 	for (int i = 0; i < NUM_CONTROLLERS; i++) {
 		int modid = 0x20 + i;
 		int32_t value = controller_update(i);
+		if (read_mods) {
+			mod_data[modid] = (uint8_t)(value >> 8);
+		}
 		add_mod_targets(modid, value);
 	}
 	//for (int i = 0; i < NUM_OPERATORS; i++) {
 		//int modid = 0x30 + i;
 	//}
+
+	if (read_mods) {
+		mod_data_done = 0;
+		control_out_queue(mod_data, sizeof(mod_data));
+	}
 }
 
 void synth_run()
