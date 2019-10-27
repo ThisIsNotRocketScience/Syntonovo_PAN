@@ -216,7 +216,7 @@ void bottomencoder_t::Render(bool active, float DT)
 			
 			if (t)
 			{
-				ImGui::SetCursorPos(ImVec2(x - ImGui::GetTextLineHeight()-21, y2+8));
+				ImGui::SetCursorPos(ImVec2(x - ImGui::GetTextLineHeight()-22, y2+8));
 				ImGui::Image(t, ImVec2(22, 76));
 			}
 
@@ -226,7 +226,7 @@ void bottomencoder_t::Render(bool active, float DT)
 				if (idx < 128)
 				{
 					int val = mod_values[idx];
-					RenderModulationAmountV(x - ImGui::GetTextLineHeight() - 21 + 5 * i, y2 + 20, true, 5, 20, val, false, true);
+					RenderModulationAmountV(x - ImGui::GetTextLineHeight() - 21 + 9 * i, y2 + ParamVerticalBoxHeight - 50, false, 8, 45, val, false, true);
 				}
 			}
 
