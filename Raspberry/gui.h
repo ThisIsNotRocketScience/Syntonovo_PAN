@@ -63,7 +63,7 @@ extern void cmd_preset_save(int presetid);
 extern int ButtonHeight(int idx);
 extern int MButtonHeight(int idx);
 extern int GetEncoderX(int id);
-extern void RenderLettersInABox(int x, int y, bool active, const char *text, int w, int h, bool notghosted = true);
+extern void RenderLettersInABox(int x, int y, bool active, const char *text, int w, int h, bool notghosted = true, int value = 0, bool unipolar = false);
 ImU32 Dimmed(int dim, ImU32 col);
 
 extern uint16_t lerp(uint16_t i, uint16_t f, uint16_t t);
@@ -89,6 +89,7 @@ extern void LoadPatch(int n);
 extern bool ModulationSourceHasInstances(ModSource_t modType);
 extern int DecodeCurrentEffect();
 extern void SetEffect(int effect);
+extern void RenderModulationAmount(int x, int y, bool active, int w, int h, int value, bool unipolardisplay, bool notghosted);
 
 typedef struct FinalPan_GuiResources_t
 {
@@ -365,6 +366,7 @@ public:
 	void AddLedControl(const char *name, int x, int y, LedTheme whichled);
 
 	void ChangeActiveControl(int delta);
+	void OpenKeyrangeModal();
 
 	virtual void SketchLeft(int delta);
 
@@ -475,6 +477,6 @@ public:
 extern Gui gGui;
 class ParameterModal;
 extern ParameterModal  *theParameterBindingModal;
-
+extern int8_t mod_values[128];
 
 #endif

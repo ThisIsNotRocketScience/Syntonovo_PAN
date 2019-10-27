@@ -3,11 +3,9 @@
 #include "PanPreset.h"
 #include "ParameterModal.h"
 
-
 extern int DecodeCurrentEffect();
+
 extern void SetEffect(int effect);
-
-
 
 _screensetup_t::_screensetup_t(_screensetup_t *parent)
 {
@@ -70,8 +68,6 @@ _screensetup_t::_screensetup_t(_screensetup_t *parent)
 
 	SetFirstEnabledControlActive();
 }
-
-
 
 uint16_t _screensetup_t::GetParameterValue(int param, int encoderset)
 {
@@ -224,13 +220,21 @@ void _screensetup_t::SetupLeds()
 	SetupEncodersAndButtonsLeds();
 	
 }
+
 extern void cmd_pad_zero();
+
 extern void cmd_calibrate();
+
+void _screensetup_t::OpenKeyrangeModal()
+{
+
+}
 
 void _screensetup_t::Action(int action)
 {
 	switch (action)
 	{
+	case MenuAction_Keyrange: OpenKeyrangeModal(); break;
 	case MenuAction_PrevVCF2: gGui.PrevVCF2(); break;
 	case MenuAction_NextVCF2: gGui.NextVCF2(); break;
 	case MenuAction_PrevVCO: gGui.PrevVCO(); break;
@@ -519,6 +523,7 @@ int _screensetup_t::GetControlIndex(_control_t *c)
 	}
 	return -1;
 }
+
 void _screensetup_t::SetActiveControl(_control_t *c)
 {
 	int id = GetControlIndex(c);
@@ -530,6 +535,7 @@ void _screensetup_t::SetActiveControl(_control_t *c)
 	}
 
 }
+
 void _screensetup_t::SideButton(FinalLedButtonEnum b)
 {
 	if (Modal)
@@ -778,7 +784,6 @@ public:
 		ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(x, y), ImVec2(x + 40, y + 40), IM_COL32(r >> 8, g >> 8, b >> 8, 255));
 	}
 };
-
 
 void _screensetup_t::AddLedControl(const char *name, int x, int y, LedTheme whichled)
 {

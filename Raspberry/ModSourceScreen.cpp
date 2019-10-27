@@ -81,6 +81,8 @@ void ModSourceScreen::SetActiveInstance(int id)
 ModSourceScreen::ModSourceScreen(Screens_t screen, ModSource_t modsourcetype)
 {
 	ModSource = modsourcetype;
+	unipolarmod = gCurrentPreset.isModUnipolar(modsourcetype);
+
 	MaxInstances = 16;
 	ActiveInstance = 0;
 	theModTargetModal.Parent = this;
@@ -359,9 +361,20 @@ void ModSourceScreen::Render(bool active, float DT)
 
 			int x = (i-MaxInstances/2) * 40 + 512;
 			int y = 60;
-			RenderLettersInABox(x,y, i == ActiveInstance, txt, 35, 35, used);
+			
+
+			int idx = gCurrentPreset.GetModMatrixIndex(modType, i);
+
+			int value = mod_values[idx];
+			RenderLettersInABox(x,y, i == ActiveInstance, txt, 35, 35, used, value, unipolarmod);
 		}
 	}
+
+	int activeidx = gCurrentPreset.GetModMatrixIndex(modType, ActiveInstance);
+	int activevalue = mod_values[activeidx];
+
+	RenderModulationAmount(512-126, 100, true, 256, 12, activevalue, unipolarmod, true);
+
 	RenderModalBox(active, DT);
 	//auto row = gCurrentPreset.GetModSourceRow(modType, ActiveInstance);
 }

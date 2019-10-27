@@ -221,6 +221,7 @@ enum
 	MenuAction_GotoModulation5,
 	MenuAction_GotoModulation6,
 
+	MenuAction_Keyrange,
 	__MenuAction_Count
 };
 

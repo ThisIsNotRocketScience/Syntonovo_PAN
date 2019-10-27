@@ -11,7 +11,7 @@ public:
 	Screens_t myScreen;
 	int ActiveInstance;
 	int MaxInstances;
-
+	bool unipolarmod;
 	ModSource_t modType;
 	bool HasActiveInstanceDisplay;
 	virtual uint16_t GetParameterValue(int param, int encoderset);

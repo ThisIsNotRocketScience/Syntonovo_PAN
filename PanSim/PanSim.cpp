@@ -35,6 +35,8 @@ extern float gImguiScale ;
 extern float gImguiOffY ;
 extern float gImguiOffX;
 
+int8_t mod_values[128] = { 0 };
+
 extern PanPreset_t gCurrentPreset;
 
 presetnames_t presetnames;
@@ -1130,6 +1132,12 @@ int main(int argc, char** argv)
 			//			ImGui_ImplSdlGL3_NewFrame(window);
 			ImGui::SetNextWindowPos(ImVec2(0, 0));
 			auto nt = SDL_GetTicks();
+
+			for (int i = 0; i < 128; i++)
+			{
+				mod_values[i] = (int)(sin(i + nt * 0.001) * 127.0f);
+			}
+
 			auto diff = nt - t;
 			t = nt;
 			FinalPan_WindowFrame(diff * 0.001);

@@ -15,6 +15,5 @@ C:\Users\Root\Documents\GitHub\Syntonovo_PAN\SliderTest\obj\Release\SliderTest.c
 C:\Users\Root\Documents\GitHub\Syntonovo_PAN\SliderTest\obj\Release\SliderTest.Form1.resources
 C:\Users\Root\Documents\GitHub\Syntonovo_PAN\SliderTest\obj\Release\SliderTest.Properties.Resources.resources
 C:\Users\Root\Documents\GitHub\Syntonovo_PAN\SliderTest\obj\Release\SliderTest.csproj.GenerateResource.cache
-C:\Users\Root\Documents\GitHub\Syntonovo_PAN\SliderTest\obj\Release\SliderTest.csproj.CoreCompileInputs.cache
 C:\Users\Root\Documents\GitHub\Syntonovo_PAN\SliderTest\obj\Release\SliderTest.exe
 C:\Users\Root\Documents\GitHub\Syntonovo_PAN\SliderTest\obj\Release\SliderTest.pdb

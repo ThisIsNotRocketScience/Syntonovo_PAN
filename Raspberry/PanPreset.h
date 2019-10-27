@@ -451,6 +451,15 @@ public:
 		*mod = Source_none;
 	}
 
+	bool isModUnipolar(ModSource_t modsourcetype)
+	{
+		switch (modsourcetype)
+		{
+			case ModSource_t::Source_Envelope: return true;
+		}
+		return false;
+	}
+
 	void GetModSourceName(int id, char *txt, int len)
 	{
 		int instance = 0;
@@ -478,28 +487,34 @@ public:
 		snprintf(txt, len, "unknown?");
 	}
 
-
-
-	ModMatrixRow_t *GetModSourceRow(ModSource_t mod, int instance)
+	int GetModMatrixIndex(ModSource_t mod, int instance)
 	{
 		switch (mod)
 		{
-		case Source_LFO: return &modmatrix[0 + instance];
-		case Source_Envelope: return &modmatrix[0x10 + instance];
-		case Source_x: return &modmatrix[0x20];
-		case Source_y: return &modmatrix[0x21];
-		case Source_z: return &modmatrix[0x22];	
-		case Source_zprime: return &modmatrix[0x23];
-		case Source_left_mod: return &modmatrix[0x24];
-		case Source_right_mod: return &modmatrix[0x25];
-		case Source_left_sus: return &modmatrix[0x26];
-		case Source_right_sus: return &modmatrix[0x27];
-		case Source_left_unac: return &modmatrix[0x28];
-		case Source_right_unac: return &modmatrix[0x29];
-		case Source_note: return &modmatrix[0x2a];
-		case Source_vel:  return &modmatrix[0x2b];
+		case Source_LFO: return instance;
+		case Source_Envelope: return 0x10 + instance;
+		case Source_x: return 0x20;
+		case Source_y: return 0x21;
+		case Source_z: return 0x22;
+		case Source_zprime: return 0x23;
+		case Source_left_mod: return 0x24;
+		case Source_right_mod: return 0x25;
+		case Source_left_sus: return 0x26;
+		case Source_right_sus: return 0x27;
+		case Source_left_unac: return 0x28;
+		case Source_right_unac: return 0x29;
+		case Source_note: return 0x2a;
+		case Source_vel:  return 0x2b;
 			//		case Source_pedal: return &modmatrix[0x22];
 		}
+		return -1;
+
+	}
+
+	ModMatrixRow_t *GetModSourceRow(ModSource_t mod, int instance)
+	{
+		int idx = GetModMatrixIndex(mod, instance);
+		if (idx > -1) return &modmatrix[idx];
 		return 0;
 	}
 

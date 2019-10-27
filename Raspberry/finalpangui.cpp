@@ -24,7 +24,7 @@ PanState_t gPanState;
 class ParameterModal * theParameterBindingModal;
 Gui gGui;
 
-extern uint8_t mod_values[128];
+extern int8_t mod_values[128];
 
 bool GotoPageOnTurn = true;
 
@@ -1399,11 +1399,12 @@ void FinalPan_RenderMain(float DT, int specificscreen = -1)
 
 
 	}
-
-	for (int mod = 0; mod < 48; mod++) {
-		ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(0, mod*12), ImVec2(0 + ((int)(int8_t)mod_values[mod]+0x80)*2, (mod+1)*12), gGuiResources.Highlight);
+	if (gGuiResources.referencelines)
+	{
+		for (int mod = 0; mod < 48; mod++) {
+			ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(0, mod * 12), ImVec2(0 + ((int)(int8_t)mod_values[mod] + 0x80) * 2, (mod + 1) * 12), gGuiResources.Highlight);
+		}
 	}
-
 
 	FinalPan_PopStyle();
 }

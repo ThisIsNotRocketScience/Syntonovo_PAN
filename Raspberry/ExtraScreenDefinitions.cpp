@@ -6,6 +6,7 @@
 
 extern PanPreset_t gCurrentPreset;
 
+
 void LetterControl::SketchRightDelta(int delta)
 {
 	Current = GetDeltaChar(Current, delta);// ((Current + delta - 32 + 96) % 96) + 32;
@@ -97,14 +98,35 @@ int PresetScreen::GetActiveLetter()
 #define LetterBoxW 40
 #define LetterBoxH 40
 
+void RenderModulationAmount(int x, int y, bool active, int w, int h, int value, bool unipolardisplay, bool notghosted)
+{
+	float H1, H2;
+	if (unipolardisplay)
+	{
+		H1 = h;
+		H2 = h - (h) * (value / 128.0f);
 
-void RenderLettersInABox(int x, int y, bool active, const char* text, int w, int h, bool notghosted)
+	}
+	else
+	{
+		H1 = h / 2;
+		H2 = (h / 2) - (h / 2) * (value / 128.0f);
+	};
+
+	ImVec2 tlv(x, y + __min(H1, H2));
+
+	ImVec2 brv(x + w, y + __max(H1, H2));
+
+	ImGui::GetWindowDrawList()->AddRectFilled(tlv, brv, active ? gGuiResources.Highlight : Dimmed(notghosted ? 1 : 3, gGuiResources.Normal), 0, 0);
+}
+
+void RenderLettersInABox(int x, int y, bool active, const char* text, int w, int h, bool notghosted, int value, bool unipolardisplay)
 {
 	ImVec2 tl(x, y);
 	ImVec2 br(x + w, y + h);
 
 	ImGui::GetWindowDrawList()->AddRect(tl, br, active ? gGuiResources.Highlight : Dimmed(notghosted ? 1 : 3, gGuiResources.Normal), 0, 0, 2);
-
+	RenderModulationAmount(x, y, active, w, h, value, unipolardisplay, notghosted);
 	auto s = ImGui::CalcTextSize(text);
 
 	ImGui::SetCursorPos(ImVec2(x + LetterBoxW / 2 - s.x / 2, y + LetterBoxH / 2 - s.y / 2));
