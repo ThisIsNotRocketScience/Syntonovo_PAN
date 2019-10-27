@@ -222,9 +222,12 @@ void bottomencoder_t::Render(bool active, float DT)
 
 			for (int i = 0; i < ModSourceCount; i++)
 			{
-				int idx = MSFOS.SourceDetails[i].sourceid;
-				int val = mod_values[idx];
-				RenderModulationAmountV(x - ImGui::GetTextLineHeight() - 21 + 5 * i, y2+20, true, 5, 20, val, false, true);
+				uint8_t idx = MSFOS.SourceDetails[i].sourceid;
+				if (idx < 128)
+				{
+					int val = mod_values[idx];
+					RenderModulationAmountV(x - ImGui::GetTextLineHeight() - 21 + 5 * i, y2 + 20, true, 5, 20, val, false, true);
+				}
 			}
 
 		}
