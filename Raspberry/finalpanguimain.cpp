@@ -287,7 +287,7 @@ void* SerialThread(void*)
 
 
 presetnames_t  presetnames = {0};
-uint8_t mod_values[128] = {0};
+int8_t mod_values[128] = {0};
 
 void sync_data_func(int addr, uint8_t* data)
 {

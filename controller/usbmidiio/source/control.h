@@ -14,8 +14,8 @@ extern "C" {
 
 void control_init();
 void control_write(uint8_t* data, int count);
-
-void control_cb(int param, int subparam, uint16_t value);
+void control_process();
+void control_cb(uint8_t data);
 
 #ifdef __cplusplus
 };
