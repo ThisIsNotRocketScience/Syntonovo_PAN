@@ -6,6 +6,13 @@
 
 extern PanPreset_t gCurrentPreset;
 
+#ifndef __min
+#define __min(a,b) (((a)<(b))?(a):(b))
+#endif
+#ifndef __max
+#define __max(a,b) (((a)>(b))?(a):(b))
+#endif
+
 
 void LetterControl::SketchRightDelta(int delta)
 {
