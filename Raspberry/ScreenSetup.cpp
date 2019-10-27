@@ -566,14 +566,14 @@ void _screensetup_t::SetupEncoderSet(int n)
 		}
 	}
 
-	ModSourcesForOutputStruct MSFOS;
+	
 	for (int i = 0; i < 11; i++)
 	{
 		if (encoders[n][i].enabled && encoders[n][i].IsDirectOutput)
 		{
 			OutputEnum targetparam = gCurrentPreset.GetModulationOutput((OutputEnum)encoders[n][i].target);
-			gCurrentPreset.FillModSourcesForOutput(targetparam, &MSFOS);
-			encoders[n][i].ModSourceCount = MSFOS.Sources;
+			gCurrentPreset.FillModSourcesForOutput(targetparam, &encoders[n][i].MSFOS);
+			encoders[n][i].ModSourceCount = encoders[n][i].MSFOS.Sources;
 		}
 
 	}

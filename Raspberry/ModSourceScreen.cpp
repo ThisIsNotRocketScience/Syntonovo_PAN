@@ -373,6 +373,7 @@ void ModSourceScreen::Render(bool active, float DT)
 
 	int activeidx = gCurrentPreset.GetModMatrixIndex(modType, ActiveInstance);
 	int activevalue = mod_values[activeidx];
+	if (unipolarmod) activevalue = ((uint8_t*)mod_values)[activeidx] / 2;
 
 	RenderModulationAmountH(512-126, 152, true, 256, 15, activevalue, unipolarmod, true);
 

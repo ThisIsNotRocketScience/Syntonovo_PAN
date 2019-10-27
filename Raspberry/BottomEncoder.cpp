@@ -213,12 +213,20 @@ void bottomencoder_t::Render(bool active, float DT)
 			case 2:t = gGuiResources.Plugs[Plugs_TwoPlug]; break;
 			default: t = gGuiResources.Plugs[Plugs_ManyPlug]; break;
 			}
-
+			
 			if (t)
 			{
 				ImGui::SetCursorPos(ImVec2(x - ImGui::GetTextLineHeight()-21, y2+8));
 				ImGui::Image(t, ImVec2(22, 76));
 			}
+
+			for (int i = 0; i < ModSourceCount; i++)
+			{
+				int idx = MSFOS.SourceDetails[i].sourceid;
+				int val = mod_values[idx];
+				RenderModulationAmountV(x - ImGui::GetTextLineHeight() - 21 + 5 * i, y2+20, true, 5, 20, val, false, true);
+			}
+
 		}
 
 		//	VerticalText(txt, align_right);

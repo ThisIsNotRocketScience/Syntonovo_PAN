@@ -10,6 +10,8 @@
 #define PANGUIH
 #define HEADERHEIGHT 30
 
+#include "PanPreset.h"
+
 enum alignment_t
 {
 	align_left,
@@ -89,6 +91,7 @@ extern void LoadPatch(int n);
 extern bool ModulationSourceHasInstances(ModSource_t modType);
 extern int DecodeCurrentEffect();
 extern void SetEffect(int effect);
+extern void RenderModulationAmountV(int x, int y, bool active, int w, int h, int value, bool unipolardisplay, bool notghosted);
 extern void RenderModulationAmountH(int x, int y, bool active, int w, int h, int value, bool unipolardisplay, bool notghosted);
 
 typedef struct FinalPan_GuiResources_t
@@ -283,6 +286,8 @@ public:
 	//int ParameterID;
 	int x, y;
 	
+	ModSourcesForOutputStruct MSFOS;
+
 	bool IsDirectOutput;
 	int ModSourceCount;
 	
