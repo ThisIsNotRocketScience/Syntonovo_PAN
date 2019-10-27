@@ -24,6 +24,9 @@ NewModulationModal::NewModulationModal()
 	EnableButton(LB8, "Envelope");
 
 	EnableButton(LB9, "Velocity");
+
+
+
 	EnableButton(RB3, "Mod left");
 
 	EnableButton(RB4, "Mod Right");
@@ -46,6 +49,21 @@ void NewModulationModal::Setup(OutputEnum target)
 void NewModulationModal::Render(bool active, float DT)
 {
 	_screensetup_t::Render(active, DT);
+	/*
+	gCurrentPreset.GetModulationValue(ModSource_t::Source_left_mod);
+	ModSource_t::Source_left_unac;
+	ModSource_t::Source_left_sus;
+
+	ModSource_t::Source_right_mod;
+	ModSource_t::Source_right_sus;
+	ModSource_t::Source_right_unac;
+
+	ModSource_t::Source_x;
+	ModSource_t::Source_y;
+	ModSource_t::Source_z;
+
+	*/
+
 }
 
 void NewModulationModal::Action(int action)
