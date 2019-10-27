@@ -366,7 +366,7 @@ void ModSourceScreen::Render(bool active, float DT)
 			int idx = gCurrentPreset.GetModMatrixIndex(modType, i);
 
 			int value = mod_values[idx];
-			if (unipolarmod) value = (mod_values[idx] + 0x80)/2;
+			if (unipolarmod) value = ((uint8_t*)mod_values)[idx] / 2;
 			RenderLettersInABox(x,y, i == ActiveInstance, txt, 35, 35, used, value, unipolarmod);
 		}
 	}

@@ -456,6 +456,10 @@ public:
 		switch (modsourcetype)
 		{
 			case ModSource_t::Source_Envelope: return true;
+			case ModSource_t::Source_left_sus: return true;
+			case ModSource_t::Source_right_sus: return true;
+			case ModSource_t::Source_left_unac: return true;
+			case ModSource_t::Source_right_unac: return true;
 		}
 		return false;
 	}
