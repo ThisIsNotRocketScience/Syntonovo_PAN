@@ -177,6 +177,7 @@ public:
 
 	void RenderBox(int x, int y, int val, int mode, bool active);
 	void RenderBoxVertical(int x, int y, int val, int mode, bool active);
+	void RenderBoxHorizontal(int x, int y, int val, int mode, bool active);
 };
 
 class EncoderLineDisplay : public _control_t

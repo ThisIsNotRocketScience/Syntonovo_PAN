@@ -156,12 +156,13 @@ void bottomencoder_t::Render(bool active, float DT)
 	switch (style)
 	{
 	case MenuEntry_Ghosted:
-		RenderBoxVertical(x, y2, Parent->GetParameterValue(target, Set), BOX_GHOST, active);
+		//RenderBoxVertical
+		RenderBoxHorizontal(x, y2, Parent->GetParameterValue(target, Set), BOX_GHOST, active);
 		break;
 	case MenuEntry_EnvelopeValue:
 	case MenuEntry_LFOValue:
 	{
-		RenderBoxVertical(x, y2, Parent->GetParameterValue(target, Set), BOX_REGULAR, active);
+		RenderBoxHorizontal(x, y2, Parent->GetParameterValue(target, Set), BOX_REGULAR, active);
 		//	char txt[400];
 		//		gCurrentPreset.DescribeParam((OutputEnum)target, style, txt, 400);
 		//		VerticalText(txt, align_right);
@@ -172,7 +173,7 @@ void bottomencoder_t::Render(bool active, float DT)
 	case MenuEntry_LedValue:
 	{
 
-		RenderBoxVertical(x, y2, gCurrentPreset.GetLedParameter((LedParameter)target), BOX_REGULAR, active);
+		RenderBoxHorizontal(x, y2, gCurrentPreset.GetLedParameter((LedParameter)target), BOX_REGULAR, active);
 		//char txt[400];
 		//gCurrentPreset.DescribeParam((OutputEnum)target, style, txt, 400);
 		//VerticalText(txt, align_right);
@@ -183,7 +184,7 @@ void bottomencoder_t::Render(bool active, float DT)
 
 	{
 		int16_t modval = Parent->GetParameterValue(target, Set);
-		RenderBoxVertical(x, y2, modval, BOX_MOD, active);
+		RenderBoxHorizontal(x, y2, modval, BOX_MOD, active);
 	}
 	break;
 	case MenuEntry_MidValue:
@@ -197,7 +198,7 @@ void bottomencoder_t::Render(bool active, float DT)
 	case MenuEntry_Value:
 	{
 
-		RenderBoxVertical(x, y2, gCurrentPreset.paramvalue[target], style == MenuEntry_MidValue ? BOX_MID : BOX_REGULAR, active);
+		RenderBoxHorizontal(x, y2, gCurrentPreset.paramvalue[target], style == MenuEntry_MidValue ? BOX_MID : BOX_REGULAR, active);
 
 		char txt[400];
 

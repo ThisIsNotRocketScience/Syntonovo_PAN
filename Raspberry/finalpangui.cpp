@@ -615,6 +615,80 @@ void _control_t::RenderBoxVertical(int x, int y, int val, int mode, bool active)
 }
 
 
+void _control_t::RenderBoxHorizontal(int x, int y, int val, int mode, bool active)
+{
+	ImVec2 p = ImVec2(x, y);// +ImGui::GetTextLineHeight());
+	p.x -= ParamBoxDim / 2;
+	ImVec2 tl = p;
+	ImVec2 br = tl;
+	br.y += ParamBoxDim;
+	br.x += ParamVerticalBoxHeight;
+	switch (mode)
+	{
+	case BOX_REGULAR:
+	{
+		ImVec2 br2 = br;
+		ImVec2 tl2 = tl;
+		tl2.x = br.x - (val * ParamVerticalBoxHeight) / 0xffff;
+		ImGui::GetWindowDrawList()->AddRectFilled(tl, br, CalcFillColor(0, active));
+		ImGui::GetWindowDrawList()->AddRectFilled(tl2, br2, CalcFillColor(1, active));
+
+
+		//ImGui::GetWindowDrawList()->AddRectFilled(tl2, br2, CalcFillColor(val, active));
+		ImGui::GetWindowDrawList()->AddRect(tl2, br2, active ? gGuiResources.Highlight : gGuiResources.Normal, 0, 0, 2);
+	}
+	break;
+
+	case BOX_GHOST:
+	{
+		ImGui::GetWindowDrawList()->AddRectFilled(tl, br, gGuiResources.GhostBG);
+	}
+	break;
+	case BOX_INV:
+	{
+		ImVec2 br2 = br;
+		ImVec2 tl2 = tl;
+		tl2.x = tl.x + (val * ParamVerticalBoxHeight) / 0xffff;
+		br2.x = tl.x + ParamVerticalBoxHeight / 2;
+		ImGui::GetWindowDrawList()->AddRectFilled(tl, br, CalcFillColor(0, active));
+
+		ImGui::GetWindowDrawList()->AddRectFilled(tl, br2, CalcFillColor(1, active));
+		ImGui::GetWindowDrawList()->AddRect(tl, br2, active ? gGuiResources.Highlight : gGuiResources.Normal, 0, 0, 2);
+	}
+	break;
+	case BOX_MOD:
+	{
+		ImVec2 br2 = br;
+		float x1 = tl.x + ParamVerticalBoxHeight / 2;
+		float x2 = x1 - ((val)*ParamVerticalBoxHeight / 2) / 0x8000;
+		ImVec2 tl2 = tl;
+		tl2.x = __min(x1, x2);
+		br2.x = __max(x1, x2);
+		ImGui::GetWindowDrawList()->AddRectFilled(tl, br, CalcFillColor(0, active));
+		ImGui::GetWindowDrawList()->AddRectFilled(tl2, br2, CalcFillColor(1, active));
+		ImGui::GetWindowDrawList()->AddRect(tl2, br2, active ? gGuiResources.Highlight : gGuiResources.Normal, 0, 0, 2);
+	}
+	break;
+	case BOX_MID:
+	{
+		ImVec2 br2 = br;
+		float x1 = tl.x + ParamVerticalBoxHeight / 2;
+		float x2 = tl.x + ((0xffff - val) * ParamVerticalBoxHeight) / 0xffff;
+		ImVec2 tl2 = tl;
+		tl2.x = __min(x1, x2);
+		br2.x = __max(x1, x2);
+		ImGui::GetWindowDrawList()->AddRectFilled(tl, br, CalcFillColor(0, active));
+		ImGui::GetWindowDrawList()->AddRectFilled(tl2, br2, CalcFillColor(1, active));
+		ImGui::GetWindowDrawList()->AddRect(tl2, br2, active ? gGuiResources.Highlight : gGuiResources.Normal, 0, 0, 2);
+	}
+	break;
+	}
+	ImGui::GetWindowDrawList()->AddRect(tl, br, active ? gGuiResources.Highlight : gGuiResources.Normal, 0, 0, 2);
+	p.x += 12;
+	ImGui::SetCursorScreenPos(p);
+}
+
+
 void sidebutton_t::UpdateLed(bool active)
 {
 	if (enabled)

@@ -5,7 +5,7 @@
 #include <stdint.h>
 
 #define ParamBoxWidth 220
-#define ParamVerticalBoxHeight 90
+#define ParamVerticalBoxHeight 80
 #define ParamBoxDim 30
 #define ParamMasterMargin 8
 #define ParamBankWidth 200

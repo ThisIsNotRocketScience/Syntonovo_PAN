@@ -153,6 +153,9 @@ void Gui::BuildScreens()
 
 	Screens[SCREEN_SYSTEM]->EnableAvailableButton("Headphone enable", MenuEntry_Toggle, Switch_SELVCF1MOST);
 
+	//Screens[SCREEN_SYSTEM]->EnableButton(7, "Done", Menu);
+
+
 
 	Screens[SCREEN_PRESETNAME]->SetTitle("Edit Name/Category");
 
