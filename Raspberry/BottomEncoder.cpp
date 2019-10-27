@@ -93,6 +93,7 @@ void bottomencoder_t::Render(bool active, float DT)
 	int x2 = x;
 	int y2 = y;
 	int textjump =  (((EncoderID % 2) == 0) ? -30 : 0);
+	textjump = 0;
 	bool ActiveSet = true;
 
 	char finaltitle[300];
@@ -136,22 +137,12 @@ void bottomencoder_t::Render(bool active, float DT)
 	
 	ImGui::PushFont(gGuiResources.TinyFont);
 
-	ImGui::SetCursorPos(ImVec2(x2 - ImGui::GetTextLineHeight() - ParamBoxDim / 2, y2-120 + textjump ));
+	ImGui::SetCursorPos(ImVec2(x2 - ImGui::GetTextLineHeight() - ParamBoxDim / 2, y2 - 20 - ImGui::GetTextLineHeight() ));
 
 	
-	if (active)
-	{
-		TextHorizontal(x2 , y2 - 120 + textjump, finaltitle, false, align_center, font_tiny);
-		// VerticalText(finaltitle, align_left, gGuiResources.Highlight);
-	}
-	else
-	{
-		TextHorizontal(x2 , y2 - 120 + textjump, finaltitle, false, align_center, font_tiny);
-		// ImGui::Text(finaltitle);
-		// VerticalText(finaltitle, align_left);
-	}
+	
 
-	y2 -= ParamVerticalBoxHeight;
+	y2 -= ParamBoxDim;
 
 	switch (style)
 	{
@@ -206,6 +197,7 @@ void bottomencoder_t::Render(bool active, float DT)
 
 		if (IsDirectOutput)
 		{
+			/*
 			ImTextureID t = 0;
 			switch(ModSourceCount)
 			{
@@ -220,14 +212,19 @@ void bottomencoder_t::Render(bool active, float DT)
 				ImGui::SetCursorPos(ImVec2(x - ImGui::GetTextLineHeight()-22, y2+8));
 				ImGui::Image(t, ImVec2(22, 76));
 			}
-
+			*/
 			for (int i = 0; i < ModSourceCount; i++)
 			{
 				uint8_t idx = MSFOS.SourceDetails[i].sourceid;
 				if (idx < 128)
 				{
 					int val = mod_values[idx];
-					RenderModulationAmountV(x - ImGui::GetTextLineHeight() - 21 + 9 * i, y2 + ParamVerticalBoxHeight - 50, false, 8, 45, val, false, true);
+
+					//gCurrentPreset
+					//if (gCurrentPreset.Isunipolarmod) val = ((uint8_t*)mod_values)[idx] / 2;
+
+					y2 -= 16;
+					RenderModulationAmountH(x - ParamHorizontalBoxWidth / 2, y2 , false, ParamHorizontalBoxWidth, 14, val, false, true);
 				}
 			}
 
@@ -255,6 +252,19 @@ void bottomencoder_t::Render(bool active, float DT)
 
 		break;
 	}
+
+	if (active)
+	{
+		TextHorizontal(x2, y2 - ImGui::GetTextLineHeight() - ParamMasterMargin, finaltitle, false, align_center, font_tiny);
+		// VerticalText(finaltitle, align_left, gGuiResources.Highlight);
+	}
+	else
+	{
+		TextHorizontal(x2, y2 - ImGui::GetTextLineHeight() - ParamMasterMargin, finaltitle, false, align_center, font_tiny);
+		// ImGui::Text(finaltitle);
+		// VerticalText(finaltitle, align_left);
+	}
+
 	ImGui::PopFont();
 
 

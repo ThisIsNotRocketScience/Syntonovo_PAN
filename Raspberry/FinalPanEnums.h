@@ -6,7 +6,8 @@
 
 #define ParamBoxWidth 220
 #define ParamVerticalBoxHeight 80
-#define ParamBoxDim 30
+#define ParamHorizontalBoxWidth 80
+#define ParamBoxDim 20
 #define ParamMasterMargin 8
 #define ParamBankWidth 200
 

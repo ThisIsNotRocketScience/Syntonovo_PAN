@@ -129,7 +129,7 @@ void RenderModulationAmountH(int x, int y, bool active, int w, int h, int value,
 	ImVec2 br(x + w, y + h);
 	
 	ImGui::GetWindowDrawList()->AddRectFilled(tlv, brv, active ? gGuiResources.Highlight : Dimmed(notghosted ? 2 : 3, gGuiResources.Normal), 0, 0);
-	ImGui::GetWindowDrawList()->AddRect(tl, br, active ? gGuiResources.Highlight : Dimmed(notghosted ? 1 : 3, gGuiResources.Normal), 0, 0, 2);
+	ImGui::GetWindowDrawList()->AddRect(tl, br, active ? gGuiResources.Highlight : Dimmed(notghosted ? 1 : 3, gGuiResources.Normal), 0, 0,1);
 
 }
 
