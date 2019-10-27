@@ -302,6 +302,7 @@ void sync_data_func(int addr, uint8_t* data)
 	}
 	if (addr >= 0x2000000 && addr < 0x2000000 + (int)sizeof(mod_values)) {
 		addr -= 0x2000000;
+		//printf("mod %x: %x\n", addr, *(uint32_t*)data);
 		*(uint32_t*)&((uint8_t*)&mod_values)[addr] = *(uint32_t*)data;
 	}
 }
