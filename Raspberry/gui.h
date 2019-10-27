@@ -89,7 +89,7 @@ extern void LoadPatch(int n);
 extern bool ModulationSourceHasInstances(ModSource_t modType);
 extern int DecodeCurrentEffect();
 extern void SetEffect(int effect);
-extern void RenderModulationAmount(int x, int y, bool active, int w, int h, int value, bool unipolardisplay, bool notghosted);
+extern void RenderModulationAmountH(int x, int y, bool active, int w, int h, int value, bool unipolardisplay, bool notghosted);
 
 typedef struct FinalPan_GuiResources_t
 {

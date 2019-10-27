@@ -105,7 +105,33 @@ int PresetScreen::GetActiveLetter()
 #define LetterBoxW 40
 #define LetterBoxH 40
 
-void RenderModulationAmount(int x, int y, bool active, int w, int h, int value, bool unipolardisplay, bool notghosted)
+void RenderModulationAmountH(int x, int y, bool active, int w, int h, int value, bool unipolardisplay, bool notghosted)
+{
+	float W1, W2;
+	if (unipolardisplay)
+	{
+		W1 = 0;
+		W2 = (w) * (value / 128.0f);
+
+	}
+	else
+	{
+		W1 = w / 2;
+		W2 = (w / 2) + (w / 2) * (value / 128.0f);
+	};
+
+	ImVec2 tlv(x+ __min(W1, W2), y);
+
+	ImVec2 brv(x +__max(W1, W2), y + h);
+	ImVec2 tl(x, y);
+	ImVec2 br(x + w, y + h);
+	ImGui::GetWindowDrawList()->AddRect(tl, br, active ? gGuiResources.Highlight : Dimmed(notghosted ? 1 : 3, gGuiResources.Normal), 0, 0, 2);
+
+	ImGui::GetWindowDrawList()->AddRectFilled(tlv, brv, active ? gGuiResources.Highlight : Dimmed(notghosted ? 1 : 3, gGuiResources.Normal), 0, 0);
+}
+
+
+void RenderModulationAmountV(int x, int y, bool active, int w, int h, int value, bool unipolardisplay, bool notghosted)
 {
 	float H1, H2;
 	if (unipolardisplay)
@@ -124,16 +150,19 @@ void RenderModulationAmount(int x, int y, bool active, int w, int h, int value, 
 
 	ImVec2 brv(x + w, y + __max(H1, H2));
 
+	ImVec2 tl(x, y);
+	ImVec2 br(x + w, y + h);
+	ImGui::GetWindowDrawList()->AddRect(tl, br, active ? gGuiResources.Highlight : Dimmed(notghosted ? 1 : 3, gGuiResources.Normal), 0, 0, 2);
+
 	ImGui::GetWindowDrawList()->AddRectFilled(tlv, brv, active ? gGuiResources.Highlight : Dimmed(notghosted ? 1 : 3, gGuiResources.Normal), 0, 0);
 }
 
+
+
 void RenderLettersInABox(int x, int y, bool active, const char* text, int w, int h, bool notghosted, int value, bool unipolardisplay)
 {
-	ImVec2 tl(x, y);
-	ImVec2 br(x + w, y + h);
 
-	ImGui::GetWindowDrawList()->AddRect(tl, br, active ? gGuiResources.Highlight : Dimmed(notghosted ? 1 : 3, gGuiResources.Normal), 0, 0, 2);
-	RenderModulationAmount(x, y, active, w, h, value, unipolardisplay, notghosted);
+	RenderModulationAmountV(x, y, active, w, h, value, unipolardisplay, notghosted);
 	auto s = ImGui::CalcTextSize(text);
 
 	ImGui::SetCursorPos(ImVec2(x + LetterBoxW / 2 - s.x / 2, y + LetterBoxH / 2 - s.y / 2));

@@ -366,6 +366,7 @@ void ModSourceScreen::Render(bool active, float DT)
 			int idx = gCurrentPreset.GetModMatrixIndex(modType, i);
 
 			int value = mod_values[idx];
+			if (unipolarmod) value = (mod_values[idx] + 0x80)/2;
 			RenderLettersInABox(x,y, i == ActiveInstance, txt, 35, 35, used, value, unipolarmod);
 		}
 	}
@@ -373,7 +374,7 @@ void ModSourceScreen::Render(bool active, float DT)
 	int activeidx = gCurrentPreset.GetModMatrixIndex(modType, ActiveInstance);
 	int activevalue = mod_values[activeidx];
 
-	RenderModulationAmount(512-126, 100, true, 256, 12, activevalue, unipolarmod, true);
+	RenderModulationAmountH(512-126, 152, true, 256, 15, activevalue, unipolarmod, true);
 
 	RenderModalBox(active, DT);
 	//auto row = gCurrentPreset.GetModSourceRow(modType, ActiveInstance);
