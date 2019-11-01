@@ -33,7 +33,7 @@ typedef struct _param_t
 //	SubParamFlags_max = 0xffff
 //};
 
-#define SYNTH_PARAM_COUNT (256)
+#define SYNTH_PARAM_COUNT (512)
 extern param_t synth_param[SYNTH_PARAM_COUNT];
 
 #define MODTARGET_COUNT (11)
@@ -102,5 +102,34 @@ typedef struct _operator_param_t {
 
 #define NUM_OPERATORS (16)
 extern operator_param_t op_param[NUM_OPERATORS];
+
+typedef struct _key_mapping_t {
+	uint8_t keyzone;
+	uint8_t keyindex;
+	uint16_t reserved;
+} key_mapping_t;
+
+typedef enum {
+	key_map_target_vco1 = 1,
+	key_map_target_vco2,
+	key_map_target_vco3,
+	key_map_target_vco4,
+	key_map_target_vco5,
+	key_map_target_vco6,
+	key_map_target_vco7,
+	key_map_target_vco8,
+	key_map_target_vcf1,
+	key_map_target_vcf2a,
+	key_map_target_vcf2b,
+	key_map_target_vcf2c,
+	key_map_target_vcf2d,
+
+	key_map_target_lfo1 = 0x20,
+
+	key_map_target_env1 = 0x30
+} key_map_target_t;
+
+#define NUM_KEY_MAP_TARGETS (64)
+extern key_mapping_t key_mapping[NUM_KEY_MAP_TARGETS];
 
 #endif /* SYNTH_PARAM_H_ */

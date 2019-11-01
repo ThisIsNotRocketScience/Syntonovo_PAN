@@ -34,7 +34,7 @@ param_t lfo_mod[NUM_LFOS*2];
 //   0 := DO1, DO2
 // 1:3 := S1-S6
 // 4:6 := A, B, C
-int synth_output[256];
+int synth_output[512];
 
 #if 0
 #define CTRL(id) (id)
@@ -100,7 +100,7 @@ lfo_param_t lfo_param[NUM_LFOS];
 env_param_t env_param[NUM_ENVS];
 controller_param_t controller_param[NUM_CONTROLLERS];
 operator_param_t op_param[NUM_OPERATORS];
-
+key_mapping_t key_mapping[NUM_KEY_MAP_TARGETS];
 
 ////////////////////////////////////////////////////////////////
 // Virtual parameter handler forward declarations
