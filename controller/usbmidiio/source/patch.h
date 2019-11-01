@@ -12,8 +12,7 @@ typedef struct _param_t
 typedef struct _modtarget_spec_t
 {
 	uint16_t depth;
-	uint8_t outputid;
-	uint8_t reserved;
+	uint16_t outputid;
 } modtarget_spec_t;
 
 #define MODTARGET_COUNT (11)
