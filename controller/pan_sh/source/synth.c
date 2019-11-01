@@ -734,6 +734,7 @@ void control_cb(int param, int subparam, uint16_t value)
 				break;
 			case 3:
 				lfo_param[param - 0x00].shape = value;
+				lfo_set_shape(param - 0x00, value);
 				break;
 			case 4:
 				lfo_param[param - 0x00].reset_phase = value;
@@ -1965,9 +1966,10 @@ void add_mod_targets(int modid, int32_t value)
 			int depth = modmatrix[modid].targets[k].depth;
 			synth_param[outputid].sum += bipolar_signed_scale(value, depth);
 		}
-		//else if (outputid >= 0x100 && outputid < 0x110) {
-
-		//}
+		else if (outputid >= 0x100 && outputid < 0x120) {
+			int depth = modmatrix[modid].targets[k].depth;
+			lfo_mod[outputid - 0x100].sum += bipolar_signed_scale(value, depth);
+		}
 	}
 }
 
@@ -2006,9 +2008,18 @@ int32_t controller_update(int ctrlid)
 void synth_modulation_run()
 {
 	int read_mods = mod_data_done;
+
+	for (int i = 0; i < NUM_LFOS; i++) {
+		if (lfo_mod[i].add != lfo_mod[i].sum) {
+			lfo_mod[i].add = lfo_mod[i].sum;
+			lfo_set_speed(i, add_clamp_signed(lfo_param[i].speed, lfo_mod[i].sum));
+			lfo_set_shape(i, add_clamp_signed(lfo_param[i].shape, lfo_mod[i + NUM_LFOS].sum));
+		}
+		lfo_mod[i].sum = 0;
+	}
 	for (int i = 0; i < NUM_LFOS; i++) {
 		int modid = 0x00 + i;
-		int32_t lfo = (int32_t)lfo_update(i) - 0x8000;
+		int32_t lfo = (int32_t)lfo_update(i);
 		if (read_mods) {
 			mod_data[modid] = (uint8_t)(lfo >> 8);
 		}

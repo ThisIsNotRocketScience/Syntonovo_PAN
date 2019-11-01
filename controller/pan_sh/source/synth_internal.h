@@ -26,11 +26,15 @@ void do_smooth(int ctrlid);
 
 param_t synth_param[SYNTH_PARAM_COUNT];
 
+// 16* speed mod
+// 16* shape mod
+param_t lfo_mod[NUM_LFOS*2];
+
 // 7 bits used;
 //   0 := DO1, DO2
 // 1:3 := S1-S6
 // 4:6 := A, B, C
-int synth_output[0x256];
+int synth_output[256];
 
 #if 0
 #define CTRL(id) (id)

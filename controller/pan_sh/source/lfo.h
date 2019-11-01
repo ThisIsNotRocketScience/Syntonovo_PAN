@@ -11,9 +11,10 @@
 #include <stdint.h>
 
 void lfo_init();
-uint16_t lfo_update(int lfoid);
+int16_t lfo_update(int lfoid);
 
 void lfo_reset(int lfoid, uint16_t phase);
 void lfo_set_speed(int lfoid, uint16_t speed);
+void lfo_set_shape(int lfoid, uint16_t shape);
 
 #endif /* LFO_H_ */
