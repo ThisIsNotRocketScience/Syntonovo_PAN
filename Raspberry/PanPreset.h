@@ -5,7 +5,7 @@
 #include <stdint.h>
 #include <vector>
 #include "FinalPanEnums.h"
-
+#include "ArpSettings.h"
 #pragma pack(push)
 #pragma pack(1)
 
@@ -95,6 +95,35 @@ enum
 	Controller_Pedal,
 	NUM_CONTROLLERS
 };
+
+typedef struct
+{
+	uint8_t keyzone;
+	uint8_t keyindex;
+	uint16_t reserved;
+} PACKED key_mapping_t;
+
+typedef struct
+{
+	uint8_t rangelo;
+	uint8_t rangehi;
+	uint8_t channel;
+	int8_t transpose;
+	uint32_t reserved;
+} PACKED key_input_t;
+
+enum PresetKeyzoneType
+{
+	PresetKeyzoneType_Single,
+	PresetKeyzoneType_Paraphonic,
+	PresetKeyzoneType_Arpeggiator,
+};
+
+typedef struct
+{
+	PresetKeyzoneType type;
+	ArpSettings_t arpsettings;
+} PACKED keyzone_settings_t;
 
 #define MAX_MODULATION_SOURCE (6)
 #define NUM_LFOS (16)
@@ -587,6 +616,14 @@ public:
 	hsv low;
 	hsv high;
 	hsv active;
+
+
+#define NUM_KEY_MAP_TARGETS (64)
+	key_mapping_t key_mapping[NUM_KEY_MAP_TARGETS];
+#define NUM_KEY_INPUTS (16)
+	key_input_t key_input[NUM_KEY_INPUTS];
+#define NUM_KEYZONES (4)
+	keyzone_settings_t keyzone[4];
 } PACKED;
 
 extern PanPreset_t gCurrentPreset;
