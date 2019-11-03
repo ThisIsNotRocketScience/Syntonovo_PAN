@@ -70,8 +70,8 @@ sync_state_t rpi_sync;
 
 volatile int loading = 0;
 
-#define NOTEON(note, velocity) dsp_cmd(0xfc, 2, note | (velocity << 8))
-#define NOTEOFF(note) dsp_cmd(0xfc, 1, note)
+#define NOTEON(zone, note, velocity) dsp_cmd(0xfc, 2 | ((zone&3) << 4), note | (velocity << 8))
+#define NOTEOFF(zone, note) dsp_cmd(0xfc, 1 | ((zone&3) << 4), note)
 
 void dsp_reset()
 {
@@ -124,15 +124,57 @@ void dsp_cmd(int param, int subparam, uint16_t value)
 	//rpi_write(data, 4);
 }
 
+typedef enum {
+	key_source_midi,
+	key_source_usb,
+	key_source_kb
+} key_source_t;
+
+void key_down(key_source_t source, int channel, int key, int vel)
+{
+	int fieldbase = 0;
+	if (source == key_source_midi) fieldbase = 0;
+	else if (source == key_source_usb) fieldbase = 4;
+	else if (source == key_source_kb) fieldbase = 8;
+
+	for (int zone = 0; zone < 4; zone++) {
+		int field = fieldbase + zone;
+		if (key >= preset.key_input[field].rangelo && key <= preset.key_input[field].rangehi) {
+			int playkey = key + preset.key_input[field].transpose;
+			if (playkey < 0) playkey = 0;
+			else if (playkey > 0x7f) playkey = 0x7f;
+			NOTEON(zone, playkey, vel);
+		}
+	}
+}
+
+void key_up(key_source_t source, int channel, int key)
+{
+	int fieldbase = 0;
+	if (source == key_source_midi) fieldbase = 0;
+	else if (source == key_source_usb) fieldbase = 4;
+	else if (source == key_source_kb) fieldbase = 8;
+
+	for (int zone = 0; zone < 4; zone++) {
+		int field = fieldbase + zone;
+		if (key >= preset.key_input[field].rangelo && key <= preset.key_input[field].rangehi) {
+			int playkey = key + preset.key_input[field].transpose;
+			if (playkey < 0) playkey = 0;
+			else if (playkey > 0x7f) playkey = 0x7f;
+			NOTEOFF(zone, playkey);
+		}
+	}
+}
+
 BaseType_t keys_press(int keyindex, uint32_t timediff)
 {
-	NOTEON(keyindex, 0xff);
+	key_down(key_source_kb, 0, keyindex, 0xff);
 	return pdFALSE;
 }
 
 BaseType_t keys_release(int keyindex)
 {
-	NOTEOFF(keyindex);
+	key_up(key_source_kb, 0, keyindex);
 	return pdFALSE;
 }
 
@@ -1061,9 +1103,10 @@ void KeyboardTask(void* pvParameters)
 	}
 }
 
-#define FULLVALUE(param, subparam, value) dsp_cmd(param, subparam, value)
+#define FULLVALUE(param, subparam, value) dsp_cmd(param, subparam, value);
 #define SETMODSOURCE(source, subparam, value) dsp_cmd(source, (subparam) | 0x80, value)
 #define MODMATRIX(param, target, subparam, value) dsp_cmd(param, ((((target & 0xF) << 2)) + ((subparam) & 3)) | 0x40, value)
+#define SETKEYMAP(target, zone, keyindex) dsp_cmd(0xfb, target&0x3f, ((zone&0x3) << 4) | (keyindex & 0x3))
 
 #define SWITCH_ON(sw) FULLVALUE(0xfe, 0xfd, 0x200 | (sw));
 #define SWITCH_OFF(sw) FULLVALUE(0xfe, 0xfd, 0x100 | (sw));
@@ -1111,6 +1154,13 @@ void preset_init()
 			}
 	}
 
+	// keymap
+	for (int tgt = 0; tgt < 0x40; tgt++) {
+		preset.key_mapping[tgt].keyzone = 0;
+		preset.key_mapping[tgt].keyindex = 0;
+		SETKEYMAP(tgt, 0, 0);
+	}
+
 	// parameters
 	for (int param = 0; param < 0xf0; param++) {
 		FULLVALUE(param, 0, 0);
@@ -1119,7 +1169,7 @@ void preset_init()
 	}
 
 #define OUTPUT(NAME, x, y, z, w, k, VALUE, dummy1, dummy2) FULLVALUE(output_##NAME, 0, VALUE); preset.paramvalue[output_##NAME] = VALUE;
-#define OUTPUT_VIRT(NAME, x, y, z, w, k, VALUE, dummy1, dummy2) FULLVALUE(output_##NAME, 0, VALUE); preset.paramvalue[output_##NAME] = VALUE;
+#define OUTPUT_VIRT(NAME, x, y, z, w, k, VALUE, dummy1, dummy2) do { if (output_##NAME < 0xff) { FULLVALUE(output_##NAME, 0, VALUE); preset.paramvalue[output_##NAME] = VALUE; } } while(0);
 
 #include "../../../interface/paramdef.h"
 
@@ -1183,6 +1233,22 @@ void preset_init()
 	preset.modmatrix[modsource_LFO0].targets[0].outputid = output_VCF1_CV;
 	SETMODSOURCE(0, 1, 0x4000);
 	preset.lfo[0].speed = 0x4000;
+
+	// vco2
+	preset.key_mapping[key_map_target_vco2].keyindex = 1;
+	SETKEYMAP(key_map_target_vco2, 0, 1);
+	preset.key_mapping[key_map_target_vco3].keyindex = 2;
+	SETKEYMAP(key_map_target_vco3, 0, 2);
+
+	for (int i = 0; i < 16; i++) {
+		preset.key_input[i].channel = 0xff;
+		preset.key_input[i].rangelo = 0;
+		preset.key_input[i].rangehi = 0x7f;
+		preset.key_input[i].transpose = 0;
+	}
+	for (int i = 0; i < 4; i++) {
+		preset.keyzone[i].type = PresetKeyzoneType_Single;
+	}
 
 	preset.low.h = 0x1000;
 	preset.high.h = 0x1000;
@@ -1274,8 +1340,27 @@ void IdleTask(void* pvParameters)
 
 void sync_preset(uint32_t addr)
 {
-	if (addr >= offsetof(PanPreset_t, ledbrightness)) {
-		// the rest is skipped
+	if (addr >= offsetof(PanPreset_t, key_input)) {
+		// skip
+//#define NUM_KEY_INPUTS (16)
+//	key_input_t key_input[NUM_KEY_INPUTS];
+//#define NUM_KEYZONES (4)
+//	keyzone_settings_t keyzone[4];
+	}
+	else if (addr >= offsetof(PanPreset_t, key_mapping)) {
+		addr -= offsetof(PanPreset_t, key_mapping);
+
+		int mapid = addr / sizeof(key_mapping_t);
+		int subaddr = addr - mapid * sizeof(key_mapping_t);
+
+		switch (subaddr) {
+		case 0:
+			SETKEYMAP(mapid, preset.key_mapping[mapid].keyzone, preset.key_mapping[mapid].keyindex);
+			break;
+		}
+	}
+	else if (addr >= offsetof(PanPreset_t, ledbrightness)) {
+		// skip
 	}
 	else if (addr >= offsetof(PanPreset_t, op)) {
 		addr -= offsetof(PanPreset_t, op);
@@ -1458,6 +1543,10 @@ void sync_preset_full()
 			    SWITCH_OFF(i);
 			}
 		}
+	}
+
+	for (int tgt = 0; tgt < 0x40; tgt++) {
+		SETKEYMAP(tgt, preset.key_mapping[tgt].keyzone, preset.key_mapping[tgt].keyindex);
 	}
 }
 

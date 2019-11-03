@@ -771,6 +771,14 @@ void control_cb(int param, int subparam, uint16_t value)
 
 		return;
 	}
+	if (param == 0xfb) {
+		int tgt = subparam & 0x3f;
+		int zone = value >> 4;
+		int keyindex = value & 0x0f;
+		key_mapping[tgt].keyzone = zone;
+		key_mapping[tgt].keyindex = keyindex;
+		return;
+	}
 
 	if (subparam & 0x80) {
 		// modsource
