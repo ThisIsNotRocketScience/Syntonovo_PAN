@@ -27,6 +27,14 @@ void ports_value(int portid, uint16_t value);
 #include "autotune.h"
 #include "notestack.h"
 
+__attribute__( ( section(".data") ) )
+void virt_gate(int gate);
+
+__attribute__( ( section(".data") ) )
+void virt_retrigger(int retrigger);
+
+void virt_note(int portaid, int note);
+
 void pad_zero();
 
 
@@ -637,11 +645,15 @@ void ports_input(int portid, uint16_t* value)
 //__attribute__( ( section(".data") ) )
 static void update_note(int zone)
 {
-	if (notestack_empty()) {
-		synth_param[GATE1].value = sustain_gate ? 0xFFFF : 0;
-		synth_param[RETRIGGER1].value = 0;
-		virt_GATE1();
-		virt_RETRIGGER1();
+	int gateid = GATE1 + zone;
+	int retriggerid = RETRIGGER1 + zone;
+	int noteid = ZONE1NOTE1 + (zone << 4);
+
+	if (notestack_empty(zone)) {
+		synth_param[gateid].value = sustain_gate ? 0xFFFF : 0;
+		synth_param[retriggerid].value = 0;
+		virt_gate(gateid);
+		virt_retrigger(retriggerid);
 		return;
 	}
 
@@ -652,35 +664,35 @@ static void update_note(int zone)
 	int polymode = shiftctrl_flag_state(POLYMODE1) | (shiftctrl_flag_state(POLYMODE2) << 1);
 	if (polymode & 1) {
 		for (int i = 0; i < 4; i++) {
-			int new_note_value = (notestack_n(i).note << 8);
-			is_new_note[i] = (new_note_value != synth_param[ZONE1NOTE1 + i].value);
+			int new_note_value = (notestack_n(zone, i).note << 8);
+			is_new_note[i] = (new_note_value != synth_param[noteid + i].value);
 			if (is_new_note[i]) {
 				note_change = 1;
 			}
-			synth_param[ZONE1NOTE1 + i].value = new_note_value;
+			synth_param[noteid + i].value = new_note_value;
 		}
 	}
 	else {
-		int new_note_value = (notestack_n(0).note << 8);
+		int new_note_value = (notestack_n(zone, 0).note << 8);
 		for (int i = 0; i < 4; i++) {
-			is_new_note[i] = (new_note_value != synth_param[ZONE1NOTE1 + i].value);
+			is_new_note[i] = (new_note_value != synth_param[noteid + i].value);
 			if (is_new_note[i]) {
 				note_change = 1;
 			}
-			synth_param[ZONE1NOTE1 + i].value = new_note_value;
+			synth_param[noteid + i].value = new_note_value;
 		}
 	}
 
 	int retrigger = 1;
-	if (synth_param[GATE1].value != 0xffff) {
+	if (synth_param[gateid].value != 0xffff) {
 		retrigger = 0;
 		note_change = 1;
 	}
 
 	for (int i = 0; i < 4; i++) {
 		if (is_new_note[i]) {
-			update_porta_time(zone, ZONE1NOTE1 + i, retrigger);
-			virt_note(i, ZONE1NOTE1 + i);
+			update_porta_time(zone, noteid + i, retrigger);
+			virt_note(i, noteid + i);
 		}
 	}
 
@@ -692,14 +704,14 @@ static void update_note(int zone)
 		}
 	}
 
-	if (synth_param[GATE1].value != 0xffff) {
-		synth_param[GATE1].value = 0xffff;
-		virt_GATE1();
+	if (synth_param[gateid].value != 0xffff) {
+		synth_param[gateid].value = 0xffff;
+		virt_gate(gateid);
 	}
 
 	if (note_change) {
-		synth_param[RETRIGGER1].value = 2;
-		virt_RETRIGGER1();
+		synth_param[retriggerid].value = 2;
+		virt_retrigger(retriggerid);
 	}
 }
 
@@ -720,14 +732,18 @@ void control_cb(int param, int subparam, uint16_t value)
 			}
 
 			if ((value & 0x7f) == KEYPRIO1 || (value & 0x7f) == KEYPRIO2) {
-				notestack_init(shiftctrl_flag_state(KEYPRIO1) | (shiftctrl_flag_state(KEYPRIO2) << 1));
+				notestack_init(0, shiftctrl_flag_state(KEYPRIO1) | (shiftctrl_flag_state(KEYPRIO2) << 1));
+				notestack_init(1, shiftctrl_flag_state(KEYPRIO1) | (shiftctrl_flag_state(KEYPRIO2) << 1));
+				notestack_init(2, shiftctrl_flag_state(KEYPRIO1) | (shiftctrl_flag_state(KEYPRIO2) << 1));
+				notestack_init(3, shiftctrl_flag_state(KEYPRIO1) | (shiftctrl_flag_state(KEYPRIO2) << 1));
 				update_note(0);
 			}
 		}
 
 		if (subparam == 0xfc) {
-			notestack_init(value);
-			update_note(0);
+			int zone = (value >> 3) & 3;
+			notestack_init(zone, value & 7);
+			update_note(zone);
 		}
 
 		if (subparam == 0xfb) {
@@ -743,15 +759,14 @@ void control_cb(int param, int subparam, uint16_t value)
 	}
 
 	if (param == 0xfc) {
-		if (subparam == 2) {
-			notestack_push(value & 0xff, value >> 8);
-
-			update_note(0);
+		int zone = (subparam >> 4) & 3;
+		if ((subparam & 0xf) == 2) {
+			notestack_push(zone, value & 0xff, value >> 8);
+			update_note(zone);
 		}
-		else if (subparam == 1) {
-			notestack_pop(value & 0xff);
-
-			update_note(0);
+		else if ((subparam & 0xf) == 1) {
+			notestack_pop(zone, value & 0xff);
+			update_note(zone);
 		}
 
 		return;
@@ -1620,14 +1635,14 @@ void virt_VCO1_PITCH()
 
 	process_param_note(VCO1_PITCH, VCO1_OCTAVE, value, 24);
 }
-
+/*
 int32_t note_distance(int notectrl, int polymode)
 {
 	int curmode = shiftctrl_flag_state(POLYMODE1) | (shiftctrl_flag_state(POLYMODE2) << 1);
 	if (curmode != polymode) return 0;
 	return (int32_t)synth_param[notectrl].value - (int32_t)synth_param[ZONE1NOTE1].value;
 }
-
+*/
 uint16_t add_clamp_signed(uint16_t a, int16_t b)
 {
 	int value = (int32_t)a + (int32_t)b;
@@ -1795,65 +1810,66 @@ void update_gateled()
 }
 
 __attribute__( ( section(".data") ) )
+void virt_gate(int gate)
+{
+	synth_param[gate].last = synth_param[gate].value;
+}
+
+__attribute__( ( section(".data") ) )
 void virt_GATE1()
 {
-	synth_param[GATE1].last = synth_param[GATE1].value;
+	virt_gate(GATE1);
 	update_gateled();
 }
 
 __attribute__( ( section(".data") ) )
 void virt_GATE2()
 {
-	synth_param[GATE2].last = synth_param[GATE2].value;
+	virt_gate(GATE2);
 }
 
 __attribute__( ( section(".data") ) )
 void virt_GATE3()
 {
-	synth_param[GATE3].last = synth_param[GATE3].value;
+	virt_gate(GATE3);
 }
-
 
 __attribute__( ( section(".data") ) )
 void virt_GATE4()
 {
-	synth_param[GATE4].last = synth_param[GATE4].value;
+	virt_gate(GATE4);
+}
+
+void virt_retrigger(int retrigger)
+{
+	if (synth_param[retrigger].value) {
+		synth_param[retrigger].value--;
+	}
+	synth_param[retrigger].last = synth_param[retrigger].value;
 }
 
 __attribute__( ( section(".data") ) )
 void virt_RETRIGGER1()
 {
-	if (synth_param[RETRIGGER1].value) {
-		synth_param[RETRIGGER1].value--;
-	}
-	synth_param[RETRIGGER1].last = synth_param[RETRIGGER1].value;
+	virt_retrigger(RETRIGGER1);
 }
 
 __attribute__( ( section(".data") ) )
 void virt_RETRIGGER2()
 {
-	if (synth_param[RETRIGGER2].value) {
-		synth_param[RETRIGGER2].value--;
-	}
-	synth_param[RETRIGGER2].last = synth_param[RETRIGGER2].value;
+	virt_retrigger(RETRIGGER2);
 }
 
 __attribute__( ( section(".data") ) )
 void virt_RETRIGGER3()
 {
-	if (synth_param[RETRIGGER3].value) {
-		synth_param[RETRIGGER3].value--;
-	}
-	synth_param[RETRIGGER3].last = synth_param[RETRIGGER3].value;
+	virt_retrigger(RETRIGGER3);
 }
 
 __attribute__( ( section(".data") ) )
 void virt_RETRIGGER4()
 {
-	if (synth_param[RETRIGGER4].value) {
-		synth_param[RETRIGGER4].value--;
-	}
-	synth_param[RETRIGGER4].last = synth_param[RETRIGGER4].value;
+	virt_retrigger(RETRIGGER4);
 }
 
 void virt_MASTER_PITCH()
@@ -1957,7 +1973,10 @@ void pad_init()
 
 void synth_init()
 {
-	notestack_init(keyboard_mode_last);
+	notestack_init(0, keyboard_mode_last);
+	notestack_init(1, keyboard_mode_last);
+	notestack_init(2, keyboard_mode_last);
+	notestack_init(3, keyboard_mode_last);
 
 	for (int i = 0; i < SYNTH_MODSOURCE_COUNT; i++) {
 		for(int k = 0; k < MODTARGET_COUNT; k++) {
@@ -2091,15 +2110,25 @@ static void process_inputs()
 	int32_t zprime_tmp = lp_update(&zprime_lp, pad_value[KEYBOARD_Z]);
 	zprime_value = hp_update(&zprime_hp, zprime_tmp);
 
-	if (shiftctrl_flag_state(SELSUSTAINL) && pad_value[PAD_SUSL] > 500 && synth_param[GATE1].value == 0xFFFF)
+	int any_gate_open = 0;
+	for (int i = 0; i < 4; i++) {
+		if (synth_param[GATE1 + i].value == 0xFFFF) {
+			any_gate_open = 1;
+			break;
+		}
+	}
+
+	if (shiftctrl_flag_state(SELSUSTAINL) && pad_value[PAD_SUSL] > 500 && any_gate_open)
 		sustain_gate = 1;
-	else if (shiftctrl_flag_state(SELSUSTAINR) && pad_value[PAD_SUSR] > 500 && synth_param[GATE1].value == 0xFFFF)
+	else if (shiftctrl_flag_state(SELSUSTAINR) && pad_value[PAD_SUSR] > 500 && any_gate_open)
 		sustain_gate = 1;
 	else {
 		sustain_gate = 0;
 
-		if (notestack_empty() && synth_param[GATE1].value == 0xFFFF) {
-			update_note(0);
+		for (int i = 0; i < 4; i++) {
+			if (notestack_empty(i) && synth_param[GATE1 + i].value == 0xFFFF) {
+				update_note(i);
+			}
 		}
 	}
 
@@ -2187,7 +2216,7 @@ void synth_modulation_run()
 
 		int32_t adsr = adsr_update(i, una_corda_release);
 		if (read_mods) {
-			mod_data[modid] = (uint8_t)(adsr >> 8);
+			mod_data[modid] = (uint8_t)(adsr >> 9);
 		}
 		add_mod_targets(modid, adsr);
 		//uint16_t ad = ad_update(ctrlid, una_corda_release);

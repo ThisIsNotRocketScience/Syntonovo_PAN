@@ -19,10 +19,10 @@ enum keyboard_mode_t {
 	keyboard_mode_end = 3
 };
 
-void notestack_init(enum keyboard_mode_t mode);
+void notestack_init(int stack, enum keyboard_mode_t mode);
 
-void notestack_push(int note, uint32_t velocity);
-void notestack_pop(int note);
+void notestack_push(int stack, int note, uint32_t velocity);
+void notestack_pop(int stack, int note);
 
 struct note_t
 {
@@ -32,8 +32,8 @@ struct note_t
 	uint32_t index;
 };
 
-int notestack_empty();
-struct note_t notestack_n(int n);
+int notestack_empty(int stack);
+struct note_t notestack_n(int stack, int n);
 //struct note_t notestack_first();
 //struct note_t notestack_second();
 //struct note_t notestack_third();
