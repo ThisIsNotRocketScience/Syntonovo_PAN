@@ -8,11 +8,16 @@
 #include <stdlib.h>
 #include "notestack.h"
 
+#define NUM_STACKS 4
 #define NOTESTACK_SIZE 32
-static int notestack_top = 0;
-static struct note_t notestack[NOTESTACK_SIZE];
 
-static enum keyboard_mode_t notestack_mode = keyboard_mode_high;
+typedef struct {
+	int notestack_top;
+	struct note_t notestack[NOTESTACK_SIZE];
+	enum keyboard_mode_t notestack_mode;
+} notestack_t;
+
+static notestack_t stacks[NUM_STACKS];
 
 typedef int (*qsort_cmp)(const void *, const void *);
 
@@ -37,27 +42,27 @@ int notecmp_latest(struct note_t* left, struct note_t* right)
 	return 0;
 }
 
-int notestack_empty()
+int notestack_empty(int stack)
 {
-	return notestack_top == 0;
+	return stacks[stack].notestack_top == 0;
 }
 
 //__attribute__( ( section(".data") ) )
-struct note_t notestack_first()
+struct note_t notestack_first(int stack)
 {
-	if (notestack_top == 0) {
-		return notestack[0];
+	if (stacks[stack].notestack_top == 0) {
+		return stacks[stack].notestack[0];
 	}
-	return notestack[notestack_top - 1];
+	return stacks[stack].notestack[stacks[stack].notestack_top - 1];
 }
 
 //__attribute__( ( section(".data") ) )
-struct note_t notestack_n(int n)
+struct note_t notestack_n(int stack, int n)
 {
-	if (notestack_top <= n) {
-		return notestack[notestack_top - 1];
+	if (stacks[stack].notestack_top <= n) {
+		return stacks[stack].notestack[stacks[stack].notestack_top - 1];
 	}
-	return notestack[notestack_top - n - 1];
+	return stacks[stack].notestack[stacks[stack].notestack_top - n - 1];
 }
 
 #if 0
@@ -100,64 +105,64 @@ static struct note_t makenote(int note, uint32_t velocity)
 	return n;
 }
 
-void notestack_push(int note, uint32_t velocity)
+void notestack_push(int stack, int note, uint32_t velocity)
 {
 	//__DI();
-	if (notestack_top == NOTESTACK_SIZE) {
+	if (stacks[stack].notestack_top == NOTESTACK_SIZE) {
 		//__EI();
 		return;
 	}
-	for (int i = 0; i < notestack_top; i++) {
-		if (notestack[i].note == note) {
+	for (int i = 0; i < stacks[stack].notestack_top; i++) {
+		if (stacks[stack].notestack[i].note == note) {
 			//__EI();
 			return;
 		}
 	}
-	notestack[notestack_top++] = makenote(note, velocity);
+	stacks[stack].notestack[stacks[stack].notestack_top++] = makenote(note, velocity);
 
-	if (notestack_mode == keyboard_mode_low) {
-		qsort(notestack, notestack_top, sizeof(notestack[0]), (qsort_cmp)notecmp_lowest);
+	if (stacks[stack].notestack_mode == keyboard_mode_low) {
+		qsort(stacks[stack].notestack, stacks[stack].notestack_top, sizeof(stacks[0].notestack[0]), (qsort_cmp)notecmp_lowest);
 	}
-	else if (notestack_mode == keyboard_mode_high) {
-		qsort(notestack, notestack_top, sizeof(notestack[0]), (qsort_cmp)notecmp_highest);
+	else if (stacks[stack].notestack_mode == keyboard_mode_high) {
+		qsort(stacks[stack].notestack, stacks[stack].notestack_top, sizeof(stacks[0].notestack[0]), (qsort_cmp)notecmp_highest);
 	}
-	else if (notestack_mode == keyboard_mode_last) {
-		qsort(notestack, notestack_top, sizeof(notestack[0]), (qsort_cmp)notecmp_latest);
+	else if (stacks[stack].notestack_mode == keyboard_mode_last) {
+		qsort(stacks[stack].notestack, stacks[stack].notestack_top, sizeof(stacks[0].notestack[0]), (qsort_cmp)notecmp_latest);
 	}
-	if (notestack_top == 1) {
-		notestack[0].first = 1;
+	if (stacks[stack].notestack_top == 1) {
+		stacks[stack].notestack[0].first = 1;
 	} else {
-		notestack[0].first = 0;
+		stacks[stack].notestack[0].first = 0;
 	}
 	//__EI();
 }
 
-void notestack_pop(int note)
+void notestack_pop(int stack, int note)
 {
-	notestack[0].first = 0;
+	stacks[stack].notestack[0].first = 0;
 	//__DI();
-	if (notestack_top == 0) {
+	if (stacks[stack].notestack_top == 0) {
 		//__EI();
 		return;
 	}
-	for (int i = 0; i < notestack_top; i++) {
-		if (notestack[i].note == note) {
-			notestack_top--;
-			for (int j = i; j < notestack_top; j++) {
-				notestack[j] = notestack[j + 1];
+	for (int i = 0; i < stacks[stack].notestack_top; i++) {
+		if (stacks[stack].notestack[i].note == note) {
+			stacks[stack].notestack_top--;
+			for (int j = i; j < stacks[stack].notestack_top; j++) {
+				stacks[stack].notestack[j] = stacks[stack].notestack[j + 1];
 			}
 		}
 	}
 	//__EI();
 }
 
-void notestack_init(enum keyboard_mode_t mode)
+void notestack_init(int stack, enum keyboard_mode_t mode)
 {
-	notestack_top = 0;
+	stacks[stack].notestack_top = 0;
 
 	if (mode >= keyboard_mode_start && mode <= keyboard_mode_end) {
-		notestack_mode = mode;
+		stacks[stack].notestack_mode = mode;
 	} else {
-		notestack_mode = keyboard_mode_high;
+		stacks[stack].notestack_mode = keyboard_mode_high;
 	}
 }
