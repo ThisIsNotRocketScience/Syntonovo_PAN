@@ -64,6 +64,8 @@ ENTRY("Pitch", MenuEntry_Pitch, Output_VCO1_PITCH)
 SKIPENTRY
 ENTRY("PW", MenuEntry_Percentage, Output_VCO1_PW)
 SKIPENTRY
+SKIPENTRY
+SKIPENTRY
 ENTRY("> VCF1", MenuEntry_Value, Output_VCO1_MIX1)
 SKIPENTRY
 ENTRY("> VCF2", MenuEntry_Value, Output_VCO1_MIX2)
