@@ -3,7 +3,6 @@
 #define PANPRESET
 
 #include <stdint.h>
-#include <vector>
 #include "FinalPanEnums.h"
 #include "ArpSettings.h"
 #pragma pack(push)
@@ -145,16 +144,6 @@ public:
 	ModSourceSpec_t SourceDetails[MODTARGET_COUNT * SYNTH_MODSOURCE_COUNT];
 };
 
-class PanPreset_Listener
-{
-public:
-	static std::vector<PanPreset_Listener* > RegisteredPresetListeners;
-
-	virtual void ParamChanged(OutputEnum paramID, uint16_t newvalue) {};
-	virtual void SwitchChanged(SwitchEnum switchID, bool newvalue) {};
-	virtual void NameChanged(char *newname) {}
-	virtual void CategoryChanged(PresetCategoryEnum newcategory) {}
-};
 
 class PanPreset_t {
 public:
