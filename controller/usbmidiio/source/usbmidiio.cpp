@@ -1241,10 +1241,10 @@ void preset_init()
 	SETKEYMAP(key_map_target_vco3, 0, 2);
 
 	for (int i = 0; i < 16; i++) {
-		preset.key_input[0].channel = 0xff;
-		preset.key_input[0].rangelo = 0;
-		preset.key_input[0].rangehi = 0x7f;
-		preset.key_input[0].transpose = 0;
+		preset.key_input[i].channel = 0xff;
+		preset.key_input[i].rangelo = 0;
+		preset.key_input[i].rangehi = 0x7f;
+		preset.key_input[i].transpose = 0;
 	}
 	for (int i = 0; i < 4; i++) {
 		preset.keyzone[i].type = PresetKeyzoneType_Single;

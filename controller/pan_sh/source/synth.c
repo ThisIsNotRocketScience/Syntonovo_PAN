@@ -775,7 +775,7 @@ void control_cb(int param, int subparam, uint16_t value)
 		int tgt = subparam & 0x3f;
 		int zone = value >> 4;
 		int keyindex = value & 0x0f;
-		key_mapping[tgt].keyzone = keyzone;
+		key_mapping[tgt].keyzone = zone;
 		key_mapping[tgt].keyindex = keyindex;
 		return;
 	}
