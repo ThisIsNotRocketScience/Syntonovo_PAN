@@ -217,7 +217,7 @@ int32_t div64(int32_t a, int32_t b)
 };
 void BuildLFOPts(float x, float y, float W, float H, ImVec2 *Pts, int cnt, int ActiveInstance)
 {
-	uint32_t Speed = gCurrentPreset.GetModParameterValue(LFO_Speed, ActiveInstance)<<16;
+	uint32_t Speed = gCurrentPreset.GetModParameterValue(LFO_Speed, ActiveInstance)<<11;
 //	float Ps = 6.283f * (gCurrentPreset.GetModParameterValue(LFO_ResetPhase, ActiveInstance) / 65535.0f);
 
 
@@ -233,12 +233,12 @@ void BuildLFOPts(float x, float y, float W, float H, ImVec2 *Pts, int cnt, int A
 
 
 
-	W = W * 2.0f / (float)cnt;
+	//W = W * 2.0f / (float)cnt;
 	//H *= 1.0f / 32767.0f;
 
 	for (int i = 0; i < cnt; i++)
 	{
-		Pts[i].x = W * i + x;
+		Pts[i].x = (W * i)/(float)cnt + x;
 
 		if (sphase < -shape) {
 			cur = m64(-(sphase)-0x7fffffff, ooomshape);
@@ -279,7 +279,7 @@ void ModSourceScreen::RenderContent(bool active, float DT)
 		BuildLFOPts(x,y,W,H, Pts, 500, ActiveInstance);
 
 		ImGui::GetWindowDrawList()->AddLine(ImVec2(0, y + H/2), ImVec2(1024, y + H/2), IM_COL32(255, 255, 255, 20), 3);
-		ImGui::GetWindowDrawList()->AddPolyline(Pts, 100, gGuiResources.Normal,false, 5);
+		ImGui::GetWindowDrawList()->AddPolyline(Pts, 500, gGuiResources.Normal,false, 5);
 
 		break;
 	};
