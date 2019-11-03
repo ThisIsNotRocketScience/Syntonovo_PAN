@@ -95,6 +95,26 @@ enum
 	NUM_CONTROLLERS
 };
 
+typedef enum {
+	key_map_target_vco1 = 1,
+	key_map_target_vco2,
+	key_map_target_vco3,
+	key_map_target_vco4,
+	key_map_target_vco5,
+	key_map_target_vco6,
+	key_map_target_vco7,
+	key_map_target_vco8,
+	key_map_target_vcf1,
+	key_map_target_vcf2a,
+	key_map_target_vcf2b,
+	key_map_target_vcf2c,
+	key_map_target_vcf2d,
+
+	key_map_target_lfo1 = 0x20,
+
+	key_map_target_env1 = 0x30
+} key_map_target_t;
+
 typedef struct
 {
 	uint8_t keyzone;

@@ -11,13 +11,19 @@
 #define __min(x,y) (((x)<(y))?(x):(y))
 #endif
 
+#ifdef WIN32
+#define PACKED
+#else
+#define PACKED  __attribute__((packed))
+#endif
+
 typedef enum ClockSource_t
 {
 	Clock1,
 	Clock2,
 	Clock3,
 	__ClockSource_Count
-} ClockSource_t;
+} PACKED ClockSource_t;
 
 typedef enum ArpeggioMode_t
 {
@@ -33,7 +39,7 @@ typedef enum ArpeggioMode_t
 	Arp_Random,
 
 	__ArpeggioMode_Count
-} ArpeggioMode_t;
+} PACKED ArpeggioMode_t;
 
 typedef enum ArpeggioOctaves_t
 {
@@ -43,7 +49,7 @@ typedef enum ArpeggioOctaves_t
 	Oct_Three,
 	Oct_Four,
 	__ArpeggioOctaves_Count
-} ArpeggioOctaves_t;
+} PACKED ArpeggioOctaves_t;
 
 typedef enum ArpeggioOctaveInterleaving_t
 {
@@ -51,7 +57,7 @@ typedef enum ArpeggioOctaveInterleaving_t
 	Interleave_Note,
 
 	__ArpeggioOctavesInterleaving_Count
-} ArpeggioOctaveInterleaving_t;
+} PACKED ArpeggioOctaveInterleaving_t;
 
 #define MAXBOTTOM 32
 #define MAXTOP 8
@@ -123,7 +129,7 @@ public:
 		}
 		Top = T;
 	}
-};
+} PACKED;
 
 
 typedef enum VelocityMode_t
@@ -132,7 +138,7 @@ typedef enum VelocityMode_t
 	VelMode_LastVelocity,
 	VelMode_NoteVelocity,
 	__VelocityMode_Count
-} VelocityMode_t;
+} PACKED VelocityMode_t;
 
 typedef enum TimeSource_t
 {
@@ -140,7 +146,7 @@ typedef enum TimeSource_t
 	TimeSource_USB,
 	TimeSource_DIN,
 	__TimeSource_Count
-} TimeSource_t;
+} PACKED TimeSource_t;
 
 class ClockChannelSettings_t
 {
@@ -154,7 +160,7 @@ public:
 
 	TimeSource_t Source;
 	SpeedMode_t Division;
-};
+} PACKED;
 
 class ClockSettings_t
 {
@@ -169,7 +175,7 @@ public:
 
 	int BPM;
 	bool Running;
-};
+} PACKED;
 
 
 class ArpSettings_t
@@ -202,6 +208,6 @@ public:
 
 	bool ResetTimeOnFirstKey;
 	bool KillNotesAfterLastNoteOff;
-};
+} PACKED;
 
 #endif
