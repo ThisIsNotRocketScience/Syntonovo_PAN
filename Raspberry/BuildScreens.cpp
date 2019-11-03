@@ -47,36 +47,36 @@ void Gui::BuildScreens()
 	theParameterBindingModal = new ParameterModal();
 	TheNewModulationModal = new NewModulationModal();
 
-	Screens[SCREEN_X] = AddModSourceScreen(SCREEN_X, Source_x);
+	Screens[SCREEN_X] = AddModSourceScreen(SCREEN_X, Source_x, "Keyboard X");
 	Screens[SCREEN_X]->LedButtonsThatOpenThisScreen.push_back(ledbutton_BX);
-	Screens[SCREEN_Y] = AddModSourceScreen(SCREEN_Y, Source_y);
+	Screens[SCREEN_Y] = AddModSourceScreen(SCREEN_Y, Source_y, "Keyboard Y");
 	Screens[SCREEN_Y]->LedButtonsThatOpenThisScreen.push_back(ledbutton_BY);
-	Screens[SCREEN_Z] = AddModSourceScreen(SCREEN_Z, Source_z);
+	Screens[SCREEN_Z] = AddModSourceScreen(SCREEN_Z, Source_z, "Keyboard Z" );
 	Screens[SCREEN_Z]->LedButtonsThatOpenThisScreen.push_back(ledbutton_BZ);
 	// TODO ??? what is touch ook al weer????
-	Screens[SCREEN_TOUCH] = AddModSourceScreen(SCREEN_TOUCH, Source_zprime);
+	Screens[SCREEN_TOUCH] = AddModSourceScreen(SCREEN_TOUCH, Source_zprime,"Keyboard Toucher" );
 	Screens[SCREEN_TOUCH]->LedButtonsThatOpenThisScreen.push_back(ledbutton_BTouch);
-	Screens[SCREEN_LMOD] = AddModSourceScreen(SCREEN_LMOD, Source_left_mod);
+	Screens[SCREEN_LMOD] = AddModSourceScreen(SCREEN_LMOD, Source_left_mod, "Left Mod Pad");
 	Screens[SCREEN_LMOD]->LedButtonsThatOpenThisScreen.push_back(ledbutton_LMod);
-	Screens[SCREEN_RMOD] = AddModSourceScreen(SCREEN_RMOD, Source_right_mod);
+	Screens[SCREEN_RMOD] = AddModSourceScreen(SCREEN_RMOD, Source_right_mod, "Right Mod Pad");
 	Screens[SCREEN_RMOD]->LedButtonsThatOpenThisScreen.push_back(ledbutton_RMod);
-	Screens[SCREEN_LSUS] = AddModSourceScreen(SCREEN_LSUS, Source_left_sus);
+	Screens[SCREEN_LSUS] = AddModSourceScreen(SCREEN_LSUS, Source_left_sus,"Left Sustain" );
 	Screens[SCREEN_LSUS]->LedButtonsThatOpenThisScreen.push_back(ledbutton_LSus);
-	Screens[SCREEN_RSUS] = AddModSourceScreen(SCREEN_RSUS, Source_right_sus);
+	Screens[SCREEN_RSUS] = AddModSourceScreen(SCREEN_RSUS, Source_right_sus,"Right Sustain");
 	Screens[SCREEN_RSUS]->LedButtonsThatOpenThisScreen.push_back(ledbutton_RSus);
-	Screens[SCREEN_LUNA] = AddModSourceScreen(SCREEN_LUNA, Source_left_unac);
+	Screens[SCREEN_LUNA] = AddModSourceScreen(SCREEN_LUNA, Source_left_unac, "Left Una Corda");
 	Screens[SCREEN_LUNA]->LedButtonsThatOpenThisScreen.push_back(ledbutton_LUna);
-	Screens[SCREEN_RUNA] = AddModSourceScreen(SCREEN_RUNA, Source_right_unac);
+	Screens[SCREEN_RUNA] = AddModSourceScreen(SCREEN_RUNA, Source_right_unac,"Right Una Corda");
 	Screens[SCREEN_RUNA]->LedButtonsThatOpenThisScreen.push_back(ledbutton_RUna);
 
-	Screens[SCREEN_VELOCITY] = AddModSourceScreen(SCREEN_VELOCITY, Source_vel);
+	Screens[SCREEN_VELOCITY] = AddModSourceScreen(SCREEN_VELOCITY, Source_vel, "Keyboard Velocity" );
 	Screens[SCREEN_VELOCITY]->LedButtonsThatOpenThisScreen.push_back(ledbutton_BVelocity);
-	Screens[SCREEN_KEYBOARD] = AddModSourceScreen(SCREEN_KEYBOARD, Source_note);
+	Screens[SCREEN_KEYBOARD] = AddModSourceScreen(SCREEN_KEYBOARD, Source_note,"Keyboard Tracking" );
 	Screens[SCREEN_KEYBOARD]->LedButtonsThatOpenThisScreen.push_back(ledbutton_BCV);
-	Screens[SCREEN_LFO] = AddModSourceScreen(SCREEN_LFO, Source_LFO);
+	Screens[SCREEN_LFO] = AddModSourceScreen(SCREEN_LFO, Source_LFO,"LFO" );
 	Screens[SCREEN_LFO]->LedButtonsThatOpenThisScreen.push_back(ledbutton_BLFO);
 
-	Screens[SCREEN_ENVELOPE] = AddModSourceScreen(SCREEN_ENVELOPE, Source_Envelope);
+	Screens[SCREEN_ENVELOPE] = AddModSourceScreen(SCREEN_ENVELOPE, Source_Envelope, "Envelope");
 	Screens[SCREEN_ENVELOPE]->LedButtonsThatOpenThisScreen.push_back(ledbutton_BEnv);
 	Screens[SCREEN_VCF2_structure] = new VCF2StructureScreen();
 
@@ -213,24 +213,9 @@ void Gui::BuildScreens()
 	Screens[SCREEN_COLORS]->EnableAvailableEncoder("Active: Sat", MenuEntry_LedValue, Led_Active_Sat, -1);
 	Screens[SCREEN_COLORS]->EnableAvailableEncoder("Active: Bright", MenuEntry_LedValue, Led_Active_Bright, -1);
 
-	Screens[SCREEN_X]->SetTitle("Keyboard X");
-	Screens[SCREEN_Y]->SetTitle("Keyboard Y");
-	Screens[SCREEN_Z]->SetTitle("Keyboard Z");
-	Screens[SCREEN_TOUCH]->SetTitle("Keyboard Touch");
-	Screens[SCREEN_VELOCITY]->SetTitle("Keyboard Velocity");
-	Screens[SCREEN_KEYBOARD]->SetTitle("CV Keytrack");
 
-	Screens[SCREEN_LMOD]->SetTitle("Left Mod");
-	Screens[SCREEN_RMOD]->SetTitle("Right Mod");
-	Screens[SCREEN_LSUS]->SetTitle("Left Sustain");
-	Screens[SCREEN_RSUS]->SetTitle("Right Sustain");
-	Screens[SCREEN_LUNA]->SetTitle("Left Una Corda");
-	Screens[SCREEN_RUNA]->SetTitle("Right Una Corda");
-
-	Screens[SCREEN_ENVELOPE]->SetTitle("Envelope");
 	Screens[SCREEN_ENVELOPE]->LedButtonsThatOpenThisScreen.push_back(ledbutton_BEnv);
 
-	Screens[SCREEN_LFO]->SetTitle("LFO");
 	Screens[SCREEN_LFO]->LedButtonsThatOpenThisScreen.push_back(ledbutton_BLFO);
 
 	Screens[SCREEN_ARP]->SetTitle("Arpeggiator");

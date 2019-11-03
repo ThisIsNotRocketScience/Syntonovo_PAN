@@ -17,7 +17,7 @@ public:
 	virtual uint16_t GetParameterValue(int param, int encoderset);
 	virtual void TweakParameterValue(int param, int delta);
 	ModSource_t ModTypeFromScreen(Screens_t screen);
-	ModSourceScreen(Screens_t screen, ModSource_t modsourcetype);
+	ModSourceScreen(Screens_t screen, ModSource_t modsourcetype, const char *basetitle);
 	virtual void Action(int a);
 	uint16_t GetModValue(int v);
 	
@@ -35,4 +35,6 @@ public:
 	virtual void Render(bool active, float DT);
 	virtual void Activate();
 	void SetEncoderNames();
+	const char* BaseTitle;
+
 };

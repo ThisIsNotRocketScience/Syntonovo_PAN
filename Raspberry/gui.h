@@ -438,7 +438,7 @@ class Gui
 {
 public:
 	Gui();
-	ModSourceScreen *AddModSourceScreen(Screens_t screen, ModSource_t mod);
+	ModSourceScreen *AddModSourceScreen(Screens_t screen, ModSource_t mod, const char *basetitle);
 	void GotoPageForMod(ModSource_t mod, int instance);
 	void Init();
 	void SketchLeftPress();

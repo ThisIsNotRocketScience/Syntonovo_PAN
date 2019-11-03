@@ -72,19 +72,28 @@ ModSource_t ModSourceScreen::ModTypeFromScreen(Screens_t screen)
 }
 void ModSourceScreen::SetActiveInstance(int id)
 {
+
 	if (HasActiveInstanceDisplay)
 	{
 		ActiveInstance = id % MaxInstances;
+
+		char newtitle[200];
+		snprintf(newtitle, 200, "%s %d", BaseTitle, ActiveInstance + 1);
+		SetTitle(newtitle);
+	}
+	else
+	{
+		SetTitle(BaseTitle);
 	}
 }
 
-ModSourceScreen::ModSourceScreen(Screens_t screen, ModSource_t modsourcetype)
+ModSourceScreen::ModSourceScreen(Screens_t screen, ModSource_t modsourcetype, const char *basetitle)
 {
+	BaseTitle = basetitle;
 	ModSource = modsourcetype;
 	unipolarmod = gCurrentPreset.isModUnipolar(modsourcetype);
 
 	MaxInstances = 16;
-	ActiveInstance = 0;
 	theModTargetModal.Parent = this;
 	myScreen = screen;
 	modType = ModTypeFromScreen(screen);
@@ -191,7 +200,61 @@ ModSourceScreen::ModSourceScreen(Screens_t screen, ModSource_t modsourcetype)
 		
 //		encoders[1][i].SetTitle(GetModulationTargetName(row->targets[i].outputid));		
 	}
+	SetActiveInstance(0);
+	
 	SetEncoderNames();
+	
+}
+
+int64_t m64(int32_t a, int32_t b)
+{
+	return (((int64_t)a * (int64_t)b) >> 32);
+};
+
+int32_t div64(int32_t a, int32_t b)
+{
+	return (int32_t)(((int64_t)a << 31) / b);
+};
+void BuildLFOPts(float x, float y, float W, float H, ImVec2 *Pts, int cnt, int ActiveInstance)
+{
+	uint32_t Speed = gCurrentPreset.GetModParameterValue(LFO_Speed, ActiveInstance)<<16;
+//	float Ps = 6.283f * (gCurrentPreset.GetModParameterValue(LFO_ResetPhase, ActiveInstance) / 65535.0f);
+
+
+	int32_t shape =  gCurrentPreset.GetModParameterValue(LFO_Shape, ActiveInstance)<<15;
+	
+	if (shape < 1) shape = 1; else if (shape > 0x7ffffffe) shape = 0x7ffffffe;
+
+	int32_t sphase = (int32_t)gCurrentPreset.GetModParameterValue(LFO_ResetPhase, ActiveInstance)<<16;
+	int32_t ooshape = div64(1 << 16, shape);
+	int32_t ooomshape = div64(1 << 16, 0x7FFFFFFF - shape);
+
+	int64_t cur = 0;
+
+
+
+	W = W * 2.0f / (float)cnt;
+	//H *= 1.0f / 32767.0f;
+
+	for (int i = 0; i < cnt; i++)
+	{
+		Pts[i].x = W * i + x;
+
+		if (sphase < -shape) {
+			cur = m64(-(sphase)-0x7fffffff, ooomshape);
+		}
+		else if (sphase < shape) {
+			cur = m64(sphase, ooshape);
+		}
+		else { // phase > 1-shape
+			cur = m64(-(sphase)+0x7fffffff, ooomshape);
+		}
+
+		sphase += Speed;
+
+		Pts[i].y = (-cur / 32768.0f) * (H / 2) + y + H / 2;
+//		Pts[i].y = -sin(Ps + (float)i * Speed) * H / 2 + y  + H / 2;
+	}
 }
 
 void ModSourceScreen::RenderContent(bool active, float DT)
@@ -210,15 +273,10 @@ void ModSourceScreen::RenderContent(bool active, float DT)
 		break;
 	case SCREEN_LFO:
 	{
-		ImVec2 Pts[100];
-		float Speed  = 0.1f  + gCurrentPreset.GetModParameterValue(LFO_Speed, ActiveInstance) / 65535.0f;
-		float Ps = 6.283f* (gCurrentPreset.GetModParameterValue(LFO_ResetPhase, ActiveInstance) / 65535.0f);
+		ImVec2 Pts[500];
 		x = 512 - W/2;
-		for (int i = 0; i < 100; i++)
-		{
-			Pts[i].x = W * i * 0.01 + x;
-			Pts[i].y = -sin(Ps + (float)i * Speed)  * H/2 + y + H/2;
-		}
+
+		BuildLFOPts(x,y,W,H, Pts, 500, ActiveInstance);
 
 		ImGui::GetWindowDrawList()->AddLine(ImVec2(0, y + H/2), ImVec2(1024, y + H/2), IM_COL32(255, 255, 255, 20), 3);
 		ImGui::GetWindowDrawList()->AddPolyline(Pts, 100, gGuiResources.Normal,false, 5);
@@ -330,12 +388,12 @@ void ModSourceScreen::Action(int a)
 	case MenuAction_CloseModal: Modal = NULL; SetEncoderNames(); break;
 	case MenuAction_Next:
 	{
-		ActiveInstance = (ActiveInstance + 1) % MaxInstances;
+		SetActiveInstance( (ActiveInstance + 1) % MaxInstances);
 		SetEncoderNames();
 	}break;
 	case MenuAction_Prev: 
 	{
-		ActiveInstance = (ActiveInstance + MaxInstances - 1) % MaxInstances; 
+		SetActiveInstance((ActiveInstance + MaxInstances - 1) % MaxInstances);
 		SetEncoderNames();
 	} break;
 	}

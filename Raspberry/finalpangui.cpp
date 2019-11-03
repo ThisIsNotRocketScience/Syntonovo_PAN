@@ -1040,14 +1040,20 @@ int GetSideButtonID(FinalLedButtonEnum B)
 	case ledbutton_L5:return 4;
 	case ledbutton_L6:return 5;
 	case ledbutton_L7:return 6;
+	case ledbutton_L8:return 7;
+	case ledbutton_L9:return 8;
+	case ledbutton_L10:return 9;
 
-	case ledbutton_R1:return 7;
-	case ledbutton_R2:return 8;
-	case ledbutton_R3:return 9;
-	case ledbutton_R4:return 10;
-	case ledbutton_R5:return 11;
-	case ledbutton_R6:return 12;
-	case ledbutton_R7:return 13;
+	case ledbutton_R1:return 10;
+	case ledbutton_R2:return 11;
+	case ledbutton_R3:return 12;
+	case ledbutton_R4:return 13;
+	case ledbutton_R5:return 14;
+	case ledbutton_R6:return 15;
+	case ledbutton_R7:return 16;
+	case ledbutton_R8:return 16;
+	case ledbutton_R9:return 16;
+	case ledbutton_R10:return 16;
 
 	}
 
@@ -1294,9 +1300,9 @@ void SetEffect(int effect)
 
 
 
-ModSourceScreen *Gui::AddModSourceScreen(Screens_t screen, ModSource_t mod)
+ModSourceScreen *Gui::AddModSourceScreen(Screens_t screen, ModSource_t mod, const char *basetitle)
 {
-	ModSourceScreen *MSS = new ModSourceScreen(screen, mod);
+	ModSourceScreen *MSS = new ModSourceScreen(screen, mod, basetitle);
 	ModSourceScreens.push_back(MSS);
 	return MSS;
 }

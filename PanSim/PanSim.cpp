@@ -50,7 +50,7 @@ public:
 	float x;
 	float y;
 	FinalLedButtonEnum id;
-	int fpid;
+	//int fpid;
 	float r, g, b;
 	bool value;
 	ledmodes ledmode;
@@ -98,7 +98,7 @@ void cmd_preset_save(int presetid)
 
 
 fLedButton FinalButtons[__FINALLEDBUTTON_COUNT] = {
-#define LEDBUTTON(iname,ix,iy,fpid,str,r,g,b) {str ,ix, iy,ledbutton_##iname, fpid,r,g,b},
+#define LEDBUTTON(iname,ix,iy,fpid,str,r,g,b) {str ,ix, iy,ledbutton_##iname,r,g,b},
 #include "../Raspberry/FinalPanHeader.h"
 #undef LEDBUTTON
 
