@@ -117,10 +117,24 @@ int32_t zprime_value;
 int sustain_gate = 0;
 int una_corda_release = 0;
 
-uint32_t porta_timer_count = 0;
-int32_t porta_time;
-int32_t porta_divider = 256;
-int32_t porta_timer_shift = 14;
+typedef struct {
+	uint32_t porta_timer_count;
+	int32_t porta_time;
+	int32_t porta_divider;
+	int32_t porta_timer_shift;
+} porta_state_t;
+
+porta_state_t porta_state[64];
+
+void init_porta_state()
+{
+	for (int i = 0; i < 64; i++) {
+		porta_state[i].porta_timer_count = 0;
+		porta_state[i].porta_time = 0;
+		porta_state[i].porta_divider = 256;
+		porta_state[i].porta_timer_shift = 14;
+	}
+}
 
 uint16_t pan_law_table[2049];
 
@@ -254,24 +268,25 @@ int32_t abs(int32_t x)
 }
 
 __attribute__( ( section(".data") ) )
-void update_porta_time(int retrigger)
+void update_porta_time(int zone, int note, int retrigger)
 {
+	porta_state_t* porta = &porta_state[note - 0x100];
 	if (!shiftctrl_flag_state(SELPORTAMENTO)
 		|| (shiftctrl_flag_state(SELSTACCATO) && !retrigger))
 	{
 		// no portamento
-		porta_timer_shift = 14;
-		porta_time = abs(synth_param[NOTE].value - synth_param[NOTE].last);
+		porta->porta_timer_shift = 14;
+		porta->porta_time = abs(synth_param[note].value - synth_param[note].last);
 		return;
 	}
 
-	porta_time = (abs((int32_t)(synth_param[NOTE].value - synth_param[NOTE].last)) * 256) / porta_divider;
-	porta_timer_shift = 14;
-	int div = porta_divider;
-	while (porta_time < 1 && div > 4) {
-		porta_timer_shift++;
+	porta->porta_time = (abs((int32_t)(synth_param[note].value - synth_param[note].last)) * 256) / porta->porta_divider;
+	porta->porta_timer_shift = 14;
+	int div = porta->porta_divider;
+	while (porta->porta_time < 1 && div > 4) {
+		porta->porta_timer_shift++;
 		div >>= 1;
-		porta_time = (abs((int32_t)(synth_param[NOTE].value - synth_param[NOTE].last)) * 256) / div;
+		porta->porta_time = (abs((int32_t)(synth_param[note].value - synth_param[note].last)) * 256) / div;
 	}
 }
 
@@ -350,10 +365,10 @@ int32_t chase_vcf(int vcf)
 	return value;
 }
 
-uint16_t synth_mapping_note()
-{
-	return synth_param[NOTE].value >> 8;
-}
+//uint16_t synth_mapping_note()
+//{
+//	return synth_param[NOTE].value >> 8;
+//}
 
 void synth_mapping_defaultpatch()
 {
@@ -386,6 +401,14 @@ void synth_mapping_defaultpatch()
 	modmatrix[0x10].targets[2].outputid = VCF1_LIN;
 	modmatrix[0x10].targets[2].sourceid = 0;
 	modmatrix[0x10].targets[2].depth = 0x3fff;
+
+	for (int i = 0; i < 64; i++) {
+		key_mapping[i].keyindex = 0;
+		key_mapping[i].keyzone = 0;
+	}
+	key_mapping[key_map_target_vco1].keyindex = 0;
+	key_mapping[key_map_target_vco2].keyindex = 1;
+	key_mapping[key_map_target_vco3].keyindex = 2;
 
 #if FIXME
 	synth_param[VCO1_MIX1].adsr_depth = 0x7fff;
@@ -612,36 +635,54 @@ void ports_input(int portid, uint16_t* value)
 }
 
 //__attribute__( ( section(".data") ) )
-static void update_note()
+static void update_note(int zone)
 {
 	if (notestack_empty()) {
-		synth_param[GATE].value = sustain_gate ? 0xFFFF : 0;
-		synth_param[RETRIGGER].value = 0;
-		virt_GATE();
-		virt_RETRIGGER();
+		synth_param[GATE1].value = sustain_gate ? 0xFFFF : 0;
+		synth_param[RETRIGGER1].value = 0;
+		virt_GATE1();
+		virt_RETRIGGER1();
 		return;
 	}
 
-	int new_note_value = (notestack_first().note << 8);
-	int is_new_note = new_note_value != synth_param[NOTE].value;
-	int note_change = is_new_note;
+	int is_new_note[4];
+	int note_value[4];
+	int note_change = 0;
+
+	int polymode = shiftctrl_flag_state(POLYMODE1) | (shiftctrl_flag_state(POLYMODE2) << 1);
+	if (polymode & 1) {
+		for (int i = 0; i < 4; i++) {
+			int new_note_value = (notestack_n(i).note << 8);
+			is_new_note[i] = (new_note_value != synth_param[ZONE1NOTE1 + i].value);
+			if (is_new_note[i]) {
+				note_change = 1;
+			}
+			synth_param[ZONE1NOTE1 + i].value = new_note_value;
+		}
+	}
+	else {
+		int new_note_value = (notestack_n(0).note << 8);
+		for (int i = 0; i < 4; i++) {
+			is_new_note[i] = (new_note_value != synth_param[ZONE1NOTE1 + i].value);
+			if (is_new_note[i]) {
+				note_change = 1;
+			}
+			synth_param[ZONE1NOTE1 + i].value = new_note_value;
+		}
+	}
 
 	int retrigger = 1;
-	if (synth_param[GATE].value != 0xffff) {
+	if (synth_param[GATE1].value != 0xffff) {
 		retrigger = 0;
 		note_change = 1;
 	}
 
-	if (is_new_note) {
-		synth_param[NOTE].value = new_note_value;
-		synth_param[NOTE2].value = new_note_value;
-		synth_param[NOTE3].value = new_note_value;
-		update_porta_time(retrigger);
-		virt_NOTE();
+	for (int i = 0; i < 4; i++) {
+		if (is_new_note[i]) {
+			update_porta_time(zone, ZONE1NOTE1 + i, retrigger);
+			virt_note(i, ZONE1NOTE1 + i);
+		}
 	}
-
-	synth_param[NOTE2].value = (notestack_second().note << 8);
-	synth_param[NOTE3].value = (notestack_third().note << 8);
 
 	if (note_change || retrigger) {
 		for (int i = 0; i < 16; i++) {
@@ -651,14 +692,14 @@ static void update_note()
 		}
 	}
 
-	if (synth_param[GATE].value != 0xffff) {
-		synth_param[GATE].value = 0xffff;
-		virt_GATE();
+	if (synth_param[GATE1].value != 0xffff) {
+		synth_param[GATE1].value = 0xffff;
+		virt_GATE1();
 	}
 
 	if (note_change) {
-		synth_param[RETRIGGER].value = 2;
-		virt_RETRIGGER();
+		synth_param[RETRIGGER1].value = 2;
+		virt_RETRIGGER1();
 	}
 }
 
@@ -680,13 +721,13 @@ void control_cb(int param, int subparam, uint16_t value)
 
 			if ((value & 0x7f) == KEYPRIO1 || (value & 0x7f) == KEYPRIO2) {
 				notestack_init(shiftctrl_flag_state(KEYPRIO1) | (shiftctrl_flag_state(KEYPRIO2) << 1));
-				update_note();
+				update_note(0);
 			}
 		}
 
 		if (subparam == 0xfc) {
 			notestack_init(value);
-			update_note();
+			update_note(0);
 		}
 
 		if (subparam == 0xfb) {
@@ -705,12 +746,12 @@ void control_cb(int param, int subparam, uint16_t value)
 		if (subparam == 2) {
 			notestack_push(value & 0xff, value >> 8);
 
-			update_note();
+			update_note(0);
 		}
 		else if (subparam == 1) {
 			notestack_pop(value & 0xff);
 
-			update_note();
+			update_note(0);
 		}
 
 		return;
@@ -1359,7 +1400,10 @@ void do_output_VCF2_R_LOG(int ctrlid, int port)
 void do_output_NOISE_COLOR(int ctrlid, int port)
 {
 	do_smooth(NOISE_COLOR);
-	int32_t value = signed_scale(synth_param[NOTE].last, synth_param[NOISE_COLOR].note);
+
+	int noteparam = 0x100 + (key_mapping[key_map_target_vco8].keyzone << 4) + key_mapping[key_map_target_vco8].keyindex;
+
+	int32_t value = signed_scale(synth_param[noteparam].last, synth_param[NOISE_COLOR].note);
 	value = note_add(value, note_scale(synth_param[NOISE_COLOR].value, 72 * 0x4000 / 128));
 
 	process_param_note(NOISE_COLOR, VCO8_OCTAVE, value, 24);
@@ -1467,55 +1511,87 @@ void virt_VCO4567_DRY_MIX()
 	process_param_lin(VCO4567_DRY_MIX);
 }
 
-__attribute__( ( section(".data") ) )
-void virt_NOTE()
+int update_porta(int id)
 {
-	//synth_param[NOTE].last = note_to_voltage(synth_param[NOTE].value);
-	//synth_param[NOTE].last = synth_param[NOTE].value;
-
 	uint32_t timer_count = timer_value_nonisr();
-	uint32_t timer_delta = timer_count - porta_timer_count;
+	uint32_t timer_delta = timer_count - porta_state[id].porta_timer_count;
 
-	timer_delta >>= porta_timer_shift;
-	if (timer_delta == 0) return;
-	porta_timer_count = timer_count;
+	timer_delta >>= porta_state[id].porta_timer_shift;
+	if (timer_delta == 0) return 0;
+	porta_state[id].porta_timer_count = timer_count;
 	if (timer_delta > 100) timer_delta = 100;
 
-	int32_t porta_time_scaled = porta_time * (int32_t)timer_delta;
+	return porta_state[0].porta_time * (int32_t)timer_delta;
+}
 
-	int32_t newvalue = synth_param[NOTE].last;
+void virt_note(int portaid, int note)
+{
+	if (synth_param[note].last == synth_param[note].value) return;
 
-	if (newvalue < synth_param[NOTE].value) {
+	int porta_time_scaled = update_porta(portaid);
+	int32_t newvalue = synth_param[note].last;
+
+	if (newvalue < synth_param[note].value) {
 		newvalue += porta_time_scaled;
-		if (newvalue > synth_param[NOTE].value) {
-			newvalue = synth_param[NOTE].value;
+		if (newvalue > synth_param[note].value) {
+			newvalue = synth_param[note].value;
 		}
 	}
-	else if (newvalue > synth_param[NOTE].value) {
+	else if (newvalue > synth_param[note].value) {
 		newvalue -= porta_time_scaled;
-		if (newvalue < synth_param[NOTE].value) {
-			newvalue = synth_param[NOTE].value;
+		if (newvalue < synth_param[note].value) {
+			newvalue = synth_param[note].value;
 		}
 	}
-	synth_param[NOTE].last = newvalue;
+	synth_param[note].last = newvalue;
 }
 
-void virt_NOTE2()
-{
+#define _VIRT_NOTE(NAME) \
+	__attribute__( ( section(".data") ) ) \
+	void virt_ ## NAME() \
+	{ \
+		virt_note(NAME - ZONE1NOTE1, NAME); \
+	}
 
-}
-
-void virt_NOTE3()
-{
-
-}
+_VIRT_NOTE(ZONE1NOTE1);
+_VIRT_NOTE(ZONE1NOTE2);
+_VIRT_NOTE(ZONE1NOTE3);
+_VIRT_NOTE(ZONE1NOTE4);
+_VIRT_NOTE(ZONE1NOTE5);
+_VIRT_NOTE(ZONE1NOTE6);
+_VIRT_NOTE(ZONE1NOTE7);
+_VIRT_NOTE(ZONE1NOTE8);
+_VIRT_NOTE(ZONE2NOTE1);
+_VIRT_NOTE(ZONE2NOTE2);
+_VIRT_NOTE(ZONE2NOTE3);
+_VIRT_NOTE(ZONE2NOTE4);
+_VIRT_NOTE(ZONE2NOTE5);
+_VIRT_NOTE(ZONE2NOTE6);
+_VIRT_NOTE(ZONE2NOTE7);
+_VIRT_NOTE(ZONE2NOTE8);
+_VIRT_NOTE(ZONE3NOTE1);
+_VIRT_NOTE(ZONE3NOTE2);
+_VIRT_NOTE(ZONE3NOTE3);
+_VIRT_NOTE(ZONE3NOTE4);
+_VIRT_NOTE(ZONE3NOTE5);
+_VIRT_NOTE(ZONE3NOTE6);
+_VIRT_NOTE(ZONE3NOTE7);
+_VIRT_NOTE(ZONE3NOTE8);
+_VIRT_NOTE(ZONE4NOTE1);
+_VIRT_NOTE(ZONE4NOTE2);
+_VIRT_NOTE(ZONE4NOTE3);
+_VIRT_NOTE(ZONE4NOTE4);
+_VIRT_NOTE(ZONE4NOTE5);
+_VIRT_NOTE(ZONE4NOTE6);
+_VIRT_NOTE(ZONE4NOTE7);
+_VIRT_NOTE(ZONE4NOTE8);
 
 void virt_PORTAMENTO_TIME()
 {
 	do_smooth(PORTAMENTO_TIME);
 	if (synth_param[PORTAMENTO_TIME].value != synth_param[PORTAMENTO_TIME].last) {
 		synth_param[PORTAMENTO_TIME].last = synth_param[PORTAMENTO_TIME].value;
-		porta_divider = 256 + ((int32_t)synth_param[PORTAMENTO_TIME].value * 8);
+		porta_state[0].porta_divider = 256 + ((int32_t)synth_param[PORTAMENTO_TIME].value * 8);
 	}
 }
 
@@ -1536,7 +1612,10 @@ void virt_ZPRIME_SPEED()
 void virt_VCO1_PITCH()
 {
 	do_smooth(VCO1_PITCH);
-	int32_t value = note_add(signed_scale(synth_param[NOTE].last, synth_param[VCO1_PITCH].note),
+
+	int noteparam = 0x100 + (key_mapping[key_map_target_vco1].keyzone << 4) + key_mapping[key_map_target_vco1].keyindex;
+
+	int32_t value = note_add(signed_scale(synth_param[noteparam].last, synth_param[VCO1_PITCH].note),
 			                 note_scale(synth_param[VCO1_PITCH].value, 24 * 0x4000 / 128));
 
 	process_param_note(VCO1_PITCH, VCO1_OCTAVE, value, 24);
@@ -1546,7 +1625,7 @@ int32_t note_distance(int notectrl, int polymode)
 {
 	int curmode = shiftctrl_flag_state(POLYMODE1) | (shiftctrl_flag_state(POLYMODE2) << 1);
 	if (curmode != polymode) return 0;
-	return (int32_t)synth_param[notectrl].value - (int32_t)synth_param[NOTE].value;
+	return (int32_t)synth_param[notectrl].value - (int32_t)synth_param[ZONE1NOTE1].value;
 }
 
 uint16_t add_clamp_signed(uint16_t a, int16_t b)
@@ -1561,10 +1640,14 @@ void virt_VCO2_PITCH()
 {
 	do_smooth(VCO2_PITCH);
 
-	int add = note_distance(NOTE2, 1);
-	int32_t value = signed_scale(add_clamp_signed(synth_param[NOTE].last, add), synth_param[VCO1_PITCH].note);
+	int noteparam = 0x100 + (key_mapping[key_map_target_vco2].keyzone << 4) + key_mapping[key_map_target_vco2].keyindex;
+	int32_t value = note_add(signed_scale(synth_param[noteparam].last, synth_param[VCO2_PITCH].note),
+			                 note_scale(synth_param[VCO2_PITCH].value, 24 * 0x4000 / 128));
+
+	//int add = note_distance(noteparam, 1);
+	//int32_t value = signed_scale(add_clamp_signed(synth_param[noteparam].last, add), synth_param[VCO1_PITCH].note);
 	//value = note_add(value, note_scale(synth_param[VCO1_PITCH].value, 24 * 0x4000 / 128));
-	value = note_add(value, note_scale(synth_param[VCO2_PITCH].value, 24 * 0x4000 / 128));
+	//value = note_add(value, note_scale(synth_param[VCO2_PITCH].value, 24 * 0x4000 / 128));
 
 	process_param_note(VCO2_PITCH, VCO2_OCTAVE, value, 24);
 }
@@ -1573,10 +1656,14 @@ void virt_VCO3_PITCH()
 {
 	do_smooth(VCO3_PITCH);
 
-	int add = note_distance(NOTE3, 1);
-	int32_t value = signed_scale(add_clamp_signed(synth_param[NOTE].last, add), synth_param[VCO1_PITCH].note);
+	int noteparam = 0x100 + (key_mapping[key_map_target_vco3].keyzone << 4) + key_mapping[key_map_target_vco3].keyindex;
+	int32_t value = note_add(signed_scale(synth_param[noteparam].last, synth_param[VCO3_PITCH].note),
+			                 note_scale(synth_param[VCO3_PITCH].value, 24 * 0x4000 / 128));
+
+	//int add = note_distance(NOTE3, 1);
+	//int32_t value = signed_scale(add_clamp_signed(synth_param[NOTE].last, add), synth_param[VCO1_PITCH].note);
 	//value = note_add(value, note_scale(synth_param[VCO1_PITCH].value, 24 * 0x4000 / 128));
-	value = note_add(value, note_scale(synth_param[VCO3_PITCH].value, 24 * 0x4000 / 128));
+	//value = note_add(value, note_scale(synth_param[VCO3_PITCH].value, 24 * 0x4000 / 128));
 
 	process_param_note(VCO3_PITCH, VCO3_OCTAVE, value, 24);
 }
@@ -1584,8 +1671,12 @@ void virt_VCO3_PITCH()
 void virt_VCO4_PITCH()
 {
 	do_smooth(VCO4_PITCH);
-	int32_t value = signed_scale(synth_param[NOTE].last, synth_param[VCO4_PITCH].note);
-	value = note_add(value, note_scale(synth_param[VCO4_PITCH].value, 24 * 0x4000 / 128));
+	//int32_t value = signed_scale(synth_param[NOTE].last, synth_param[VCO4_PITCH].note);
+	//value = note_add(value, note_scale(synth_param[VCO4_PITCH].value, 24 * 0x4000 / 128));
+
+	int noteparam = 0x100 + (key_mapping[key_map_target_vco4].keyzone << 4) + key_mapping[key_map_target_vco4].keyindex;
+	int32_t value = note_add(signed_scale(synth_param[noteparam].last, synth_param[VCO4_PITCH].note),
+			                 note_scale(synth_param[VCO4_PITCH].value, 24 * 0x4000 / 128));
 
 	process_param_note(VCO4_PITCH, VCO4_OCTAVE, value, 24);
 }
@@ -1593,10 +1684,14 @@ void virt_VCO4_PITCH()
 void virt_VCO5_PITCH()
 {
 	do_smooth(VCO5_PITCH);
-	int32_t value = signed_scale(synth_param[NOTE].last, synth_param[VCO4_PITCH].note);
+	//int32_t value = signed_scale(synth_param[NOTE].last, synth_param[VCO4_PITCH].note);
 	//value = note_add(value, note_scale(synth_param[VCO4_PITCH].value, 72 * 0x4000 / 128));
 	//value += signed_scale(synth_param[VCO5_PITCH].value, 36 * 0x4000 / 256);
-	value = note_add(value, note_scale(synth_param[VCO5_PITCH].value, 24 * 0x4000 / 128));
+	//value = note_add(value, note_scale(synth_param[VCO5_PITCH].value, 24 * 0x4000 / 128));
+
+	int noteparam = 0x100 + (key_mapping[key_map_target_vco5].keyzone << 4) + key_mapping[key_map_target_vco5].keyindex;
+	int32_t value = note_add(signed_scale(synth_param[noteparam].last, synth_param[VCO5_PITCH].note),
+			                 note_scale(synth_param[VCO5_PITCH].value, 24 * 0x4000 / 128));
 
 	process_param_note(VCO5_PITCH, VCO5_OCTAVE, value, 24);
 }
@@ -1604,10 +1699,14 @@ void virt_VCO5_PITCH()
 void virt_VCO6_PITCH()
 {
 	do_smooth(VCO6_PITCH);
-	int32_t value = signed_scale(synth_param[NOTE].last, synth_param[VCO4_PITCH].note);
+	//int32_t value = signed_scale(synth_param[NOTE].last, synth_param[VCO4_PITCH].note);
 	//value = note_add(value, note_scale(synth_param[VCO4_PITCH].value, 72 * 0x4000 / 128));
 	//value += signed_scale(synth_param[VCO6_PITCH].value, 36 * 0x4000 / 256);
-	value = note_add(value, note_scale(synth_param[VCO6_PITCH].value, 24 * 0x4000 / 128));
+	//value = note_add(value, note_scale(synth_param[VCO6_PITCH].value, 24 * 0x4000 / 128));
+
+	int noteparam = 0x100 + (key_mapping[key_map_target_vco6].keyzone << 4) + key_mapping[key_map_target_vco6].keyindex;
+	int32_t value = note_add(signed_scale(synth_param[noteparam].last, synth_param[VCO6_PITCH].note),
+			                 note_scale(synth_param[VCO6_PITCH].value, 24 * 0x4000 / 128));
 
 	process_param_note(VCO6_PITCH, VCO6_OCTAVE, value, 24);
 }
@@ -1615,10 +1714,14 @@ void virt_VCO6_PITCH()
 void virt_VCO7_PITCH()
 {
 	do_smooth(VCO7_PITCH);
-	int32_t value = signed_scale(synth_param[NOTE].last, synth_param[VCO4_PITCH].note);
+	//int32_t value = signed_scale(synth_param[NOTE].last, synth_param[VCO4_PITCH].note);
 	//value = note_add(value, note_scale(synth_param[VCO4_PITCH].value, 72 * 0x4000 / 128));
 	//value += signed_scale(synth_param[VCO7_PITCH].value, 36 * 0x4000 / 256);
-	value = note_add(value, note_scale(synth_param[VCO7_PITCH].value, 24 * 0x4000 / 128));
+	//value = note_add(value, note_scale(synth_param[VCO7_PITCH].value, 24 * 0x4000 / 128));
+
+	int noteparam = 0x100 + (key_mapping[key_map_target_vco7].keyzone << 4) + key_mapping[key_map_target_vco7].keyindex;
+	int32_t value = note_add(signed_scale(synth_param[noteparam].last, synth_param[VCO7_PITCH].note),
+			                 note_scale(synth_param[VCO7_PITCH].value, 24 * 0x4000 / 128));
 
 	process_param_note(VCO7_PITCH, VCO7_OCTAVE, value, 24);
 }
@@ -1681,11 +1784,9 @@ void virt_VCO8_OCTAVE()
 	synth_param[VCO8_OCTAVE].last = synth_param[VCO8_OCTAVE].value;
 }
 
-__attribute__( ( section(".data") ) )
-void virt_GATE()
+void update_gateled()
 {
-	synth_param[GATE].last = synth_param[GATE].value;
-	if (synth_param[GATE].last) {
+	if (synth_param[GATE1].last | synth_param[GATE2].last | synth_param[GATE3].last | synth_param[GATE4].last) {
 		GPIO->B[BOARD_INITPINS_LED_PORT][BOARD_INITPINS_LED_PIN] = 0;
 	}
 	else {
@@ -1694,12 +1795,65 @@ void virt_GATE()
 }
 
 __attribute__( ( section(".data") ) )
-void virt_RETRIGGER()
+void virt_GATE1()
 {
-	if (synth_param[RETRIGGER].value) {
-		synth_param[RETRIGGER].value--;
+	synth_param[GATE1].last = synth_param[GATE1].value;
+	update_gateled();
+}
+
+__attribute__( ( section(".data") ) )
+void virt_GATE2()
+{
+	synth_param[GATE2].last = synth_param[GATE2].value;
+}
+
+__attribute__( ( section(".data") ) )
+void virt_GATE3()
+{
+	synth_param[GATE3].last = synth_param[GATE3].value;
+}
+
+
+__attribute__( ( section(".data") ) )
+void virt_GATE4()
+{
+	synth_param[GATE4].last = synth_param[GATE4].value;
+}
+
+__attribute__( ( section(".data") ) )
+void virt_RETRIGGER1()
+{
+	if (synth_param[RETRIGGER1].value) {
+		synth_param[RETRIGGER1].value--;
 	}
-	synth_param[RETRIGGER].last = synth_param[RETRIGGER].value;
+	synth_param[RETRIGGER1].last = synth_param[RETRIGGER1].value;
+}
+
+__attribute__( ( section(".data") ) )
+void virt_RETRIGGER2()
+{
+	if (synth_param[RETRIGGER2].value) {
+		synth_param[RETRIGGER2].value--;
+	}
+	synth_param[RETRIGGER2].last = synth_param[RETRIGGER2].value;
+}
+
+__attribute__( ( section(".data") ) )
+void virt_RETRIGGER3()
+{
+	if (synth_param[RETRIGGER3].value) {
+		synth_param[RETRIGGER3].value--;
+	}
+	synth_param[RETRIGGER3].last = synth_param[RETRIGGER3].value;
+}
+
+__attribute__( ( section(".data") ) )
+void virt_RETRIGGER4()
+{
+	if (synth_param[RETRIGGER4].value) {
+		synth_param[RETRIGGER4].value--;
+	}
+	synth_param[RETRIGGER4].last = synth_param[RETRIGGER4].value;
 }
 
 void virt_MASTER_PITCH()
@@ -1937,15 +2091,15 @@ static void process_inputs()
 	int32_t zprime_tmp = lp_update(&zprime_lp, pad_value[KEYBOARD_Z]);
 	zprime_value = hp_update(&zprime_hp, zprime_tmp);
 
-	if (shiftctrl_flag_state(SELSUSTAINL) && pad_value[PAD_SUSL] > 500 && synth_param[GATE].value == 0xFFFF)
+	if (shiftctrl_flag_state(SELSUSTAINL) && pad_value[PAD_SUSL] > 500 && synth_param[GATE1].value == 0xFFFF)
 		sustain_gate = 1;
-	else if (shiftctrl_flag_state(SELSUSTAINR) && pad_value[PAD_SUSR] > 500 && synth_param[GATE].value == 0xFFFF)
+	else if (shiftctrl_flag_state(SELSUSTAINR) && pad_value[PAD_SUSR] > 500 && synth_param[GATE1].value == 0xFFFF)
 		sustain_gate = 1;
 	else {
 		sustain_gate = 0;
 
-		if (notestack_empty() && synth_param[GATE].value == 0xFFFF) {
-			update_note();
+		if (notestack_empty() && synth_param[GATE1].value == 0xFFFF) {
+			update_note(0);
 		}
 	}
 
@@ -2028,7 +2182,7 @@ void synth_modulation_run()
 	for (int i = 0; i < NUM_ENVS; i++) {
 		int modid = 0x10 + i;
 
-		adsr_set_gate(i, synth_param[GATE].value, env_param[i].flags & SubParamFlags_AdsrRetrigger);
+		adsr_set_gate(i, synth_param[GATE1 + key_mapping[key_map_target_env1 + i].keyzone].value, env_param[i].flags & SubParamFlags_AdsrRetrigger);
 		//ad_set_gate(ctrlid, synth_param[GATE].value, synth_param[ctrlid].flags & SubParamFlags_AdRetrigger);
 
 		int32_t adsr = adsr_update(i, una_corda_release);

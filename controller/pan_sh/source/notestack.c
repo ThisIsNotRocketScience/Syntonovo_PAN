@@ -52,6 +52,16 @@ struct note_t notestack_first()
 }
 
 //__attribute__( ( section(".data") ) )
+struct note_t notestack_n(int n)
+{
+	if (notestack_top <= n) {
+		return notestack[notestack_top - 1];
+	}
+	return notestack[notestack_top - n - 1];
+}
+
+#if 0
+//__attribute__( ( section(".data") ) )
 struct note_t notestack_second()
 {
 	if (notestack_top == 0) {
@@ -76,6 +86,7 @@ struct note_t notestack_third()
 	}
 	return notestack[notestack_top - 3];
 }
+#endif
 
 static struct note_t makenote(int note, uint32_t velocity)
 {
