@@ -52,8 +52,12 @@
 #include "rpi.h"
 #include "../../Raspberry/PanPreset.h"
 #include "../../Raspberry/FinalPanEnums.h"
+#include "Arpeggiator.h"
 
 /* TODO: insert other definitions and declarations here. */
+
+void arpclock_run();
+void arpclock_set_speed(float bpm);
 
 uint32_t timer_value();
 
@@ -124,6 +128,29 @@ void dsp_cmd(int param, int subparam, uint16_t value)
 	//rpi_write(data, 4);
 }
 
+class DirectSynth : public Synth {
+public:
+	void Init(int zone) {
+		zone_ = zone;
+	}
+
+	virtual void NoteOn(int note, int vel) {
+		NOTEON(zone_, note, vel);
+	}
+	virtual void NoteOff(int note, int vel) {
+		NOTEOFF(zone_, note);
+	}
+	virtual void Panic() {
+	};
+	virtual void Start() {};
+	virtual void Stop() { Panic(); };
+
+	int zone_;
+};
+
+DirectSynth direct[4];
+ArpeggioState arp[4];
+
 typedef enum {
 	key_source_midi,
 	key_source_usb,
@@ -143,7 +170,15 @@ void key_down(key_source_t source, int channel, int key, int vel)
 			int playkey = key + preset.key_input[field].transpose;
 			if (playkey < 0) playkey = 0;
 			else if (playkey > 0x7f) playkey = 0x7f;
-			NOTEON(zone, playkey, vel);
+
+			switch (preset.keyzone[zone].type) {
+			case PresetKeyzoneType_Single:
+				direct[zone].NoteOn(playkey, vel);
+				break;
+			case PresetKeyzoneType_Arpeggiator:
+				arp[zone].NoteOn(playkey, vel);
+				break;
+			}
 		}
 	}
 }
@@ -161,14 +196,22 @@ void key_up(key_source_t source, int channel, int key)
 			int playkey = key + preset.key_input[field].transpose;
 			if (playkey < 0) playkey = 0;
 			else if (playkey > 0x7f) playkey = 0x7f;
-			NOTEOFF(zone, playkey);
+
+			switch (preset.keyzone[zone].type) {
+			case PresetKeyzoneType_Single:
+				direct[zone].NoteOff(playkey, 0);
+				break;
+			case PresetKeyzoneType_Arpeggiator:
+				arp[zone].NoteOff(playkey, 0);
+				break;
+			}
 		}
 	}
 }
 
 BaseType_t keys_press(int keyindex, uint32_t timediff)
 {
-	key_down(key_source_kb, 0, keyindex, 0xff);
+	key_down(key_source_kb, 0, keyindex, 0x7f);
 	return pdFALSE;
 }
 
@@ -1093,13 +1136,27 @@ void KeyboardTask(void* pvParameters)
 	NVIC_SetPriority(SCTIMER_1_IRQN, 2);
     SCTIMER_EnableInterrupts(SCTIMER_1_PERIPHERAL, 1);
 
+    arpclock_run();
+
 	while (1) {
-        if( xSemaphoreTake( xKeyTimerSemaphore, ( TickType_t ) 10 ) == pdTRUE )
-        {
+        if (xSemaphoreTake(xKeyTimerSemaphore, (TickType_t)10) == pdTRUE) {
         	KeyScan();
             ScanButtonsAndEncoders();
         }
 		//vTaskDelay(1);
+	}
+}
+
+SemaphoreHandle_t xBpmTimerSemaphore = NULL;
+
+void ArpTriggerTask(void* pvParameters)
+{
+	while (1) {
+        if (xSemaphoreTake(xBpmTimerSemaphore, (TickType_t)10) == pdTRUE) {
+        	for (int i = 0; i < 4; i++) {
+        		arp[i].TimerTick();
+        	}
+        }
 	}
 }
 
@@ -1197,6 +1254,8 @@ void preset_init()
 	preset.switches[1] |= 1 << (switch_SEL3SQR - 32);
 
     for (int i = 0; i < 16; i++) {
+		SETMODSOURCE(i + modsource_ENV0, 0,1);
+    	preset.env[i].flags = 1; // SubParamFlags_AdsrRetrigger
 		SETMODSOURCE(i + modsource_ENV0, 1, 0x10);
 		preset.env[i].a = 0x10;
 		SETMODSOURCE(i + modsource_ENV0, 2, 0x2000);
@@ -1249,6 +1308,10 @@ void preset_init()
 	for (int i = 0; i < 4; i++) {
 		preset.keyzone[i].type = PresetKeyzoneType_Single;
 	}
+
+	preset.clock.source = ClockSourceType_Internal;
+	preset.clock.internal_bpm = 12000;
+	arpclock_set_speed((float)preset.clock.internal_bpm * 0.01f);
 
 	preset.low.h = 0x1000;
 	preset.high.h = 0x1000;
@@ -1340,7 +1403,17 @@ void IdleTask(void* pvParameters)
 
 void sync_preset(uint32_t addr)
 {
-	if (addr >= offsetof(PanPreset_t, key_input)) {
+	if (addr >= offsetof(PanPreset_t, clock)) {
+		addr -= offsetof(PanPreset_t, clock);
+		switch (addr) {
+		case 0:
+			break;
+		case 1:
+			arpclock_set_speed((float)preset.clock.internal_bpm * 0.01f);
+			break;
+		}
+	}
+	else if (addr >= offsetof(PanPreset_t, key_input)) {
 		// skip
 //#define NUM_KEY_INPUTS (16)
 //	key_input_t key_input[NUM_KEY_INPUTS];
@@ -1548,6 +1621,8 @@ void sync_preset_full()
 	for (int tgt = 0; tgt < 0x40; tgt++) {
 		SETKEYMAP(tgt, preset.key_mapping[tgt].keyzone, preset.key_mapping[tgt].keyindex);
 	}
+
+	arpclock_set_speed((float)preset.clock.internal_bpm * 0.01f);
 }
 
 void sync_ledstate_encoder(int index)
@@ -1732,6 +1807,44 @@ void spifi_init()
 
 void flash_init();
 
+extern "C" void CTIMER0_IRQHandler(void)
+{
+	// clear all interrupt flags
+	CTIMER0->IR = 0xf;
+
+	BaseType_t higherPriorityTaskWoken;
+	xSemaphoreGiveFromISR(xBpmTimerSemaphore, &higherPriorityTaskWoken);
+	portEND_SWITCHING_ISR(higherPriorityTaskWoken);
+}
+
+void arpclock_init()
+{
+	CLOCK_EnableClock(kCLOCK_Ct32b0);
+	RESET_ClearPeripheralReset(kCT32B0_RST_SHIFT_RSTn);
+
+	CTIMER0->PR = 59; // 180 MHz / 60 = 3 MHz
+	CTIMER0->MCR = CTIMER_MCR_MR0I_MASK | CTIMER_MCR_MR0R_MASK | CTIMER_MCR_MR0RL_MASK;
+	CTIMER0->CTCR = 0;
+	CTIMER0->PWMC = 0;
+
+	// initial value, 1 Hz
+	CTIMER0->MR[0] = 180000000/60;
+}
+
+void arpclock_run()
+{
+	// reset and run
+	CTIMER0->TCR = CTIMER_TCR_CEN_MASK | CTIMER_TCR_CRST_MASK;
+
+	NVIC_SetPriority(CTIMER0_IRQn, 2);
+	NVIC_EnableIRQ(CTIMER0_IRQn);
+}
+
+void arpclock_set_speed(float bpm)
+{
+	CTIMER0->MSR[0] = (int)((180000000.f /* * 60.f */ ) / bpm);
+}
+
 int main(void) {
   	/* Init board hardware. */
 	BOARD_InitBootPins();
@@ -1768,17 +1881,25 @@ int main(void) {
 
     control_init();
 
+    arpclock_init();
+
     rpi_init(&rpi_uart);
     sync_init(&rpi_sync, &rpi_uart, sync_data_func, sync_oobdata_func);
 
+    for (int i = 0; i < 4; i++) {
+    	direct[i].Init(i);
+    	arp[i].Init(&preset.keyzone[i].arpsettings, &direct[i]);
+    }
+
    // while(1) SendLeds();
 
-
+    xBpmTimerSemaphore = xSemaphoreCreateBinary();
     xKeyTimerSemaphore = xSemaphoreCreateBinary();
 
     volatile BaseType_t r = 0;
     r = xTaskCreate(KeyboardTask, "keys", 256, NULL, 2, NULL);
     r = xTaskCreate(LedTask, "Leds", 1024, NULL, 3, NULL);
+    r = xTaskCreate(ArpTriggerTask, "Arp", 256, NULL, 1, NULL);
     //xTaskCreate(RpiTask, "rpi", 256, NULL, 4, NULL);
     //xTaskCreate(USBTask, "usb", 512, NULL, 3, NULL);
     r = xTaskCreate(IdleTask, "idle", 512, NULL, 3, NULL);

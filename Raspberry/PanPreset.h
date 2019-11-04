@@ -144,6 +144,19 @@ typedef struct
 	ArpSettings_t arpsettings;
 } PACKED keyzone_settings_t;
 
+enum ClockSourceType
+{
+	ClockSourceType_Internal,
+	ClockSourceType_Usb,
+	ClockSourceType_Midi,
+};
+
+typedef struct
+{
+	ClockSourceType source;
+	int32_t internal_bpm; // bpm*100 !!!
+} PACKED clock_settings_t;
+
 #define MAX_MODULATION_SOURCE (6)
 #define NUM_LFOS (16)
 #define NUM_ENVS (16)
@@ -633,6 +646,8 @@ public:
 	key_input_t key_input[NUM_KEY_INPUTS];
 #define NUM_KEYZONES (4)
 	keyzone_settings_t keyzone[4];
+
+	clock_settings_t clock;
 } PACKED;
 
 extern PanPreset_t gCurrentPreset;
