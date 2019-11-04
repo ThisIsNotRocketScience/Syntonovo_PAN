@@ -696,22 +696,29 @@ static void update_note(int zone)
 		}
 	}
 
-	if (note_change || retrigger) {
-		for (int i = 0; i < 16; i++) {
-			if (lfo_param[i].flags & LfoParamFlags_LfoRetrigger) {
-				lfo_reset(i, lfo_param[i].reset_phase);
-			}
-		}
-	}
-
 	if (synth_param[gateid].value != 0xffff) {
 		synth_param[gateid].value = 0xffff;
 		virt_gate(gateid);
 	}
 
-	if (note_change) {
-		synth_param[retriggerid].value = 2;
-		virt_retrigger(retriggerid);
+	if (!(shiftctrl_flag_state(SELPORTAMENTO) && retrigger))
+	{
+		if (note_change || retrigger) {
+			synth_param[retriggerid].value = 2;
+			virt_retrigger(retriggerid);
+
+			for (int i = 0; i < 16; i++) {
+				if (lfo_param[i].flags & LfoParamFlags_LfoRetrigger) {
+					lfo_reset(i, lfo_param[i].reset_phase);
+				}
+			}
+			for (int i = 0; i < 16; i++) {
+				if (env_param[i].flags & SubParamFlags_AdsrRetrigger) {
+					adsr_set_gate(i, 0, 0);
+					adsr_set_gate(i, synth_param[GATE1 + key_mapping[key_map_target_env1 + i].keyzone].value, 0);
+				}
+			}
+		}
 	}
 }
 
