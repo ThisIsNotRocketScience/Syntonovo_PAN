@@ -57,6 +57,7 @@
 /* TODO: insert other definitions and declarations here. */
 
 void arpclock_run();
+void arpclock_reset();
 void arpclock_set_speed(float bpm);
 
 uint32_t timer_value();
@@ -135,6 +136,10 @@ public:
 	}
 
 	virtual void NoteOn(int note, int vel) {
+		if (vel == 0) {
+			NOTEOFF(zone_, note);
+			return;
+		}
 		NOTEON(zone_, note, vel);
 	}
 	virtual void NoteOff(int note, int vel) {
@@ -176,8 +181,15 @@ void key_down(key_source_t source, int channel, int key, int vel)
 				direct[zone].NoteOn(playkey, vel);
 				break;
 			case PresetKeyzoneType_Arpeggiator:
-				arp[zone].NoteOn(playkey, vel);
-				break;
+				{
+					if (preset.keyzone[zone].arpsettings.ResetTimeOnFirstKey) {
+						if (!arp[0].NotesOn && !arp[1].NotesOn && !arp[2].NotesOn && !arp[3].NotesOn) {
+							arpclock_reset();
+						}
+					}
+					arp[zone].NoteOn(playkey, vel);
+					break;
+				}
 			}
 		}
 	}
@@ -1313,6 +1325,17 @@ void preset_init()
 	preset.clock.internal_bpm = 12000;
 	arpclock_set_speed((float)preset.clock.internal_bpm * 0.01f);
 
+	preset.keyzone[0].type = PresetKeyzoneType_Arpeggiator;
+	preset.keyzone[0].arpsettings = ArpSettings_t();
+	preset.keyzone[0].arpsettings.Mode = Arp_UpDown;
+	preset.keyzone[0].arpsettings.Octaves = Oct_Two;
+	preset.keyzone[0].arpsettings.ResetTimeOnFirstKey = true;
+	preset.keyzone[0].arpsettings.Rhythm = 0xff;
+	preset.keyzone[0].arpsettings.TimingSource = TimeSource_Internal;
+	preset.keyzone[0].arpsettings.Interleave = Interleave_Pattern;
+	preset.keyzone[0].arpsettings.Speed.Top = 1;
+	preset.keyzone[0].arpsettings.Speed.Bottom = 16;
+
 	preset.low.h = 0x1000;
 	preset.high.h = 0x1000;
 	preset.active.h = 0xC000;
@@ -1822,6 +1845,8 @@ void arpclock_init()
 	CLOCK_EnableClock(kCLOCK_Ct32b0);
 	RESET_ClearPeripheralReset(kCT32B0_RST_SHIFT_RSTn);
 
+	CTIMER0->TCR = CTIMER_TCR_CRST_MASK;
+
 	CTIMER0->PR = 59; // 180 MHz / 60 = 3 MHz
 	CTIMER0->MCR = CTIMER_MCR_MR0I_MASK | CTIMER_MCR_MR0R_MASK | CTIMER_MCR_MR0RL_MASK;
 	CTIMER0->CTCR = 0;
@@ -1838,11 +1863,24 @@ void arpclock_run()
 
 	NVIC_SetPriority(CTIMER0_IRQn, 2);
 	NVIC_EnableIRQ(CTIMER0_IRQn);
+
+	CTIMER0->TCR = CTIMER_TCR_CEN_MASK;
+}
+
+void arpclock_reset()
+{
+	CTIMER0->TCR = CTIMER_TCR_CEN_MASK | CTIMER_TCR_CRST_MASK;
+	__NOP();
+	__NOP();
+	__NOP();
+	__NOP();
+	CTIMER0->TCR = CTIMER_TCR_CEN_MASK;
 }
 
 void arpclock_set_speed(float bpm)
 {
-	CTIMER0->MSR[0] = (int)((180000000.f /* * 60.f */ ) / bpm);
+	// 180 MHz / 24 = 7.5 MHz
+	CTIMER0->MSR[0] = (int)((7500000.f /* * 60.f */ ) / bpm);
 }
 
 int main(void) {
