@@ -79,6 +79,8 @@ volatile int loading = 0;
 #define NOTEON(zone, note, velocity) dsp_cmd(0xfc, 2 | ((zone&3) << 4), note | (velocity << 8))
 #define NOTEOFF(zone, note) dsp_cmd(0xfc, 1 | ((zone&3) << 4), note)
 
+#define SET_KEYPRIORITY(zone, priority) dsp_cmd(0xfe, 0xfc, (((zone)&3) << 3) | (priority&7));
+
 void dsp_reset()
 {
 	uint8_t data[4];
@@ -147,6 +149,8 @@ public:
 		NOTEOFF(zone_, note);
 	}
 	virtual void Panic() {
+		// setting key priority resets playing notes
+		SET_KEYPRIORITY(zone_, preset.keyzone[zone_].keypriority);
 	};
 	virtual void Start() {};
 	virtual void Stop() { Panic(); };
@@ -1327,10 +1331,13 @@ void preset_init()
 	}
 	for (int i = 0; i < 4; i++) {
 		preset.keyzone[i].type = PresetKeyzoneType_Single;
+		preset.keyzone[i].keypriority = PresetKeyzoneKeyPriority_high;
+
+		SET_KEYPRIORITY(i, preset.keyzone[i].keypriority);
 	}
 
 	preset.clock.source = ClockSourceType_Internal;
-	preset.clock.internal_bpm = 12000;
+	preset.clock.internal_bpm = 14400;
 	arpclock_set_speed((float)preset.clock.internal_bpm * 0.01f);
 
 	preset.keyzone[0].type = PresetKeyzoneType_Arpeggiator;
@@ -1343,6 +1350,7 @@ void preset_init()
 	preset.keyzone[0].arpsettings.Interleave = Interleave_Pattern;
 	preset.keyzone[0].arpsettings.Speed.Top = 1;
 	preset.keyzone[0].arpsettings.Speed.Bottom = 16;
+	preset.keyzone[0].arpsettings.KillNotesAfterLastNoteOff = true;
 
 	preset.low.h = 0x1000;
 	preset.high.h = 0x1000;
@@ -1442,6 +1450,14 @@ void sync_preset(uint32_t addr)
 		case 1:
 			arpclock_set_speed((float)preset.clock.internal_bpm * 0.01f);
 			break;
+		}
+	}
+	else if (addr >= offsetof(PanPreset_t, keyzone)) {
+		addr -= offsetof(PanPreset_t, keyzone);
+		int zone = addr / sizeof(keyzone_settings_t);
+		int suboffset = addr - zone * sizeof(keyzone_settings_t);
+		if (suboffset >= offsetof(keyzone_settings_t, keypriority) && suboffset < offsetof(keyzone_settings_t, keypriority)+4) {
+			SET_KEYPRIORITY(zone, preset.keyzone[zone].keypriority);
 		}
 	}
 	else if (addr >= offsetof(PanPreset_t, key_input)) {
@@ -1651,6 +1667,10 @@ void sync_preset_full()
 
 	for (int tgt = 0; tgt < 0x40; tgt++) {
 		SETKEYMAP(tgt, preset.key_mapping[tgt].keyzone, preset.key_mapping[tgt].keyindex);
+	}
+
+	for (int zone = 0; zone < 4; zone++) {
+		SET_KEYPRIORITY(zone, preset.keyzone[zone].keypriority);
 	}
 
 	arpclock_set_speed((float)preset.clock.internal_bpm * 0.01f);

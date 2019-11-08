@@ -138,10 +138,18 @@ enum PresetKeyzoneType
 	PresetKeyzoneType_Arpeggiator,
 };
 
+enum PresetKeyzoneKeyPriority
+{
+	PresetKeyzoneKeyPriority_low = 1,
+	PresetKeyzoneKeyPriority_high = 2,
+	PresetKeyzoneKeyPriority_last = 3,
+};
+
 typedef struct
 {
 	PresetKeyzoneType type;
 	ArpSettings_t arpsettings;
+	PresetKeyzoneKeyPriority keypriority;
 } PACKED keyzone_settings_t;
 
 enum ClockSourceType

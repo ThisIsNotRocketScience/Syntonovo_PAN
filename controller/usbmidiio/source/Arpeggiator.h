@@ -36,6 +36,7 @@ class ArpeggioState : public Synth
 public:
 	ArpeggioState()
 	{
+		Target = 0;
 		NotesOn = 0;
 		Panic();
 	}
@@ -97,6 +98,7 @@ public:
 		{
 			Target->NoteOff(LastNote, 0);
 			LastNote = -1;
+			Stop();
 		}
 		Rebuild();
 	}
@@ -361,6 +363,7 @@ public:
 		NoteIndex = 0xffff;
 		NoteTicks = 0;
 		LastNote = -1;
+		if (Target) Target->Panic();
 	}
 
 	int8_t NoteActive[128];
