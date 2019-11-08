@@ -283,13 +283,13 @@ void update_porta_time(int zone, int note, int retrigger)
 		|| (shiftctrl_flag_state(SELSTACCATO) && !retrigger))
 	{
 		// no portamento
-		porta->porta_timer_shift = 14;
+		porta->porta_timer_shift = 13;
 		porta->porta_time = abs(synth_param[note].value - synth_param[note].last);
 		return;
 	}
 
 	porta->porta_time = (abs((int32_t)(synth_param[note].value - synth_param[note].last)) * 256) / porta->porta_divider;
-	porta->porta_timer_shift = 14;
+	porta->porta_timer_shift = 13;
 	int div = porta->porta_divider;
 	while (porta->porta_time < 1 && div > 4) {
 		porta->porta_timer_shift++;
@@ -1621,7 +1621,19 @@ void virt_PORTAMENTO_TIME()
 	do_smooth(PORTAMENTO_TIME);
 	if (synth_param[PORTAMENTO_TIME].value != synth_param[PORTAMENTO_TIME].last) {
 		synth_param[PORTAMENTO_TIME].last = synth_param[PORTAMENTO_TIME].value;
-		porta_state[0].porta_divider = 256 + ((int32_t)synth_param[PORTAMENTO_TIME].value * 8);
+		int value = (int32_t)synth_param[PORTAMENTO_TIME].value;
+		if (value < 0x1000) {
+			porta_state[0].porta_divider = 256 + ((int32_t)synth_param[PORTAMENTO_TIME].value);
+		}
+		else if (value < 0x2000) {
+			porta_state[0].porta_divider = 256 + ((int32_t)synth_param[PORTAMENTO_TIME].value) + ((int32_t)synth_param[PORTAMENTO_TIME].value - 0x1000) * 2;
+		}
+		else if (value < 0x4000) {
+			porta_state[0].porta_divider = 256 + ((int32_t)synth_param[PORTAMENTO_TIME].value) + ((int32_t)synth_param[PORTAMENTO_TIME].value - 0x1000) * 2 + ((int32_t)synth_param[PORTAMENTO_TIME].value - 0x2000) * 4;
+		}
+		else {
+			porta_state[0].porta_divider = 256 + ((int32_t)synth_param[PORTAMENTO_TIME].value) + ((int32_t)synth_param[PORTAMENTO_TIME].value - 0x1000) * 2 + ((int32_t)synth_param[PORTAMENTO_TIME].value - 0x2000) * 4 + ((int32_t)synth_param[PORTAMENTO_TIME].value - 0x4000) * 16;
+		}
 	}
 }
 
