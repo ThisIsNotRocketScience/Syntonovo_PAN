@@ -239,7 +239,7 @@ usb_status_t USB_DeviceCdcAcmEndpointsInit(usb_device_cdc_acm_struct_t *cdcAcmHa
 
     interfaceList = &cdcAcmHandle->configStruct->classInfomation->interfaceList[cdcAcmHandle->configuration - 1];
 
-    for (int count = 0; count < interfaceList->count; count++)
+    /*for (int count = 0; count < interfaceList->count; count++)
     {
         if (USB_DEVICE_CONFIG_CDC_COMM_CLASS_CODE == interfaceList->interfaces[count].classCode)
         {
@@ -259,8 +259,8 @@ usb_status_t USB_DeviceCdcAcmEndpointsInit(usb_device_cdc_acm_struct_t *cdcAcmHa
     {
         return error;
     }
-    cdcAcmHandle->commInterfaceHandle = interface;
-    for (int count = 0; count < interface->endpointList.count; count++)
+    cdcAcmHandle->commInterfaceHandle = interface;*/
+    /*for (int count = 0; count < interface->endpointList.count; count++)
     {
         usb_device_endpoint_init_struct_t epInitStruct;
         usb_device_endpoint_callback_struct_t epCallback;
@@ -284,7 +284,7 @@ usb_status_t USB_DeviceCdcAcmEndpointsInit(usb_device_cdc_acm_struct_t *cdcAcmHa
         epCallback.callbackParam = cdcAcmHandle;
 
         error = USB_DeviceInitEndpoint(cdcAcmHandle->handle, &epInitStruct, &epCallback);
-    }
+    }*/
 
     for (int count = 0; count < interfaceList->count; count++)
     {

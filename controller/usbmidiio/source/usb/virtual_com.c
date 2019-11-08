@@ -49,7 +49,7 @@
 #include "fsl_debug_console.h"
 
 #include "usb_device_descriptor.h"
-#include "virtual_com.h"
+//#include "virtual_com.h"
 #if (defined(FSL_FEATURE_SOC_SYSMPU_COUNT) && (FSL_FEATURE_SOC_SYSMPU_COUNT > 0U))
 #include "fsl_sysmpu.h"
 #endif /* FSL_FEATURE_SOC_SYSMPU_COUNT */
@@ -65,6 +65,7 @@ extern uint8_t USB_EnterLowpowerMode(void);
 #include "pin_mux.h"
 #include <stdbool.h>
 #include "fsl_power.h"
+#include "midicmd.h"
 /*******************************************************************************
 * Definitions
 ******************************************************************************/
@@ -81,14 +82,54 @@ void USB_DeviceTaskFn(void *deviceHandle);
 
 void BOARD_DbgConsole_Deinit(void);
 void BOARD_DbgConsole_Init(void);
-usb_status_t USB_DeviceCdcVcomCallback(class_handle_t handle, uint32_t event, void *param);
+usb_status_t USB_DeviceMidiStreamingCallback(class_handle_t handle, uint32_t event, void *param);
 usb_status_t USB_DeviceCallback(usb_device_handle handle, uint32_t event, void *param);
 
 /*******************************************************************************
 * Variables
 ******************************************************************************/
-extern usb_device_endpoint_struct_t g_UsbDeviceCdcVcomDicEndpoints[];
-extern usb_device_class_struct_t g_UsbDeviceCdcVcomConfig;
+extern usb_device_endpoint_struct_t g_UsbDeviceMidiStreamingEndpoints[];
+extern usb_device_class_struct_t g_UsbDeviceMidiStreamingConfig;
+
+#define FIFO_SIZE (256)
+volatile int input_fifo_readpos = 0;
+volatile int input_fifo_writepos = 0;
+volatile uint8_t input_fifo[FIFO_SIZE];
+
+int input_fifo_free() {
+	return (input_fifo_readpos - input_fifo_writepos - 1) & (FIFO_SIZE - 1);
+}
+
+int input_fifo_used() {
+	return (input_fifo_writepos - input_fifo_readpos) & (FIFO_SIZE - 1);
+}
+
+uint8_t input_fifo_read() {
+	int readpos = input_fifo_readpos;
+	uint8_t b = input_fifo[readpos];
+	input_fifo_readpos = (readpos + 1) & (FIFO_SIZE - 1);
+	return b;
+}
+
+#define USB_MIDISTREAMING_INTERFACE_COUNT (1)
+
+/* Define the types for application */
+typedef struct _usb_midistreaming_struct
+{
+    usb_device_handle deviceHandle; /* USB device handle. */
+    class_handle_t midiStreamingHandle; /* USB MidiStreaming class handle.                                                         */
+    volatile uint8_t attach;     /* A flag to indicate whether a usb device is attached. 1: attached, 0: not attached */
+    uint8_t speed;               /* Speed of USB device. USB_SPEED_FULL/USB_SPEED_LOW/USB_SPEED_HIGH.                 */
+    volatile uint8_t startTransactions; /* A flag to indicate whether a CDC device is ready to transmit and receive data.    */
+    uint8_t currentConfiguration; /* Current configuration value. */
+    uint8_t currentInterfaceAlternateSetting
+        [USB_MIDISTREAMING_INTERFACE_COUNT]; /* Current alternate setting value for each interface. */
+    volatile int readActive;
+} usb_midistreaming_struct_t;
+
+usb_midistreaming_struct_t s_MidiStreaming;
+
+#if 0
 /* Data structure of virtual com device */
 usb_cdc_vcom_struct_t s_cdcVcom;
 
@@ -113,20 +154,45 @@ USB_DMA_INIT_DATA_ALIGN(USB_DATA_ALIGN_SIZE) static uint8_t s_countryCode[COMM_F
 
 /* CDC ACM information */
 USB_DMA_NONINIT_DATA_ALIGN(USB_DATA_ALIGN_SIZE) static usb_cdc_acm_info_t s_usbCdcAcmInfo;
-/* Data buffer for receiving and sending*/
+#endif
+
+#if defined(USB_DEVICE_CONFIG_EHCI) && (USB_DEVICE_CONFIG_EHCI > 0)
+#define CONTROLLER_ID kUSB_ControllerEhci0
+#define DATA_BUFF_SIZE HS_CDC_VCOM_BULK_OUT_PACKET_SIZE
+
+#endif
+#if defined(USB_DEVICE_CONFIG_KHCI) && (USB_DEVICE_CONFIG_KHCI > 0)
+#define CONTROLLER_ID kUSB_ControllerKhci0
+#define DATA_BUFF_SIZE FS_CDC_VCOM_BULK_OUT_PACKET_SIZE
+
+#endif
+#if defined(USB_DEVICE_CONFIG_LPCIP3511FS) && (USB_DEVICE_CONFIG_LPCIP3511FS > 0U)
+#define CONTROLLER_ID kUSB_ControllerLpcIp3511Fs0
+#define DATA_BUFF_SIZE FS_CDC_VCOM_BULK_OUT_PACKET_SIZE
+
+#endif
+
+#if defined(USB_DEVICE_CONFIG_LPCIP3511HS) && (USB_DEVICE_CONFIG_LPCIP3511HS > 0U)
+#define CONTROLLER_ID kUSB_ControllerLpcIp3511Hs0
+#define DATA_BUFF_SIZE HS_CDC_VCOM_BULK_OUT_PACKET_SIZE
+#endif
+
+#define USB_DEVICE_INTERRUPT_PRIORITY (3U)
+
+/* Data buffer for receiving and sending */
 USB_DMA_NONINIT_DATA_ALIGN(USB_DATA_ALIGN_SIZE) static uint8_t s_currRecvBuf[DATA_BUFF_SIZE];
 USB_DMA_NONINIT_DATA_ALIGN(USB_DATA_ALIGN_SIZE) static uint8_t s_currSendBuf[DATA_BUFF_SIZE];
 volatile static uint32_t s_recvSize = 0;
 volatile static uint32_t s_sendSize = 0;
 
 /* USB device class information */
-static usb_device_class_config_struct_t s_cdcAcmConfig[1] = {{
-    USB_DeviceCdcVcomCallback, 0, &g_UsbDeviceCdcVcomConfig,
+static usb_device_class_config_struct_t s_midiStreamingConfig[1] = {{
+    USB_DeviceMidiStreamingCallback, 0, &g_UsbDeviceMidiStreamingConfig,
 }};
 
 /* USB device class configuraion information */
-static usb_device_class_config_list_struct_t s_cdcAcmConfigList = {
-    s_cdcAcmConfig, USB_DeviceCallback, 1,
+static usb_device_class_config_list_struct_t s_midiStreamingConfigList = {
+		s_midiStreamingConfig, USB_DeviceCallback, 1,
 };
 
 #if defined(FSL_FEATURE_USB_KHCI_KEEP_ALIVE_ENABLED) && (FSL_FEATURE_USB_KHCI_KEEP_ALIVE_ENABLED > 0U) && \
@@ -147,7 +213,7 @@ void USB0_IRQHandler(void)
 #if (defined(USB_DEVICE_CONFIG_LPCIP3511HS) && (USB_DEVICE_CONFIG_LPCIP3511HS > 0U))
 void USB1_IRQHandler(void)
 {
-    USB_DeviceLpcIp3511IsrFunction(s_cdcVcom.deviceHandle);
+    USB_DeviceLpcIp3511IsrFunction(s_MidiStreaming.deviceHandle);
 }
 #endif
 void USB_DeviceClockInit(void)
@@ -174,6 +240,7 @@ void USB_DeviceClockInit(void)
 #endif
 #endif
 }
+
 void USB_DeviceIsrEnable(void)
 {
     uint8_t irqNumber;
@@ -200,6 +267,98 @@ void USB_DeviceTaskFn(void *deviceHandle)
 #endif
 }
 #endif
+
+usb_status_t USB_DeviceMidiStreamingCallback(class_handle_t handle, uint32_t event, void *param)
+{
+    //uint32_t len;
+    //uint8_t *uartBitmap;
+    //usb_device_cdc_acm_request_param_struct_t *acmReqParam;
+    usb_device_endpoint_callback_message_struct_t *epCbParam;
+    usb_status_t error = kStatus_USB_Error;
+    //usb_cdc_acm_info_t *acmInfo = &s_usbCdcAcmInfo;
+    //acmReqParam = (usb_device_cdc_acm_request_param_struct_t *)param;
+    epCbParam = (usb_device_endpoint_callback_message_struct_t *)param;
+    switch (event)
+    {
+        case kUSB_DeviceCdcEventSendResponse:
+        {
+            if ((epCbParam->length != 0) && (!(epCbParam->length % g_UsbDeviceMidiStreamingEndpoints[0].maxPacketSize)))
+            {
+                /* If the last packet is the size of endpoint, then send also zero-ended packet,
+                 ** meaning that we want to inform the host that we do not have any additional
+                 ** data, so it can flush the output.
+                 */
+                error = USB_DeviceCdcAcmSend(handle, USB_CDC_VCOM_BULK_IN_ENDPOINT, NULL, 0);
+            }
+            else if ((1 == s_MidiStreaming.attach) && (1 == s_MidiStreaming.startTransactions))
+            {
+                if ((epCbParam->buffer != NULL) || ((epCbParam->buffer == NULL) && (epCbParam->length == 0)))
+                {
+                    /* User: add your own code for send complete event */
+                    /* Schedule buffer for next receive event */
+                	if (!s_MidiStreaming.readActive) {
+						s_MidiStreaming.readActive = 1;
+						error = USB_DeviceCdcAcmRecv(handle, USB_CDC_VCOM_BULK_OUT_ENDPOINT, s_currRecvBuf,
+													 g_UsbDeviceMidiStreamingEndpoints[0].maxPacketSize);
+                	}
+#if defined(FSL_FEATURE_USB_KHCI_KEEP_ALIVE_ENABLED) && (FSL_FEATURE_USB_KHCI_KEEP_ALIVE_ENABLED > 0U) && \
+    defined(USB_DEVICE_CONFIG_KEEP_ALIVE_MODE) && (USB_DEVICE_CONFIG_KEEP_ALIVE_MODE > 0U) &&             \
+    defined(FSL_FEATURE_USB_KHCI_USB_RAM) && (FSL_FEATURE_USB_KHCI_USB_RAM > 0U)
+                    s_waitForDataReceive = 1;
+                    USB0->INTEN &= ~USB_INTEN_SOFTOKEN_MASK;
+#endif
+                }
+            }
+            else
+            {
+            }
+        }
+        break;
+        case kUSB_DeviceCdcEventRecvResponse:
+        {
+			s_MidiStreaming.readActive = 0;
+            if ((1 == s_MidiStreaming.attach) && (1 == s_MidiStreaming.startTransactions))
+            {
+                s_recvSize = epCbParam->length;
+
+                int count = (int)s_recvSize;
+
+                for (int i = 0; i < count; i++) {
+                	int writepos = input_fifo_writepos;
+                	input_fifo[writepos] = s_currRecvBuf[i];
+                	input_fifo_writepos = (writepos + 1) & (FIFO_SIZE - 1);
+                }
+
+#if defined(FSL_FEATURE_USB_KHCI_KEEP_ALIVE_ENABLED) && (FSL_FEATURE_USB_KHCI_KEEP_ALIVE_ENABLED > 0U) && \
+    defined(USB_DEVICE_CONFIG_KEEP_ALIVE_MODE) && (USB_DEVICE_CONFIG_KEEP_ALIVE_MODE > 0U) &&             \
+    defined(FSL_FEATURE_USB_KHCI_USB_RAM) && (FSL_FEATURE_USB_KHCI_USB_RAM > 0U)
+                s_waitForDataReceive = 0;
+                USB0->INTEN |= USB_INTEN_SOFTOKEN_MASK;
+#endif
+                if (!s_recvSize && input_fifo_free() >= g_UsbDeviceMidiStreamingEndpoints[0].maxPacketSize)
+                {
+                    /* Schedule buffer for next receive event */
+                	if (!s_MidiStreaming.readActive) {
+						s_MidiStreaming.readActive = 1;
+						error = USB_DeviceCdcAcmRecv(handle, USB_CDC_VCOM_BULK_OUT_ENDPOINT, s_currRecvBuf,
+													 g_UsbDeviceMidiStreamingEndpoints[0].maxPacketSize);
+                	}
+#if defined(FSL_FEATURE_USB_KHCI_KEEP_ALIVE_ENABLED) && (FSL_FEATURE_USB_KHCI_KEEP_ALIVE_ENABLED > 0U) && \
+    defined(USB_DEVICE_CONFIG_KEEP_ALIVE_MODE) && (USB_DEVICE_CONFIG_KEEP_ALIVE_MODE > 0U) &&             \
+    defined(FSL_FEATURE_USB_KHCI_USB_RAM) && (FSL_FEATURE_USB_KHCI_USB_RAM > 0U)
+                    s_waitForDataReceive = 1;
+                    USB0->INTEN &= ~USB_INTEN_SOFTOKEN_MASK;
+#endif
+                }
+            }
+        }
+        break;
+    }
+
+    return error;
+}
+
+#if 0
 /*!
  * @brief CDC class specific callback function.
  *
@@ -225,7 +384,7 @@ usb_status_t USB_DeviceCdcVcomCallback(class_handle_t handle, uint32_t event, vo
     {
         case kUSB_DeviceCdcEventSendResponse:
         {
-            if ((epCbParam->length != 0) && (!(epCbParam->length % g_UsbDeviceCdcVcomDicEndpoints[0].maxPacketSize)))
+            if ((epCbParam->length != 0) && (!(epCbParam->length % g_UsbDeviceMidiStreamingEndpoints[0].maxPacketSize)))
             {
                 /* If the last packet is the size of endpoint, then send also zero-ended packet,
                  ** meaning that we want to inform the host that we do not have any additional
@@ -240,7 +399,7 @@ usb_status_t USB_DeviceCdcVcomCallback(class_handle_t handle, uint32_t event, vo
                     /* User: add your own code for send complete event */
                     /* Schedule buffer for next receive event */
                     error = USB_DeviceCdcAcmRecv(handle, USB_CDC_VCOM_BULK_OUT_ENDPOINT, s_currRecvBuf,
-                                                 g_UsbDeviceCdcVcomDicEndpoints[0].maxPacketSize);
+                                                 g_UsbDeviceMidiStreamingEndpoints[0].maxPacketSize);
 #if defined(FSL_FEATURE_USB_KHCI_KEEP_ALIVE_ENABLED) && (FSL_FEATURE_USB_KHCI_KEEP_ALIVE_ENABLED > 0U) && \
     defined(USB_DEVICE_CONFIG_KEEP_ALIVE_MODE) && (USB_DEVICE_CONFIG_KEEP_ALIVE_MODE > 0U) &&             \
     defined(FSL_FEATURE_USB_KHCI_USB_RAM) && (FSL_FEATURE_USB_KHCI_USB_RAM > 0U)
@@ -270,7 +429,7 @@ usb_status_t USB_DeviceCdcVcomCallback(class_handle_t handle, uint32_t event, vo
                 {
                     /* Schedule buffer for next receive event */
                     error = USB_DeviceCdcAcmRecv(handle, USB_CDC_VCOM_BULK_OUT_ENDPOINT, s_currRecvBuf,
-                                                 g_UsbDeviceCdcVcomDicEndpoints[0].maxPacketSize);
+                                                 g_UsbDeviceMidiStreamingEndpoints[0].maxPacketSize);
 #if defined(FSL_FEATURE_USB_KHCI_KEEP_ALIVE_ENABLED) && (FSL_FEATURE_USB_KHCI_KEEP_ALIVE_ENABLED > 0U) && \
     defined(USB_DEVICE_CONFIG_KEEP_ALIVE_MODE) && (USB_DEVICE_CONFIG_KEEP_ALIVE_MODE > 0U) &&             \
     defined(FSL_FEATURE_USB_KHCI_USB_RAM) && (FSL_FEATURE_USB_KHCI_USB_RAM > 0U)
@@ -448,6 +607,15 @@ usb_status_t USB_DeviceCdcVcomCallback(class_handle_t handle, uint32_t event, vo
 
     return error;
 }
+#endif
+
+/*uint32_t events[32] = {0};
+int eventpos = 0;
+void logevent(uint32_t event)
+{
+	if (eventpos >= 32) return;
+	events[eventpos++] = event;
+}*/
 
 /*!
  * @brief USB device callback function.
@@ -466,42 +634,49 @@ usb_status_t USB_DeviceCallback(usb_device_handle handle, uint32_t event, void *
     uint16_t *temp16 = (uint16_t *)param;
     uint8_t *temp8 = (uint8_t *)param;
 
+    //logevent(event);
+
     switch (event)
     {
         case kUSB_DeviceEventBusReset:
         {
-            s_cdcVcom.attach = 0;
+        	s_MidiStreaming.attach = 0;
+        	s_MidiStreaming.startTransactions = 0;
 #if (defined(USB_DEVICE_CONFIG_EHCI) && (USB_DEVICE_CONFIG_EHCI > 0U)) || \
     (defined(USB_DEVICE_CONFIG_LPCIP3511HS) && (USB_DEVICE_CONFIG_LPCIP3511HS > 0U))
             /* Get USB speed to configure the device, including max packet size and interval of the endpoints. */
-            if (kStatus_USB_Success == USB_DeviceClassGetSpeed(CONTROLLER_ID, &s_cdcVcom.speed))
+            if (kStatus_USB_Success == USB_DeviceClassGetSpeed(CONTROLLER_ID, &s_MidiStreaming.speed))
             {
-                USB_DeviceSetSpeed(handle, s_cdcVcom.speed);
+                USB_DeviceSetSpeed(handle, s_MidiStreaming.speed);
             }
 #endif
         }
         break;
         case kUSB_DeviceEventSetConfiguration:
-            if (param)
+        	if (param)
             {
-                s_cdcVcom.attach = 1;
-                s_cdcVcom.currentConfiguration = *temp8;
-                if (USB_CDC_VCOM_CONFIGURE_INDEX == (*temp8))
+        		s_MidiStreaming.attach = 1;
+        		s_MidiStreaming.startTransactions = 1;
+        		s_MidiStreaming.currentConfiguration = *temp8;
+                if (/*USB_CDC_VCOM_CONFIGURE_INDEX*/ 1 == (*temp8))
                 {
                     /* Schedule buffer for receive */
-                    USB_DeviceCdcAcmRecv(s_cdcVcom.cdcAcmHandle, USB_CDC_VCOM_BULK_OUT_ENDPOINT, s_currRecvBuf,
-                                         g_UsbDeviceCdcVcomDicEndpoints[0].maxPacketSize);
+                	if (!s_MidiStreaming.readActive) {
+						s_MidiStreaming.readActive = 1;
+						USB_DeviceCdcAcmRecv(s_MidiStreaming.midiStreamingHandle, USB_CDC_VCOM_BULK_OUT_ENDPOINT, s_currRecvBuf,
+											 g_UsbDeviceMidiStreamingEndpoints[0].maxPacketSize);
+                	}
                 }
             }
             break;
         case kUSB_DeviceEventSetInterface:
-            if (s_cdcVcom.attach)
+        	if (s_MidiStreaming.attach)
             {
                 uint8_t interface = (uint8_t)((*temp16 & 0xFF00U) >> 0x08U);
                 uint8_t alternateSetting = (uint8_t)(*temp16 & 0x00FFU);
-                if (interface < USB_CDC_VCOM_INTERFACE_COUNT)
+                if (interface < USB_MIDISTREAMING_INTERFACE_COUNT)
                 {
-                    s_cdcVcom.currentInterfaceAlternateSetting[interface] = alternateSetting;
+                	s_MidiStreaming.currentInterfaceAlternateSetting[interface] = alternateSetting;
                 }
             }
             break;
@@ -550,25 +725,28 @@ void APPInit(void)
     SYSMPU_Enable(SYSMPU, 0);
 #endif /* FSL_FEATURE_SOC_SYSMPU_COUNT */
 
-    s_cdcVcom.speed = USB_SPEED_FULL;
-    s_cdcVcom.attach = 0;
-    s_cdcVcom.cdcAcmHandle = (class_handle_t)NULL;
-    s_cdcVcom.deviceHandle = NULL;
+    s_MidiStreaming.speed = USB_SPEED_FULL;
+    s_MidiStreaming.attach = 0;
+    s_MidiStreaming.midiStreamingHandle = (class_handle_t)NULL;
+    s_MidiStreaming.deviceHandle = NULL;
+    s_MidiStreaming.readActive = 0;
 
-    if (kStatus_USB_Success != USB_DeviceClassInit(CONTROLLER_ID, &s_cdcAcmConfigList, &s_cdcVcom.deviceHandle))
+    if (kStatus_USB_Success != USB_DeviceClassInit(CONTROLLER_ID, &s_midiStreamingConfigList, &s_MidiStreaming.deviceHandle))
     {
         usb_echo("USB device init failed\r\n");
     }
     else
     {
         usb_echo("USB device CDC virtual com demo\r\n");
-        s_cdcVcom.cdcAcmHandle = s_cdcAcmConfigList.config->classHandle;
+        s_MidiStreaming.midiStreamingHandle = s_midiStreamingConfigList.config->classHandle;
     }
 
     USB_DeviceIsrEnable();
 
-    USB_DeviceRun(s_cdcVcom.deviceHandle);
+    USB_DeviceRun(s_MidiStreaming.deviceHandle);
 }
+
+void DoMidiCommand(midicmd_t cmd);
 
 /*!
  * @brief Application task function.
@@ -580,6 +758,25 @@ void APPInit(void)
 void APPTask(void)
 {
     usb_status_t error = kStatus_USB_Error;
+
+    while (input_fifo_used() >= 4) {
+    	midicmd_t cmd;
+    	cmd.header = input_fifo_read();
+    	cmd.b1 = input_fifo_read();
+    	cmd.b2 = input_fifo_read();
+    	cmd.b3 = input_fifo_read();
+		cmd.header = 0x20;
+		__disable_irq();
+    	DoMidiCommand(cmd);
+    	__enable_irq();
+    }
+
+	if (!s_MidiStreaming.readActive && (1 == s_MidiStreaming.attach) && (1 == s_MidiStreaming.startTransactions)) {
+		s_MidiStreaming.readActive = 1;
+		USB_DeviceCdcAcmRecv(s_MidiStreaming.midiStreamingHandle, USB_CDC_VCOM_BULK_OUT_ENDPOINT, s_currRecvBuf, g_UsbDeviceMidiStreamingEndpoints[0].maxPacketSize);
+	}
+
+#if 0
     if ((1 == s_cdcVcom.attach) && (1 == s_cdcVcom.startTransactions))
     {
         /* User Code */
@@ -607,6 +804,8 @@ void APPTask(void)
                 /* Failure to send Data Handling code here */
             }
         }
+#endif
+
 #if defined(FSL_FEATURE_USB_KHCI_KEEP_ALIVE_ENABLED) && (FSL_FEATURE_USB_KHCI_KEEP_ALIVE_ENABLED > 0U) && \
     defined(USB_DEVICE_CONFIG_KEEP_ALIVE_MODE) && (USB_DEVICE_CONFIG_KEEP_ALIVE_MODE > 0U) &&             \
     defined(FSL_FEATURE_USB_KHCI_USB_RAM) && (FSL_FEATURE_USB_KHCI_USB_RAM > 0U)
@@ -635,8 +834,8 @@ void APPTask(void)
             BOARD_DbgConsole_Init();
             usb_echo("Exit  lowpower\r\n");
         }
-#endif
     }
+#endif
 }
 
 #if 0

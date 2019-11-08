@@ -70,7 +70,7 @@ outputs:
 - {id: SYSPLL_clock.outFreq, value: 180 MHz}
 - {id: System_clock.outFreq, value: 180 MHz}
 - {id: USB1_clock.outFreq, value: 48 MHz}
-- {id: USBPLL_clock.outFreq, value: 48 MHz}
+- {id: USBPLL_clock.outFreq, value: 96 MHz}
 settings:
 - {id: ASYNC_SYSCON.ASYNCAPBCLKSELA.sel, value: SYSCON.audio_pll_clk}
 - {id: SYSCON.AHBCLKDIV.scale, value: '1', locked: true}
@@ -87,8 +87,9 @@ settings:
 - {id: SYSCON.SCTCLKSEL.sel, value: SYSCON.MAINCLKSELB}
 - {id: SYSCON.SPIFICLKDIV.scale, value: '9', locked: true}
 - {id: SYSCON.SPIFICLKSEL.sel, value: SYSCON.PLL_BYPASS}
+- {id: SYSCON.USB1CLKDIV.scale, value: '2', locked: true}
 - {id: SYSCON.USB1CLKSEL.sel, value: SYSCON.USBDIRECT}
-- {id: SYSCON.USBPLL_PSEL.scale, value: '4', locked: true}
+- {id: SYSCON.USBPLL_PSEL.scale, value: '2', locked: true}
 - {id: SYSCON.USB_M_MULT.scale, value: '16', locked: true}
 - {id: SYSCON.USB_N_DIV.scale, value: '1', locked: true}
 - {id: SYSCON_PDRUNCFG0_PDEN_SYS_PLL_CFG, value: Power_up}
@@ -144,7 +145,7 @@ void BOARD_BootClockRUN(void)
     const usb_pll_setup_t usb_pllSetup = {
         .msel = 15U,
         .nsel = 0U,
-        .psel = 1U,
+        .psel = 0U,
         .direct = false,
         .bypass = false,
         .fbsel = false,
@@ -156,7 +157,7 @@ void BOARD_BootClockRUN(void)
     /*!< Set up dividers */
     CLOCK_SetClkDiv(kCLOCK_DivAhbClk, 1U, false);                  /*!< Reset divider counter and set divider to value 1 */
     CLOCK_SetClkDiv(kCLOCK_DivUsb1Clk, 0U, true);                  /*!< Reset USB1CLKDIV divider counter and halt it */
-    CLOCK_SetClkDiv(kCLOCK_DivUsb1Clk, 1U, false);                  /*!< Set USB1CLKDIV divider to value 1 */
+    CLOCK_SetClkDiv(kCLOCK_DivUsb1Clk, 2U, false);                  /*!< Set USB1CLKDIV divider to value 2 */
     CLOCK_SetClkDiv(kCLOCK_DivSctClk, 0U, true);                  /*!< Reset SCTCLKDIV divider counter and halt it */
     CLOCK_SetClkDiv(kCLOCK_DivSctClk, 1U, false);                  /*!< Set SCTCLKDIV divider to value 1 */
 

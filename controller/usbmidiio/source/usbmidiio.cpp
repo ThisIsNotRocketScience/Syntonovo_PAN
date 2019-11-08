@@ -53,6 +53,7 @@
 #include "../../Raspberry/PanPreset.h"
 #include "../../Raspberry/FinalPanEnums.h"
 #include "Arpeggiator.h"
+#include "midicmd.h"
 
 /* TODO: insert other definitions and declarations here. */
 
@@ -162,8 +163,15 @@ typedef enum {
 	key_source_kb
 } key_source_t;
 
+void key_up(key_source_t source, int channel, int key);
+
 void key_down(key_source_t source, int channel, int key, int vel)
 {
+	if (vel == 0) {
+		key_up(source, channel, key);
+		return;
+	}
+
 	int fieldbase = 0;
 	if (source == key_source_midi) fieldbase = 0;
 	else if (source == key_source_usb) fieldbase = 4;
@@ -1883,6 +1891,53 @@ void arpclock_set_speed(float bpm)
 	CTIMER0->MSR[0] = (int)((7500000.f /* * 60.f */ ) / bpm);
 }
 
+extern "C" void DoMidiCommand(midicmd_t cmd)
+{
+	key_source_t src = (cmd.header == 0x10) ? key_source_midi : key_source_usb;
+	int channel = cmd.b1&0xF;
+
+	if ((cmd.b1 & 0xF0) == 0x90)
+	{
+		key_down(src, channel, cmd.b2, cmd.b3);
+	}
+	else if ((cmd.b1 & 0xF0) == 0x80) {
+		key_up(src, channel, cmd.b2);
+	}
+#if 0
+	else if (cmd.b1 == 0xF2) {
+		int beat = cmd.b2 + cmd.b3 * 0x80;
+		for (int i = 0; i < 4; i++) {
+			midi_clock_seek(&clock[i], beat);
+		}
+	}
+	else if (cmd.b1 == 0xF8) {
+		for (int i = 0; i < 4; i++) {
+			midi_clock_step(&clock[i]);
+			if (Settings.CVGate.Channels[i].Arp.TimingSource== TimeSource) arpeggiator[i].TimerTick();
+		}
+	}
+	else if (cmd.b1 == 0xFA) {
+		// start
+		for (int i = 0; i < 4; i++) {
+			midi_clock_seek(&clock[i], 0);
+			if (Settings.CVGate.Channels[i].Arp.TimingSource== TimeSource) arpeggiator[i].Start();
+		}
+		play = 1;
+	}
+	else if (cmd.b1 == 0xFB) {
+		// continue
+		play = 1;
+	}
+	else if (cmd.b1 == 0xFC) {
+		// stop
+		for (int i = 0; i < 4; i++) {
+			if (Settings.CVGate.Channels[i].Arp.TimingSource== TimeSource) arpeggiator[i].Stop();
+		}
+		play = 0;
+	}
+#endif
+}
+
 int main(void) {
   	/* Init board hardware. */
 	BOARD_InitBootPins();
@@ -1895,16 +1950,16 @@ int main(void) {
     LedsOff();
     printf("Board init done\n");
 
-    POWER_DisablePD(kPDRUNCFG_PD_USB1_PHY);
-    /* enable usb1 host clock */
-    CLOCK_EnableClock(kCLOCK_Usbh1);
-    /* According to reference mannual, device mode setting has to be set by access usb host register */
-    *((uint32_t *)(USBHSH_BASE + 0x50)) |= USBHSH_PORTMODE_DEV_ENABLE_MASK;
-    /* disable usb1 host clock */
-    CLOCK_DisableClock(kCLOCK_Usbh1);
-
-    POWER_EnablePD(kPDRUNCFG_PD_VD5);
-    POWER_EnablePD(kPDRUNCFG_PD_USB1_PHY);
+	CLOCK_EnableClock(kCLOCK_Usbd1);
+	CLOCK_EnableClock(kCLOCK_UsbRam1);
+	POWER_EnablePD(kPDRUNCFG_PD_VD5);
+	POWER_EnablePD(kPDRUNCFG_PD_USB1_PHY);
+	/* enable usb1 host clock */
+	CLOCK_EnableClock(kCLOCK_Usbh1);
+	/* disable usb1 host clock */
+	//CLOCK_DisableClock(kCLOCK_Usbh1);
+	/* According to reference manual, device mode setting has to be set by access usb host register */
+	*((uint32_t *)(USBHSH_BASE + 0x50)) |= USBHSH_PORTMODE_DEV_ENABLE_MASK;
 
     printf("USB init done\n");
     //POWER_EnablePD(kPDRUNCFG_PD_VD3);
@@ -1939,7 +1994,7 @@ int main(void) {
     r = xTaskCreate(LedTask, "Leds", 1024, NULL, 3, NULL);
     r = xTaskCreate(ArpTriggerTask, "Arp", 256, NULL, 1, NULL);
     //xTaskCreate(RpiTask, "rpi", 256, NULL, 4, NULL);
-    //xTaskCreate(USBTask, "usb", 512, NULL, 3, NULL);
+    r = xTaskCreate(USBTask, "usb", 2048, NULL, 3, NULL);
     r = xTaskCreate(IdleTask, "idle", 512, NULL, 3, NULL);
 
     printf("Everything running\n");
