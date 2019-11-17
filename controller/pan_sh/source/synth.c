@@ -152,7 +152,7 @@ static void pan_law_init()
 		float x = cosf((float)i * (0.5f * 3.141592654f / 2048.0f));
 		pan_law_table[i] = floorf((x * x) * 16384.f);
 	}
-	pan_law_table[2048];
+	pan_law_table[2048] = 0;
 }
 
 static uint16_t linint(uint16_t* table, uint32_t phase)
@@ -365,8 +365,8 @@ int32_t chase_vco(int vco)
 {
 	int32_t value = 0;
 
-	if (shiftctrl_flag_state(SELCHASEOSC4567)) value += chase(vco, synth_param[CHASE].last) - 0xffff;
-	if (shiftctrl_flag_state(SELSTASHOSC4567)) value += stash(vco, synth_param[STASH].last) - 0xffff;
+//	if (shiftctrl_flag_state(SELCHASEOSC4567)) value += chase(vco, synth_param[CHASE].last) - 0xffff;
+//	if (shiftctrl_flag_state(SELSTASHOSC4567)) value += stash(vco, synth_param[STASH].last) - 0xffff;
 	return value;
 }
 
@@ -374,8 +374,8 @@ int32_t chase_vcf(int vcf)
 {
 	int32_t value = 0;
 
-	if (shiftctrl_flag_state(SELCHASEVCF2)) value += chase(vcf, synth_param[CHASE].last) - 0xffff;
-	if (shiftctrl_flag_state(SELSTASHVCF2)) value += stash(vcf, synth_param[STASH].last) - 0xffff;
+//	if (shiftctrl_flag_state(SELCHASEVCF2)) value += chase(vcf, synth_param[CHASE].last) - 0xffff;
+//	if (shiftctrl_flag_state(SELSTASHVCF2)) value += stash(vcf, synth_param[STASH].last) - 0xffff;
 	return value;
 }
 
@@ -744,6 +744,7 @@ void control_cb(int param, int subparam, uint16_t value)
 				shiftctrl_clear(value & 0x7f);
 			}
 
+			/*
 			if ((value & 0x7f) == KEYPRIO1 || (value & 0x7f) == KEYPRIO2) {
 				notestack_init(0, shiftctrl_flag_state(KEYPRIO1) | (shiftctrl_flag_state(KEYPRIO2) << 1));
 				notestack_init(1, shiftctrl_flag_state(KEYPRIO1) | (shiftctrl_flag_state(KEYPRIO2) << 1));
@@ -751,6 +752,7 @@ void control_cb(int param, int subparam, uint16_t value)
 				notestack_init(3, shiftctrl_flag_state(KEYPRIO1) | (shiftctrl_flag_state(KEYPRIO2) << 1));
 				update_note(0);
 			}
+			*/
 		}
 
 		if (subparam == 0xfc) {
@@ -1194,6 +1196,14 @@ void linpan_r(int ctrlid, int port, int linctrlid, int panctrlid)
 	int result = (synth_param[ctrlid].last != value) || doing_reset;
 	if (result) {
 		synth_param[ctrlid].last = value;
+		ports_value(port, synth_param[ctrlid].last);
+	}
+}
+
+void do_output_GATETRIG_MIX2(int ctrlid, int port)
+{
+	do_smooth(ctrlid);
+	if (process_param_log(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
 }
