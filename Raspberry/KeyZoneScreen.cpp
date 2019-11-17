@@ -43,6 +43,11 @@ bool KeyZoneSelectorScreen::GetToggle(int id)
 	case 1:return (currentmapping->keyzone == 1);
 	case 2:return (currentmapping->keyzone == 2);
 	case 3:return (currentmapping->keyzone == 3);
+
+	case 4:return (currentmapping->keyindex == 0);
+	case 5:return (currentmapping->keyindex == 1);
+	case 6:return (currentmapping->keyindex == 2);
+
 	}
 	return false;
 }
@@ -56,6 +61,10 @@ void KeyZoneSelectorScreen::DoToggle(int id)
 	case 1:if (currentmapping->keyzone != 1)SetZone(1); break;
 	case 2:if (currentmapping->keyzone != 2)SetZone(2); break;
 	case 3:if (currentmapping->keyzone != 3)SetZone(3); break;
+
+	case 4:if (currentmapping->keyindex != 0) currentmapping->keyindex = 0;
+	case 5:if (currentmapping->keyindex != 1) currentmapping->keyindex = 1;
+	case 6:if (currentmapping->keyindex != 2) currentmapping->keyindex = 2;
 	}
 }
 
@@ -84,11 +93,15 @@ KeyZoneSelectorScreen::KeyZoneSelectorScreen(): _screensetup_t(SCREEN_KEYZONESEL
 
 	EnableButton(RB2, "Close", MenuEntry_Action, MenuAction_CloseParentModal);
 	//EnableButton(RB3, "Cancel", MenuEntry_Action, MenuAction_Revert);
-	EnableButton(RB4, "Go to zone settings", MenuEntry_Action, MenuAction_1);
+	EnableButton(RB3, "Go to zone settings", MenuEntry_Action, MenuAction_1);
 	EnableButton(LB3, "1", MenuEntry_FeatureToggle, 0);
 	EnableButton(LB4, "2", MenuEntry_FeatureToggle, 1);
 	EnableButton(LB5, "3", MenuEntry_FeatureToggle, 2);
 	EnableButton(LB6, "4", MenuEntry_FeatureToggle, 3);
+
+	EnableButton(RB4, "Para 1", MenuEntry_FeatureToggle, 4);
+	EnableButton(RB5, "Para 2", MenuEntry_FeatureToggle, 5);
+	EnableButton(RB6, "Para 3", MenuEntry_FeatureToggle, 6);
 
 
 	for (int i = 0; i < 11; i++)
