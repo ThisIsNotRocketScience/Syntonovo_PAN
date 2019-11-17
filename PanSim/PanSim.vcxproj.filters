@@ -107,6 +107,12 @@
     <ClCompile Include="..\Raspberry\ExtraScreenDefinitions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\Raspberry\ArpeggiatorScreen.cpp">
+      <Filter>Source Files\Screens</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Raspberry\KeyZoneScreen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Font Include="ProggyTiny.ttf" />
@@ -137,6 +143,18 @@
       <Filter>Source Files\Screens</Filter>
     </ClInclude>
     <ClInclude Include="..\Raspberry\ExtraScreenDefinitions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Raspberry\ArpeggiatorScreen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Raspberry\ModSourceScreen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Raspberry\ModSourceSelectorModal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Raspberry\KeyZoneScreen.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

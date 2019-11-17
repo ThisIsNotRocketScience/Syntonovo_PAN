@@ -2,13 +2,15 @@
 #include "gui.h"
 #include "PanPreset.h"
 #include "ParameterModal.h"
+#include "KeyZoneScreen.h"
 
 extern int DecodeCurrentEffect();
 
 extern void SetEffect(int effect);
 
-_screensetup_t::_screensetup_t(_screensetup_t *parent)
+_screensetup_t::_screensetup_t(int screenid, _screensetup_t *parent)
 {
+	ScreenID = screenid;
 	BG = NULL;
 	currentencoderset = 0;
 	encodersets = 1;
@@ -156,6 +158,10 @@ void _screensetup_t::SetupMainUILeds()
 	}
 	for (int i = 0; i < __FINALENCODER_COUNT; i++)
 	{
+
+		// TODO: override main button leds
+
+
 		FinalEncoderEnum enc = (FinalEncoderEnum)i;
 		if (IsCenterEncoder(enc) == false)
 		{
@@ -225,16 +231,18 @@ extern void cmd_pad_zero();
 
 extern void cmd_calibrate();
 
-void _screensetup_t::OpenKeyrangeModal()
+void _screensetup_t::OpenKeyZoneModal()
 {
-
+	Modal = &KeyZoneModal;
+	KeyZoneModal.Parent = this;
+	KeyZoneModal.SetTarget(this->ScreenID, GetActiveInstance());
 }
 
 void _screensetup_t::Action(int action)
 {
 	switch (action)
 	{
-	case MenuAction_Keyrange: OpenKeyrangeModal(); break;
+	case MenuAction_KeyZone: OpenKeyZoneModal(); break;
 	case MenuAction_PrevVCF2: gGui.PrevVCF2(); break;
 	case MenuAction_NextVCF2: gGui.NextVCF2(); break;
 	case MenuAction_PrevVCO: gGui.PrevVCO(); break;
@@ -510,9 +518,16 @@ void _screensetup_t::EncoderPress(FinalEncoderEnum button)
 			Modal->Parent = this;
 			theParameterBindingModal->Setup( (OutputEnum) encoders[currentencoderset][bottomencoderid].target);			
 			Modal->Activate(); 
-		
+			return;
 		}
 	}
+
+	if (isPageEncoder(button))
+	{
+		Screens_t Page = GetPage(button);
+		gGui.GotoPage(Page);
+	}
+	
 }
 
 int _screensetup_t::GetControlIndex(_control_t *c)
@@ -788,4 +803,13 @@ public:
 void _screensetup_t::AddLedControl(const char *name, int x, int y, LedTheme whichled)
 {
 	ControlsInOrder.push_back(new LedControl(whichled, x, y, name));
+}
+
+
+void _screensetup_t::CloseParentModal()
+{
+	if (Parent == NULL) return;
+	((_screensetup_t*)Parent)->Modal = NULL;
+
+
 }

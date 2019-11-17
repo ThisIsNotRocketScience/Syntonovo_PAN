@@ -36,5 +36,6 @@ public:
 	virtual void Activate();
 	void SetEncoderNames();
 	const char* BaseTitle;
-
+	
+	virtual int GetActiveInstance() { return ActiveInstance; }
 };

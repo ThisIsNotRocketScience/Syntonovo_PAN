@@ -17,11 +17,12 @@
 #include "VCF2Structure.h"
 #include "ParameterModal.h"
 #include "NewModulationModal.h"
+#include "KeyZoneScreen.h"
 
 PanPreset_t gCurrentPreset;
 PanPreset_t gRevertPreset;
 PanState_t gPanState;
-class ParameterModal * theParameterBindingModal;
+class ParameterModal* theParameterBindingModal;
 Gui gGui;
 
 extern int8_t mod_values[128];
@@ -146,7 +147,7 @@ int GetAssociatedParameter(FinalEncoderEnum button)
 }
 int ButtonHeight(int idx)
 {
-	return  HEADERHEIGHT +  (int)((idx % SIDEBUTTON_PER_COLUMN ) * (500.0f / SIDEBUTTON_PER_COLUMN));
+	return  HEADERHEIGHT + (int)((idx % SIDEBUTTON_PER_COLUMN) * (500.0f / SIDEBUTTON_PER_COLUMN));
 }
 
 int MButtonHeight(int idx)
@@ -316,7 +317,7 @@ enum
 #include "../libs/lodepng-master/lodepng.h"
 
 
-ImTextureID Raspberry_LoadTexture(const char *filename)
+ImTextureID Raspberry_LoadTexture(const char* filename)
 {
 	std::vector<unsigned char> buffer, image;
 	lodepng::load_file(buffer, filename); //load the image file with given filename
@@ -353,11 +354,11 @@ ImTextureID Raspberry_LoadTexture(const char *filename)
 	return (ImTextureID)tex;
 };
 
-void VerticalText(char *text, alignment_t align, ImU32 text_color)
+void VerticalText(char* text, alignment_t align, ImU32 text_color)
 {
-	ImFont *font = ImGui::GetFont();
+	ImFont* font = ImGui::GetFont();
 	char c;
-	const ImFont::Glyph *glyph;
+	const ImFont::Glyph* glyph;
 
 	const ImGuiStyle& style = ImGui::GetStyle();
 	float pad = style.FramePadding.x;
@@ -409,7 +410,7 @@ _control_t::_control_t()
 	Parent = NULL;
 }
 
-void _control_t::SetTitle(const char *t)
+void _control_t::SetTitle(const char* t)
 {
 	snprintf(title, 255, "%s", t);
 }
@@ -454,10 +455,10 @@ sidebutton_t::sidebutton_t()
 
 void _control_t::SetupEncoderSet(int n)
 {
-	currentencoderset = n; 
+	currentencoderset = n;
 };
 
-void _control_t::Activate() 
+void _control_t::Activate()
 {
 	SetupEncoderSet(currentencoderset);
 }
@@ -586,7 +587,7 @@ void _control_t::RenderBoxVertical(int x, int y, int val, int mode, bool active)
 	{
 		ImVec2 br2 = br;
 		float y1 = tl.y + ParamVerticalBoxHeight / 2;
-		float y2 = y1 - ((val)* ParamVerticalBoxHeight / 2) / 0x8000;
+		float y2 = y1 - ((val)*ParamVerticalBoxHeight / 2) / 0x8000;
 		ImVec2 tl2 = tl;
 		tl2.y = __min(y1, y2);
 		br2.y = __max(y1, y2);
@@ -709,6 +710,7 @@ void sidebutton_t::Pressed()
 	case MenuEntry_Action: Parent->Action(target); break;
 	case MenuEntry_EncoderSet: Parent->SetupEncoderSet(target); break;
 	case MenuEntry_Toggle: gCurrentPreset.ToggleSwitch((SwitchEnum)target); break;
+	case MenuEntry_FeatureToggle: ((_screensetup_t*)this->Parent)->DoToggle(target); break;
 
 	case MenuEntry_EnvelopeToggle: gCurrentPreset.ToggleModulationSwitch(target, Instance);
 	}
@@ -814,11 +816,18 @@ void sidebutton_t::Render(bool active, float DT)
 		case MenuEntry_EnvelopeToggle:
 			if (gCurrentPreset.GetModulationSwitch(target, Instance)) icon = Icon_ON; else icon = Icon_OFF;
 			break;
+		case MenuEntry_FeatureToggle:
+		{
+			int id = ((_screensetup_t*)this->Parent)->GetToggle(target) ? 1 : 0;
+			if (id) icon = Icon_ON; else icon = Icon_OFF;
+		}
+		break;
 		case MenuEntry_Toggle:
-
+		{
 			int id = gCurrentPreset.GetSwitch((SwitchEnum)target) ? 1 : 0;
 			if (id) icon = Icon_ON; else icon = Icon_OFF;
-			break;
+		}
+		break;
 		}
 
 		if (icon != Icon_NO)
@@ -897,7 +906,7 @@ uint16_t lerp(uint16_t i, uint16_t f, uint16_t t)
 	return R >> 16;
 }
 
-void LedLerp(bool active, uint16_t value, uint16_t *r, uint16_t *g, uint16_t *b)
+void LedLerp(bool active, uint16_t value, uint16_t* r, uint16_t* g, uint16_t* b)
 {
 	if (active)
 	{
@@ -944,10 +953,10 @@ void LoadPatch(int n)
 
 }
 
-extern ImTextureID Raspberry_LoadTexture(const char *filename);
+extern ImTextureID Raspberry_LoadTexture(const char* filename);
 static bool init = false;
 
-void PrintFontSpec(ImFont*F, const char* name)
+void PrintFontSpec(ImFont* F, const char* name)
 {
 	ImGui::PushFont(F);
 	float H = ImGui::GetTextLineHeight();
@@ -957,7 +966,7 @@ void PrintFontSpec(ImFont*F, const char* name)
 
 }
 
-void CheckFont(const char*name, ImFont*F)
+void CheckFont(const char* name, ImFont* F)
 {
 	if (F) printf("%s loaded correctly\n", name); else
 	{
@@ -1015,7 +1024,7 @@ void FinalPan_LoadResources()
 
 	gGuiResources.referencelines = false;
 	gGuiResources.testimage = false;
-//	gGuiResources.BigFont = io.Fonts->AddFontFromFileTTF("Petronius-Roman.ttf", 38.0f);
+	//	gGuiResources.BigFont = io.Fonts->AddFontFromFileTTF("Petronius-Roman.ttf", 38.0f);
 	gGuiResources.BigFont = io.Fonts->AddFontFromFileTTF("CORBEL.TTF", 38.0f);
 	init = true;
 
@@ -1217,7 +1226,7 @@ void Gui::ButtonPressed(FinalLedButtonEnum Button)
 
 }
 
-_screensetup_t *Gui::CS()
+_screensetup_t* Gui::CS()
 
 {
 	return Screens[CurrentScreen];
@@ -1300,9 +1309,9 @@ void SetEffect(int effect)
 
 
 
-ModSourceScreen *Gui::AddModSourceScreen(Screens_t screen, ModSource_t mod, const char *basetitle)
+ModSourceScreen* Gui::AddModSourceScreen(Screens_t screen, ModSource_t mod, const char* basetitle)
 {
-	ModSourceScreen *MSS = new ModSourceScreen(screen, mod, basetitle);
+	ModSourceScreen* MSS = new ModSourceScreen(screen, mod, basetitle);
 	ModSourceScreens.push_back(MSS);
 	return MSS;
 }
@@ -1320,6 +1329,13 @@ void Gui::GotoPageForMod(ModSource_t mod, int instance)
 		}
 	}
 }
+
+void Gui::GotoPageForKeyZone(int zone)
+{
+	GotoPage(SCREEN_KEYZONES);
+	((KeyZoneScreen*)Screens[SCREEN_KEYZONES])->SetActiveInstance(zone);	
+}
+
 
 void Gui::Render(bool active, float dt)
 {
@@ -1354,7 +1370,7 @@ void Gui::GotoPage(Screens_t s)
 	}
 }
 
-void hsv2rgb(uint16_t h, uint16_t s, uint16_t v, uint16_t *r, uint16_t *g, uint16_t *b)
+void hsv2rgb(uint16_t h, uint16_t s, uint16_t v, uint16_t* r, uint16_t* g, uint16_t* b)
 {
 	float rr, gg, bb;
 	ImGui::ColorConvertHSVtoRGB((h) / 65535.0, s / 65535.0f, v / 65535.0f, rr, gg, bb);
@@ -1455,7 +1471,7 @@ void FinalPan_RenderMain(float DT, int specificscreen = -1)
 
 		FinalPan_LoadResources();
 	}
-	
+
 	FinalPan_PushStyle();
 	ImVec2 pos = ImGui::GetCursorPos();
 	pos = ImGui::GetCursorScreenPos();
@@ -1498,7 +1514,7 @@ void FinalPan_SetupLeds()
 
 void FinalPan_RenderSpecificScreen(float DT, int screen)
 {
-	
+
 
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0);
@@ -1574,12 +1590,7 @@ void LedEncoderButtonPress(FinalEncoderEnum Button)
 		return;
 	default:
 	{
-		if (isPageEncoder(Button))
-		{
-			Screens_t Page = GetPage(Button);
-			gGui.GotoPage(Page);
-		}
-		else
+
 		{
 			gGui.EncoderPress(Button);
 		}
@@ -1591,11 +1602,11 @@ void LedEncoderButtonPress(FinalEncoderEnum Button)
 void LedEncoderButtonLeft(FinalEncoderEnum Button, int delta)
 {
 	if (GotoPageOnTurn)
-	if (isPageEncoder(Button))
-	{
-		Screens_t Page = GetPage(Button);
-		gGui.GotoPage(Page);
-	}
+		if (isPageEncoder(Button))
+		{
+			Screens_t Page = GetPage(Button);
+			gGui.GotoPage(Page);
+		}
 
 	switch (Button)
 	{
@@ -1608,11 +1619,11 @@ void LedEncoderButtonLeft(FinalEncoderEnum Button, int delta)
 void LedEncoderButtonRight(FinalEncoderEnum Button, int delta)
 {
 	if (GotoPageOnTurn)
-	if (isPageEncoder(Button))
-	{
-		Screens_t Page = GetPage(Button);
-		gGui.GotoPage(Page);
-	}
+		if (isPageEncoder(Button))
+		{
+			Screens_t Page = GetPage(Button);
+			gGui.GotoPage(Page);
+		}
 	switch (Button)
 	{
 	case encoder_SketchLeft: gGui.SketchLeft(1); break;

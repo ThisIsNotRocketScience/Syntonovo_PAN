@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include "ModSourceSelectorModal.h"
 
-ModSourceSelectorModalScreen::ModSourceSelectorModalScreen()
+ModSourceSelectorModalScreen::ModSourceSelectorModalScreen(): _screensetup_t(SCREEN_MODSOURCESELECTORMODAL)
 {
 
 }

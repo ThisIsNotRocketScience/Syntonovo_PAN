@@ -585,14 +585,13 @@ public:
 
 	EnvParam_t env[NUM_ENVS];
 
-//#define NUM_CONTROLLERS (11)
-
 	ControllerParam_t controller[NUM_CONTROLLERS];
 
 	OperatorParam_t op[NUM_OPERATORS];
 
 	uint16_t ledbrightness;
 	uint16_t ledblinkspeed;
+
 	uint16_t GetLedParameter(LedParameter par)
 	{
 
@@ -652,8 +651,8 @@ public:
 	key_mapping_t key_mapping[NUM_KEY_MAP_TARGETS];
 #define NUM_KEY_INPUTS (16)
 	key_input_t key_input[NUM_KEY_INPUTS];
-#define NUM_KEYZONES (4)
-	keyzone_settings_t keyzone[4];
+#define NUM_KEYZONES (__KeyZone_Count)
+	keyzone_settings_t keyzone[NUM_KEYZONES];
 
 	clock_settings_t clock;
 } PACKED;

@@ -305,6 +305,7 @@ class _screensetup_t : public _control_t
 {
 public:
 
+	int ScreenID;
 	ImTextureID BG;
 	//std::vector<_screensetup_t *> SubScreens;
 	virtual void Deactivate()
@@ -332,7 +333,7 @@ public:
 	std::vector<int> EncodersThatOpenThisScreen;
 	std::vector<int> LedButtonsThatOpenThisScreen;
 
-	_screensetup_t(_screensetup_t *parent = NULL);
+	_screensetup_t(int ScreenID, _screensetup_t *parent = NULL);
 	virtual uint16_t GetParameterValue(int param, int encoderset);
 	virtual void TweakParameterValue(int param, int delta) ;
 	virtual void SetupEncoderSet(int n);
@@ -347,6 +348,9 @@ public:
 
 	virtual void SetupLeds();
 	virtual void Action(int action);
+
+	virtual bool GetToggle(int id) { return false; };
+	virtual void DoToggle(int id) {};
 
 	void SetFirstEnabledControlActive();
 	void DisableEncoder(int i);
@@ -372,7 +376,8 @@ public:
 	void AddLedControl(const char *name, int x, int y, LedTheme whichled);
 
 	void ChangeActiveControl(int delta);
-	void OpenKeyrangeModal();
+	void OpenKeyZoneModal();
+	void CloseParentModal();
 
 	virtual void SketchLeft(int delta);
 
@@ -393,7 +398,7 @@ public:
 	virtual void RenderContent(bool active, float DT);
 	void RenderModalBox(bool active, float DT);
 	virtual void Render(bool active, float DT);
-
+	virtual int GetActiveInstance() { return 0; }
 };
 
 
@@ -440,6 +445,7 @@ public:
 	Gui();
 	ModSourceScreen *AddModSourceScreen(Screens_t screen, ModSource_t mod, const char *basetitle);
 	void GotoPageForMod(ModSource_t mod, int instance);
+	void GotoPageForKeyZone(int zone);
 	void Init();
 	void SketchLeftPress();
 	void SketchRightPress();
@@ -462,6 +468,7 @@ public:
 
 	_screensetup_t *Screens[__SCREENS_COUNT];
 
+	
 	void BuildScreens();
 
 	virtual	void Render(bool active, float DT);
@@ -484,5 +491,8 @@ extern Gui gGui;
 class ParameterModal;
 extern ParameterModal  *theParameterBindingModal;
 extern int8_t mod_values[128];
+extern bool isPageEncoder(FinalEncoderEnum Button);
+extern Screens_t GetPage(FinalEncoderEnum Button);
+
 
 #endif

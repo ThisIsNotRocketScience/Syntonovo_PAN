@@ -13,7 +13,8 @@
 
 #include "ExtraScreenDefinitions.h"
 
-
+#include "ArpeggiatorScreen.h"
+#include "KeyZoneScreen.h"
 
 void Gui::BuildScreens()
 {
@@ -31,6 +32,9 @@ void Gui::BuildScreens()
 
 	auto SaveScreen = new SavePresetScreen();
 	Screens[SCREEN_PRESETSAVE] = SaveScreen;
+
+	Screens[SCREEN_ARP] = new ArpeggiatorScreen();
+	Screens[SCREEN_KEYZONES] = new KeyZoneScreen();
 
 	Screens[SCREEN_TEST] = new ImageScreen(gGuiResources.TestBG);
 	Screens[SCREEN_TEST]->AddText(10, 30, "10,30 - tadaa", align_left, font_small);
@@ -84,7 +88,7 @@ void Gui::BuildScreens()
 
 	for (int i = 0; i < __SCREENS_COUNT; i++)
 	{
-		if (Screens[i] == 0) Screens[i] = new _screensetup_t();
+		if (Screens[i] == 0) Screens[i] = new _screensetup_t(i);
 	}
 
 	Screens[SCREEN_HOME]->SetTitle("Home");

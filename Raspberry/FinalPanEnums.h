@@ -45,6 +45,15 @@ enum LedTheme
 	Led_Active
 };
 
+enum KeyZone
+{
+	KeyZone_1,
+	KeyZone_2,
+	KeyZone_3,
+	KeyZone_4,
+	__KeyZone_Count
+};
+
 enum Screens_t
 {
 	SCREEN_HOME,
@@ -107,13 +116,22 @@ enum Screens_t
 	SCREEN_LOADING,
 	
 	SCREEN_SELECTSOURCE,
-	SCREEN_TARGET_MODOVERVIEW,
+	
+	SCREEN_MODTARGETMODAL,
+	SCREEN_MODSOURCESELECTORMODAL,
+	SCREEN_NEWMODULATIONMODAL,
+
+	SCREEN_PARAMETERMODAL,
+
 	SCREEN_ALLMODULATIONS,
 	SCREEN_ALLPARAMETERSANDSWITCHES,
 	SCREEN_MIDI,
 
 	SCREEN_CALIBRATION,
 	SCREEN_KEYZONES,
+	SCREEN_KEYZONESELECTOR,
+	
+	SCREEN_SHOWIMAGE,
 
 	__SCREENS_COUNT
 };
@@ -222,7 +240,12 @@ enum
 	MenuAction_GotoModulation5,
 	MenuAction_GotoModulation6,
 
-	MenuAction_Keyrange,
+	MenuAction_1,
+	MenuAction_2,
+	MenuAction_3,
+	MenuAction_4,
+
+	MenuAction_KeyZone,
 	__MenuAction_Count
 };
 

@@ -3,7 +3,7 @@
 
 NewModulationModal *TheNewModulationModal;
 
-NewModulationModal::NewModulationModal()
+NewModulationModal::NewModulationModal(): _screensetup_t(SCREEN_NEWMODULATIONMODAL)
 {
 	EnableButton(LB1, "Back", MenuEntry_Action, MenuAction_Ok);
 
