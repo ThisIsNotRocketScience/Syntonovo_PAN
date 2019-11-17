@@ -29,6 +29,10 @@ public:
 	void SetZone(int Z);
 	key_mapping_t* currentmapping;
 	int RevertZone;
+
+	virtual bool GetToggle(int id);
+	virtual void DoToggle(int id);
+
 };
 
 

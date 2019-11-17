@@ -34,6 +34,31 @@ int ScreenToKeymap(int screen, int activeinstance)
 	return -1;
 }
 
+bool KeyZoneSelectorScreen::GetToggle(int id)
+{
+	if (currentmapping == NULL) return false;
+	switch (id)
+	{
+	case 0:return (currentmapping->keyzone == 0);
+	case 1:return (currentmapping->keyzone == 1);
+	case 2:return (currentmapping->keyzone == 2);
+	case 3:return (currentmapping->keyzone == 3);
+	}
+	return false;
+}
+
+void KeyZoneSelectorScreen::DoToggle(int id)
+{
+	if (currentmapping == NULL) return;
+	switch (id)
+	{
+	case 0:if (currentmapping->keyzone != 0)SetZone(0); break;
+	case 1:if (currentmapping->keyzone != 1)SetZone(1); break;
+	case 2:if (currentmapping->keyzone != 2)SetZone(2); break;
+	case 3:if (currentmapping->keyzone != 3)SetZone(3); break;
+	}
+}
+
 
 uint16_t KeyZoneSelectorScreen::GetParameterValue(int param, int encoderset)
 {
@@ -57,13 +82,13 @@ KeyZoneSelectorScreen::KeyZoneSelectorScreen(): _screensetup_t(SCREEN_KEYZONESEL
 
 	int cur = 0;
 
-	EnableButton(RB2, "OK", MenuEntry_Action, MenuAction_CloseParentModal);
-	EnableButton(RB3, "Cancel", MenuEntry_Action, MenuAction_Revert);
-
-	EnableButton(LB3, "1", MenuEntry_Action, MenuAction_1);
-	EnableButton(LB4, "2", MenuEntry_Action, MenuAction_2);
-	EnableButton(LB5, "3", MenuEntry_Action, MenuAction_3);
-	EnableButton(LB6, "4", MenuEntry_Action, MenuAction_4);
+	EnableButton(RB2, "Close", MenuEntry_Action, MenuAction_CloseParentModal);
+	//EnableButton(RB3, "Cancel", MenuEntry_Action, MenuAction_Revert);
+	EnableButton(RB4, "Go to zone settings", MenuEntry_Action, MenuAction_1);
+	EnableButton(LB3, "1", MenuEntry_FeatureToggle, 0);
+	EnableButton(LB4, "2", MenuEntry_FeatureToggle, 1);
+	EnableButton(LB5, "3", MenuEntry_FeatureToggle, 2);
+	EnableButton(LB6, "4", MenuEntry_FeatureToggle, 3);
 
 
 	for (int i = 0; i < 11; i++)
@@ -97,13 +122,14 @@ void KeyZoneSelectorScreen::SetZone(int Z)
 }
 void KeyZoneSelectorScreen::Action(int a)
 {
+
+
+
 	switch (a)
 	{
 	
-	case MenuAction_1: SetZone(0); break;
-	case MenuAction_2: SetZone(1); break;
-	case MenuAction_3: SetZone(2); break;
-	case MenuAction_4: SetZone(3); break;
+	case MenuAction_1:if (currentmapping)gGui.GotoPageForKeyZone(currentmapping->keyzone); break;
+	
 
 	case MenuAction_CloseParentModal: Modal = NULL; CloseParentModal();  break;
 	case MenuAction_Revert: SetZone(RevertZone); CloseParentModal(); Modal = NULL; break;
@@ -114,10 +140,6 @@ void KeyZoneSelectorScreen::Action(int a)
 void KeyZoneSelectorScreen::Render(bool active, float DT)
 {
 	RenderContent(active, DT);
-
-	
-
-
 	RenderModalBox(active, DT);
 	//auto row = gCurrentPreset.GetModSourceRow(modType, ActiveInstance);
 }
@@ -307,7 +329,7 @@ void KeyZoneScreen::Render(bool active, float DT)
 
 		for (int j = 0; j < NUM_KEY_MAP_TARGETS; j++)
 		{
-			if (gCurrentPreset.key_mapping[j].keyzone == ActiveInstance) used = true;
+			if (gCurrentPreset.key_mapping[j].keyzone == i) used = true;
 		};
 
 		int x = (i - MaxInstances / 2) * 40 + 512;
@@ -317,15 +339,12 @@ void KeyZoneScreen::Render(bool active, float DT)
 		RenderLettersInABox(x, y, i == ActiveInstance, txt, 35, 35, used, value, false);
 	}
 
-
-
 	RenderModalBox(active, DT);
 	//auto row = gCurrentPreset.GetModSourceRow(modType, ActiveInstance);
 }
 
 void KeyZoneScreen::Activate()
 {
-
 	_control_t::Activate();
 }
 
@@ -344,4 +363,3 @@ void KeyZoneScreen::EncoderPress(FinalEncoderEnum button)
 		}
 	}
 }
-
