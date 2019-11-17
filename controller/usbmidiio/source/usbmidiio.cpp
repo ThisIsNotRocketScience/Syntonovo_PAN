@@ -489,8 +489,8 @@ void setupleds()
 	LEDBUTTON(0, B14);
 	LEDBUTTON(0, B15);
 	LEDBUTTON(0, B16);
-	LEDBUTTON(0, OctDownRight);
 	LEDBUTTON(0, OctUpRight);
+	LEDBUTTON(0, OctDownRight);
 	LEDBUTTON(0, BankRight);
 	LEDBUTTON(0, PortamentoRight);
 	LEDBUTTON(0, RSus);
@@ -516,7 +516,7 @@ void setupleds()
 	LEDBUTTON(1, LUna);
 	LEDBUTTON(1, LMod);
 	LEDBUTTON(1, PortamentoLeft);
-	LEDBUTTON(1, OctUpLeft);
+	LEDBUTTON(1, OctDownLeft);
 	LEDBUTTON(1, B6);
 	LEDBUTTON(1, B5);
 	LEDBUTTON(1, B4);
@@ -524,7 +524,7 @@ void setupleds()
 	LEDBUTTON(1, B2);
 	LEDBUTTON(1, B1);
 	LEDBUTTON(1, BankLeft);
-	LEDBUTTON(1, OctDownLeft);
+	LEDBUTTON(1, OctUpLeft);
 
 //	ENCODER(1, LedSwitch); //???? SW65
 	UNUSEDENCODER(1); //ENCODER(1, FExt);
@@ -893,7 +893,8 @@ void ScanButtonsAndEncoders()
 	uint8_t data[4] = {0};
 /*
 	for (int i = 0; i < 160; i++) {
-		if (sw[i] != last_sw[i]) { //printf("sw %d\n", PINMANGLE(i));
+		if (sw[i] != last_sw[i]) {
+			printf("sw %d\n", PINMANGLE(i));
 			data[0] = PINMANGLE(i);
 			sync_oob_word(&rpi_sync, OOB_SWITCH_CHANGE, *(uint32_t*)data, 0);
 		}
@@ -901,21 +902,20 @@ void ScanButtonsAndEncoders()
 	memcpy(last_sw, sw, 160);
 */
 	for (int i = 0; i < __ledbutton_Count; i++) {
-		int move = switch_process(&switch_state[i], sw[switch_sw[i]]);
-
-		if (move && switch_sw[i] == 0) {
+		if (switch_sw[i] == 0) {
 			// sw[0] is bound to an encoder so we can easily skip unbound buttons
-			printf("Unknown switch %d %d\n", i, move);
 			continue;
 		}
 
+		int move = switch_process(&switch_state[i], sw[switch_sw[i]]);
+
 		if (move > 0) {
-			//printf("sw %d up\n", i);
+			//printf("sw %d (%d) up\n", i, switch_sw[i]);
 			data[0] = i;
 			sync_oob_word(&rpi_sync, OOB_BUTTON_UP, *(uint32_t*)data, 0);
 		}
 		else if (move < 0) {
-			//printf("sw %d down\n", i);
+			//printf("sw %d (%d) down\n", i, switch_sw[i]);
 			data[0] = i;
 			sync_oob_word(&rpi_sync, OOB_BUTTON_DOWN, *(uint32_t*)data, 0);
 		}
@@ -942,10 +942,12 @@ void ScanButtonsAndEncoders()
 
 		move = switch_process(&encoder_sw_state[i], sw[encoder_sw[i]]);
 		if (move > 0) {
+			//printf("enc %d up\n", i);
 			data[0] = i;
 			sync_oob_word(&rpi_sync, OOB_ENCODER_UP, *(uint32_t*)data, 0);
 		}
 		else if (move < 0) {
+			//printf("enc %d down\n", i);
 			data[0] = i;
 			sync_oob_word(&rpi_sync, OOB_ENCODER_DOWN, *(uint32_t*)data, 0);
 		}
