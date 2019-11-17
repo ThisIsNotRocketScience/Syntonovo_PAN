@@ -203,6 +203,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Raspberry\ArpeggiatorScreen.h" />
+    <ClInclude Include="..\Raspberry\ArpSettings.h" />
     <ClInclude Include="..\Raspberry\ExtraScreenDefinitions.h" />
     <ClInclude Include="..\Raspberry\FinalPanEnums.h" />
     <ClInclude Include="..\Raspberry\FinalPanHeader.h" />
