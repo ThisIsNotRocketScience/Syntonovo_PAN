@@ -157,6 +157,9 @@
     <ClInclude Include="..\Raspberry\KeyZoneScreen.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\Raspberry\ArpSettings.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\libs\SDL2-2.0.7\lib\x86\SDL2.lib" />

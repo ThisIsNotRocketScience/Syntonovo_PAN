@@ -11,7 +11,7 @@
 #ifdef WIN32
 #define PACKED
 #else
-#define PACKED  __attribute__((packed))
+#define PACKED  __attribute__((__packed__, __aligned__(1)))
 #endif
 
 
