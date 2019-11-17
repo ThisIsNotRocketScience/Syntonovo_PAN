@@ -2,27 +2,27 @@
 <section name="Workbench">
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
 		<item value="true" key="isRegEx"/>
-		<item value="uart_configure" key="selection"/>
+		<item value="porta_time" key="selection"/>
 		<item value="false" key="casesensitive"/>
 		<item value="false" key="incremental"/>
 		<item value="true" key="wrap"/>
 		<item value="false" key="wholeword"/>
 		<list key="findhistory">
-			<item value="uart_configure"/>
-			<item value="uart_byte_counter"/>
-			<item value="databuf_read"/>
-			<item value="uart_config"/>
-			<item value="_cb;"/>
-			<item value="_cb"/>
-			<item value="complete_cb"/>
-			<item value="uart_"/>
-			<item value="_cb ="/>
-			<item value="reset"/>
-			<item value="fifo_rx_pop"/>
-			<item value="uart_write"/>
-			<item value="ring_buffer_free"/>
-			<item value="rpi_cb"/>
-			<item value="RpiTask"/>
+			<item value="porta_time"/>
+			<item value="11"/>
+			<item value="porta_timer_shift"/>
+			<item value="porta_divider"/>
+			<item value="update_porta_time"/>
+			<item value="PORTAMENTO"/>
+			<item value="portamento"/>
+			<item value="do_smooth"/>
+			<item value="panic"/>
+			<item value="bpm"/>
+			<item value="lastnote ="/>
+			<item value="lastnode"/>
+			<item value="LastNote"/>
+			<item value="kill"/>
+			<item value="stop"/>
 		</list>
 		<list key="replacehistory">
 			<item value="USART_RPI"/>
@@ -34,7 +34,7 @@
 		<item value="277" key="DIALOG_WIDTH"/>
 		<item value="1|Segoe UI|9.0|0|WINDOWS|1|-24|0|0|0|400|0|0|0|1|0|0|0|0|Segoe UI" key="DIALOG_FONT_NAME"/>
 		<item value="370" key="DIALOG_HEIGHT"/>
-		<item value="1158" key="DIALOG_X_ORIGIN"/>
-		<item value="250" key="DIALOG_Y_ORIGIN"/>
+		<item value="1418" key="DIALOG_X_ORIGIN"/>
+		<item value="293" key="DIALOG_Y_ORIGIN"/>
 	</section>
 </section>

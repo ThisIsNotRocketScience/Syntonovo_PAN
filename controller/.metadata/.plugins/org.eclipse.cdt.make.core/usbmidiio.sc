@@ -2,12 +2,12 @@
 <?scdStore version="2"?><scannerInfo id="org.eclipse.cdt.make.core.discoveredScannerInfo">
 <instance id="com.crt.advproject.config.exe.debug.664475528;com.crt.advproject.config.exe.debug.664475528.;com.crt.advproject.cpp.exe.debug.849944181;com.crt.advproject.compiler.cpp.input.1093488160">
 <collector id="org.eclipse.cdt.make.core.PerProjectSICollector">
-<includePath path="c:/nxp/mcuxpressoide_10.2.1_795/ide/tools/arm-none-eabi/include/c++/7.2.1"/>
-<includePath path="c:/nxp/mcuxpressoide_10.2.1_795/ide/tools/arm-none-eabi/include/c++/7.2.1/arm-none-eabi"/>
-<includePath path="c:/nxp/mcuxpressoide_10.2.1_795/ide/tools/arm-none-eabi/include/c++/7.2.1/backward"/>
-<includePath path="c:/nxp/mcuxpressoide_10.2.1_795/ide/tools/lib/gcc/arm-none-eabi/7.2.1/include"/>
-<includePath path="c:/nxp/mcuxpressoide_10.2.1_795/ide/tools/lib/gcc/arm-none-eabi/7.2.1/include-fixed"/>
-<includePath path="c:/nxp/mcuxpressoide_10.2.1_795/ide/tools/arm-none-eabi/include"/>
+<includePath path="c:/apps/mcuxpressoide_10.2.0_759/ide/tools/arm-none-eabi/include/c++/7.2.1"/>
+<includePath path="c:/apps/mcuxpressoide_10.2.0_759/ide/tools/arm-none-eabi/include/c++/7.2.1/arm-none-eabi"/>
+<includePath path="c:/apps/mcuxpressoide_10.2.0_759/ide/tools/arm-none-eabi/include/c++/7.2.1/backward"/>
+<includePath path="c:/apps/mcuxpressoide_10.2.0_759/ide/tools/lib/gcc/arm-none-eabi/7.2.1/include"/>
+<includePath path="c:/apps/mcuxpressoide_10.2.0_759/ide/tools/lib/gcc/arm-none-eabi/7.2.1/include-fixed"/>
+<includePath path="c:/apps/mcuxpressoide_10.2.0_759/ide/tools/arm-none-eabi/include"/>
 <definedSymbol symbol="__STDC__=1"/>
 <definedSymbol symbol="__cplusplus=201402L"/>
 <definedSymbol symbol="__STDC_UTF_16__=1"/>
@@ -459,12 +459,12 @@
 </instance>
 <instance id="com.crt.advproject.config.exe.debug.664475528;com.crt.advproject.config.exe.debug.664475528.;com.crt.advproject.gcc.exe.debug.1400217291;com.crt.advproject.compiler.input.1143965036">
 <collector id="org.eclipse.cdt.make.core.PerProjectSICollector">
-<includePath path="c:/nxp/mcuxpressoide_10.2.1_795/ide/tools/arm-none-eabi/include/c++/7.2.1"/>
-<includePath path="c:/nxp/mcuxpressoide_10.2.1_795/ide/tools/arm-none-eabi/include/c++/7.2.1/arm-none-eabi"/>
-<includePath path="c:/nxp/mcuxpressoide_10.2.1_795/ide/tools/arm-none-eabi/include/c++/7.2.1/backward"/>
-<includePath path="c:/nxp/mcuxpressoide_10.2.1_795/ide/tools/lib/gcc/arm-none-eabi/7.2.1/include"/>
-<includePath path="c:/nxp/mcuxpressoide_10.2.1_795/ide/tools/lib/gcc/arm-none-eabi/7.2.1/include-fixed"/>
-<includePath path="c:/nxp/mcuxpressoide_10.2.1_795/ide/tools/arm-none-eabi/include"/>
+<includePath path="c:/apps/mcuxpressoide_10.2.0_759/ide/tools/arm-none-eabi/include/c++/7.2.1"/>
+<includePath path="c:/apps/mcuxpressoide_10.2.0_759/ide/tools/arm-none-eabi/include/c++/7.2.1/arm-none-eabi"/>
+<includePath path="c:/apps/mcuxpressoide_10.2.0_759/ide/tools/arm-none-eabi/include/c++/7.2.1/backward"/>
+<includePath path="c:/apps/mcuxpressoide_10.2.0_759/ide/tools/lib/gcc/arm-none-eabi/7.2.1/include"/>
+<includePath path="c:/apps/mcuxpressoide_10.2.0_759/ide/tools/lib/gcc/arm-none-eabi/7.2.1/include-fixed"/>
+<includePath path="c:/apps/mcuxpressoide_10.2.0_759/ide/tools/arm-none-eabi/include"/>
 <definedSymbol symbol="__STDC__=1"/>
 <definedSymbol symbol="__cplusplus=201402L"/>
 <definedSymbol symbol="__STDC_UTF_16__=1"/>
@@ -916,12 +916,12 @@
 </instance>
 <instance id="com.crt.advproject.config.exe.debug.664475528;com.crt.advproject.config.exe.debug.664475528.;com.crt.advproject.gas.exe.debug.313271779;com.crt.advproject.assembler.input.172076198">
 <collector id="org.eclipse.cdt.make.core.PerProjectSICollector">
-<includePath path="c:/nxp/mcuxpressoide_10.2.1_795/ide/tools/arm-none-eabi/include/c++/7.2.1"/>
-<includePath path="c:/nxp/mcuxpressoide_10.2.1_795/ide/tools/arm-none-eabi/include/c++/7.2.1/arm-none-eabi"/>
-<includePath path="c:/nxp/mcuxpressoide_10.2.1_795/ide/tools/arm-none-eabi/include/c++/7.2.1/backward"/>
-<includePath path="c:/nxp/mcuxpressoide_10.2.1_795/ide/tools/lib/gcc/arm-none-eabi/7.2.1/include"/>
-<includePath path="c:/nxp/mcuxpressoide_10.2.1_795/ide/tools/lib/gcc/arm-none-eabi/7.2.1/include-fixed"/>
-<includePath path="c:/nxp/mcuxpressoide_10.2.1_795/ide/tools/arm-none-eabi/include"/>
+<includePath path="c:/apps/mcuxpressoide_10.2.0_759/ide/tools/arm-none-eabi/include/c++/7.2.1"/>
+<includePath path="c:/apps/mcuxpressoide_10.2.0_759/ide/tools/arm-none-eabi/include/c++/7.2.1/arm-none-eabi"/>
+<includePath path="c:/apps/mcuxpressoide_10.2.0_759/ide/tools/arm-none-eabi/include/c++/7.2.1/backward"/>
+<includePath path="c:/apps/mcuxpressoide_10.2.0_759/ide/tools/lib/gcc/arm-none-eabi/7.2.1/include"/>
+<includePath path="c:/apps/mcuxpressoide_10.2.0_759/ide/tools/lib/gcc/arm-none-eabi/7.2.1/include-fixed"/>
+<includePath path="c:/apps/mcuxpressoide_10.2.0_759/ide/tools/arm-none-eabi/include"/>
 <definedSymbol symbol="__STDC__=1"/>
 <definedSymbol symbol="__cplusplus=201402L"/>
 <definedSymbol symbol="__STDC_UTF_16__=1"/>
