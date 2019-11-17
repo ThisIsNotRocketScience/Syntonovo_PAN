@@ -13,7 +13,8 @@ uint16_t ArpeggiatorScreen::GetParameterValue(int param, int encoderset)
 };
 enum
 {
-	Arp_Enable,
+	
+	Arp_Enable = __ArpeggioMode_Count,
 	Arp_Reset,
 	Arp_KillAll,
 	Arp_Hold,
@@ -21,7 +22,9 @@ enum
 	Arp_Octaves,
 	Arp_speedlower,
 	Arp_speedupper,
-	Arp_Transpose
+	Arp_Transpose,
+
+
 };
 
 bool ArpeggiatorScreen::GetToggle(int id)
@@ -29,10 +32,18 @@ bool ArpeggiatorScreen::GetToggle(int id)
 	switch (id)
 	{
 	case Arp_Enable:  return gCurrentPreset.keyzone[ActiveInstance].type == PresetKeyzoneType_Arpeggiator;
-	case Arp_Reset:  return gCurrentPreset.keyzone[ActiveInstance].arpsettings.ResetTimeOnFirstKey;
-	case Arp_KillAll:  return gCurrentPreset.keyzone[ActiveInstance].arpsettings.KillNotesAfterLastNoteOff;
-	case Arp_Hold:  return gCurrentPreset.keyzone[ActiveInstance].arpsettings.Hold;
+	case Arp_Reset:  return settings->ResetTimeOnFirstKey;
+	case Arp_KillAll:  return settings->KillNotesAfterLastNoteOff;
+	case Arp_Hold:  return settings->Hold;
 
+
+	case Arp_Up: return settings->Mode == Arp_Up;
+	case Arp_Down: return settings->Mode == Arp_Down;
+	case Arp_UpDown: return settings->Mode == Arp_UpDown;
+	case Arp_DownUp: return settings->Mode == Arp_DownUp;
+	case Arp_InOrder: return settings->Mode == Arp_InOrder;
+	case Arp_ReverseOrder: return settings->Mode == Arp_ReverseOrder;
+	case Arp_Random: return settings->Mode == Arp_Random;
 
 	}
 	return false;
@@ -56,9 +67,18 @@ void ArpeggiatorScreen::DoToggle(int id)
 	}
 	break;
 
-	case Arp_Reset: gCurrentPreset.keyzone[ActiveInstance].arpsettings.ResetTimeOnFirstKey = ~gCurrentPreset.keyzone[ActiveInstance].arpsettings.ResetTimeOnFirstKey; break;
-	case Arp_KillAll: gCurrentPreset.keyzone[ActiveInstance].arpsettings.KillNotesAfterLastNoteOff = ~gCurrentPreset.keyzone[ActiveInstance].arpsettings.KillNotesAfterLastNoteOff; break;
-	case Arp_Hold: gCurrentPreset.keyzone[ActiveInstance].arpsettings.Hold = ~gCurrentPreset.keyzone[ActiveInstance].arpsettings.Hold; break;
+	case Arp_Reset: settings->ResetTimeOnFirstKey = ~settings->ResetTimeOnFirstKey; break;
+	case Arp_KillAll: settings->KillNotesAfterLastNoteOff = ~settings->KillNotesAfterLastNoteOff; break;
+	case Arp_Hold: settings->Hold = ~settings->Hold; break;
+
+
+	case Arp_Up:  settings->Mode = Arp_Up; break;
+	case Arp_Down: settings->Mode = Arp_Down; break;
+	case Arp_UpDown: settings->Mode = Arp_UpDown; break;
+	case Arp_DownUp: settings->Mode = Arp_DownUp; break;
+	case Arp_InOrder: settings->Mode = Arp_InOrder; break;
+	case Arp_ReverseOrder: settings->Mode = Arp_ReverseOrder; break;
+	case Arp_Random: settings->Mode = Arp_Random; break;
 	}
 
 }
@@ -66,6 +86,14 @@ void ArpeggiatorScreen::DoToggle(int id)
 
 void ArpeggiatorScreen::TweakParameterValue(int param, int delta)
 {
+	switch (param)
+	{	
+	case Arp_Octaves:break;
+	case Arp_Transpose:break;
+	case Arp_speedupper:break;
+	case Arp_speedlower :break;
+	
+	}
 };
 
 void ArpeggiatorScreen::SetActiveInstance(int id)
@@ -76,7 +104,9 @@ void ArpeggiatorScreen::SetActiveInstance(int id)
 	snprintf(newtitle, 200, "Arpeggiator for zone %d", ActiveInstance + 1);
 	SetTitle(newtitle);
 	snprintf(newtitle, 200, "Goto zone %d", ActiveInstance + 1);
-	EnableButton(RB6, newtitle, MenuEntry_Action, MenuAction_1);
+	EnableButton(LB2, newtitle, MenuEntry_Action, MenuAction_1);
+
+	settings = &gCurrentPreset.keyzone[ActiveInstance].arpsettings;
 }
 
 ArpeggiatorScreen::ArpeggiatorScreen() : _screensetup_t(SCREEN_ARP)
@@ -87,13 +117,20 @@ ArpeggiatorScreen::ArpeggiatorScreen() : _screensetup_t(SCREEN_ARP)
 	EnableButton(LB1, "Previous", MenuEntry_Action, MenuAction_Prev);
 	EnableButton(RB1, "Next", MenuEntry_Action, MenuAction_Next);
 
-	EnableButton(LB2, "Enabled", MenuEntry_FeatureToggle, Arp_Enable);
-	EnableButton(LB3, "Stop gates after last note", MenuEntry_FeatureToggle, Arp_KillAll);
-	EnableButton(LB4, "Hold", MenuEntry_FeatureToggle, Arp_Hold);
-	EnableButton(LB5, "Reset Timing", MenuEntry_FeatureToggle, Arp_Reset);
+	EnableButton(LB4, "Enabled", MenuEntry_FeatureToggle, Arp_Enable);
+	EnableButton(LB5, "Stop gates after last note", MenuEntry_FeatureToggle, Arp_KillAll);
+	EnableButton(LB6, "Hold", MenuEntry_FeatureToggle, Arp_Hold);
+	EnableButton(LB7, "Reset Timing", MenuEntry_FeatureToggle, Arp_Reset);
 
+	EnableButton(RB3, "Up", MenuEntry_FeatureToggle, Arp_Up);
+	EnableButton(RB4, "Down", MenuEntry_FeatureToggle, Arp_Down);
+	EnableButton(RB5, "UpDown", MenuEntry_FeatureToggle, Arp_UpDown);
+	EnableButton(RB6, "DownUp", MenuEntry_FeatureToggle, Arp_DownUp);
+	EnableButton(RB7, "Random", MenuEntry_FeatureToggle, Arp_Random);
+	EnableButton(RB8, "InOrder", MenuEntry_FeatureToggle, Arp_InOrder);
+	EnableButton(RB9, "ReverseOrder", MenuEntry_FeatureToggle, Arp_ReverseOrder);
 
-	EnableAvailableEncoder("mode", MenuEntry_Value, Arp_Mode,-1);
+	//EnableAvailableEncoder("mode", MenuEntry_Value, Arp_Mode,-1);
 	EnableAvailableEncoder("octaves", MenuEntry_Value, Arp_Octaves, -1);
 	EnableAvailableEncoder("transpose", MenuEntry_Value, Arp_Transpose, -1);
 	EnableAvailableEncoder("time upper", MenuEntry_Value, Arp_speedupper, -1);

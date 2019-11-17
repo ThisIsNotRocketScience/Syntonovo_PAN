@@ -31,4 +31,5 @@ public:
 	virtual bool GetToggle(int id);
 	virtual void DoToggle(int id);
 
+	ArpSettings_t* settings;
 };
