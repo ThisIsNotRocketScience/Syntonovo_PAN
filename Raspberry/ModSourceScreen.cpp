@@ -156,9 +156,10 @@ ModSourceScreen::ModSourceScreen(Screens_t screen, ModSource_t modsourcetype, co
 
 	case SCREEN_ENVELOPE:
 		HasActiveInstanceDisplay = true;
-
-		EnableButton(LB3, "Legato", MenuEntry_EnvelopeToggle, Envelope_Retrigger);
-
+		
+		EnableButton(LB3, "KeyZone", MenuEntry_Action, MenuAction_KeyZone);
+		EnableButton(LB4, "Legato", MenuEntry_EnvelopeToggle, Envelope_Retrigger);
+		
 		cur = EnableAvailableEncoder("Attack", MenuEntry_EnvelopeValue, Envelope_Attack,cur);
 		cur = SkipAvailableEncoder(cur+1);
 		cur = EnableAvailableEncoder("Decay", MenuEntry_EnvelopeValue, Envelope_Decay,cur);
@@ -170,7 +171,9 @@ ModSourceScreen::ModSourceScreen(Screens_t screen, ModSource_t modsourcetype, co
 
 		break;
 	case SCREEN_LFO:
-		EnableButton(LB3, "Reset on key", MenuEntry_EnvelopeToggle, LFO_ResetOnKey);
+		EnableButton(LB3, "KeyZone", MenuEntry_Action, MenuAction_KeyZone);
+		EnableButton(LB4, "Reset on key", MenuEntry_EnvelopeToggle, LFO_ResetOnKey);
+
 		cur = EnableAvailableEncoder("Speed", MenuEntry_EnvelopeValue, LFO_Speed,cur);
 		cur = SkipAvailableEncoder(cur+1);
 		cur = EnableAvailableEncoder("Shape", MenuEntry_EnvelopeValue, LFO_Shape, cur);
@@ -380,6 +383,7 @@ void ModSourceScreen::Action(int a)
 {
 	switch (a)
 	{
+	case MenuAction_KeyZone: OpenKeyZoneModal(); break;
 	case MenuAction_CloseModal: Modal = NULL; SetEncoderNames(); break;
 	case MenuAction_Next:
 	{
