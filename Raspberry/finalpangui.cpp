@@ -984,7 +984,7 @@ void FinalPan_LoadResources()
 	gGuiResources.PageTime = 0;
 	gGuiResources.Highlight = IM_COL32(235, 200, 28, 255);
 	gGuiResources.Normal = IM_COL32(200, 200, 200, 255);
-	gGuiResources.BGColor = IM_COL32(0, 58, 66, 255);
+	gGuiResources.BGColor = IM_COL32(0, 0, 0, 255);
 	gGuiResources.ModalBGColor = IM_COL32(0, 0, 0, 240);
 	gGuiResources.GhostBG = IM_COL32(0, 0, 0, 200);
 	//res.BGColor = IM_COL32(0, 0, 0, 255);

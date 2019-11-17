@@ -60,8 +60,8 @@ CUSTOMENTRY("Subosc", MenuEntry_Toggle, Switch_SEL1SUB)
 CUSTOMENTRY("Sync", MenuEntry_Toggle, Switch_SELVCOSYNC3)
 CUSTOMENTRY("Octave", MenuEntry_Octave, Output_VCO1_OCTAVE)
 
-ENTRY("Pitch", MenuEntry_Pitch, Output_VCO1_PITCH)
-SKIPENTRY
+ENTRY("Coarse", MenuEntry_Value, Output_VCO1_COARSE)
+ENTRY("Fine", MenuEntry_Pitch, Output_VCO1_PITCH)
 ENTRY("PW", MenuEntry_Percentage, Output_VCO1_PW)
 SKIPENTRY
 SKIPENTRY
