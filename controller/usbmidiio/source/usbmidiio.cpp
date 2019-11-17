@@ -190,6 +190,7 @@ void key_up(key_source_t source, int channel, int key)
 
 			switch (preset.keyzone[zone].type) {
 			case PresetKeyzoneType_Single:
+			case PresetKeyzoneType_Paraphonic:
 				direct[zone].NoteOff(playkey, 0);
 				break;
 			case PresetKeyzoneType_Arpeggiator:
@@ -1251,8 +1252,8 @@ void preset_init()
 		preset.env[i].a = 0x10;
 		SETMODSOURCE(i + modsource_ENV0, 2, 0x2000);
 		preset.env[i].d = 0x2000;
-		SETMODSOURCE(i + modsource_ENV0, 3, 0x2000);
-		preset.env[i].s = 0x2000;
+		SETMODSOURCE(i + modsource_ENV0, 3, 0xE000);
+		preset.env[i].s = 0xE000;
 		SETMODSOURCE(i + modsource_ENV0, 4, 0x5000);
 		preset.env[i].r = 0x5000;
     }
@@ -1307,10 +1308,10 @@ void preset_init()
 	preset.clock.internal_bpm = 14400;
 	arpclock_set_speed((float)preset.clock.internal_bpm * 0.01f);
 
-	preset.keyzone[0].type = PresetKeyzoneType_Arpeggiator;
+	preset.keyzone[0].type = PresetKeyzoneType_Paraphonic;
 	preset.keyzone[0].arpsettings = ArpSettings_t();
-	preset.keyzone[0].arpsettings.Mode = Arp_UpDown;
-	preset.keyzone[0].arpsettings.Octaves = Oct_Two;
+	preset.keyzone[0].arpsettings.Mode = Arp_Up;
+	preset.keyzone[0].arpsettings.Octaves = Oct_One;
 	preset.keyzone[0].arpsettings.ResetTimeOnFirstKey = true;
 	preset.keyzone[0].arpsettings.Rhythm = 0xff;
 	preset.keyzone[0].arpsettings.TimingSource = TimeSource_Internal;
@@ -1429,14 +1430,14 @@ void sync_preset(uint32_t addr)
 			if (preset.keyzone[zone].type == PresetKeyzoneType_Single) {
 				for (int mapid = 0; mapid < NUM_KEY_MAP_TARGETS; mapid++) {
 					if (preset.key_mapping[mapid].keyzone == zone) {
-						SETKEYMAP(mapid, preset.key_mapping[mapid].keyzone, 0);
+						SETKEYMAP(mapid, zone, 0);
 					}
 				}
 			}
 			else {
 				for (int mapid = 0; mapid < NUM_KEY_MAP_TARGETS; mapid++) {
 					if (preset.key_mapping[mapid].keyzone == zone) {
-						SETKEYMAP(mapid, preset.key_mapping[mapid].keyzone, preset.key_mapping[mapid].keyindex);
+						SETKEYMAP(mapid, zone, preset.key_mapping[mapid].keyindex);
 					}
 				}
 			}

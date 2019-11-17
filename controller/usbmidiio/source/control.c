@@ -15,7 +15,7 @@
 
 #define WEAK __attribute__ ((weak))
 
-#define RING_SIZE	256
+#define RING_SIZE	2048
 static volatile uint8_t fifo_rx_ring[RING_SIZE];
 static volatile int fifo_rx_write = 0;
 static volatile int fifo_rx_read = 0;
