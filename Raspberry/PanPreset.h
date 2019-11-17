@@ -67,7 +67,7 @@ typedef struct
 } PACKED OperatorParam_t;
 
 
-enum PresetCategoryEnum
+enum PresetCategoryEnum : char
 {
 	PresetCategory_Lead,
 	PresetCategory_Bass,
@@ -79,7 +79,7 @@ enum PresetCategoryEnum
 	__PresetCategoryCount
 };
 
-enum
+enum : char
 {
 	Controller_X,
 	Controller_Y,
@@ -95,7 +95,7 @@ enum
 	NUM_CONTROLLERS
 };
 
-typedef enum {
+typedef enum : char {
 	key_map_target_vco1 = 1,
 	key_map_target_vco2,
 	key_map_target_vco3,
@@ -131,14 +131,14 @@ typedef struct
 	uint32_t reserved;
 } PACKED key_input_t;
 
-enum PresetKeyzoneType
+enum PresetKeyzoneType : char
 {
 	PresetKeyzoneType_Single,
 	PresetKeyzoneType_Paraphonic,
 	PresetKeyzoneType_Arpeggiator,
 };
 
-enum PresetKeyzoneKeyPriority
+enum PresetKeyzoneKeyPriority : char
 {
 	PresetKeyzoneKeyPriority_low = 1,
 	PresetKeyzoneKeyPriority_high = 2,
@@ -152,7 +152,7 @@ typedef struct
 	PresetKeyzoneKeyPriority keypriority;
 } PACKED keyzone_settings_t;
 
-enum ClockSourceType
+enum ClockSourceType : char
 {
 	ClockSourceType_Internal,
 	ClockSourceType_Usb,

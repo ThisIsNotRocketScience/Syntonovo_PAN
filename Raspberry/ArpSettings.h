@@ -17,7 +17,7 @@
 #define PACKED  __attribute__((packed))
 #endif
 
-typedef enum ClockSource_t
+typedef enum ClockSource_t : char
 {
 	Clock1,
 	Clock2,
@@ -25,7 +25,7 @@ typedef enum ClockSource_t
 	__ClockSource_Count
 } PACKED ClockSource_t;
 
-typedef enum ArpeggioMode_t
+typedef enum ArpeggioMode_t : char
 {
 	Arp_Up,
 	Arp_Down,
@@ -41,7 +41,7 @@ typedef enum ArpeggioMode_t
 	__ArpeggioMode_Count
 } PACKED ArpeggioMode_t;
 
-typedef enum ArpeggioOctaves_t
+typedef enum ArpeggioOctaves_t : char
 {
 	Oct_None,
 	Oct_One,
@@ -51,7 +51,7 @@ typedef enum ArpeggioOctaves_t
 	__ArpeggioOctaves_Count
 } PACKED ArpeggioOctaves_t;
 
-typedef enum ArpeggioOctaveInterleaving_t
+typedef enum ArpeggioOctaveInterleaving_t : char
 {
 	Interleave_Pattern,
 	Interleave_Note,
@@ -132,7 +132,7 @@ public:
 } PACKED;
 
 
-typedef enum VelocityMode_t
+typedef enum VelocityMode_t : char
 {
 	VelMode_MaxVelocity,
 	VelMode_LastVelocity,
@@ -140,7 +140,7 @@ typedef enum VelocityMode_t
 	__VelocityMode_Count
 } PACKED VelocityMode_t;
 
-typedef enum TimeSource_t
+typedef enum TimeSource_t : char
 {
 	TimeSource_Internal,
 	TimeSource_USB,
