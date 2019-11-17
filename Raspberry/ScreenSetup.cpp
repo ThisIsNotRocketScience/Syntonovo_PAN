@@ -526,8 +526,7 @@ void _screensetup_t::EncoderPress(FinalEncoderEnum button)
 	{
 		Screens_t Page = GetPage(button);
 		gGui.GotoPage(Page);
-	}
-	
+	}	
 }
 
 int _screensetup_t::GetControlIndex(_control_t *c)
