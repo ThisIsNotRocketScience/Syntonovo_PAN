@@ -11,7 +11,7 @@
 #ifdef WIN32
 #define PACKED
 #else
-#define PACKED  __attribute__((__packed__, __aligned__(1)))
+#define PACKED  __attribute__((packed))
 #endif
 
 
@@ -131,7 +131,7 @@ typedef struct
 	uint32_t reserved;
 } PACKED key_input_t;
 
-enum PresetKeyzoneType
+enum PresetKeyzoneType : char
 {
 	PresetKeyzoneType_Single,
 	PresetKeyzoneType_Paraphonic,

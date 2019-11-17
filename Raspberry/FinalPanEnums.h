@@ -26,7 +26,8 @@
 	#endif
 #else
 	#ifndef PACKED 
-		#define PACKED  __attribute__((__packed__, __aligned__(1)))
+#define PACKED  __attribute__((packed))
+//#define PACKED  __attribute__((__packed__, __aligned__(1)))
 	#endif
 #endif
 
