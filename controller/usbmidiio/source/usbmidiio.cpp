@@ -354,6 +354,7 @@ void setupleds()
 	int index1 = 608;
 	int index2 = 0;
 
+#ifdef OLDSYNTH
 	ENCODER(0, VCO4);
 	ENCODER(0, VCO5);
 	ENCODER(0, VCO6);
@@ -456,6 +457,113 @@ void setupleds()
 	ENCODER(1, Masterout);
 	ENCODER(1, SketchRight);
 	ENCODER(1, F11);
+#else
+	ENCODER(0, VCO4);
+	ENCODER(0, VCO5);
+	ENCODER(0, VCO6);
+	ENCODER(0, VCO7);
+	ENCODER(0, VCO8); // dn
+	ENCODER(0, VCO3);
+	ENCODER(0, VCO2);
+	ENCODER(0, VCO1);
+
+	LEDBUTTON(0, L1);
+	LEDBUTTON(0, L2);
+	LEDBUTTON(0, L3);
+	LEDBUTTON(0, L4);
+	LEDBUTTON(0, L5);
+	LEDBUTTON(0, L6);
+	LEDBUTTON(0, L7);
+	LEDBUTTON(0, L8);
+	LEDBUTTON(0, R8);
+	LEDBUTTON(0, R7);
+	LEDBUTTON(0, R6);
+	LEDBUTTON(0, R5);
+	LEDBUTTON(0, R4);
+	LEDBUTTON(0, R3);
+	LEDBUTTON(0, R2);
+	LEDBUTTON(0, R1);
+	LEDBUTTON(0, B11);
+	LEDBUTTON(0, B12);
+	LEDBUTTON(0, B13);
+	LEDBUTTON(0, B14);
+	LEDBUTTON(0, B15);
+	LEDBUTTON(0, B16);
+	LEDBUTTON(0, OctDownRight);
+	LEDBUTTON(0, OctUpRight);
+	LEDBUTTON(0, BankRight);
+	LEDBUTTON(0, PortamentoRight);
+	LEDBUTTON(0, RSus);
+	LEDBUTTON(0, RUna);
+	LEDBUTTON(0, RMod);
+	LEDBUTTON(0, ArpEnable);
+	LEDBUTTON(0, ArpFreeze);
+	LEDBUTTON(0, ArpEdit);
+
+	ENCODER(0, VCF1Freq);
+	ENCODER(0, VCF1Mix);
+	ENCODER(0, VCF2Mix);
+	ENCODER(0, Cleanmix);
+	ENCODER(0, VCF2d);
+	ENCODER(0, VCF2c);
+	ENCODER(0, VCF2b);
+	ENCODER(0, VCF2a);
+
+	LEDBUTTON(1, BHome);
+	UNUSED(1);//LEDBUTTON(1, Lseq2);
+	UNUSED(1);//LEDBUTTON(1, Lseq1);
+	LEDBUTTON(1, LSus);
+	LEDBUTTON(1, LUna);
+	LEDBUTTON(1, LMod);
+	LEDBUTTON(1, PortamentoLeft);
+	LEDBUTTON(1, OctUpLeft);
+	LEDBUTTON(1, B6);
+	LEDBUTTON(1, B5);
+	LEDBUTTON(1, B4);
+	LEDBUTTON(1, B3);
+	LEDBUTTON(1, B2);
+	LEDBUTTON(1, B1);
+	LEDBUTTON(1, BankLeft);
+	LEDBUTTON(1, OctDownLeft);
+
+//	ENCODER(1, LedSwitch); //???? SW65
+	UNUSEDENCODER(1); //ENCODER(1, FExt);
+
+//	ENCODER(1, SketchLeft);
+	ENCODER(1, MasteroutHeadphone);
+	ENCODER(1, F2);
+	ENCODER(1, F4);
+	ENCODER(1, F6);
+	ENCODER(1, F5);
+	ENCODER(1, F3);
+	ENCODER(1, F1);
+
+	LEDBUTTON(1, B7);
+	LEDBUTTON(1, B8);
+	LEDBUTTON(1, BX);
+	LEDBUTTON(1, BY);
+	LEDBUTTON(1, BZ);
+	LEDBUTTON(1, BVelocity);
+	UNUSED(1); // Toucher
+	LEDBUTTON(1, BCV);
+	LEDBUTTON(1, R9);
+	LEDBUTTON(1, R10);
+	LEDBUTTON(1, L10);
+	LEDBUTTON(1, L9);
+	LEDBUTTON(1, B9);
+	LEDBUTTON(1, B10);
+	LEDBUTTON(1, BEnv);
+	LEDBUTTON(1, BLFO);
+
+	ENCODER(1, F9);
+	ENCODER(1, F7);
+	ENCODER(1, F8);
+	ENCODER(1, F10);
+	UNUSEDENCODER(1); //ENCODER(1, FExt);
+	ENCODER(1, Masterout);
+	ENCODER(1, SketchRight);
+	ENCODER(1, F11);
+#endif
 }
 
 #undef ENCODER
@@ -793,11 +901,13 @@ void ScanButtonsAndEncoders()
 	memcpy(last_sw, sw, 160);
 */
 	for (int i = 0; i < __ledbutton_Count; i++) {
-		if (switch_sw[i] == 0) {
+		int move = switch_process(&switch_state[i], sw[switch_sw[i]]);
+
+		if (move && switch_sw[i] == 0) {
 			// sw[0] is bound to an encoder so we can easily skip unbound buttons
+			printf("Unknown switch %d %d\n", i, move);
 			continue;
 		}
-		int move = switch_process(&switch_state[i], sw[switch_sw[i]]);
 
 		if (move > 0) {
 			//printf("sw %d up\n", i);
