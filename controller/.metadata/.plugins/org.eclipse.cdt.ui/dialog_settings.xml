@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section name="Workbench">
-	<item value="USB_STACK_USE_DEDICATED_RAM=1" key="org.eclipse.cdt.utils.ui.controls.FileListControl"/>
+	<item value="" key="org.eclipse.cdt.utils.ui.controls.FileListControl"/>
 	<item value="Default C source template" key="LastUsedSourceTemplate"/>
 	<item value="Default C header template" key="LastUsedHeaderTemplate"/>
 	<section name="org.eclipse.cdt.ui.text.hover.CMacroExpansionExploration">

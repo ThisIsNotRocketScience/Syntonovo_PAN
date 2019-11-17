@@ -1,6 +1,6 @@
 eclipse.preferences.version=1
 pathvariable.SDK_2_x_MKL26Z64xxx4=C\:/Users/Lauri/mcuxpresso/01/SDKPackages/MKL26Z64xxx4
-pathvariable.SDK_LPC_RESOURCES=C\:/apps/MCUXpressoIDE_10.2.0_759/ide/plugins/com.nxp.mcuxpresso.core.datamodels.resources_10.2.0.201805151128/override
+pathvariable.SDK_LPC_RESOURCES=C\:/nxp/MCUXpressoIDE_10.2.0_759/ide/plugins/com.nxp.mcuxpresso.core.datamodels.resources_10.2.0.201805151128/override
 pathvariable.usbdm_application_path=C\:/Program Files (x86)/pgo/USBDM 4.12.1.230
 pathvariable.usbdm_resource_path=C\:/Program Files (x86)/pgo/USBDM 4.12.1.230
 version=1

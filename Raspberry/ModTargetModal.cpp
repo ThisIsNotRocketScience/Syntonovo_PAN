@@ -225,7 +225,7 @@ void ModTargetModal::Activate()
 	
 }
 
-ModTargetModal::ModTargetModal()
+ModTargetModal::ModTargetModal() : _screensetup_t(SCREEN_MODTARGETMODAL)
 {
 	EnableButton(11, "OK", MenuEntry_Action, MenuAction_Ok);
 	EnableButton(10, "Cancel", MenuEntry_Action, MenuAction_Cancel);

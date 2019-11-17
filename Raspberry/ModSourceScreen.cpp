@@ -24,7 +24,6 @@ void ModSourceScreen::TweakParameterValue(int param, int delta)
 	}
 	else
 	{
-
 		gCurrentPreset.TweakModMatrix(modType, ActiveInstance, param, delta);
 	}
 };
@@ -87,7 +86,7 @@ void ModSourceScreen::SetActiveInstance(int id)
 	}
 }
 
-ModSourceScreen::ModSourceScreen(Screens_t screen, ModSource_t modsourcetype, const char *basetitle)
+ModSourceScreen::ModSourceScreen(Screens_t screen, ModSource_t modsourcetype, const char *basetitle) : _screensetup_t(screen)
 {
 	BaseTitle = basetitle;
 	ModSource = modsourcetype;
@@ -196,14 +195,11 @@ ModSourceScreen::ModSourceScreen(Screens_t screen, ModSource_t modsourcetype, co
 		encoders[1][i].enabled = true;
 		encoders[1][i].target = i;
 		encoders[1][i].Set= 1;
-		encoders[1][i].style = MenuEntry_ModMatrixValue;
-		
+		encoders[1][i].style = MenuEntry_ModMatrixValue;		
 //		encoders[1][i].SetTitle(GetModulationTargetName(row->targets[i].outputid));		
 	}
-	SetActiveInstance(0);
-	
+	SetActiveInstance(0);	
 	SetEncoderNames();
-	
 }
 
 int64_t m64(int32_t a, int32_t b)
@@ -215,6 +211,7 @@ int32_t div64(int32_t a, int32_t b)
 {
 	return (int32_t)(((int64_t)a << 31) / b);
 };
+
 void BuildLFOPts(float x, float y, float W, float H, ImVec2 *Pts, int cnt, int ActiveInstance)
 {
 	uint32_t Speed = gCurrentPreset.GetModParameterValue(LFO_Speed, ActiveInstance)<<11;
@@ -230,8 +227,6 @@ void BuildLFOPts(float x, float y, float W, float H, ImVec2 *Pts, int cnt, int A
 	int32_t ooomshape = div64(1 << 16, 0x7FFFFFFF - shape);
 
 	int64_t cur = 0;
-
-
 
 	//W = W * 2.0f / (float)cnt;
 	//H *= 1.0f / 32767.0f;
@@ -478,17 +473,19 @@ void ModSourceScreen::EncoderPress(FinalEncoderEnum button)
 	{
 		switch (button)
 		{
-		case encoder_F1: OpenTargetModal(0); break;
-		case encoder_F2: OpenTargetModal(1); break;
-		case encoder_F3: OpenTargetModal(2); break;
-		case encoder_F4: OpenTargetModal(3); break;
-		case encoder_F5: OpenTargetModal(4); break;
-		case encoder_F6: OpenTargetModal(5); break;
-		case encoder_F7: OpenTargetModal(6); break;
-		case encoder_F8: OpenTargetModal(7); break;
-		case encoder_F9: OpenTargetModal(8); break;
-		case encoder_F10: OpenTargetModal(9); break;
-		case encoder_F11: OpenTargetModal(10); break;
+		case encoder_F1: OpenTargetModal(0); return; break;
+		case encoder_F2: OpenTargetModal(1); return; break;
+		case encoder_F3: OpenTargetModal(2); return;break;
+		case encoder_F4: OpenTargetModal(3); return;break;
+		case encoder_F5: OpenTargetModal(4); return;break;
+		case encoder_F6: OpenTargetModal(5); return;break;
+		case encoder_F7: OpenTargetModal(6); return;break;
+		case encoder_F8: OpenTargetModal(7); return;break;
+		case encoder_F9: OpenTargetModal(8); return;break;
+		case encoder_F10: OpenTargetModal(9); return; break;
+		case encoder_F11: OpenTargetModal(10); return; break;
 		}
 	}
+
+	_screensetup_t::EncoderPress(button);
 }

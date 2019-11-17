@@ -174,7 +174,7 @@ void RenderLettersInABox(int x, int y, bool active, const char* text, int w, int
 
 }
 
-PresetScreen::PresetScreen()
+PresetScreen::PresetScreen() : _screensetup_t(SCREEN_PRESETNAME)
 {
 
 	for (int i = 0; i < PRESET_NAME_LENGTH - 1; i++)
@@ -251,7 +251,7 @@ void BankSelectScreen::SetLeftRight(LeftRight lr)
 }
 
 
-BankSelectScreen::BankSelectScreen()
+BankSelectScreen::BankSelectScreen(): _screensetup_t(SCREEN_SELECTBANKL)
 {
 	df = 0;
 	mybank = &df;
@@ -341,7 +341,7 @@ void SavePresetScreen::SetLeftRight(LeftRight lr)
 
 }
 
-SavePresetScreen::SavePresetScreen()
+SavePresetScreen::SavePresetScreen() : _screensetup_t(SCREEN_PRESETSAVE)
 {
 	df = 0;
 	list = new BankList(400, 150, &df, "");
@@ -386,7 +386,7 @@ void SavePresetScreen::SetNames()
 }
 
 
-ImageScreen::ImageScreen(ImTextureID img)
+ImageScreen::ImageScreen(ImTextureID img): _screensetup_t(SCREEN_SHOWIMAGE)
 {
 	theImg = img;
 }

@@ -2,7 +2,7 @@
 #include "ParameterModal.h"
 #include "NewModulationModal.h"
 
-ParameterModal::ParameterModal()
+ParameterModal::ParameterModal(): _screensetup_t(SCREEN_PARAMETERMODAL)
 {
 	EnableButton(0, "Back", MenuEntry_Action, MenuAction_Ok);
 

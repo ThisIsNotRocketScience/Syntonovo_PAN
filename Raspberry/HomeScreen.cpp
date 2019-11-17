@@ -5,7 +5,7 @@ extern presetnames_t presetnames;
 
 
 
-HomeScreen::HomeScreen()
+HomeScreen::HomeScreen() : _screensetup_t(SCREEN_HOME)
 {
 /*	this->ControlsInOrder.push_back(new BankList(512 - 20 - ParamBankWidth, 150, &gPanState.BankLeft, "Left"));
 	AddText(512 - 20 - ParamBankWidth, 120, "Left bank", align_left, font_tiny);

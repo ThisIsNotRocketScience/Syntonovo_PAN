@@ -204,10 +204,11 @@ public:
 	VelocityMode_t VelocityMode;
 	ArpeggioOctaveInterleaving_t Interleave;
 	ArpeggioOctaves_t Octaves;
-	int Transpose;
 
+	int Transpose;
 	bool ResetTimeOnFirstKey;
 	bool KillNotesAfterLastNoteOff;
+	bool Hold;
 } PACKED;
 
 #endif

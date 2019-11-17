@@ -1478,3 +1478,1270 @@ Finished building: ../source/usb/virtual_com.c
  
 Finished building: ../source/control.c
  
+16:48:29 **** Build of configuration Debug for project pan_sh ****
+make -r -j8 all 
+Building file: ../startup/startup_lpc54616.c
+Building file: ../source/LPC54616J512_Project.c
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\board" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\source" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\startup" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS\drivers" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"startup/startup_lpc54616.d" -MT"startup/startup_lpc54616.o" -MT"startup/startup_lpc54616.d" -o "startup/startup_lpc54616.o" "../startup/startup_lpc54616.c"
+Building file: ../source/LTC2712.c
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\board" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\source" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\startup" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS\drivers" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"source/LPC54616J512_Project.d" -MT"source/LPC54616J512_Project.o" -MT"source/LPC54616J512_Project.d" -o "source/LPC54616J512_Project.o" "../source/LPC54616J512_Project.c"
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\board" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\source" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\startup" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS\drivers" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"source/LTC2712.d" -MT"source/LTC2712.o" -MT"source/LTC2712.d" -o "source/LTC2712.o" "../source/LTC2712.c"
+Building file: ../source/MAX11311.c
+Invoking: MCU C Compiler
+Building file: ../source/ad.c
+arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\board" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\source" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\startup" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS\drivers" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"source/MAX11311.d" -MT"source/MAX11311.o" -MT"source/MAX11311.d" -o "source/MAX11311.o" "../source/MAX11311.c"
+Building file: ../source/adsr.c
+Invoking: MCU C Compiler
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\board" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\source" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\startup" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS\drivers" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"source/ad.d" -MT"source/ad.o" -MT"source/ad.d" -o "source/ad.o" "../source/ad.c"
+Building file: ../source/autotune.c
+arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\board" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\source" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\startup" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS\drivers" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"source/adsr.d" -MT"source/adsr.o" -MT"source/adsr.d" -o "source/adsr.o" "../source/adsr.c"
+Building file: ../source/control.c
+Invoking: MCU C Compiler
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\board" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\source" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\startup" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS\drivers" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"source/control.d" -MT"source/control.o" -MT"source/control.d" -o "source/control.o" "../source/control.c"
+arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\board" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\source" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\startup" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS\drivers" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"source/autotune.d" -MT"source/autotune.o" -MT"source/autotune.d" -o "source/autotune.o" "../source/autotune.c"
+C:\Users\Root\AppData\Local\Temp\ccIMW6mb.s: Assembler messages:
+C:\Users\Root\AppData\Local\Temp\ccIMW6mb.s:105: Warning: ignoring changed section attributes for .data
+Finished building: ../source/LTC2712.c
+ 
+Building file: ../source/hp.c
+../source/control.c: In function 'fifo_reset_enable':
+../source/control.c:67:2: warning: implicit declaration of function 'synth_reset' [-Wimplicit-function-declaration]
+  synth_reset();
+  ^~~~~~~~~~~
+Finished building: ../startup/startup_lpc54616.c
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\board" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\source" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\startup" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS\drivers" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"source/hp.d" -MT"source/hp.o" -MT"source/hp.d" -o "source/hp.o" "../source/hp.c"
+Finished building: ../source/ad.c
+ 
+ 
+Finished building: ../source/adsr.c
+Building file: ../source/lfo.c
+Building file: ../source/notestack.c
+ 
+Invoking: MCU C Compiler
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\board" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\source" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\startup" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS\drivers" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"source/lfo.d" -MT"source/lfo.o" -MT"source/lfo.d" -o "source/lfo.o" "../source/lfo.c"
+arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\board" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\source" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\startup" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS\drivers" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"source/notestack.d" -MT"source/notestack.o" -MT"source/notestack.d" -o "source/notestack.o" "../source/notestack.c"
+Building file: ../source/semihost_hardfault.c
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\board" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\source" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\startup" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS\drivers" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"source/semihost_hardfault.d" -MT"source/semihost_hardfault.o" -MT"source/semihost_hardfault.d" -o "source/semihost_hardfault.o" "../source/semihost_hardfault.c"
+../source/lfo.c:102:17: warning: 'waveform_sample' defined but not used [-Wunused-function]
+ static uint16_t waveform_sample(uint32_t phase)
+                 ^~~~~~~~~~~~~~~
+Finished building: ../source/hp.c
+Finished building: ../source/LPC54616J512_Project.c
+Finished building: ../source/control.c
+ 
+ 
+ 
+Finished building: ../source/semihost_hardfault.c
+Finished building: ../source/lfo.c
+Finished building: ../source/MAX11311.c
+Finished building: ../source/notestack.c
+ 
+ 
+ 
+ 
+Building file: ../source/shiftctrl.c
+Building file: ../source/spi_sched.c
+Invoking: MCU C Compiler
+Building file: ../source/synth.c
+arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\board" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\source" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\startup" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS\drivers" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"source/shiftctrl.d" -MT"source/shiftctrl.o" -MT"source/shiftctrl.d" -o "source/shiftctrl.o" "../source/shiftctrl.c"
+Invoking: MCU C Compiler
+Building file: ../board/board.c
+arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\board" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\source" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\startup" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS\drivers" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"source/spi_sched.d" -MT"source/spi_sched.o" -MT"source/spi_sched.d" -o "source/spi_sched.o" "../source/spi_sched.c"
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\board" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\source" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\startup" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS\drivers" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"source/synth.d" -MT"source/synth.o" -MT"source/synth.d" -o "source/synth.o" "../source/synth.c"
+Invoking: MCU C Compiler
+Building file: ../board/clock_config.c
+arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\board" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\source" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\startup" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS\drivers" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"board/board.d" -MT"board/board.o" -MT"board/board.d" -o "board/board.o" "../board/board.c"
+Building file: ../board/peripherals.c
+Invoking: MCU C Compiler
+Building file: ../board/pin_mux.c
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\board" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\source" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\startup" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS\drivers" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"board/peripherals.d" -MT"board/peripherals.o" -MT"board/peripherals.d" -o "board/peripherals.o" "../board/peripherals.c"
+arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\board" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\source" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\startup" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS\drivers" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"board/clock_config.d" -MT"board/clock_config.o" -MT"board/clock_config.d" -o "board/clock_config.o" "../board/clock_config.c"
+Invoking: MCU C Compiler
+../source/shiftctrl.c: In function 'shiftctrl_update':
+../source/shiftctrl.c:73:15: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\board" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\source" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\startup" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS\drivers" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"board/pin_mux.d" -MT"board/pin_mux.o" -MT"board/pin_mux.d" -o "board/pin_mux.o" "../board/pin_mux.c"
+   xfer.txData = &flags;
+               ^
+../source/shiftctrl.c:77:21: warning: unused variable 's' [-Wunused-variable]
+   volatile status_t s = SPI_MasterTransferBlocking(SPI_0_PERIPHERAL, &xfer);
+                     ^
+../source/synth.c: In function 'update_note':
+../source/synth.c:661:6: warning: unused variable 'note_value' [-Wunused-variable]
+  int note_value[4];
+      ^~~~~~~~~~
+../source/synth.c: In function 'synth_modulation_run':
+../source/synth.c:2265:21: warning: passing argument 1 of 'control_out_queue' discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
+   control_out_queue(mod_data, sizeof(mod_data));
+                     ^~~~~~~~
+In file included from ../source/synth.c:26:0:
+../source/control.h:9:6: note: expected 'uint8_t * {aka unsigned char *}' but argument is of type 'volatile uint8_t * {aka volatile unsigned char *}'
+ void control_out_queue(uint8_t* data, int count);
+      ^~~~~~~~~~~~~~~~~
+At top level:
+../source/synth.c:260:16: warning: 'unipolar_unsigned_scale' defined but not used [-Wunused-function]
+ static int32_t unipolar_unsigned_scale(int32_t value, uint16_t scale)
+                ^~~~~~~~~~~~~~~~~~~~~~~
+../source/synth.c:201:16: warning: 'notetrack_scale' defined but not used [-Wunused-function]
+ static int32_t notetrack_scale(uint16_t note_v, int16_t scale)
+                ^~~~~~~~~~~~~~~
+Finished building: ../board/board.c
+ 
+C:\Users\Root\AppData\Local\Temp\cc7wddCb.s: Assembler messages:
+C:\Users\Root\AppData\Local\Temp\cc7wddCb.s:357: Warning: ignoring changed section attributes for .data
+Building file: ../CMSIS/drivers/fsl_clock.c
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\board" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\source" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\startup" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS\drivers" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"CMSIS/drivers/fsl_clock.d" -MT"CMSIS/drivers/fsl_clock.o" -MT"CMSIS/drivers/fsl_clock.d" -o "CMSIS/drivers/fsl_clock.o" "../CMSIS/drivers/fsl_clock.c"
+Finished building: ../source/shiftctrl.c
+C:\Users\Root\AppData\Local\Temp\ccP9WZxa.s: Assembler messages:
+C:\Users\Root\AppData\Local\Temp\ccP9WZxa.s:17: Warning: ignoring changed section attributes for .data
+ 
+Building file: ../CMSIS/drivers/fsl_common.c
+Finished building: ../source/spi_sched.c
+Invoking: MCU C Compiler
+Finished building: ../board/clock_config.c
+arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\board" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\source" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\startup" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS\drivers" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"CMSIS/drivers/fsl_common.d" -MT"CMSIS/drivers/fsl_common.o" -MT"CMSIS/drivers/fsl_common.d" -o "CMSIS/drivers/fsl_common.o" "../CMSIS/drivers/fsl_common.c"
+ 
+ 
+Finished building: ../board/peripherals.c
+Building file: ../CMSIS/drivers/fsl_ctimer.c
+Finished building: ../board/pin_mux.c
+ 
+Invoking: MCU C Compiler
+C:\Users\Root\AppData\Local\Temp\ccQ0Hmvm.s: Assembler messages:
+C:\Users\Root\AppData\Local\Temp\ccQ0Hmvm.s:80: Warning: ignoring changed section attributes for .data
+arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\board" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\source" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\startup" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS\drivers" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"CMSIS/drivers/fsl_ctimer.d" -MT"CMSIS/drivers/fsl_ctimer.o" -MT"CMSIS/drivers/fsl_ctimer.d" -o "CMSIS/drivers/fsl_ctimer.o" "../CMSIS/drivers/fsl_ctimer.c"
+Building file: ../CMSIS/drivers/fsl_dma.c
+ 
+Building file: ../CMSIS/drivers/fsl_eeprom.c
+Building file: ../CMSIS/drivers/fsl_flexcomm.c
+Invoking: MCU C Compiler
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\board" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\source" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\startup" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS\drivers" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"CMSIS/drivers/fsl_dma.d" -MT"CMSIS/drivers/fsl_dma.o" -MT"CMSIS/drivers/fsl_dma.d" -o "CMSIS/drivers/fsl_dma.o" "../CMSIS/drivers/fsl_dma.c"
+arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\board" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\source" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\startup" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS\drivers" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"CMSIS/drivers/fsl_eeprom.d" -MT"CMSIS/drivers/fsl_eeprom.o" -MT"CMSIS/drivers/fsl_eeprom.d" -o "CMSIS/drivers/fsl_eeprom.o" "../CMSIS/drivers/fsl_eeprom.c"
+Finished building: ../source/autotune.c
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\board" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\source" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\startup" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS\drivers" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"CMSIS/drivers/fsl_flexcomm.d" -MT"CMSIS/drivers/fsl_flexcomm.o" -MT"CMSIS/drivers/fsl_flexcomm.d" -o "CMSIS/drivers/fsl_flexcomm.o" "../CMSIS/drivers/fsl_flexcomm.c"
+ 
+Building file: ../CMSIS/drivers/fsl_fmc.c
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\board" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\source" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\startup" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS\drivers" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"CMSIS/drivers/fsl_fmc.d" -MT"CMSIS/drivers/fsl_fmc.o" -MT"CMSIS/drivers/fsl_fmc.d" -o "CMSIS/drivers/fsl_fmc.o" "../CMSIS/drivers/fsl_fmc.c"
+Finished building: ../CMSIS/drivers/fsl_common.c
+ 
+Finished building: ../CMSIS/drivers/fsl_eeprom.c
+Finished building: ../CMSIS/drivers/fsl_flexcomm.c
+Building file: ../CMSIS/drivers/fsl_fmeas.c
+Invoking: MCU C Compiler
+ 
+ 
+arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\board" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\source" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\startup" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS\drivers" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"CMSIS/drivers/fsl_fmeas.d" -MT"CMSIS/drivers/fsl_fmeas.o" -MT"CMSIS/drivers/fsl_fmeas.d" -o "CMSIS/drivers/fsl_fmeas.o" "../CMSIS/drivers/fsl_fmeas.c"
+Finished building: ../CMSIS/drivers/fsl_ctimer.c
+Building file: ../CMSIS/drivers/fsl_gint.c
+Finished building: ../CMSIS/drivers/fsl_fmc.c
+Finished building: ../CMSIS/drivers/fsl_dma.c
+Building file: ../CMSIS/drivers/fsl_gpio.c
+ 
+Invoking: MCU C Compiler
+ 
+ 
+arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\board" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\source" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\startup" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS\drivers" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"CMSIS/drivers/fsl_gint.d" -MT"CMSIS/drivers/fsl_gint.o" -MT"CMSIS/drivers/fsl_gint.d" -o "CMSIS/drivers/fsl_gint.o" "../CMSIS/drivers/fsl_gint.c"
+Invoking: MCU C Compiler
+Building file: ../CMSIS/drivers/fsl_i2c.c
+arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\board" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\source" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\startup" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS\drivers" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"CMSIS/drivers/fsl_gpio.d" -MT"CMSIS/drivers/fsl_gpio.o" -MT"CMSIS/drivers/fsl_gpio.d" -o "CMSIS/drivers/fsl_gpio.o" "../CMSIS/drivers/fsl_gpio.c"
+Building file: ../CMSIS/drivers/fsl_inputmux.c
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\board" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\source" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\startup" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS\drivers" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"CMSIS/drivers/fsl_i2c.d" -MT"CMSIS/drivers/fsl_i2c.o" -MT"CMSIS/drivers/fsl_i2c.d" -o "CMSIS/drivers/fsl_i2c.o" "../CMSIS/drivers/fsl_i2c.c"
+Building file: ../CMSIS/drivers/fsl_mrt.c
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\board" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\source" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\startup" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS\drivers" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"CMSIS/drivers/fsl_inputmux.d" -MT"CMSIS/drivers/fsl_inputmux.o" -MT"CMSIS/drivers/fsl_inputmux.d" -o "CMSIS/drivers/fsl_inputmux.o" "../CMSIS/drivers/fsl_inputmux.c"
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\board" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\source" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\startup" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS\drivers" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"CMSIS/drivers/fsl_mrt.d" -MT"CMSIS/drivers/fsl_mrt.o" -MT"CMSIS/drivers/fsl_mrt.d" -o "CMSIS/drivers/fsl_mrt.o" "../CMSIS/drivers/fsl_mrt.c"
+Finished building: ../CMSIS/drivers/fsl_clock.c
+ 
+Finished building: ../CMSIS/drivers/fsl_fmeas.c
+Building file: ../CMSIS/drivers/fsl_pint.c
+ 
+Invoking: MCU C Compiler
+Building file: ../CMSIS/drivers/fsl_power.c
+Finished building: ../CMSIS/drivers/fsl_gpio.c
+arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\board" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\source" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\startup" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS\drivers" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"CMSIS/drivers/fsl_pint.d" -MT"CMSIS/drivers/fsl_pint.o" -MT"CMSIS/drivers/fsl_pint.d" -o "CMSIS/drivers/fsl_pint.o" "../CMSIS/drivers/fsl_pint.c"
+Finished building: ../CMSIS/drivers/fsl_gint.c
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\board" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\source" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\startup" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS\drivers" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"CMSIS/drivers/fsl_power.d" -MT"CMSIS/drivers/fsl_power.o" -MT"CMSIS/drivers/fsl_power.d" -o "CMSIS/drivers/fsl_power.o" "../CMSIS/drivers/fsl_power.c"
+ 
+ 
+Finished building: ../CMSIS/drivers/fsl_inputmux.c
+Building file: ../CMSIS/drivers/fsl_reset.c
+Building file: ../CMSIS/drivers/fsl_rit.c
+Invoking: MCU C Compiler
+ 
+Invoking: MCU C Compiler
+Finished building: ../CMSIS/drivers/fsl_mrt.c
+arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\board" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\source" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\startup" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS\drivers" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"CMSIS/drivers/fsl_reset.d" -MT"CMSIS/drivers/fsl_reset.o" -MT"CMSIS/drivers/fsl_reset.d" -o "CMSIS/drivers/fsl_reset.o" "../CMSIS/drivers/fsl_reset.c"
+arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\board" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\source" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\startup" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS\drivers" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"CMSIS/drivers/fsl_rit.d" -MT"CMSIS/drivers/fsl_rit.o" -MT"CMSIS/drivers/fsl_rit.d" -o "CMSIS/drivers/fsl_rit.o" "../CMSIS/drivers/fsl_rit.c"
+ 
+Building file: ../CMSIS/drivers/fsl_rtc.c
+Building file: ../CMSIS/drivers/fsl_sctimer.c
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\board" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\source" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\startup" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS\drivers" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"CMSIS/drivers/fsl_rtc.d" -MT"CMSIS/drivers/fsl_rtc.o" -MT"CMSIS/drivers/fsl_rtc.d" -o "CMSIS/drivers/fsl_rtc.o" "../CMSIS/drivers/fsl_rtc.c"
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\board" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\source" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\startup" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS\drivers" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"CMSIS/drivers/fsl_sctimer.d" -MT"CMSIS/drivers/fsl_sctimer.o" -MT"CMSIS/drivers/fsl_sctimer.d" -o "CMSIS/drivers/fsl_sctimer.o" "../CMSIS/drivers/fsl_sctimer.c"
+Finished building: ../CMSIS/drivers/fsl_i2c.c
+Finished building: ../CMSIS/drivers/fsl_power.c
+ 
+In file included from C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS/fsl_device_registers.h:50:0,
+                 from ../CMSIS/drivers/fsl_common.h:47,
+                 from ../CMSIS/drivers/fsl_sctimer.h:37,
+                 from ../CMSIS/drivers/fsl_sctimer.c:35:
+../CMSIS/drivers/fsl_sctimer.c: In function 'SCTIMER_SetupPwm':
+C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS/LPC54616.h:6341:52: warning: 'periodEvent' may be used uninitialized in this function [-Wmaybe-uninitialized]
+ #define SCT_LIMIT_LIMMSK_L(x)                    (((uint32_t)(((uint32_t)(x)) << SCT_LIMIT_LIMMSK_L_SHIFT)) & SCT_LIMIT_LIMMSK_L_MASK)
+                                                    ^
+../CMSIS/drivers/fsl_sctimer.c:199:14: note: 'periodEvent' was declared here
+     uint32_t periodEvent, pulseEvent;
+              ^~~~~~~~~~~
+../CMSIS/drivers/fsl_sctimer.c:199:27: warning: 'pulseEvent' may be used uninitialized in this function [-Wmaybe-uninitialized]
+     uint32_t periodEvent, pulseEvent;
+                           ^~~~~~~~~~
+ 
+Building file: ../CMSIS/drivers/fsl_spi.c
+Building file: ../CMSIS/drivers/fsl_spi_dma.c
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\board" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\source" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\startup" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS\drivers" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"CMSIS/drivers/fsl_spi.d" -MT"CMSIS/drivers/fsl_spi.o" -MT"CMSIS/drivers/fsl_spi.d" -o "CMSIS/drivers/fsl_spi.o" "../CMSIS/drivers/fsl_spi.c"
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\board" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\source" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\startup" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS\drivers" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"CMSIS/drivers/fsl_spi_dma.d" -MT"CMSIS/drivers/fsl_spi_dma.o" -MT"CMSIS/drivers/fsl_spi_dma.d" -o "CMSIS/drivers/fsl_spi_dma.o" "../CMSIS/drivers/fsl_spi_dma.c"
+Finished building: ../CMSIS/drivers/fsl_pint.c
+Finished building: ../CMSIS/drivers/fsl_reset.c
+ 
+ 
+Finished building: ../CMSIS/drivers/fsl_rit.c
+Building file: ../CMSIS/drivers/fsl_usart.c
+Building file: ../CMSIS/drivers/fsl_usart_dma.c
+ 
+Invoking: MCU C Compiler
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\board" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\source" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\startup" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS\drivers" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"CMSIS/drivers/fsl_usart_dma.d" -MT"CMSIS/drivers/fsl_usart_dma.o" -MT"CMSIS/drivers/fsl_usart_dma.d" -o "CMSIS/drivers/fsl_usart_dma.o" "../CMSIS/drivers/fsl_usart_dma.c"
+arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\board" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\source" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\startup" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS\drivers" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"CMSIS/drivers/fsl_usart.d" -MT"CMSIS/drivers/fsl_usart.o" -MT"CMSIS/drivers/fsl_usart.d" -o "CMSIS/drivers/fsl_usart.o" "../CMSIS/drivers/fsl_usart.c"
+Building file: ../CMSIS/drivers/fsl_utick.c
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\board" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\source" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\startup" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS\drivers" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"CMSIS/drivers/fsl_utick.d" -MT"CMSIS/drivers/fsl_utick.o" -MT"CMSIS/drivers/fsl_utick.d" -o "CMSIS/drivers/fsl_utick.o" "../CMSIS/drivers/fsl_utick.c"
+Finished building: ../CMSIS/drivers/fsl_sctimer.c
+Finished building: ../CMSIS/drivers/fsl_rtc.c
+ 
+ 
+Building file: ../CMSIS/drivers/fsl_wwdt.c
+Building file: ../CMSIS/cmsis_drivers/fsl_i2c_cmsis.c
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\board" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\source" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\startup" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS\drivers" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"CMSIS/drivers/fsl_wwdt.d" -MT"CMSIS/drivers/fsl_wwdt.o" -MT"CMSIS/drivers/fsl_wwdt.d" -o "CMSIS/drivers/fsl_wwdt.o" "../CMSIS/drivers/fsl_wwdt.c"
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\board" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\source" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\startup" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS\drivers" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"CMSIS/cmsis_drivers/fsl_i2c_cmsis.d" -MT"CMSIS/cmsis_drivers/fsl_i2c_cmsis.o" -MT"CMSIS/cmsis_drivers/fsl_i2c_cmsis.d" -o "CMSIS/cmsis_drivers/fsl_i2c_cmsis.o" "../CMSIS/cmsis_drivers/fsl_i2c_cmsis.c"
+C:\Users\Root\AppData\Local\Temp\cc89Yyjz.s: Assembler messages:
+C:\Users\Root\AppData\Local\Temp\cc89Yyjz.s:2628: Warning: ignoring changed section attributes for .data
+Finished building: ../CMSIS/drivers/fsl_usart_dma.c
+Finished building: ../CMSIS/drivers/fsl_spi_dma.c
+Finished building: ../CMSIS/drivers/fsl_spi.c
+Finished building: ../CMSIS/drivers/fsl_utick.c
+ 
+ 
+ 
+ 
+Building file: ../CMSIS/cmsis_drivers/fsl_spi_cmsis.c
+Building file: ../CMSIS/cmsis_drivers/fsl_usart_cmsis.c
+Building file: ../CMSIS/system_LPC54616.c
+Invoking: MCU C Compiler
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\board" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\source" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\startup" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS\drivers" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"CMSIS/cmsis_drivers/fsl_spi_cmsis.d" -MT"CMSIS/cmsis_drivers/fsl_spi_cmsis.o" -MT"CMSIS/cmsis_drivers/fsl_spi_cmsis.d" -o "CMSIS/cmsis_drivers/fsl_spi_cmsis.o" "../CMSIS/cmsis_drivers/fsl_spi_cmsis.c"
+Finished building: ../CMSIS/drivers/fsl_usart.c
+Finished building: ../CMSIS/drivers/fsl_wwdt.c
+arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\board" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\source" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\startup" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS\drivers" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"CMSIS/cmsis_drivers/fsl_usart_cmsis.d" -MT"CMSIS/cmsis_drivers/fsl_usart_cmsis.o" -MT"CMSIS/cmsis_drivers/fsl_usart_cmsis.d" -o "CMSIS/cmsis_drivers/fsl_usart_cmsis.o" "../CMSIS/cmsis_drivers/fsl_usart_cmsis.c"
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__REDLIB__ -DPRINTF_FLOAT_ENABLE=0 -D__USE_CMSIS -DCR_INTEGER_PRINTF -DSDK_DEBUGCONSOLE=0 -D__MCUXPRESSO -DNDEBUG -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DCPU_LPC54616J512BD208 -DCPU_LPC54616J512BD208_cm4 -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\board" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\source" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\startup" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\CMSIS\drivers" -I"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller/../interface" -O3 -fno-common -g3 -Wall -c -fmessage-length=0 -fsingle-precision-constant -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__REDLIB__ -specs=redlib.specs -MMD -MP -MF"CMSIS/system_LPC54616.d" -MT"CMSIS/system_LPC54616.o" -MT"CMSIS/system_LPC54616.d" -o "CMSIS/system_LPC54616.o" "../CMSIS/system_LPC54616.c"
+ 
+ 
+Finished building: ../CMSIS/cmsis_drivers/fsl_i2c_cmsis.c
+ 
+Finished building: ../CMSIS/cmsis_drivers/fsl_usart_cmsis.c
+Finished building: ../CMSIS/cmsis_drivers/fsl_spi_cmsis.c
+Finished building: ../CMSIS/system_LPC54616.c
+ 
+ 
+ 
+C:\Users\Root\AppData\Local\Temp\ccrh4qug.s: Assembler messages:
+C:\Users\Root\AppData\Local\Temp\ccrh4qug.s:2089: Warning: ignoring changed section attributes for .data
+Finished building: ../source/synth.c
+ 
+Building target: pan_sh.axf
+Invoking: MCU Linker
+arm-none-eabi-gcc -nostdlib -Xlinker -print-memory-usage -Xlinker --gc-sections -Xlinker -Map="pan_sh.map" -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -T LPC54616J512_Project_Debug.ld -o "pan_sh.axf"  ./startup/startup_lpc54616.o  ./source/LPC54616J512_Project.o ./source/LTC2712.o ./source/MAX11311.o ./source/ad.o ./source/adsr.o ./source/autotune.o ./source/control.o ./source/hp.o ./source/lfo.o ./source/notestack.o ./source/semihost_hardfault.o ./source/shiftctrl.o ./source/spi_sched.o ./source/synth.o  ./board/board.o ./board/clock_config.o ./board/peripherals.o ./board/pin_mux.o  ./CMSIS/drivers/fsl_clock.o ./CMSIS/drivers/fsl_common.o ./CMSIS/drivers/fsl_ctimer.o ./CMSIS/drivers/fsl_dma.o ./CMSIS/drivers/fsl_eeprom.o ./CMSIS/drivers/fsl_flexcomm.o ./CMSIS/drivers/fsl_fmc.o ./CMSIS/drivers/fsl_fmeas.o ./CMSIS/drivers/fsl_gint.o ./CMSIS/drivers/fsl_gpio.o ./CMSIS/drivers/fsl_i2c.o ./CMSIS/drivers/fsl_inputmux.o ./CMSIS/drivers/fsl_mrt.o ./CMSIS/drivers/fsl_pint.o ./CMSIS/drivers/fsl_power.o ./CMSIS/drivers/fsl_reset.o ./CMSIS/drivers/fsl_rit.o ./CMSIS/drivers/fsl_rtc.o ./CMSIS/drivers/fsl_sctimer.o ./CMSIS/drivers/fsl_spi.o ./CMSIS/drivers/fsl_spi_dma.o ./CMSIS/drivers/fsl_usart.o ./CMSIS/drivers/fsl_usart_dma.o ./CMSIS/drivers/fsl_utick.o ./CMSIS/drivers/fsl_wwdt.o  ./CMSIS/cmsis_drivers/fsl_i2c_cmsis.o ./CMSIS/cmsis_drivers/fsl_spi_cmsis.o ./CMSIS/cmsis_drivers/fsl_usart_cmsis.o  ./CMSIS/system_LPC54616.o   -lpower_hardabi
+c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/bin/ld.exe: cannot open linker script file LPC54616J512_Project_Debug.ld: No such file or directory
+collect2.exe: error: ld returned 1 exit status
+make: *** [pan_sh.axf] Error 1
+16:48:42 **** Build of configuration Debug for project usbmidiio ****
+make -r -j8 all 
+Building file: ../usb/osa/usb_osa_freertos.c
+Building file: ../usb/device/usb_device_dci.c
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"usb/osa/usb_osa_freertos.d" -MT"usb/osa/usb_osa_freertos.o" -MT"usb/osa/usb_osa_freertos.d" -o "usb/osa/usb_osa_freertos.o" "../usb/osa/usb_osa_freertos.c"
+Building file: ../usb/device/usb_device_lpcip3511.c
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"usb/device/usb_device_dci.d" -MT"usb/device/usb_device_dci.o" -MT"usb/device/usb_device_dci.d" -o "usb/device/usb_device_dci.o" "../usb/device/usb_device_dci.c"
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"usb/device/usb_device_lpcip3511.d" -MT"usb/device/usb_device_lpcip3511.o" -MT"usb/device/usb_device_lpcip3511.d" -o "usb/device/usb_device_lpcip3511.o" "../usb/device/usb_device_lpcip3511.c"
+Building file: ../startup/startup_lpc54616.cpp
+Invoking: MCU C++ Compiler
+Building file: ../source/usb/usb_device_cdc_acm.c
+arm-none-eabi-c++ -D__NEWLIB__ -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -fmessage-length=0 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"startup/startup_lpc54616.d" -MT"startup/startup_lpc54616.o" -MT"startup/startup_lpc54616.d" -o "startup/startup_lpc54616.o" "../startup/startup_lpc54616.cpp"
+Building file: ../source/usb/usb_device_ch9.c
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/usb/usb_device_cdc_acm.d" -MT"source/usb/usb_device_cdc_acm.o" -MT"source/usb/usb_device_cdc_acm.d" -o "source/usb/usb_device_cdc_acm.o" "../source/usb/usb_device_cdc_acm.c"
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/usb/usb_device_ch9.d" -MT"source/usb/usb_device_ch9.o" -MT"source/usb/usb_device_ch9.d" -o "source/usb/usb_device_ch9.o" "../source/usb/usb_device_ch9.c"
+Building file: ../source/usb/usb_device_class.c
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/usb/usb_device_class.d" -MT"source/usb/usb_device_class.o" -MT"source/usb/usb_device_class.d" -o "source/usb/usb_device_class.o" "../source/usb/usb_device_class.c"
+Building file: ../source/usb/usb_device_descriptor.c
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/usb/usb_device_descriptor.d" -MT"source/usb/usb_device_descriptor.o" -MT"source/usb/usb_device_descriptor.d" -o "source/usb/usb_device_descriptor.o" "../source/usb/usb_device_descriptor.c"
+Finished building: ../startup/startup_lpc54616.cpp
+ 
+Building file: ../source/usb/virtual_com.c
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/usb/virtual_com.d" -MT"source/usb/virtual_com.o" -MT"source/usb/virtual_com.d" -o "source/usb/virtual_com.o" "../source/usb/virtual_com.c"
+Finished building: ../source/usb/usb_device_descriptor.c
+Finished building: ../usb/osa/usb_osa_freertos.c
+ 
+ 
+Finished building: ../source/usb/usb_device_class.c
+Finished building: ../source/usb/usb_device_ch9.c
+Finished building: ../usb/device/usb_device_dci.c
+../source/usb/virtual_com.c: In function 'APPTask':
+../source/usb/virtual_com.c:760:18: warning: unused variable 'error' [-Wunused-variable]
+     usb_status_t error = kStatus_USB_Error;
+                  ^~~~~
+At top level:
+../source/usb/virtual_com.c:184:64: warning: 's_currSendBuf' defined but not used [-Wunused-variable]
+ USB_DMA_NONINIT_DATA_ALIGN(USB_DATA_ALIGN_SIZE) static uint8_t s_currSendBuf[DATA_BUFF_SIZE];
+                                                                ^~~~~~~~~~~~~
+Building file: ../source/control.c
+ 
+ 
+ 
+Building file: ../source/flashstore.cpp
+Invoking: MCU C Compiler
+Finished building: ../source/usb/usb_device_cdc_acm.c
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/control.d" -MT"source/control.o" -MT"source/control.d" -o "source/control.o" "../source/control.c"
+Building file: ../source/fsl_spifi_nor_flash.c
+Invoking: MCU C++ Compiler
+arm-none-eabi-c++ -D__NEWLIB__ -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -fmessage-length=0 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/flashstore.d" -MT"source/flashstore.o" -MT"source/flashstore.d" -o "source/flashstore.o" "../source/flashstore.cpp"
+ 
+Invoking: MCU C Compiler
+Building file: ../source/midi.cpp
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/fsl_spifi_nor_flash.d" -MT"source/fsl_spifi_nor_flash.o" -MT"source/fsl_spifi_nor_flash.d" -o "source/fsl_spifi_nor_flash.o" "../source/fsl_spifi_nor_flash.c"
+Building file: ../source/midiparser.cpp
+Invoking: MCU C++ Compiler
+arm-none-eabi-c++ -D__NEWLIB__ -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -fmessage-length=0 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/midi.d" -MT"source/midi.o" -MT"source/midi.d" -o "source/midi.o" "../source/midi.cpp"
+Building file: ../source/rpi.cpp
+Invoking: MCU C++ Compiler
+arm-none-eabi-c++ -D__NEWLIB__ -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -fmessage-length=0 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/midiparser.d" -MT"source/midiparser.o" -MT"source/midiparser.d" -o "source/midiparser.o" "../source/midiparser.cpp"
+Invoking: MCU C++ Compiler
+arm-none-eabi-c++ -D__NEWLIB__ -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -fmessage-length=0 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/rpi.d" -MT"source/rpi.o" -MT"source/rpi.d" -o "source/rpi.o" "../source/rpi.cpp"
+Finished building: ../usb/device/usb_device_lpcip3511.c
+ 
+../source/control.c:70:12: warning: 'fifo_tx_full' defined but not used [-Wunused-function]
+Building file: ../source/semihost_hardfault.c
+ static int fifo_tx_full()
+            ^~~~~~~~~~~~
+../source/control.c:35:12: warning: 'fifo_rx_empty' defined but not used [-Wunused-function]
+ static int fifo_rx_empty()
+            ^~~~~~~~~~~~~
+In file included from ../source/midiparser.cpp:1:0:
+../source/midiparser.h:21:3: warning: 'modes' defined but not used [-Wunused-variable]
+ } modes;
+   ^~~~~
+Invoking: MCU C Compiler
+In file included from ../source/midi.cpp:4:0:
+../source/midiparser.h:21:3: warning: 'modes' defined but not used [-Wunused-variable]
+ } modes;
+   ^~~~~
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/semihost_hardfault.d" -MT"source/semihost_hardfault.o" -MT"source/semihost_hardfault.d" -o "source/semihost_hardfault.o" "../source/semihost_hardfault.c"
+Finished building: ../source/usb/virtual_com.c
+In file included from ../source/flashstore.cpp:12:0:
+../../../Raspberry/PanPreset.h: In member function 'void PanPreset_t::SetFilterType(VCF2Filter, FilterTypes_t)':
+../../../Raspberry/PanPreset.h:286:10: warning: enumeration value '__VCF2_Filter_Count' not handled in switch [-Wswitch]
+   switch (filt)
+          ^
+../../../Raspberry/PanPreset.h: In member function 'uint16_t* PanPreset_t::GetModParamPointer(ModParameters, int)':
+../../../Raspberry/PanPreset.h:321:10: warning: enumeration value 'Envelope_Retrigger' not handled in switch [-Wswitch]
+   switch (param)
+          ^
+../../../Raspberry/PanPreset.h:321:10: warning: enumeration value 'LFO_ResetOnKey' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:321:10: warning: enumeration value '__Mod_Parameter_Count' not handled in switch [-Wswitch]
+In file included from ../source/flashstore.cpp:12:0:
+../../../Raspberry/PanPreset.h: In member function 'void PanPreset_t::DescribeParam(OutputEnum, int, char*, int)':
+../../../Raspberry/PanPreset.h:406:51: warning: zero-length gnu_printf format string [-Wformat-zero-length]
+   default: snprintf(targetbuffer, bufferlength, ""); break;
+                                                   ^
+../../../Raspberry/PanPreset.h: In member function 'OutputEnum PanPreset_t::GetModulationOutput(OutputEnum)':
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO1_MIX1' not handled in switch [-Wswitch]
+   switch (inparam)
+          ^
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_WHITENS_MIX1' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO1_MIX2' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO4567_MIX1' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO1_SUB2' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO4567_MIX2' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO1_SUB1' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_WHITENS_MIX2' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO1_FREQ' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO3_MIX2' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO3_MIX1' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO1_PW' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO2_MIX1' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO2_MIX2' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO2_FREQ' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO4_FREQ' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO3_FREQ' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO5_PW' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO3_PW' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO5_FREQ' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO2_PW' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO4_PW' not handled in switch [-Wswitch]
+ 
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_RM1_MIX1' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO6_DRY_MIX' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_DIGINS_MIX2' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO5_DRY_MIX' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_RM1_MIX2' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO7_DRY_MIX' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_DIGINS_MIX1' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO4_DRY_MIX' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF2_R_LOG' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_BN_MIX3' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_MASTER_LEVEL' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF1_R_LOG' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO1SIN_MIX3' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF1_L_LOG' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF2_FX_R' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_PUN_MIX' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF2_L_LOG' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO7_PW' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO6_PW' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO2SIN_MIX3' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF2_FX_L' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO7_FREQ' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO6_FREQ' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO3SIN_MIX3' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF1_R_LIN' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO123_FM2' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_CLEANF_L_LOG' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF1_CROSSMOD' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF1_L_LIN' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF2_CROSSMOD' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_DNSSAW_MIX1' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO123_FM3' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_RM2_MIX3' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_CLEANF_FX_R' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF1_FX_24' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_CLEANF_R_LOG' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_DNSSAW_MIX2' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_NOISE_COLOR' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF1_FX_12' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_CLEANF_FX_L' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF2_A_RES' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF2_D_RES' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF2_C_RES' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF2_D_CV' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF2_C_CV' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_CLEANF_R_LIN' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF2_A_CV' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_CLEANF_L_LIN' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF1_RES' not handled in switch [-Wswitch]
+Building file: ../source/uart.cpp
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF2_B_CV' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_FX_L_RETURN' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF2_B_RES' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF1_CV' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF2_M_FB' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_FX_R_RETURN' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF2_P_FB' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF2_A_MIX' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_CV_EXT_3' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF2_C_MIX' not handled in switch [-Wswitch]
+../source/rpi.cpp:75:12: warning: 'int fifo_tx_full()' defined but not used [-Wunused-function]
+ static int fifo_tx_full()
+            ^~~~~~~~~~~~
+../source/rpi.cpp:40:12: warning: 'int fifo_rx_empty()' defined but not used [-Wunused-function]
+ static int fifo_rx_empty()
+            ^~~~~~~~~~~~~
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_CV_EXT_6' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF2_L_LIN' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_CV_EXT_5' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF2_D_MIX' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_CV_EXT_4' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCA_FXPOT3' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_CV_EXT_1' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF2_B_MIX' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_CV_EXT_KB' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCA_FXPOT2' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_CV_EXT_2' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCA_FXPOT1' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF2_R_LIN' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF1_LIN' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF2_LIN' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_CLEANF_LIN' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF1_PAN' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF2_PAN' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_CLEANF_PAN' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_FX_RET_LEVEL' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZPRIME_SPEED' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_CHASE' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_STASH' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO4567_DRY_MIX' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE1NOTE1' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE1NOTE2' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE1NOTE3' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE1NOTE4' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE1NOTE5' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE1NOTE6' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE1NOTE7' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE1NOTE8' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE2NOTE1' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE2NOTE2' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE2NOTE3' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE2NOTE4' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE2NOTE5' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE2NOTE6' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE2NOTE7' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE2NOTE8' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE3NOTE1' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE3NOTE2' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE3NOTE3' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE3NOTE4' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE3NOTE5' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE3NOTE6' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE3NOTE7' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE3NOTE8' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE4NOTE1' not handled in switch [-Wswitch]
+Invoking: MCU C++ Compiler
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE4NOTE2' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE4NOTE3' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE4NOTE4' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE4NOTE5' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE4NOTE6' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE4NOTE7' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE4NOTE8' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO1_PITCH' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO2_PITCH' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO3_PITCH' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO4_PITCH' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO5_PITCH' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO6_PITCH' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO7_PITCH' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_GATE1' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_GATE2' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_GATE3' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_GATE4' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_RETRIGGER1' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_RETRIGGER2' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_RETRIGGER3' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_RETRIGGER4' not handled in switch [-Wswitch]
+arm-none-eabi-c++ -D__NEWLIB__ -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -fmessage-length=0 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/uart.d" -MT"source/uart.o" -MT"source/uart.d" -o "source/uart.o" "../source/uart.cpp"
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_MASTER_PITCH' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_PORTAMENTO_TIME' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_MASTER_PITCH2' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO1_OCTAVE' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO2_OCTAVE' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO3_OCTAVE' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO4_OCTAVE' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO5_OCTAVE' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO6_OCTAVE' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO7_OCTAVE' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO8_OCTAVE' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value '__OUTPUT_COUNT' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h: In member function 'bool PanPreset_t::isModUnipolar(ModSource_t)':
+../../../Raspberry/PanPreset.h:515:10: warning: enumeration value 'Source_none' not handled in switch [-Wswitch]
+Finished building: ../source/midiparser.cpp
+   switch (modsourcetype)
+          ^
+../../../Raspberry/PanPreset.h:515:10: warning: enumeration value 'Source_left_mod' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:515:10: warning: enumeration value 'Source_right_mod' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:515:10: warning: enumeration value 'Source_x' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:515:10: warning: enumeration value 'Source_y' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:515:10: warning: enumeration value 'Source_z' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:515:10: warning: enumeration value 'Source_zprime' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:515:10: warning: enumeration value 'Source_note' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:515:10: warning: enumeration value 'Source_vel' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:515:10: warning: enumeration value 'Source_LFO' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:515:10: warning: enumeration value 'Source_Operator' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:515:10: warning: enumeration value '__ModSource_COUNT' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h: In member function 'void PanPreset_t::GetModSourceName(int, char*, int)':
+../../../Raspberry/PanPreset.h:533:10: warning: enumeration value 'Source_none' not handled in switch [-Wswitch]
+   switch (mod)
+          ^
+../../../Raspberry/PanPreset.h:533:10: warning: enumeration value 'Source_Operator' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:533:10: warning: enumeration value '__ModSource_COUNT' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h: In member function 'int PanPreset_t::GetModMatrixIndex(ModSource_t, int)':
+../../../Raspberry/PanPreset.h:555:10: warning: enumeration value 'Source_none' not handled in switch [-Wswitch]
+   switch (mod)
+          ^
+../../../Raspberry/PanPreset.h:555:10: warning: enumeration value 'Source_Operator' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:555:10: warning: enumeration value '__ModSource_COUNT' not handled in switch [-Wswitch]
+../source/flashstore.cpp: In member function 'int Index::WritePreset(int, preset_t*)':
+../source/flashstore.cpp:273:23: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+     for (int i = 0; i < sizeof(preset_t); i += BLOCKSIZE) {
+                     ~~^~~~~~~~~
+../source/flashstore.cpp: In member function 'int Index::ReadPreset(int, preset_t*)':
+../source/flashstore.cpp:289:23: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+     for (int i = 0; i < sizeof(preset_t); i += BLOCKSIZE) {
+                     ~~^~~~~~~~~
+../source/flashstore.cpp: In member function 'int Index::NewerGeneration(int, int)':
+../source/flashstore.cpp:375:39: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+     if (newgen < 0x40000000 && oldgen > 0x80000000) {
+                                ~~~~~~~^~~~~~~~~~~~
+../source/flashstore.cpp: In function 'int flash_loadpreset(int, PanPreset_t*)':
+../source/flashstore.cpp:449:30: warning: too many arguments for format [-Wformat-extra-args]
+   printf("failed\n", presetid);
+                              ^
+ 
+Building file: ../source/usbmidiio.cpp
+Invoking: MCU C++ Compiler
+Finished building: ../source/semihost_hardfault.c
+arm-none-eabi-c++ -D__NEWLIB__ -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -fmessage-length=0 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"source/usbmidiio.d" -MT"source/usbmidiio.o" -MT"source/usbmidiio.d" -o "source/usbmidiio.o" "../source/usbmidiio.cpp"
+Finished building: ../source/control.c
+ 
+ 
+Finished building: ../source/midi.cpp
+Building file: ../freertos/source/croutine.c
+ 
+Building file: ../freertos/source/event_groups.c
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"freertos/source/croutine.d" -MT"freertos/source/croutine.o" -MT"freertos/source/croutine.d" -o "freertos/source/croutine.o" "../freertos/source/croutine.c"
+Building file: ../freertos/source/list.c
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"freertos/source/event_groups.d" -MT"freertos/source/event_groups.o" -MT"freertos/source/event_groups.d" -o "freertos/source/event_groups.o" "../freertos/source/event_groups.c"
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"freertos/source/list.d" -MT"freertos/source/list.o" -MT"freertos/source/list.d" -o "freertos/source/list.o" "../freertos/source/list.c"
+Finished building: ../source/fsl_spifi_nor_flash.c
+Finished building: ../source/rpi.cpp
+ 
+ 
+Building file: ../freertos/source/queue.c
+In file included from ../source/usbmidiio.cpp:53:0:
+../../../Raspberry/PanPreset.h: In member function 'void PanPreset_t::SetFilterType(VCF2Filter, FilterTypes_t)':
+../../../Raspberry/PanPreset.h:286:10: warning: enumeration value '__VCF2_Filter_Count' not handled in switch [-Wswitch]
+   switch (filt)
+          ^
+../../../Raspberry/PanPreset.h: In member function 'uint16_t* PanPreset_t::GetModParamPointer(ModParameters, int)':
+../../../Raspberry/PanPreset.h:321:10: warning: enumeration value 'Envelope_Retrigger' not handled in switch [-Wswitch]
+   switch (param)
+          ^
+../../../Raspberry/PanPreset.h:321:10: warning: enumeration value 'LFO_ResetOnKey' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:321:10: warning: enumeration value '__Mod_Parameter_Count' not handled in switch [-Wswitch]
+In file included from ../source/usbmidiio.cpp:53:0:
+../../../Raspberry/PanPreset.h: In member function 'void PanPreset_t::DescribeParam(OutputEnum, int, char*, int)':
+../../../Raspberry/PanPreset.h:406:51: warning: zero-length gnu_printf format string [-Wformat-zero-length]
+   default: snprintf(targetbuffer, bufferlength, ""); break;
+                                                   ^
+../../../Raspberry/PanPreset.h: In member function 'OutputEnum PanPreset_t::GetModulationOutput(OutputEnum)':
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO1_MIX1' not handled in switch [-Wswitch]
+   switch (inparam)
+          ^
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_WHITENS_MIX1' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO1_MIX2' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO4567_MIX1' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO1_SUB2' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO4567_MIX2' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO1_SUB1' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_WHITENS_MIX2' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO1_FREQ' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO3_MIX2' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO3_MIX1' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO1_PW' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO2_MIX1' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO2_MIX2' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO2_FREQ' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO4_FREQ' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO3_FREQ' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO5_PW' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO3_PW' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO5_FREQ' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO2_PW' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO4_PW' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_RM1_MIX1' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO6_DRY_MIX' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_DIGINS_MIX2' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO5_DRY_MIX' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_RM1_MIX2' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO7_DRY_MIX' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_DIGINS_MIX1' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO4_DRY_MIX' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF2_R_LOG' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_BN_MIX3' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_MASTER_LEVEL' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF1_R_LOG' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO1SIN_MIX3' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF1_L_LOG' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF2_FX_R' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_PUN_MIX' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF2_L_LOG' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO7_PW' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO6_PW' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO2SIN_MIX3' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF2_FX_L' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO7_FREQ' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO6_FREQ' not handled in switch [-Wswitch]
+Building file: ../freertos/source/tasks.c
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO3SIN_MIX3' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF1_R_LIN' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO123_FM2' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_CLEANF_L_LOG' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF1_CROSSMOD' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF1_L_LIN' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF2_CROSSMOD' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_DNSSAW_MIX1' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO123_FM3' not handled in switch [-Wswitch]
+Invoking: MCU C Compiler
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_RM2_MIX3' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_CLEANF_FX_R' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF1_FX_24' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_CLEANF_R_LOG' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_DNSSAW_MIX2' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_NOISE_COLOR' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF1_FX_12' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_CLEANF_FX_L' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF2_A_RES' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF2_D_RES' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF2_C_RES' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF2_D_CV' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF2_C_CV' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_CLEANF_R_LIN' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF2_A_CV' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_CLEANF_L_LIN' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF1_RES' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF2_B_CV' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_FX_L_RETURN' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF2_B_RES' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF1_CV' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF2_M_FB' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_FX_R_RETURN' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF2_P_FB' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF2_A_MIX' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_CV_EXT_3' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF2_C_MIX' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_CV_EXT_6' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF2_L_LIN' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_CV_EXT_5' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF2_D_MIX' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_CV_EXT_4' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCA_FXPOT3' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_CV_EXT_1' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF2_B_MIX' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_CV_EXT_KB' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCA_FXPOT2' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_CV_EXT_2' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCA_FXPOT1' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF2_R_LIN' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF1_LIN' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF2_LIN' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_CLEANF_LIN' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF1_PAN' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCF2_PAN' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_CLEANF_PAN' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_FX_RET_LEVEL' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZPRIME_SPEED' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_CHASE' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_STASH' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO4567_DRY_MIX' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE1NOTE1' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE1NOTE2' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE1NOTE3' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE1NOTE4' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE1NOTE5' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE1NOTE6' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE1NOTE7' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE1NOTE8' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE2NOTE1' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE2NOTE2' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE2NOTE3' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE2NOTE4' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE2NOTE5' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE2NOTE6' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE2NOTE7' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE2NOTE8' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE3NOTE1' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE3NOTE2' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE3NOTE3' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE3NOTE4' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE3NOTE5' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE3NOTE6' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE3NOTE7' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE3NOTE8' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE4NOTE1' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE4NOTE2' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE4NOTE3' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE4NOTE4' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE4NOTE5' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE4NOTE6' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE4NOTE7' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_ZONE4NOTE8' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO1_PITCH' not handled in switch [-Wswitch]
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"freertos/source/queue.d" -MT"freertos/source/queue.o" -MT"freertos/source/queue.d" -o "freertos/source/queue.o" "../freertos/source/queue.c"
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO2_PITCH' not handled in switch [-Wswitch]
+Finished building: ../freertos/source/croutine.c
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO3_PITCH' not handled in switch [-Wswitch]
+Invoking: MCU C Compiler
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO4_PITCH' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO5_PITCH' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO6_PITCH' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO7_PITCH' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_GATE1' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_GATE2' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_GATE3' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_GATE4' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_RETRIGGER1' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_RETRIGGER2' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_RETRIGGER3' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_RETRIGGER4' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_MASTER_PITCH' not handled in switch [-Wswitch]
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"freertos/source/tasks.d" -MT"freertos/source/tasks.o" -MT"freertos/source/tasks.d" -o "freertos/source/tasks.o" "../freertos/source/tasks.c"
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_PORTAMENTO_TIME' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_MASTER_PITCH2' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO1_OCTAVE' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO2_OCTAVE' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO3_OCTAVE' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO4_OCTAVE' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO5_OCTAVE' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO6_OCTAVE' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO7_OCTAVE' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value 'Output_VCO8_OCTAVE' not handled in switch [-Wswitch]
+Finished building: ../source/flashstore.cpp
+../../../Raspberry/PanPreset.h:411:10: warning: enumeration value '__OUTPUT_COUNT' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h: In member function 'bool PanPreset_t::isModUnipolar(ModSource_t)':
+../../../Raspberry/PanPreset.h:515:10: warning: enumeration value 'Source_none' not handled in switch [-Wswitch]
+   switch (modsourcetype)
+          ^
+../../../Raspberry/PanPreset.h:515:10: warning: enumeration value 'Source_left_mod' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:515:10: warning: enumeration value 'Source_right_mod' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:515:10: warning: enumeration value 'Source_x' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:515:10: warning: enumeration value 'Source_y' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:515:10: warning: enumeration value 'Source_z' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:515:10: warning: enumeration value 'Source_zprime' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:515:10: warning: enumeration value 'Source_note' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:515:10: warning: enumeration value 'Source_vel' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:515:10: warning: enumeration value 'Source_LFO' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:515:10: warning: enumeration value 'Source_Operator' not handled in switch [-Wswitch]
+Finished building: ../source/uart.cpp
+../../../Raspberry/PanPreset.h:515:10: warning: enumeration value '__ModSource_COUNT' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h: In member function 'void PanPreset_t::GetModSourceName(int, char*, int)':
+../../../Raspberry/PanPreset.h:533:10: warning: enumeration value 'Source_none' not handled in switch [-Wswitch]
+   switch (mod)
+          ^
+../../../Raspberry/PanPreset.h:533:10: warning: enumeration value 'Source_Operator' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:533:10: warning: enumeration value '__ModSource_COUNT' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h: In member function 'int PanPreset_t::GetModMatrixIndex(ModSource_t, int)':
+../../../Raspberry/PanPreset.h:555:10: warning: enumeration value 'Source_none' not handled in switch [-Wswitch]
+   switch (mod)
+          ^
+../../../Raspberry/PanPreset.h:555:10: warning: enumeration value 'Source_Operator' not handled in switch [-Wswitch]
+../../../Raspberry/PanPreset.h:555:10: warning: enumeration value '__ModSource_COUNT' not handled in switch [-Wswitch]
+In file included from ../source/usbmidiio.cpp:55:0:
+../source/Arpeggiator.h: In member function 'void ArpeggioState::Rebuild()':
+../source/Arpeggiator.h:126:10: warning: enumeration value '__ArpeggioMode_Count' not handled in switch [-Wswitch]
+   switch (Settings->Mode)
+          ^
+../source/Arpeggiator.h:235:10: warning: enumeration value 'Oct_None' not handled in switch [-Wswitch]
+   switch (Settings->Octaves)
+          ^
+../source/Arpeggiator.h:235:10: warning: enumeration value '__ArpeggioOctaves_Count' not handled in switch [-Wswitch]
+../source/Arpeggiator.h:123:8: warning: unused variable 'SortAsc' [-Wunused-variable]
+   bool SortAsc = true;
+        ^~~~~~~
+../source/Arpeggiator.h: In member function 'int ArpeggioState::NotesForMode(ArpeggioMode_t, ArpeggioOctaves_t)':
+../source/Arpeggiator.h:433:10: warning: enumeration value '__ArpeggioMode_Count' not handled in switch [-Wswitch]
+   switch (Mode)
+          ^
+../source/Arpeggiator.h:449:10: warning: enumeration value 'Oct_None' not handled in switch [-Wswitch]
+   switch (Octs)
+          ^
+../source/Arpeggiator.h:449:10: warning: enumeration value '__ArpeggioOctaves_Count' not handled in switch [-Wswitch]
+../source/usbmidiio.cpp: In function 'void key_down(key_source_t, int, int, int)':
+../source/usbmidiio.cpp:191:11: warning: enumeration value 'PresetKeyzoneType_Paraphonic' not handled in switch [-Wswitch]
+    switch (preset.keyzone[zone].type) {
+ 
+           ^
+../source/usbmidiio.cpp: In function 'void key_up(key_source_t, int, int)':
+../source/usbmidiio.cpp:224:11: warning: enumeration value 'PresetKeyzoneType_Paraphonic' not handled in switch [-Wswitch]
+    switch (preset.keyzone[zone].type) {
+           ^
+../source/usbmidiio.cpp: In function 'void SendLeds()':
+../source/usbmidiio.cpp:508:20: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+  for (int i = 0; i < sizeof(leddata1); i++) {
+                  ~~^~~~~~~~~
+Finished building: ../freertos/source/list.c
+../source/usbmidiio.cpp: In function 'void control_cb(uint8_t)':
+../source/usbmidiio.cpp:1387:19: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+  if (mod_fb_count < sizeof(mod_fb)) {
+      ~~~~~~~~~~~~~^~~~~~~~~
+../source/usbmidiio.cpp: In function 'void sync_preset(uint32_t)':
+../source/usbmidiio.cpp:1459:17: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+   if (suboffset >= offsetof(keyzone_settings_t, keypriority) && suboffset < offsetof(keyzone_settings_t, keypriority)+4) {
+                 ^
+../source/usbmidiio.cpp:1459:75: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+   if (suboffset >= offsetof(keyzone_settings_t, keypriority) && suboffset < offsetof(keyzone_settings_t, keypriority)+4) {
+                                                                 ~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+../source/usbmidiio.cpp: In function 'void sync_ledstate(int)':
+ 
+../source/usbmidiio.cpp:1690:11: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+  if (addr >= offsetof(PanLedState_t, encoders)) {
+           ^
+../source/usbmidiio.cpp: In function 'int main()':
+../source/usbmidiio.cpp:2012:25: warning: variable 'r' set but not used [-Wunused-but-set-variable]
+     volatile BaseType_t r = 0;
+                         ^
+../source/usbmidiio.cpp: In instantiation of 'int DiffSyncer<T>::run() [with T = presetnames_t]':
+../source/usbmidiio.cpp:1061:21:   required from here
+../source/usbmidiio.cpp:988:21: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+   for (int i = 0; i < sizeof(T); i += 4) {
+                   ~~^~~~~~~~~
+../source/usbmidiio.cpp:992:14: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+     for (; j < sizeof(T); j += 4) {
+            ~~^~~~~~~~~
+Building file: ../freertos/source/timers.c
+Finished building: ../freertos/source/event_groups.c
+ 
+Invoking: MCU C Compiler
+Building file: ../freertos/portable/fsl_tickless_systick.c
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"freertos/source/timers.d" -MT"freertos/source/timers.o" -MT"freertos/source/timers.d" -o "freertos/source/timers.o" "../freertos/source/timers.c"
+ 
+Building file: ../freertos/portable/heap_4.c
+Invoking: MCU C Compiler
+Building file: ../freertos/portable/port.c
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"freertos/portable/fsl_tickless_systick.d" -MT"freertos/portable/fsl_tickless_systick.o" -MT"freertos/portable/fsl_tickless_systick.d" -o "freertos/portable/fsl_tickless_systick.o" "../freertos/portable/fsl_tickless_systick.c"
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"freertos/portable/heap_4.d" -MT"freertos/portable/heap_4.o" -MT"freertos/portable/heap_4.d" -o "freertos/portable/heap_4.o" "../freertos/portable/heap_4.c"
+Building file: ../board/board.c
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"freertos/portable/port.d" -MT"freertos/portable/port.o" -MT"freertos/portable/port.d" -o "freertos/portable/port.o" "../freertos/portable/port.c"
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"board/board.d" -MT"board/board.o" -MT"board/board.d" -o "board/board.o" "../board/board.c"
+Finished building: ../freertos/portable/fsl_tickless_systick.c
+Finished building: ../board/board.c
+ 
+Finished building: ../freertos/source/queue.c
+ 
+Finished building: ../freertos/portable/port.c
+Building file: ../board/clock_config.c
+ 
+Finished building: ../freertos/portable/heap_4.c
+Invoking: MCU C Compiler
+Finished building: ../freertos/source/timers.c
+ 
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"board/clock_config.d" -MT"board/clock_config.o" -MT"board/clock_config.d" -o "board/clock_config.o" "../board/clock_config.c"
+Building file: ../board/peripherals.c
+ 
+Invoking: MCU C Compiler
+ 
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"board/peripherals.d" -MT"board/peripherals.o" -MT"board/peripherals.d" -o "board/peripherals.o" "../board/peripherals.c"
+Building file: ../board/pin_mux.c
+Building file: ../CMSIS/drivers/fsl_adc.c
+Invoking: MCU C Compiler
+Building file: ../CMSIS/drivers/fsl_clock.c
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"board/pin_mux.d" -MT"board/pin_mux.o" -MT"board/pin_mux.d" -o "board/pin_mux.o" "../board/pin_mux.c"
+Building file: ../CMSIS/drivers/fsl_common.c
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"CMSIS/drivers/fsl_adc.d" -MT"CMSIS/drivers/fsl_adc.o" -MT"CMSIS/drivers/fsl_adc.d" -o "CMSIS/drivers/fsl_adc.o" "../CMSIS/drivers/fsl_adc.c"
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"CMSIS/drivers/fsl_clock.d" -MT"CMSIS/drivers/fsl_clock.o" -MT"CMSIS/drivers/fsl_clock.d" -o "CMSIS/drivers/fsl_clock.o" "../CMSIS/drivers/fsl_clock.c"
+Invoking: MCU C Compiler
+Finished building: ../freertos/source/tasks.c
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"CMSIS/drivers/fsl_common.d" -MT"CMSIS/drivers/fsl_common.o" -MT"CMSIS/drivers/fsl_common.d" -o "CMSIS/drivers/fsl_common.o" "../CMSIS/drivers/fsl_common.c"
+ 
+Building file: ../CMSIS/drivers/fsl_crc.c
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"CMSIS/drivers/fsl_crc.d" -MT"CMSIS/drivers/fsl_crc.o" -MT"CMSIS/drivers/fsl_crc.d" -o "CMSIS/drivers/fsl_crc.o" "../CMSIS/drivers/fsl_crc.c"
+Finished building: ../board/peripherals.c
+Finished building: ../board/clock_config.c
+ 
+ 
+Building file: ../CMSIS/drivers/fsl_ctimer.c
+Building file: ../CMSIS/drivers/fsl_dma.c
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"CMSIS/drivers/fsl_ctimer.d" -MT"CMSIS/drivers/fsl_ctimer.o" -MT"CMSIS/drivers/fsl_ctimer.d" -o "CMSIS/drivers/fsl_ctimer.o" "../CMSIS/drivers/fsl_ctimer.c"
+Invoking: MCU C Compiler
+Finished building: ../CMSIS/drivers/fsl_adc.c
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"CMSIS/drivers/fsl_dma.d" -MT"CMSIS/drivers/fsl_dma.o" -MT"CMSIS/drivers/fsl_dma.d" -o "CMSIS/drivers/fsl_dma.o" "../CMSIS/drivers/fsl_dma.c"
+ 
+Finished building: ../board/pin_mux.c
+Building file: ../CMSIS/drivers/fsl_dmic.c
+Finished building: ../CMSIS/drivers/fsl_common.c
+ 
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"CMSIS/drivers/fsl_dmic.d" -MT"CMSIS/drivers/fsl_dmic.o" -MT"CMSIS/drivers/fsl_dmic.d" -o "CMSIS/drivers/fsl_dmic.o" "../CMSIS/drivers/fsl_dmic.c"
+ 
+Building file: ../CMSIS/drivers/fsl_dmic_dma.c
+Building file: ../CMSIS/drivers/fsl_eeprom.c
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"CMSIS/drivers/fsl_dmic_dma.d" -MT"CMSIS/drivers/fsl_dmic_dma.o" -MT"CMSIS/drivers/fsl_dmic_dma.d" -o "CMSIS/drivers/fsl_dmic_dma.o" "../CMSIS/drivers/fsl_dmic_dma.c"
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"CMSIS/drivers/fsl_eeprom.d" -MT"CMSIS/drivers/fsl_eeprom.o" -MT"CMSIS/drivers/fsl_eeprom.d" -o "CMSIS/drivers/fsl_eeprom.o" "../CMSIS/drivers/fsl_eeprom.c"
+Finished building: ../CMSIS/drivers/fsl_crc.c
+ 
+Building file: ../CMSIS/drivers/fsl_emc.c
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"CMSIS/drivers/fsl_emc.d" -MT"CMSIS/drivers/fsl_emc.o" -MT"CMSIS/drivers/fsl_emc.d" -o "CMSIS/drivers/fsl_emc.o" "../CMSIS/drivers/fsl_emc.c"
+Finished building: ../CMSIS/drivers/fsl_clock.c
+ 
+Building file: ../CMSIS/drivers/fsl_enet.c
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"CMSIS/drivers/fsl_enet.d" -MT"CMSIS/drivers/fsl_enet.o" -MT"CMSIS/drivers/fsl_enet.d" -o "CMSIS/drivers/fsl_enet.o" "../CMSIS/drivers/fsl_enet.c"
+Finished building: ../CMSIS/drivers/fsl_ctimer.c
+ 
+Finished building: ../CMSIS/drivers/fsl_dmic.c
+Building file: ../CMSIS/drivers/fsl_flashiap.c
+Finished building: ../CMSIS/drivers/fsl_dma.c
+ 
+Invoking: MCU C Compiler
+Finished building: ../CMSIS/drivers/fsl_eeprom.c
+ 
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"CMSIS/drivers/fsl_flashiap.d" -MT"CMSIS/drivers/fsl_flashiap.o" -MT"CMSIS/drivers/fsl_flashiap.d" -o "CMSIS/drivers/fsl_flashiap.o" "../CMSIS/drivers/fsl_flashiap.c"
+Building file: ../CMSIS/drivers/fsl_flexcomm.c
+Finished building: ../CMSIS/drivers/fsl_dmic_dma.c
+ 
+Invoking: MCU C Compiler
+ 
+Building file: ../CMSIS/drivers/fsl_fmc.c
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"CMSIS/drivers/fsl_flexcomm.d" -MT"CMSIS/drivers/fsl_flexcomm.o" -MT"CMSIS/drivers/fsl_flexcomm.d" -o "CMSIS/drivers/fsl_flexcomm.o" "../CMSIS/drivers/fsl_flexcomm.c"
+Building file: ../CMSIS/drivers/fsl_fmeas.c
+Invoking: MCU C Compiler
+Building file: ../CMSIS/drivers/fsl_gint.c
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"CMSIS/drivers/fsl_fmc.d" -MT"CMSIS/drivers/fsl_fmc.o" -MT"CMSIS/drivers/fsl_fmc.d" -o "CMSIS/drivers/fsl_fmc.o" "../CMSIS/drivers/fsl_fmc.c"
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"CMSIS/drivers/fsl_fmeas.d" -MT"CMSIS/drivers/fsl_fmeas.o" -MT"CMSIS/drivers/fsl_fmeas.d" -o "CMSIS/drivers/fsl_fmeas.o" "../CMSIS/drivers/fsl_fmeas.c"
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"CMSIS/drivers/fsl_gint.d" -MT"CMSIS/drivers/fsl_gint.o" -MT"CMSIS/drivers/fsl_gint.d" -o "CMSIS/drivers/fsl_gint.o" "../CMSIS/drivers/fsl_gint.c"
+Finished building: ../source/usbmidiio.cpp
+ 
+Building file: ../CMSIS/drivers/fsl_gpio.c
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"CMSIS/drivers/fsl_gpio.d" -MT"CMSIS/drivers/fsl_gpio.o" -MT"CMSIS/drivers/fsl_gpio.d" -o "CMSIS/drivers/fsl_gpio.o" "../CMSIS/drivers/fsl_gpio.c"
+Finished building: ../CMSIS/drivers/fsl_emc.c
+ 
+Building file: ../CMSIS/drivers/fsl_i2c.c
+Invoking: MCU C Compiler
+Finished building: ../CMSIS/drivers/fsl_flashiap.c
+Finished building: ../CMSIS/drivers/fsl_fmc.c
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"CMSIS/drivers/fsl_i2c.d" -MT"CMSIS/drivers/fsl_i2c.o" -MT"CMSIS/drivers/fsl_i2c.d" -o "CMSIS/drivers/fsl_i2c.o" "../CMSIS/drivers/fsl_i2c.c"
+Finished building: ../CMSIS/drivers/fsl_fmeas.c
+Finished building: ../CMSIS/drivers/fsl_enet.c
+ 
+ 
+ 
+Finished building: ../CMSIS/drivers/fsl_flexcomm.c
+ 
+Finished building: ../CMSIS/drivers/fsl_gint.c
+Building file: ../CMSIS/drivers/fsl_i2c_dma.c
+ 
+Building file: ../CMSIS/drivers/fsl_i2c_freertos.c
+ 
+Invoking: MCU C Compiler
+Invoking: MCU C Compiler
+Building file: ../CMSIS/drivers/fsl_i2s_dma.c
+Building file: ../CMSIS/drivers/fsl_i2s.c
+Building file: ../CMSIS/drivers/fsl_inputmux.c
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"CMSIS/drivers/fsl_i2c_freertos.d" -MT"CMSIS/drivers/fsl_i2c_freertos.o" -MT"CMSIS/drivers/fsl_i2c_freertos.d" -o "CMSIS/drivers/fsl_i2c_freertos.o" "../CMSIS/drivers/fsl_i2c_freertos.c"
+Building file: ../CMSIS/drivers/fsl_mcan.c
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"CMSIS/drivers/fsl_i2c_dma.d" -MT"CMSIS/drivers/fsl_i2c_dma.o" -MT"CMSIS/drivers/fsl_i2c_dma.d" -o "CMSIS/drivers/fsl_i2c_dma.o" "../CMSIS/drivers/fsl_i2c_dma.c"
+Invoking: MCU C Compiler
+Invoking: MCU C Compiler
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"CMSIS/drivers/fsl_inputmux.d" -MT"CMSIS/drivers/fsl_inputmux.o" -MT"CMSIS/drivers/fsl_inputmux.d" -o "CMSIS/drivers/fsl_inputmux.o" "../CMSIS/drivers/fsl_inputmux.c"
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"CMSIS/drivers/fsl_i2s.d" -MT"CMSIS/drivers/fsl_i2s.o" -MT"CMSIS/drivers/fsl_i2s.d" -o "CMSIS/drivers/fsl_i2s.o" "../CMSIS/drivers/fsl_i2s.c"
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"CMSIS/drivers/fsl_i2s_dma.d" -MT"CMSIS/drivers/fsl_i2s_dma.o" -MT"CMSIS/drivers/fsl_i2s_dma.d" -o "CMSIS/drivers/fsl_i2s_dma.o" "../CMSIS/drivers/fsl_i2s_dma.c"
+Invoking: MCU C Compiler
+Finished building: ../CMSIS/drivers/fsl_gpio.c
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"CMSIS/drivers/fsl_mcan.d" -MT"CMSIS/drivers/fsl_mcan.o" -MT"CMSIS/drivers/fsl_mcan.d" -o "CMSIS/drivers/fsl_mcan.o" "../CMSIS/drivers/fsl_mcan.c"
+ 
+Building file: ../CMSIS/drivers/fsl_mrt.c
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"CMSIS/drivers/fsl_mrt.d" -MT"CMSIS/drivers/fsl_mrt.o" -MT"CMSIS/drivers/fsl_mrt.d" -o "CMSIS/drivers/fsl_mrt.o" "../CMSIS/drivers/fsl_mrt.c"
+Finished building: ../CMSIS/drivers/fsl_i2c_freertos.c
+Finished building: ../CMSIS/drivers/fsl_i2c.c
+Finished building: ../CMSIS/drivers/fsl_inputmux.c
+ 
+Finished building: ../CMSIS/drivers/fsl_i2c_dma.c
+ 
+ 
+Building file: ../CMSIS/drivers/fsl_pint.c
+ 
+Building file: ../CMSIS/drivers/fsl_power.c
+Invoking: MCU C Compiler
+Building file: ../CMSIS/drivers/fsl_reset.c
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"CMSIS/drivers/fsl_pint.d" -MT"CMSIS/drivers/fsl_pint.o" -MT"CMSIS/drivers/fsl_pint.d" -o "CMSIS/drivers/fsl_pint.o" "../CMSIS/drivers/fsl_pint.c"
+Building file: ../CMSIS/drivers/fsl_rit.c
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"CMSIS/drivers/fsl_power.d" -MT"CMSIS/drivers/fsl_power.o" -MT"CMSIS/drivers/fsl_power.d" -o "CMSIS/drivers/fsl_power.o" "../CMSIS/drivers/fsl_power.c"
+Invoking: MCU C Compiler
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"CMSIS/drivers/fsl_reset.d" -MT"CMSIS/drivers/fsl_reset.o" -MT"CMSIS/drivers/fsl_reset.d" -o "CMSIS/drivers/fsl_reset.o" "../CMSIS/drivers/fsl_reset.c"
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"CMSIS/drivers/fsl_rit.d" -MT"CMSIS/drivers/fsl_rit.o" -MT"CMSIS/drivers/fsl_rit.d" -o "CMSIS/drivers/fsl_rit.o" "../CMSIS/drivers/fsl_rit.c"
+Finished building: ../CMSIS/drivers/fsl_i2s_dma.c
+Finished building: ../CMSIS/drivers/fsl_i2s.c
+ 
+ 
+Finished building: ../CMSIS/drivers/fsl_mcan.c
+Finished building: ../CMSIS/drivers/fsl_mrt.c
+Building file: ../CMSIS/drivers/fsl_rtc.c
+Building file: ../CMSIS/drivers/fsl_sctimer.c
+ 
+Invoking: MCU C Compiler
+ 
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"CMSIS/drivers/fsl_rtc.d" -MT"CMSIS/drivers/fsl_rtc.o" -MT"CMSIS/drivers/fsl_rtc.d" -o "CMSIS/drivers/fsl_rtc.o" "../CMSIS/drivers/fsl_rtc.c"
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"CMSIS/drivers/fsl_sctimer.d" -MT"CMSIS/drivers/fsl_sctimer.o" -MT"CMSIS/drivers/fsl_sctimer.d" -o "CMSIS/drivers/fsl_sctimer.o" "../CMSIS/drivers/fsl_sctimer.c"
+Building file: ../CMSIS/drivers/fsl_sdif.c
+Building file: ../CMSIS/drivers/fsl_spi.c
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"CMSIS/drivers/fsl_sdif.d" -MT"CMSIS/drivers/fsl_sdif.o" -MT"CMSIS/drivers/fsl_sdif.d" -o "CMSIS/drivers/fsl_sdif.o" "../CMSIS/drivers/fsl_sdif.c"
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"CMSIS/drivers/fsl_spi.d" -MT"CMSIS/drivers/fsl_spi.o" -MT"CMSIS/drivers/fsl_spi.d" -o "CMSIS/drivers/fsl_spi.o" "../CMSIS/drivers/fsl_spi.c"
+Finished building: ../CMSIS/drivers/fsl_power.c
+ 
+Finished building: ../CMSIS/drivers/fsl_reset.c
+Building file: ../CMSIS/drivers/fsl_spi_dma.c
+ 
+Finished building: ../CMSIS/drivers/fsl_rit.c
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"CMSIS/drivers/fsl_spi_dma.d" -MT"CMSIS/drivers/fsl_spi_dma.o" -MT"CMSIS/drivers/fsl_spi_dma.d" -o "CMSIS/drivers/fsl_spi_dma.o" "../CMSIS/drivers/fsl_spi_dma.c"
+Building file: ../CMSIS/drivers/fsl_spi_freertos.c
+ 
+Finished building: ../CMSIS/drivers/fsl_pint.c
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"CMSIS/drivers/fsl_spi_freertos.d" -MT"CMSIS/drivers/fsl_spi_freertos.o" -MT"CMSIS/drivers/fsl_spi_freertos.d" -o "CMSIS/drivers/fsl_spi_freertos.o" "../CMSIS/drivers/fsl_spi_freertos.c"
+ 
+Building file: ../CMSIS/drivers/fsl_spifi.c
+Invoking: MCU C Compiler
+Building file: ../CMSIS/drivers/fsl_spifi_dma.c
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"CMSIS/drivers/fsl_spifi.d" -MT"CMSIS/drivers/fsl_spifi.o" -MT"CMSIS/drivers/fsl_spifi.d" -o "CMSIS/drivers/fsl_spifi.o" "../CMSIS/drivers/fsl_spifi.c"
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"CMSIS/drivers/fsl_spifi_dma.d" -MT"CMSIS/drivers/fsl_spifi_dma.o" -MT"CMSIS/drivers/fsl_spifi_dma.d" -o "CMSIS/drivers/fsl_spifi_dma.o" "../CMSIS/drivers/fsl_spifi_dma.c"
+Finished building: ../CMSIS/drivers/fsl_sctimer.c
+Finished building: ../CMSIS/drivers/fsl_rtc.c
+ 
+ 
+Building file: ../CMSIS/drivers/fsl_usart.c
+Building file: ../CMSIS/drivers/fsl_usart_dma.c
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"CMSIS/drivers/fsl_usart.d" -MT"CMSIS/drivers/fsl_usart.o" -MT"CMSIS/drivers/fsl_usart.d" -o "CMSIS/drivers/fsl_usart.o" "../CMSIS/drivers/fsl_usart.c"
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"CMSIS/drivers/fsl_usart_dma.d" -MT"CMSIS/drivers/fsl_usart_dma.o" -MT"CMSIS/drivers/fsl_usart_dma.d" -o "CMSIS/drivers/fsl_usart_dma.o" "../CMSIS/drivers/fsl_usart_dma.c"
+Finished building: ../CMSIS/drivers/fsl_spi.c
+Finished building: ../CMSIS/drivers/fsl_sdif.c
+ 
+ 
+Building file: ../CMSIS/drivers/fsl_usart_freertos.c
+Building file: ../CMSIS/drivers/fsl_utick.c
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"CMSIS/drivers/fsl_usart_freertos.d" -MT"CMSIS/drivers/fsl_usart_freertos.o" -MT"CMSIS/drivers/fsl_usart_freertos.d" -o "CMSIS/drivers/fsl_usart_freertos.o" "../CMSIS/drivers/fsl_usart_freertos.c"
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"CMSIS/drivers/fsl_utick.d" -MT"CMSIS/drivers/fsl_utick.o" -MT"CMSIS/drivers/fsl_utick.d" -o "CMSIS/drivers/fsl_utick.o" "../CMSIS/drivers/fsl_utick.c"
+Finished building: ../CMSIS/drivers/fsl_spi_freertos.c
+ 
+Finished building: ../CMSIS/drivers/fsl_spifi.c
+Finished building: ../CMSIS/drivers/fsl_spi_dma.c
+Building file: ../CMSIS/drivers/fsl_wwdt.c
+ 
+ 
+Invoking: MCU C Compiler
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"CMSIS/drivers/fsl_wwdt.d" -MT"CMSIS/drivers/fsl_wwdt.o" -MT"CMSIS/drivers/fsl_wwdt.d" -o "CMSIS/drivers/fsl_wwdt.o" "../CMSIS/drivers/fsl_wwdt.c"
+Building file: ../CMSIS/system_LPC54616.c
+Invoking: MCU C Compiler
+Finished building: ../CMSIS/drivers/fsl_spifi_dma.c
+arm-none-eabi-gcc -D__NEWLIB__ -DUSB_STACK_USE_DEDICATED_RAM=1 -DUSB_STACK_FREERTOS -DFSL_RTOS_BM -DSDK_OS_BAREMETAL -DSDK_DEBUGCONSOLE=0 -DSDK_OS_FREE_RTOS -DFSL_RTOS_FREE_RTOS -DCPU_LPC54616J512ET100 -DCPU_LPC54616J512ET100_cm4 -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -I../board -I../source/usb -I../usb/osa -I../usb/device -I../usb/include -I../source -I../ -I../freertos/include -I../freertos/portable -I../CMSIS_driver -I../CMSIS/drivers -I../startup -I../CMSIS -O2 -fno-common -g3 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -MMD -MP -MF"CMSIS/system_LPC54616.d" -MT"CMSIS/system_LPC54616.o" -MT"CMSIS/system_LPC54616.d" -o "CMSIS/system_LPC54616.o" "../CMSIS/system_LPC54616.c"
+ 
+Finished building: ../CMSIS/drivers/fsl_usart_dma.c
+ 
+Finished building: ../CMSIS/drivers/fsl_usart.c
+Finished building: ../CMSIS/drivers/fsl_utick.c
+ 
+ 
+Finished building: ../CMSIS/drivers/fsl_usart_freertos.c
+ 
+Finished building: ../CMSIS/drivers/fsl_wwdt.c
+Finished building: ../CMSIS/system_LPC54616.c
+ 
+ 
+Building target: usbmidiio.axf
+Invoking: MCU C++ Linker
+arm-none-eabi-c++ -nostdlib -L"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\usbmidiio\libs" -Xlinker -Map="usbmidiio.map" -Xlinker --gc-sections -Xlinker -print-memory-usage -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -T "usbmidiio_Debug.ld" -o "usbmidiio.axf"  ./usb/osa/usb_osa_freertos.o  ./usb/device/usb_device_dci.o ./usb/device/usb_device_lpcip3511.o  ./startup/startup_lpc54616.o  ./source/usb/usb_device_cdc_acm.o ./source/usb/usb_device_ch9.o ./source/usb/usb_device_class.o ./source/usb/usb_device_descriptor.o ./source/usb/virtual_com.o  ./source/control.o ./source/flashstore.o ./source/fsl_spifi_nor_flash.o ./source/midi.o ./source/midiparser.o ./source/rpi.o ./source/semihost_hardfault.o ./source/uart.o ./source/usbmidiio.o  ./freertos/source/croutine.o ./freertos/source/event_groups.o ./freertos/source/list.o ./freertos/source/queue.o ./freertos/source/tasks.o ./freertos/source/timers.o  ./freertos/portable/fsl_tickless_systick.o ./freertos/portable/heap_4.o ./freertos/portable/port.o  ./board/board.o ./board/clock_config.o ./board/peripherals.o ./board/pin_mux.o  ./CMSIS/drivers/fsl_adc.o ./CMSIS/drivers/fsl_clock.o ./CMSIS/drivers/fsl_common.o ./CMSIS/drivers/fsl_crc.o ./CMSIS/drivers/fsl_ctimer.o ./CMSIS/drivers/fsl_dma.o ./CMSIS/drivers/fsl_dmic.o ./CMSIS/drivers/fsl_dmic_dma.o ./CMSIS/drivers/fsl_eeprom.o ./CMSIS/drivers/fsl_emc.o ./CMSIS/drivers/fsl_enet.o ./CMSIS/drivers/fsl_flashiap.o ./CMSIS/drivers/fsl_flexcomm.o ./CMSIS/drivers/fsl_fmc.o ./CMSIS/drivers/fsl_fmeas.o ./CMSIS/drivers/fsl_gint.o ./CMSIS/drivers/fsl_gpio.o ./CMSIS/drivers/fsl_i2c.o ./CMSIS/drivers/fsl_i2c_dma.o ./CMSIS/drivers/fsl_i2c_freertos.o ./CMSIS/drivers/fsl_i2s.o ./CMSIS/drivers/fsl_i2s_dma.o ./CMSIS/drivers/fsl_inputmux.o ./CMSIS/drivers/fsl_mcan.o ./CMSIS/drivers/fsl_mrt.o ./CMSIS/drivers/fsl_pint.o ./CMSIS/drivers/fsl_power.o ./CMSIS/drivers/fsl_reset.o ./CMSIS/drivers/fsl_rit.o ./CMSIS/drivers/fsl_rtc.o ./CMSIS/drivers/fsl_sctimer.o ./CMSIS/drivers/fsl_sdif.o ./CMSIS/drivers/fsl_spi.o ./CMSIS/drivers/fsl_spi_dma.o ./CMSIS/drivers/fsl_spi_freertos.o ./CMSIS/drivers/fsl_spifi.o ./CMSIS/drivers/fsl_spifi_dma.o ./CMSIS/drivers/fsl_usart.o ./CMSIS/drivers/fsl_usart_dma.o ./CMSIS/drivers/fsl_usart_freertos.o ./CMSIS/drivers/fsl_utick.o ./CMSIS/drivers/fsl_wwdt.o  ./CMSIS/system_LPC54616.o   -lpower_hardabi
+c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/bin/ld.exe: cannot open linker script file usbmidiio_Debug.ld: No such file or directory
+collect2.exe: error: ld returned 1 exit status
+make: *** [usbmidiio.axf] Error 1
+16:49:15 **** Incremental Build of configuration Debug for project pan_sh ****
+make -r -j8 all 
+Building target: pan_sh.axf
+Invoking: MCU Linker
+arm-none-eabi-gcc -nostdlib -Xlinker -print-memory-usage -Xlinker --gc-sections -Xlinker -Map="pan_sh.map" -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -T LPC54616J512_Project_Debug.ld -o "pan_sh.axf"  ./startup/startup_lpc54616.o  ./source/LPC54616J512_Project.o ./source/LTC2712.o ./source/MAX11311.o ./source/ad.o ./source/adsr.o ./source/autotune.o ./source/control.o ./source/hp.o ./source/lfo.o ./source/notestack.o ./source/semihost_hardfault.o ./source/shiftctrl.o ./source/spi_sched.o ./source/synth.o  ./board/board.o ./board/clock_config.o ./board/peripherals.o ./board/pin_mux.o  ./CMSIS/drivers/fsl_clock.o ./CMSIS/drivers/fsl_common.o ./CMSIS/drivers/fsl_ctimer.o ./CMSIS/drivers/fsl_dma.o ./CMSIS/drivers/fsl_eeprom.o ./CMSIS/drivers/fsl_flexcomm.o ./CMSIS/drivers/fsl_fmc.o ./CMSIS/drivers/fsl_fmeas.o ./CMSIS/drivers/fsl_gint.o ./CMSIS/drivers/fsl_gpio.o ./CMSIS/drivers/fsl_i2c.o ./CMSIS/drivers/fsl_inputmux.o ./CMSIS/drivers/fsl_mrt.o ./CMSIS/drivers/fsl_pint.o ./CMSIS/drivers/fsl_power.o ./CMSIS/drivers/fsl_reset.o ./CMSIS/drivers/fsl_rit.o ./CMSIS/drivers/fsl_rtc.o ./CMSIS/drivers/fsl_sctimer.o ./CMSIS/drivers/fsl_spi.o ./CMSIS/drivers/fsl_spi_dma.o ./CMSIS/drivers/fsl_usart.o ./CMSIS/drivers/fsl_usart_dma.o ./CMSIS/drivers/fsl_utick.o ./CMSIS/drivers/fsl_wwdt.o  ./CMSIS/cmsis_drivers/fsl_i2c_cmsis.o ./CMSIS/cmsis_drivers/fsl_spi_cmsis.o ./CMSIS/cmsis_drivers/fsl_usart_cmsis.o  ./CMSIS/system_LPC54616.o   -lpower_hardabi
+c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/bin/ld.exe: cannot find -lpower_hardabi
+collect2.exe: error: ld returned 1 exit status
+make: *** [pan_sh.axf] Error 1
+16:49:16 **** Incremental Build of configuration Debug for project usbmidiio ****
+make -r -j8 all 
+Building target: usbmidiio.axf
+Invoking: MCU C++ Linker
+arm-none-eabi-c++ -nostdlib -L"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\usbmidiio\libs" -Xlinker -Map="usbmidiio.map" -Xlinker --gc-sections -Xlinker -print-memory-usage -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -T "usbmidiio_Debug.ld" -o "usbmidiio.axf"  ./usb/osa/usb_osa_freertos.o  ./usb/device/usb_device_dci.o ./usb/device/usb_device_lpcip3511.o  ./startup/startup_lpc54616.o  ./source/usb/usb_device_cdc_acm.o ./source/usb/usb_device_ch9.o ./source/usb/usb_device_class.o ./source/usb/usb_device_descriptor.o ./source/usb/virtual_com.o  ./source/control.o ./source/flashstore.o ./source/fsl_spifi_nor_flash.o ./source/midi.o ./source/midiparser.o ./source/rpi.o ./source/semihost_hardfault.o ./source/uart.o ./source/usbmidiio.o  ./freertos/source/croutine.o ./freertos/source/event_groups.o ./freertos/source/list.o ./freertos/source/queue.o ./freertos/source/tasks.o ./freertos/source/timers.o  ./freertos/portable/fsl_tickless_systick.o ./freertos/portable/heap_4.o ./freertos/portable/port.o  ./board/board.o ./board/clock_config.o ./board/peripherals.o ./board/pin_mux.o  ./CMSIS/drivers/fsl_adc.o ./CMSIS/drivers/fsl_clock.o ./CMSIS/drivers/fsl_common.o ./CMSIS/drivers/fsl_crc.o ./CMSIS/drivers/fsl_ctimer.o ./CMSIS/drivers/fsl_dma.o ./CMSIS/drivers/fsl_dmic.o ./CMSIS/drivers/fsl_dmic_dma.o ./CMSIS/drivers/fsl_eeprom.o ./CMSIS/drivers/fsl_emc.o ./CMSIS/drivers/fsl_enet.o ./CMSIS/drivers/fsl_flashiap.o ./CMSIS/drivers/fsl_flexcomm.o ./CMSIS/drivers/fsl_fmc.o ./CMSIS/drivers/fsl_fmeas.o ./CMSIS/drivers/fsl_gint.o ./CMSIS/drivers/fsl_gpio.o ./CMSIS/drivers/fsl_i2c.o ./CMSIS/drivers/fsl_i2c_dma.o ./CMSIS/drivers/fsl_i2c_freertos.o ./CMSIS/drivers/fsl_i2s.o ./CMSIS/drivers/fsl_i2s_dma.o ./CMSIS/drivers/fsl_inputmux.o ./CMSIS/drivers/fsl_mcan.o ./CMSIS/drivers/fsl_mrt.o ./CMSIS/drivers/fsl_pint.o ./CMSIS/drivers/fsl_power.o ./CMSIS/drivers/fsl_reset.o ./CMSIS/drivers/fsl_rit.o ./CMSIS/drivers/fsl_rtc.o ./CMSIS/drivers/fsl_sctimer.o ./CMSIS/drivers/fsl_sdif.o ./CMSIS/drivers/fsl_spi.o ./CMSIS/drivers/fsl_spi_dma.o ./CMSIS/drivers/fsl_spi_freertos.o ./CMSIS/drivers/fsl_spifi.o ./CMSIS/drivers/fsl_spifi_dma.o ./CMSIS/drivers/fsl_usart.o ./CMSIS/drivers/fsl_usart_dma.o ./CMSIS/drivers/fsl_usart_freertos.o ./CMSIS/drivers/fsl_utick.o ./CMSIS/drivers/fsl_wwdt.o  ./CMSIS/system_LPC54616.o   -lpower_hardabi
+Memory region         Used Size  Region Size  %age Used
+   PROGRAM_FLASH:       72248 B       512 KB     13.78%
+    SRAM_0_1_2_3:      114336 B       160 KB     69.79%
+           SRAMX:          0 GB        32 KB      0.00%
+         USB_RAM:          7 KB         8 KB     87.50%
+Finished building target: usbmidiio.axf
+ 
+make --no-print-directory post-build
+Performing post-build steps
+arm-none-eabi-size "usbmidiio.axf"; # arm-none-eabi-objcopy -v -O binary "usbmidiio.axf" "usbmidiio.bin" ; # checksum -p LPC54616J512 -d "usbmidiio.bin";
+   text	   data	    bss	    dec	    hex	filename
+  69688	   2560	 118944	 191192	  2ead8	usbmidiio.axf
+ 
+16:49:29 **** Incremental Build of configuration Debug for project pan_sh ****
+make -r -j8 all 
+Building target: pan_sh.axf
+Invoking: MCU Linker
+arm-none-eabi-gcc -nostdlib -Xlinker -print-memory-usage -Xlinker --gc-sections -Xlinker -Map="pan_sh.map" -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -T LPC54616J512_Project_Debug.ld -o "pan_sh.axf"  ./startup/startup_lpc54616.o  ./source/LPC54616J512_Project.o ./source/LTC2712.o ./source/MAX11311.o ./source/ad.o ./source/adsr.o ./source/autotune.o ./source/control.o ./source/hp.o ./source/lfo.o ./source/notestack.o ./source/semihost_hardfault.o ./source/shiftctrl.o ./source/spi_sched.o ./source/synth.o  ./board/board.o ./board/clock_config.o ./board/peripherals.o ./board/pin_mux.o  ./CMSIS/drivers/fsl_clock.o ./CMSIS/drivers/fsl_common.o ./CMSIS/drivers/fsl_ctimer.o ./CMSIS/drivers/fsl_dma.o ./CMSIS/drivers/fsl_eeprom.o ./CMSIS/drivers/fsl_flexcomm.o ./CMSIS/drivers/fsl_fmc.o ./CMSIS/drivers/fsl_fmeas.o ./CMSIS/drivers/fsl_gint.o ./CMSIS/drivers/fsl_gpio.o ./CMSIS/drivers/fsl_i2c.o ./CMSIS/drivers/fsl_inputmux.o ./CMSIS/drivers/fsl_mrt.o ./CMSIS/drivers/fsl_pint.o ./CMSIS/drivers/fsl_power.o ./CMSIS/drivers/fsl_reset.o ./CMSIS/drivers/fsl_rit.o ./CMSIS/drivers/fsl_rtc.o ./CMSIS/drivers/fsl_sctimer.o ./CMSIS/drivers/fsl_spi.o ./CMSIS/drivers/fsl_spi_dma.o ./CMSIS/drivers/fsl_usart.o ./CMSIS/drivers/fsl_usart_dma.o ./CMSIS/drivers/fsl_utick.o ./CMSIS/drivers/fsl_wwdt.o  ./CMSIS/cmsis_drivers/fsl_i2c_cmsis.o ./CMSIS/cmsis_drivers/fsl_spi_cmsis.o ./CMSIS/cmsis_drivers/fsl_usart_cmsis.o  ./CMSIS/system_LPC54616.o   -lpower_hardabi
+c:/nxp/mcuxpressoide_10.2.0_759/ide/tools/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/bin/ld.exe: cannot find -lpower_hardabi
+collect2.exe: error: ld returned 1 exit status
+make: *** [pan_sh.axf] Error 1
+16:49:30 **** Incremental Build of configuration Debug for project usbmidiio ****
+make -r -j8 all 
+make: Nothing to be done for `all'.
+16:51:24 **** Incremental Build of configuration Debug for project pan_sh ****
+make -r -j8 all 
+Building target: pan_sh.axf
+Invoking: MCU Linker
+arm-none-eabi-gcc -nostdlib -L"C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller\pan_sh\libs" -Xlinker -print-memory-usage -Xlinker --gc-sections -Xlinker -Map="pan_sh.map" -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -T LPC54616J512_Project_Debug.ld -o "pan_sh.axf"  ./startup/startup_lpc54616.o  ./source/LPC54616J512_Project.o ./source/LTC2712.o ./source/MAX11311.o ./source/ad.o ./source/adsr.o ./source/autotune.o ./source/control.o ./source/hp.o ./source/lfo.o ./source/notestack.o ./source/semihost_hardfault.o ./source/shiftctrl.o ./source/spi_sched.o ./source/synth.o  ./board/board.o ./board/clock_config.o ./board/peripherals.o ./board/pin_mux.o  ./CMSIS/drivers/fsl_clock.o ./CMSIS/drivers/fsl_common.o ./CMSIS/drivers/fsl_ctimer.o ./CMSIS/drivers/fsl_dma.o ./CMSIS/drivers/fsl_eeprom.o ./CMSIS/drivers/fsl_flexcomm.o ./CMSIS/drivers/fsl_fmc.o ./CMSIS/drivers/fsl_fmeas.o ./CMSIS/drivers/fsl_gint.o ./CMSIS/drivers/fsl_gpio.o ./CMSIS/drivers/fsl_i2c.o ./CMSIS/drivers/fsl_inputmux.o ./CMSIS/drivers/fsl_mrt.o ./CMSIS/drivers/fsl_pint.o ./CMSIS/drivers/fsl_power.o ./CMSIS/drivers/fsl_reset.o ./CMSIS/drivers/fsl_rit.o ./CMSIS/drivers/fsl_rtc.o ./CMSIS/drivers/fsl_sctimer.o ./CMSIS/drivers/fsl_spi.o ./CMSIS/drivers/fsl_spi_dma.o ./CMSIS/drivers/fsl_usart.o ./CMSIS/drivers/fsl_usart_dma.o ./CMSIS/drivers/fsl_utick.o ./CMSIS/drivers/fsl_wwdt.o  ./CMSIS/cmsis_drivers/fsl_i2c_cmsis.o ./CMSIS/cmsis_drivers/fsl_spi_cmsis.o ./CMSIS/cmsis_drivers/fsl_usart_cmsis.o  ./CMSIS/system_LPC54616.o   -lpower_hardabi
+Memory region         Used Size  Region Size  %age Used
+   PROGRAM_FLASH:      110256 B       512 KB     21.03%
+    SRAM_0_1_2_3:      153572 B       160 KB     93.73%
+           SRAMX:          0 GB        32 KB      0.00%
+         USB_RAM:          0 GB         8 KB      0.00%
+Finished building target: pan_sh.axf
+ 
+make --no-print-directory post-build
+Performing post-build steps
+arm-none-eabi-size "pan_sh.axf" ; arm-none-eabi-objcopy -v -O ihex "pan_sh.axf" "pan_sh.hex" ; # arm-none-eabi-objcopy -v -O binary "pan_sh.axf" "pan_sh.bin" ; # checksum -p LPC54616J512 -d "pan_sh.bin" ;
+   text	   data	    bss	    dec	    hex	filename
+ 101952	   8304	 144868	 255124	  3e494	pan_sh.axf
+copy from `pan_sh.axf' [elf32-littlearm] to `pan_sh.hex' [ihex]
+ 
+16:51:26 **** Incremental Build of configuration Debug for project usbmidiio ****
+make -r -j8 all 
+make: Nothing to be done for `all'.

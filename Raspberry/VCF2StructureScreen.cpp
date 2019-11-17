@@ -31,7 +31,7 @@ void RenderFilter(int x, int y, FilterTypes_t typeA, FilterTypes_t typeB, bool M
 	}
 
 }
-VCF2StructureScreen::VCF2StructureScreen()
+VCF2StructureScreen::VCF2StructureScreen(): _screensetup_t(SCREEN_VCF2_structure)
 {
 	EnableButton(0, "Mode A", MenuEntry_Action, MenuAction_VCFAMode);
 	EnableButton(1, "Mode B", MenuEntry_Action, MenuAction_VCFBMode);

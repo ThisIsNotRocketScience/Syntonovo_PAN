@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section name="Workbench">
 	<list key="installedFeatures">
-		<item value="com.crt.lpcxpresso.feature.product:10.2.1.201807111214"/>
-		<item value="com.crt.lpcxpresso.feature:10.2.1.201807251003"/>
-		<item value="com.nxp.mcuxpresso.addons.feature:10.2.0.201807161014"/>
-		<item value="com.nxp.mcuxpresso.core.datamodels.feature:10.2.1.201807191204"/>
+		<item value="com.crt.lpcxpresso.feature.product:10.2.0.201805151128"/>
+		<item value="com.crt.lpcxpresso.feature:10.2.0.201805151128"/>
+		<item value="com.nxp.mcuxpresso.addons.feature:10.2.0.201805151128"/>
+		<item value="com.nxp.mcuxpresso.core.datamodels.feature:10.2.0.201805151128"/>
 		<item value="com.nxp.swtools.clocks.feature:4.1.0.201805101316"/>
 		<item value="com.nxp.swtools.framework.feature:4.1.0.201805101316"/>
 		<item value="com.nxp.swtools.periphs.feature:4.1.0.201805101316"/>
@@ -42,9 +42,10 @@
 	</section>
 	<section name="ExternalProjectImportWizard">
 		<item value="false" key="WizardProjectsImportPage.STORE_NESTED_PROJECTS"/>
-		<item value="true" key="WizardProjectsImportPage.STORE_COPY_PROJECT_ID"/>
+		<item value="false" key="WizardProjectsImportPage.STORE_COPY_PROJECT_ID"/>
 		<item value="false" key="WizardProjectsImportPage.STORE_ARCHIVE_SELECTED"/>
 		<list key="WizardProjectsImportPage.STORE_DIRECTORIES">
+			<item value="C:\Users\Root\Documents\GitHub\Syntonovo_PAN\controller"/>
 			<item value="C:\work\pan\git\import\codectest"/>
 			<item value="C:\work\pan\git\import"/>
 		</list>

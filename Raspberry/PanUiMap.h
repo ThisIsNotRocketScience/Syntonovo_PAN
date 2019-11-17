@@ -51,7 +51,7 @@ ENDMENU()
 
 MENU(VCO1, ledbutton_VCO1, "VCO1")
 
-CUSTOMENTRY("Keyrange", MenuEntry_Action, MenuAction_Keyrange)
+CUSTOMENTRY("KeyZone", MenuEntry_Action, MenuAction_KeyZone)
 
 CUSTOMENTRY("Triangle", MenuEntry_Toggle, Switch_SEL1TRI)
 CUSTOMENTRY("Pulse", MenuEntry_Toggle, Switch_SEL1SQR)
@@ -75,7 +75,7 @@ ENTRY("Sine >\n Cleanfeed ", MenuEntry_Value, Output_VCO1SIN_MIX3)
 ENDMENU()
 
 MENU(VCO2, ledbutton_VCO2, "VCO2")
-CUSTOMENTRY("Keyrange", MenuEntry_Action, MenuAction_Keyrange)
+CUSTOMENTRY("KeyZone", MenuEntry_Action, MenuAction_KeyZone)
 
 CUSTOMENTRY("Triangle", MenuEntry_Toggle, Switch_SEL2TRI)
 CUSTOMENTRY("Pulse", MenuEntry_Toggle, Switch_SEL2SQR)
@@ -100,7 +100,7 @@ ENTRY("Sine -> Cleanfeed ", MenuEntry_Value, Output_VCO2SIN_MIX3)
 ENDMENU()
 
 MENU(VCO3, ledbutton_VCO3, "VCO3")
-CUSTOMENTRY("Keyrange", MenuEntry_Action, MenuAction_Keyrange)
+CUSTOMENTRY("KeyZone", MenuEntry_Action, MenuAction_KeyZone)
 
 CUSTOMENTRY("Triangle", MenuEntry_Toggle, Switch_SEL3TRI)
 CUSTOMENTRY("Pulse", MenuEntry_Toggle, Switch_SEL3SQR)
@@ -125,7 +125,7 @@ ENTRY("Sine -> Cleanfeed ", MenuEntry_Value, Output_VCO3SIN_MIX3)
 ENDMENU()
 
 MENU(VCO8, ledbutton_VCO3, "Noise")
-CUSTOMENTRY("Keyrange", MenuEntry_Action, MenuAction_Keyrange)
+CUSTOMENTRY("KeyZone", MenuEntry_Action, MenuAction_KeyZone)
 
 ENTRY("Color", MenuEntry_Pitch, Output_NOISE_COLOR)
 SKIPENTRY
@@ -141,8 +141,8 @@ ENTRY("Noise -> VCF2", MenuEntry_Value, Output_DIGINS_MIX2)
 ENDMENU()
 
 MENU(VCO4, ledbutton_VCO4, "VCO4")
-CUSTOMENTRY("Keyrange", MenuEntry_Action, MenuAction_Keyrange)
 
+CUSTOMENTRY("KeyZone", MenuEntry_Action, MenuAction_KeyZone)
 CUSTOMENTRY("Square Output", MenuEntry_Toggle, Switch_SEL4SQR)
 CUSTOMENTRY("Octave", MenuEntry_Octave, Output_VCO4_OCTAVE)
 
@@ -160,7 +160,7 @@ ENDMENU()
 
 MENU(VCO5, ledbutton_VCO4, "VCO5")
 
-CUSTOMENTRY("Keyrange", MenuEntry_Action, MenuAction_Keyrange)
+CUSTOMENTRY("KeyZone", MenuEntry_Action, MenuAction_KeyZone)
 
 CUSTOMENTRY("Square Output", MenuEntry_Toggle, Switch_SEL5SQR)
 CUSTOMENTRY("Octave", MenuEntry_Octave, Output_VCO5_OCTAVE)
@@ -178,7 +178,7 @@ ENTRY("4567 Square -> VCF2", MenuEntry_Value, Output_VCO4567_MIX2)
 ENDMENU()
 
 MENU(VCO6, ledbutton_VCO4, "VCO6")
-CUSTOMENTRY("Keyrange", MenuEntry_Action, MenuAction_Keyrange)
+CUSTOMENTRY("KeyZone", MenuEntry_Action, MenuAction_KeyZone)
 
 CUSTOMENTRY("Square Output", MenuEntry_Toggle, Switch_SEL6SQR)
 CUSTOMENTRY("Octave", MenuEntry_Octave, Output_VCO6_OCTAVE)
@@ -195,7 +195,7 @@ ENTRY("4567 Square -> VCF2", MenuEntry_Value, Output_VCO4567_MIX2)
 ENDMENU()
 
 MENU(VCO7, ledbutton_VCO4, "VCO7")
-CUSTOMENTRY("Keyrange", MenuEntry_Action, MenuAction_Keyrange)
+CUSTOMENTRY("KeyZone", MenuEntry_Action, MenuAction_KeyZone)
 
 CUSTOMENTRY("Square Output", MenuEntry_Toggle, Switch_SEL7SQR)
 CUSTOMENTRY("Octave", MenuEntry_Octave, Output_VCO7_OCTAVE)
@@ -216,7 +216,7 @@ EXTRABUTTON(VCF1, ledbutton_VCF1_Routing)
 EXTRABUTTON(VCF1, ledbutton_VCF1_Spectrum_ModBut)
 
 MENU(VCF1, ledbutton_VCF1_FrequencyBut, "VCF1")
-CUSTOMENTRY("Keyrange", MenuEntry_Action, MenuAction_Keyrange)
+CUSTOMENTRY("KeyZone", MenuEntry_Action, MenuAction_KeyZone)
 
 ENTRY("Frequency", MenuEntry_Value, Output_VCF1_CV)
 SKIPENTRY
@@ -311,7 +311,7 @@ EXTRABUTTON(VCF2a, ledbutton_PB4but)
 EXTRABUTTON(VCF2a, ledbutton_VCF2_RES)
 
 MENU(VCF2a, ledbutton_LowButton, "VCF2 A")
-CUSTOMENTRY("Keyrange", MenuEntry_Action, MenuAction_Keyrange)
+CUSTOMENTRY("KeyZone", MenuEntry_Action, MenuAction_KeyZone)
 
 
 CUSTOMENTRY("FSM to A & B", MenuEntry_Toggle, Switch_SELVCF23FSM)
@@ -337,7 +337,7 @@ ENDMENU()
 
 
 MENU(VCF2b, ledbutton_LowButton, "VCF2 B")
-CUSTOMENTRY("Keyrange", MenuEntry_Action, MenuAction_Keyrange)
+CUSTOMENTRY("KeyZone", MenuEntry_Action, MenuAction_KeyZone)
 
 CUSTOMENTRY("FSM to A & B", MenuEntry_Toggle, Switch_SELVCF23FSM)
 CUSTOMENTRY("FSM src -> Osc1 / Osc5", MenuEntry_Toggle, Switch_SELFSM2SRC)
@@ -361,7 +361,7 @@ ENTRY("Positive FB", MenuEntry_Value, Output_VCF2_P_FB)
 ENDMENU()
 
 MENU(VCF2c, ledbutton_LowButton, "VCF2 C")
-CUSTOMENTRY("Keyrange", MenuEntry_Action, MenuAction_Keyrange)
+CUSTOMENTRY("KeyZone", MenuEntry_Action, MenuAction_KeyZone)
 
 CUSTOMENTRY("FSM to C & D", MenuEntry_Toggle, Switch_SELVCF45FSM)
 CUSTOMENTRY("FSM src -> Osc1 / Osc5", MenuEntry_Toggle, Switch_SELFSM2SRC)
@@ -385,7 +385,7 @@ ENTRY("Positive FB", MenuEntry_Value, Output_VCF2_P_FB)
 ENDMENU()
 
 MENU(VCF2d, ledbutton_LowButton, "VCF2 D")
-CUSTOMENTRY("Keyrange", MenuEntry_Action, MenuAction_Keyrange)
+CUSTOMENTRY("KeyZone", MenuEntry_Action, MenuAction_KeyZone)
 
 CUSTOMENTRY("FSM to C & D", MenuEntry_Toggle, Switch_SELVCF45FSM)
 

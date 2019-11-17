@@ -180,11 +180,13 @@
     <ClCompile Include="..\libs\imgui-master\imgui.cpp" />
     <ClCompile Include="..\libs\imgui-master\imgui_draw.cpp" />
     <ClCompile Include="..\libs\lodepng-master\lodepng.cpp" />
+    <ClCompile Include="..\Raspberry\ArpeggiatorScreen.cpp" />
     <ClCompile Include="..\Raspberry\BottomEncoder.cpp" />
     <ClCompile Include="..\Raspberry\BuildScreens.cpp" />
     <ClCompile Include="..\Raspberry\ExtraScreenDefinitions.cpp" />
     <ClCompile Include="..\Raspberry\finalpangui.cpp" />
     <ClCompile Include="..\Raspberry\HomeScreen.cpp" />
+    <ClCompile Include="..\Raspberry\KeyZoneScreen.cpp" />
     <ClCompile Include="..\Raspberry\ModSourceScreen.cpp" />
     <ClCompile Include="..\Raspberry\ModSourceSelectorModal.cpp" />
     <ClCompile Include="..\Raspberry\ModTargetModal.cpp" />
@@ -200,10 +202,14 @@
     </Font>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Raspberry\ArpeggiatorScreen.h" />
     <ClInclude Include="..\Raspberry\ExtraScreenDefinitions.h" />
     <ClInclude Include="..\Raspberry\FinalPanEnums.h" />
     <ClInclude Include="..\Raspberry\FinalPanHeader.h" />
     <ClInclude Include="..\Raspberry\Gui.h" />
+    <ClInclude Include="..\Raspberry\KeyZoneScreen.h" />
+    <ClInclude Include="..\Raspberry\ModSourceScreen.h" />
+    <ClInclude Include="..\Raspberry\ModSourceSelectorModal.h" />
     <ClInclude Include="..\Raspberry\NewModulationModal.h" />
     <ClInclude Include="..\Raspberry\PanHeader.h" />
     <ClInclude Include="..\Raspberry\PanPreset.h" />
