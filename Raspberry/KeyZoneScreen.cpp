@@ -113,27 +113,19 @@ void KeyZoneSelectorScreen::Deactivate()
 	Modal = NULL;
 }
 
-
 void KeyZoneSelectorScreen::SetZone(int Z)
 {
 	if (currentmapping == NULL) return;
 	currentmapping->keyzone = Z % __KeyZone_Count;
-
 }
+
 void KeyZoneSelectorScreen::Action(int a)
 {
-
-
-
 	switch (a)
 	{
-	
-	case MenuAction_1:if (currentmapping)gGui.GotoPageForKeyZone(currentmapping->keyzone); break;
-	
-
-	case MenuAction_CloseParentModal: Modal = NULL; CloseParentModal();  break;
-	case MenuAction_Revert: SetZone(RevertZone); CloseParentModal(); Modal = NULL; break;
-	
+		case MenuAction_1:if (currentmapping)gGui.GotoPageForKeyZone(currentmapping->keyzone); break;
+		case MenuAction_CloseParentModal: Modal = NULL; CloseParentModal();  break;
+		case MenuAction_Revert: SetZone(RevertZone); CloseParentModal(); Modal = NULL; break;
 	}
 }
 
@@ -164,6 +156,7 @@ void KeyZoneSelectorScreen::EncoderPress(FinalEncoderEnum button)
 		{
 		}
 	}
+	_screensetup_t::EncoderPress(button);
 }
 
 void KeyZoneSelectorScreen::SetTarget(int screen, int instance)
@@ -258,6 +251,15 @@ void KeyZoneScreen::SetActiveInstance(int id)
 
 KeyZoneScreen::KeyZoneScreen() : _screensetup_t(SCREEN_KEYZONES)
 {
+	int off = (uint8_t*)&gCurrentPreset.keyzone - (uint8_t*)&gCurrentPreset;
+	int off2 = (uint8_t*)&gCurrentPreset.keyzone[0].arpsettings - (uint8_t*)&gCurrentPreset;
+	int off3 = (uint8_t*)&gCurrentPreset.keyzone[0].arpsettings.Rhythm - (uint8_t*)&gCurrentPreset;
+	//int off3 = (uint8_t*)&gCurrentPreset.key_mapping - (uint8_t*)&gCurrentPreset;
+	printf("keyzone offs 0x%x (%d)\n", off, off);
+	printf("arpsettings offs 0x%x (%d)\n", off2, off2);
+	printf("arpsetting rhythm offs 0x%x (%d)\n", off3, off3);
+	
+
 	MaxInstances = __KeyZone_Count;
 
 	int cur = 0;
@@ -362,4 +364,5 @@ void KeyZoneScreen::EncoderPress(FinalEncoderEnum button)
 		{
 		}
 	}
+	_screensetup_t::EncoderPress(button);
 }

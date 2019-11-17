@@ -190,4 +190,6 @@ void ArpeggiatorScreen::EncoderPress(FinalEncoderEnum button)
 		{
 		}
 	}
+
+	_screensetup_t::EncoderPress(button);
 }
