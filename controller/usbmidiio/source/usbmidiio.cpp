@@ -1,37 +1,3 @@
-/*
- * Copyright 2016-2018 NXP Semiconductor, Inc.
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
- *
- * o Redistributions of source code must retain the above copyright notice, this list
- *   of conditions and the following disclaimer.
- *
- * o Redistributions in binary form must reproduce the above copyright notice, this
- *   list of conditions and the following disclaimer in the documentation and/or
- *   other materials provided with the distribution.
- *
- * o Neither the name of NXP Semiconductor, Inc. nor the names of its
- *   contributors may be used to endorse or promote products derived from this
- *   software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
- * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
- * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
- 
-/**
- * @file    usbmidiio2.cpp
- * @brief   Application entry point.
- */
 #include <stdio.h>
 #include "board.h"
 #include "peripherals.h"
@@ -190,6 +156,7 @@ void key_down(key_source_t source, int channel, int key, int vel)
 
 			switch (preset.keyzone[zone].type) {
 			case PresetKeyzoneType_Single:
+			case PresetKeyzoneType_Paraphonic:
 				direct[zone].NoteOn(playkey, vel);
 				break;
 			case PresetKeyzoneType_Arpeggiator:
@@ -1456,7 +1423,25 @@ void sync_preset(uint32_t addr)
 		addr -= offsetof(PanPreset_t, keyzone);
 		int zone = addr / sizeof(keyzone_settings_t);
 		int suboffset = addr - zone * sizeof(keyzone_settings_t);
-		if (suboffset >= offsetof(keyzone_settings_t, keypriority) && suboffset < offsetof(keyzone_settings_t, keypriority)+4) {
+		if (suboffset >= offsetof(keyzone_settings_t, type) && suboffset < offsetof(keyzone_settings_t, type)+4) {
+			arp[zone].Panic();
+
+			if (preset.keyzone[zone].type == PresetKeyzoneType_Single) {
+				for (int mapid = 0; mapid < NUM_KEY_MAP_TARGETS; mapid++) {
+					if (preset.key_mapping[mapid].keyzone == zone) {
+						SETKEYMAP(mapid, preset.key_mapping[mapid].keyzone, 0);
+					}
+				}
+			}
+			else {
+				for (int mapid = 0; mapid < NUM_KEY_MAP_TARGETS; mapid++) {
+					if (preset.key_mapping[mapid].keyzone == zone) {
+						SETKEYMAP(mapid, preset.key_mapping[mapid].keyzone, preset.key_mapping[mapid].keyindex);
+					}
+				}
+			}
+		}
+		else if (suboffset >= offsetof(keyzone_settings_t, keypriority) && suboffset < offsetof(keyzone_settings_t, keypriority)+4) {
 			SET_KEYPRIORITY(zone, preset.keyzone[zone].keypriority);
 		}
 	}
@@ -1464,8 +1449,6 @@ void sync_preset(uint32_t addr)
 		// skip
 //#define NUM_KEY_INPUTS (16)
 //	key_input_t key_input[NUM_KEY_INPUTS];
-//#define NUM_KEYZONES (4)
-//	keyzone_settings_t keyzone[4];
 	}
 	else if (addr >= offsetof(PanPreset_t, key_mapping)) {
 		addr -= offsetof(PanPreset_t, key_mapping);
@@ -1475,7 +1458,11 @@ void sync_preset(uint32_t addr)
 
 		switch (subaddr) {
 		case 0:
-			SETKEYMAP(mapid, preset.key_mapping[mapid].keyzone, preset.key_mapping[mapid].keyindex);
+			if (preset.keyzone[preset.key_mapping[mapid].keyzone].type == PresetKeyzoneType_Single) {
+				SETKEYMAP(mapid, preset.key_mapping[mapid].keyzone, 0);
+			} else {
+				SETKEYMAP(mapid, preset.key_mapping[mapid].keyzone, preset.key_mapping[mapid].keyindex);
+			}
 			break;
 		}
 	}
