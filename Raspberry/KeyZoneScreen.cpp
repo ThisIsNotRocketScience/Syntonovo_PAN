@@ -62,9 +62,9 @@ void KeyZoneSelectorScreen::DoToggle(int id)
 	case 2:if (currentmapping->keyzone != 2)SetZone(2); break;
 	case 3:if (currentmapping->keyzone != 3)SetZone(3); break;
 
-	case 4:if (currentmapping->keyindex != 0) currentmapping->keyindex = 0;
-	case 5:if (currentmapping->keyindex != 1) currentmapping->keyindex = 1;
-	case 6:if (currentmapping->keyindex != 2) currentmapping->keyindex = 2;
+	case 4:if (currentmapping->keyindex != 0) currentmapping->keyindex = 0; break;
+	case 5:if (currentmapping->keyindex != 1) currentmapping->keyindex = 1; break;
+	case 6:if (currentmapping->keyindex != 2) currentmapping->keyindex = 2; break;
 	}
 }
 
