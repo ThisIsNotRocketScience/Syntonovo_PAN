@@ -2117,15 +2117,20 @@ void synth_init()
 	//synth_param[VCF2_H_CV].lfo_speed = 0xffff;
 	//lfo_set_speed(VCF2_H_CV, synth_param[VCF2_H_CV].lfo_speed);
 
+    sctimer_init();
+
+    autotune_init();
+    pad_init();
+}
+
+void sctimer_init()
+{
     //SCTIMER_SetCallback(SCTIMER_1_PERIPHERAL, SCTimer_Func, 0);
     SCTIMER_EnableInterrupts(SCTIMER_1_PERIPHERAL, 3);
     SCTIMER_StartTimer(SCTIMER_1_PERIPHERAL, kSCTIMER_Counter_L);
 
     // must be lower than autotune priority or overflow checking will break!
     NVIC_SetPriority(SCTIMER_1_IRQN, 1);
-
-    autotune_init();
-    pad_init();
 }
 
 const int negate[12] = { 1, 0, 1,  0, 0, 0,  1, 0, 0,  1, 0, 0 };

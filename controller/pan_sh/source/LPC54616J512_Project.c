@@ -113,6 +113,7 @@ void portssetup_init()
 /*
  * @brief   Application entry point.
  */
+
 int main(void) {
   	/* Init board hardware. */
     BOARD_InitBootPins();
@@ -120,6 +121,9 @@ int main(void) {
     BOARD_InitBootPeripherals();
 
     for (int i = 0; i < 1000000; i++) __NOP();
+
+    CLOCK_EnableClock(kCLOCK_Gpio0);
+    CLOCK_EnableClock(kCLOCK_Gpio1);
 
     //synth_init();
     codecsetup_init();
@@ -129,23 +133,25 @@ int main(void) {
     //max11300_init();
     //max5134_init();
     portssetup_init();
-    control_init();
 
     spi_sched_start();
 
     ltc2712_init();
 
-    CLOCK_EnableClock(kCLOCK_Gpio0);
-    CLOCK_EnableClock(kCLOCK_Gpio1);
+    int test_mode = 0;
+    if (test_mode) {
+    	testmode_run();
+        while(1) {
+        	__NOP();
+        }
+    }
 
     synth_init();
+    control_init();
     synth_run();
 
-    /* Force the counter to be placed into memory. */
-    volatile static int i = 0 ;
-    /* Enter an infinite loop, just incrementing a counter. */
     while(1) {
-        i++ ;
+    	__NOP();
     }
     return 0 ;
 }

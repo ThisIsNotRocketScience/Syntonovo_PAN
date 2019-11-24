@@ -1,15 +1,12 @@
-/*
- * synth.h
- *
- *  Created on: Apr 1, 2018
- *      Author: ld0d
- */
+#pragma once
 
-#ifndef SYNTH_H_
-#define SYNTH_H_
+#include <stdint.h>
 
 void synth_init();
 void synth_run();
 void synth_reset();
 
-#endif /* SYNTH_H_ */
+// access for testmode
+void sctimer_init();
+void ports_value(int portid, uint16_t value);
+void ports_refresh(void);

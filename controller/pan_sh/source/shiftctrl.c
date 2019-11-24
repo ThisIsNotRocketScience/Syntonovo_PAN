@@ -73,7 +73,11 @@ void shiftctrl_update()
 		xfer.txData = &flags;
 		xfer.rxData = 0;
 		xfer.configFlags = kSPI_FrameAssert;
+#ifdef OLDSYNTH
 		xfer.dataSize = 6;
+#else
+		xfer.dataSize = 7;
+#endif
 		volatile status_t s = SPI_MasterTransferBlocking(SPI_0_PERIPHERAL, &xfer);
 
 		__NOP();
