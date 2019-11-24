@@ -149,7 +149,7 @@ uint16_t pan_law_table[2049];
 static void pan_law_init()
 {
 	for (int i = 0; i < 2048; i++) {
-		float x = sinf((float)i * (0.5f * 3.141592654f / 2048.0f));
+		float x = cosf((float)i * (0.5f * 3.141592654f / 2048.0f));
 		pan_law_table[i] = floorf((x * x) * 16384.f);
 	}
 	pan_law_table[2048] = 0;
@@ -365,8 +365,8 @@ int32_t chase_vco(int vco)
 {
 	int32_t value = 0;
 
-	if (shiftctrl_flag_state(SELCHASEOSC4567)) value += chase(vco, synth_param[CHASE].last) - 0xffff;
-	if (shiftctrl_flag_state(SELSTASHOSC4567)) value += stash(vco, synth_param[STASH].last) - 0xffff;
+//	if (shiftctrl_flag_state(SELCHASEOSC4567)) value += chase(vco, synth_param[CHASE].last) - 0xffff;
+//	if (shiftctrl_flag_state(SELSTASHOSC4567)) value += stash(vco, synth_param[STASH].last) - 0xffff;
 	return value;
 }
 
@@ -374,8 +374,8 @@ int32_t chase_vcf(int vcf)
 {
 	int32_t value = 0;
 
-	if (shiftctrl_flag_state(SELCHASEVCF2)) value += chase(vcf, synth_param[CHASE].last) - 0xffff;
-	if (shiftctrl_flag_state(SELSTASHVCF2)) value += stash(vcf, synth_param[STASH].last) - 0xffff;
+//	if (shiftctrl_flag_state(SELCHASEVCF2)) value += chase(vcf, synth_param[CHASE].last) - 0xffff;
+//	if (shiftctrl_flag_state(SELSTASHVCF2)) value += stash(vcf, synth_param[STASH].last) - 0xffff;
 	return value;
 }
 
@@ -744,6 +744,7 @@ void control_cb(int param, int subparam, uint16_t value)
 				shiftctrl_clear(value & 0x7f);
 			}
 
+			/*
 			if ((value & 0x7f) == KEYPRIO1 || (value & 0x7f) == KEYPRIO2) {
 				notestack_init(0, shiftctrl_flag_state(KEYPRIO1) | (shiftctrl_flag_state(KEYPRIO2) << 1));
 				notestack_init(1, shiftctrl_flag_state(KEYPRIO1) | (shiftctrl_flag_state(KEYPRIO2) << 1));
@@ -751,6 +752,7 @@ void control_cb(int param, int subparam, uint16_t value)
 				notestack_init(3, shiftctrl_flag_state(KEYPRIO1) | (shiftctrl_flag_state(KEYPRIO2) << 1));
 				update_note(0);
 			}
+			*/
 		}
 
 		if (subparam == 0xfc) {
@@ -939,6 +941,14 @@ int process_param_inv(int ctrlid)
 	return result;
 }
 
+int32_t log_curve(int32_t value)
+{
+	if (value < 0x1000) return value * 8;
+	else if (value < 0x2000) return (value - 0x1000) * 4 + 0x8000;
+	else if (value < 0xE000) return ((value - 0x2000) >> 2) + 0xC000;
+	else return ((value - 0xE000) >> 1) + 0xF000;
+}
+
 int process_param_log_add(int ctrlid, int32_t add, int32_t addchase)
 {
 	int result = doing_reset;
@@ -950,6 +960,7 @@ int process_param_log_add(int ctrlid, int32_t add, int32_t addchase)
 	value += addchase;
 	if (value < 0) value = 0;
 	else if (value > 65535) value = 65535;
+	else value = log_curve(value);
 	//printf("+ sum\n", synth_param[ctrlid].sum),
 	value += synth_param[ctrlid].sum;
 	if (value < 0) value = 65535;
@@ -1078,7 +1089,7 @@ void do_output_VCF2_D_MIX(int ctrlid, int port)
 void do_output_VCO1_SUB1(int ctrlid, int port)
 {
 	do_smooth(ctrlid);
-	if (process_param_inv(ctrlid)) {
+	if (process_param_log(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
 }
@@ -1086,7 +1097,7 @@ void do_output_VCO1_SUB1(int ctrlid, int port)
 void do_output_VCO1_SUB2(int ctrlid, int port)
 {
 	do_smooth(ctrlid);
-	if (process_param_inv(ctrlid)) {
+	if (process_param_log(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
 }
@@ -1094,7 +1105,7 @@ void do_output_VCO1_SUB2(int ctrlid, int port)
 void do_output_VCF1_FX_12(int ctrlid, int port)
 {
 	do_smooth(ctrlid);
-	if (process_param_inv(ctrlid)) {
+	if (process_param_log(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
 }
@@ -1102,7 +1113,7 @@ void do_output_VCF1_FX_12(int ctrlid, int port)
 void do_output_VCF1_FX_24(int ctrlid, int port)
 {
 	do_smooth(ctrlid);
-	if (process_param_inv(ctrlid)) {
+	if (process_param_log(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
 }
@@ -1110,7 +1121,7 @@ void do_output_VCF1_FX_24(int ctrlid, int port)
 void do_output_VCF2_FX_L(int ctrlid, int port)
 {
 	do_smooth(ctrlid);
-	if (process_param_inv(ctrlid)) {
+	if (process_param_log(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
 }
@@ -1118,7 +1129,7 @@ void do_output_VCF2_FX_L(int ctrlid, int port)
 void do_output_VCF2_FX_R(int ctrlid, int port)
 {
 	do_smooth(ctrlid);
-	if (process_param_inv(ctrlid)) {
+	if (process_param_log(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
 }
@@ -1126,7 +1137,7 @@ void do_output_VCF2_FX_R(int ctrlid, int port)
 void do_output_CLEANF_FX_L(int ctrlid, int port)
 {
 	do_smooth(ctrlid);
-	if (process_param_inv(ctrlid)) {
+	if (process_param_log(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
 }
@@ -1134,7 +1145,7 @@ void do_output_CLEANF_FX_L(int ctrlid, int port)
 void do_output_CLEANF_FX_R(int ctrlid, int port)
 {
 	do_smooth(ctrlid);
-	if (process_param_inv(ctrlid)) {
+	if (process_param_log(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
 }
@@ -1142,7 +1153,7 @@ void do_output_CLEANF_FX_R(int ctrlid, int port)
 void do_output_FX_L_RETURN(int ctrlid, int port)
 {
 	//do_smooth(ctrlid);
-	//if (process_param_inv(ctrlid)) {
+	//if (process_param_log(ctrlid)) {
 	//	ports_value(port, synth_param[ctrlid].last);
 	//}
 
@@ -1156,7 +1167,7 @@ void do_output_FX_L_RETURN(int ctrlid, int port)
 void do_output_FX_R_RETURN(int ctrlid, int port)
 {
 	//do_smooth(ctrlid);
-	//if (process_param_inv(ctrlid)) {
+	//if (process_param_log(ctrlid)) {
 	//	ports_value(port, synth_param[ctrlid].last);
 	//}
 
@@ -1169,7 +1180,7 @@ void do_output_FX_R_RETURN(int ctrlid, int port)
 
 void linpan_l(int ctrlid, int port, int linctrlid, int panctrlid)
 {
-	uint16_t value = signed_scale(synth_param[linctrlid].last, pan_law(synth_param[panctrlid].last));
+	uint16_t value = signed_scale(synth_param[linctrlid].last, pan_law(65535 - synth_param[panctrlid].last));
 
 	int result = (synth_param[ctrlid].last != value) || doing_reset;
 	if (result) {
@@ -1180,7 +1191,7 @@ void linpan_l(int ctrlid, int port, int linctrlid, int panctrlid)
 
 void linpan_r(int ctrlid, int port, int linctrlid, int panctrlid)
 {
-	uint16_t value = signed_scale(synth_param[linctrlid].last, pan_law(65535 - synth_param[panctrlid].last));
+	uint16_t value = signed_scale(synth_param[linctrlid].last, pan_law(synth_param[panctrlid].last));
 
 	int result = (synth_param[ctrlid].last != value) || doing_reset;
 	if (result) {
@@ -1189,10 +1200,18 @@ void linpan_r(int ctrlid, int port, int linctrlid, int panctrlid)
 	}
 }
 
+void do_output_GATETRIG_MIX2(int ctrlid, int port)
+{
+	do_smooth(ctrlid);
+	if (process_param_log(ctrlid)) {
+		ports_value(port, synth_param[ctrlid].last);
+	}
+}
+
 void do_output_VCO1_MIX1(int ctrlid, int port)
 {
 	do_smooth(ctrlid);
-	if (process_param_inv(ctrlid)) {
+	if (process_param_log(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
 }
@@ -1200,7 +1219,7 @@ void do_output_VCO1_MIX1(int ctrlid, int port)
 void do_output_VCO1_MIX2(int ctrlid, int port)
 {
 	do_smooth(ctrlid);
-	if (process_param_inv(ctrlid)) {
+	if (process_param_log(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
 }
@@ -1208,7 +1227,7 @@ void do_output_VCO1_MIX2(int ctrlid, int port)
 void do_output_VCO2_MIX1(int ctrlid, int port)
 {
 	do_smooth(ctrlid);
-	if (process_param_inv(ctrlid)) {
+	if (process_param_log(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
 }
@@ -1216,7 +1235,7 @@ void do_output_VCO2_MIX1(int ctrlid, int port)
 void do_output_VCO2_MIX2(int ctrlid, int port)
 {
 	do_smooth(ctrlid);
-	if (process_param_inv(ctrlid)) {
+	if (process_param_log(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
 }
@@ -1224,7 +1243,7 @@ void do_output_VCO2_MIX2(int ctrlid, int port)
 void do_output_VCO3_MIX1(int ctrlid, int port)
 {
 	do_smooth(ctrlid);
-	if (process_param_inv(ctrlid)) {
+	if (process_param_log(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
 }
@@ -1232,7 +1251,7 @@ void do_output_VCO3_MIX1(int ctrlid, int port)
 void do_output_VCO3_MIX2(int ctrlid, int port)
 {
 	do_smooth(ctrlid);
-	if (process_param_inv(ctrlid)) {
+	if (process_param_log(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
 }
@@ -1240,7 +1259,7 @@ void do_output_VCO3_MIX2(int ctrlid, int port)
 void do_output_VCO4567_MIX1(int ctrlid, int port)
 {
 	do_smooth(ctrlid);
-	if (process_param_inv(ctrlid)) {
+	if (process_param_log(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
 }
@@ -1248,7 +1267,7 @@ void do_output_VCO4567_MIX1(int ctrlid, int port)
 void do_output_VCO4567_MIX2(int ctrlid, int port)
 {
 	do_smooth(ctrlid);
-	if (process_param_inv(ctrlid)) {
+	if (process_param_log(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
 }
@@ -1256,7 +1275,7 @@ void do_output_VCO4567_MIX2(int ctrlid, int port)
 void do_output_RM1_MIX1(int ctrlid, int port)
 {
 	do_smooth(ctrlid);
-	if (process_param_inv(ctrlid)) {
+	if (process_param_log(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
 }
@@ -1264,7 +1283,7 @@ void do_output_RM1_MIX1(int ctrlid, int port)
 void do_output_RM1_MIX2(int ctrlid, int port)
 {
 	do_smooth(ctrlid);
-	if (process_param_inv(ctrlid)) {
+	if (process_param_log(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
 }
@@ -1272,7 +1291,7 @@ void do_output_RM1_MIX2(int ctrlid, int port)
 void do_output_RM2_MIX3(int ctrlid, int port)
 {
 	do_smooth(ctrlid);
-	if (process_param_inv(ctrlid)) {
+	if (process_param_log(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
 
@@ -1287,7 +1306,7 @@ void do_output_RM2_MIX3(int ctrlid, int port)
 void do_output_WHITENS_MIX1(int ctrlid, int port)
 {
 	do_smooth(ctrlid);
-	if (process_param_inv(ctrlid)) {
+	if (process_param_log(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
 }
@@ -1295,7 +1314,7 @@ void do_output_WHITENS_MIX1(int ctrlid, int port)
 void do_output_WHITENS_MIX2(int ctrlid, int port)
 {
 	do_smooth(ctrlid);
-	if (process_param_inv(ctrlid)) {
+	if (process_param_log(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
 }
@@ -1303,7 +1322,7 @@ void do_output_WHITENS_MIX2(int ctrlid, int port)
 void do_output_DIGINS_MIX1(int ctrlid, int port)
 {
 	do_smooth(ctrlid);
-	if (process_param_inv(ctrlid)) {
+	if (process_param_log(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
 }
@@ -1311,7 +1330,7 @@ void do_output_DIGINS_MIX1(int ctrlid, int port)
 void do_output_DIGINS_MIX2(int ctrlid, int port)
 {
 	do_smooth(ctrlid);
-	if (process_param_inv(ctrlid)) {
+	if (process_param_log(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
 }
@@ -1319,7 +1338,7 @@ void do_output_DIGINS_MIX2(int ctrlid, int port)
 void do_output_EXT_MIX1(int ctrlid, int port)
 {
 	do_smooth(ctrlid);
-	if (process_param_inv(ctrlid)) {
+	if (process_param_log(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
 }
@@ -1327,7 +1346,7 @@ void do_output_EXT_MIX1(int ctrlid, int port)
 void do_output_EXT_MIX2(int ctrlid, int port)
 {
 	do_smooth(ctrlid);
-	if (process_param_inv(ctrlid)) {
+	if (process_param_log(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
 }
@@ -1335,7 +1354,7 @@ void do_output_EXT_MIX2(int ctrlid, int port)
 void do_output_DNSSAW_MIX1(int ctrlid, int port)
 {
 	do_smooth(ctrlid);
-	if (process_param_inv(ctrlid)) {
+	if (process_param_log(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
 }
@@ -1343,7 +1362,7 @@ void do_output_DNSSAW_MIX1(int ctrlid, int port)
 void do_output_DNSSAW_MIX2(int ctrlid, int port)
 {
 	do_smooth(ctrlid);
-	if (process_param_inv(ctrlid)) {
+	if (process_param_log(ctrlid)) {
 		ports_value(port, synth_param[ctrlid].last);
 	}
 }
@@ -2307,7 +2326,16 @@ void synth_modulation_run()
 		int modid = 0x20 + i;
 		int32_t value = controller_update(i);
 		if (read_mods) {
-			mod_data[modid] = (uint8_t)(value >> 8);
+			int ctrlval = value;
+			if (i >= 6 && i <= 9) {
+				ctrlval = ((int)value) >> 6;
+				if (ctrlval < 0) ctrlval = 0;
+				else if (ctrlval > 255) ctrlval = 255;
+			}
+			else {
+				ctrlval = value >> 8;
+			}
+			mod_data[modid] = (uint8_t)(ctrlval);
 		}
 		add_mod_targets(modid, value);
 	}
