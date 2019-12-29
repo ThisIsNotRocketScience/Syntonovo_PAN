@@ -292,6 +292,11 @@
                         <pin_feature name="direction" value="OUTPUT"/>
                      </pin_features>
                   </pin>
+                  <pin peripheral="GPIO" signal="PIO0, 16" pin_num="27" pin_signal="PIO0_16/FC4_TXD_SCL_MISO/CLKOUT/CTIMER1_CAP0/EMC_CSN(0)/ENET_TXD0/ADC0_4">
+                     <pin_features>
+                        <pin_feature name="direction" value="INPUT"/>
+                     </pin_features>
+                  </pin>
                </pins>
             </function>
          </functions_list>
@@ -336,6 +341,7 @@
                </clock_sources>
                <clock_outputs>
                   <clock_output id="AUDPLL_clock.outFreq" value="48 MHz" locked="false" accuracy=""/>
+                  <clock_output id="CLKOUT_clock.outFreq" value="12 MHz" locked="false" accuracy=""/>
                   <clock_output id="FRO12M_clock.outFreq" value="12 MHz" locked="false" accuracy=""/>
                   <clock_output id="FROHF_clock.outFreq" value="48 MHz" locked="false" accuracy=""/>
                   <clock_output id="FXCOM1_clock.outFreq" value="48 MHz" locked="false" accuracy=""/>
@@ -346,14 +352,16 @@
                   <clock_output id="SPIFI_clock.outFreq" value="20 MHz" locked="false" accuracy=""/>
                   <clock_output id="SYSPLL_clock.outFreq" value="180 MHz" locked="false" accuracy=""/>
                   <clock_output id="System_clock.outFreq" value="180 MHz" locked="false" accuracy=""/>
-                  <clock_output id="USB1_clock.outFreq" value="48 MHz" locked="false" accuracy=""/>
-                  <clock_output id="USBPLL_clock.outFreq" value="96 MHz" locked="false" accuracy=""/>
+                  <clock_output id="USB1_clock.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="USBPLL_clock.outFreq" value="48 MHz" locked="false" accuracy=""/>
                </clock_outputs>
                <clock_settings>
                   <setting id="ASYNC_SYSCON.ASYNCAPBCLKSELA.sel" value="SYSCON.audio_pll_clk" locked="false"/>
                   <setting id="SYSCON.AHBCLKDIV.scale" value="1" locked="true"/>
+                  <setting id="SYSCON.AUDPLLCLKSEL.sel" value="SYSCON._clk_in" locked="false"/>
                   <setting id="SYSCON.AUD_M_MULT.scale" value="128" locked="true"/>
                   <setting id="SYSCON.AUD_N_DIV.scale" value="4" locked="true"/>
+                  <setting id="SYSCON.CLKOUTSELA.sel" value="SYSCON._clk_in" locked="false"/>
                   <setting id="SYSCON.FXCLKSEL1.sel" value="SYSCON.AUDPLL_BYPASS" locked="false"/>
                   <setting id="SYSCON.FXCLKSEL2.sel" value="SYSCON.AUDPLL_BYPASS" locked="false"/>
                   <setting id="SYSCON.FXCLKSEL7.sel" value="SYSCON.AUDPLL_BYPASS" locked="false"/>
@@ -365,9 +373,10 @@
                   <setting id="SYSCON.SCTCLKSEL.sel" value="SYSCON.MAINCLKSELB" locked="false"/>
                   <setting id="SYSCON.SPIFICLKDIV.scale" value="9" locked="true"/>
                   <setting id="SYSCON.SPIFICLKSEL.sel" value="SYSCON.PLL_BYPASS" locked="false"/>
+                  <setting id="SYSCON.SYSPLLCLKSEL.sel" value="SYSCON._clk_in" locked="false"/>
                   <setting id="SYSCON.USB1CLKDIV.scale" value="2" locked="true"/>
                   <setting id="SYSCON.USB1CLKSEL.sel" value="SYSCON.USBDIRECT" locked="false"/>
-                  <setting id="SYSCON.USBPLL_PSEL.scale" value="2" locked="true"/>
+                  <setting id="SYSCON.USBPLL_PSEL.scale" value="4" locked="true"/>
                   <setting id="SYSCON.USB_M_MULT.scale" value="16" locked="true"/>
                   <setting id="SYSCON.USB_N_DIV.scale" value="1" locked="true"/>
                   <setting id="SYSCON_PDRUNCFG0_PDEN_SYS_PLL_CFG" value="Power_up" locked="false"/>

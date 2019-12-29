@@ -126,6 +126,7 @@ BOARD_InitPins:
   - {pin_num: '92', peripheral: GPIO, signal: 'PIO1, 31', pin_signal: PIO1_31/MCLK/CTIMER0_MAT2/SCT0_OUT6/FC8_CTS_SDA_SSEL0/EMC_D(15), direction: OUTPUT}
   - {pin_num: '94', peripheral: GPIO, signal: 'PIO1, 11', pin_signal: PIO1_11/ENET_TX_EN/FC1_TXD_SCL_MISO/CTIMER1_CAP1/USB0_VBUS/EMC_CLK(0), direction: OUTPUT}
   - {pin_num: '100', peripheral: GPIO, signal: 'PIO0, 1', pin_signal: PIO0_1/CAN1_TD/FC3_CTS_SDA_SSEL0/CTIMER0_CAP0/SCT0_GPI1/PDM0_DATA, direction: OUTPUT}
+  - {pin_num: '27', peripheral: GPIO, signal: 'PIO0, 16', pin_signal: PIO0_16/FC4_TXD_SCL_MISO/CLKOUT/CTIMER1_CAP0/EMC_CSN(0)/ENET_TXD0/ADC0_4, direction: INPUT}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
  */
 /* clang-format on */
@@ -215,6 +216,13 @@ void BOARD_InitPins(void)
     };
     /* Initialize GPIO functionality on pin PIO0_15 (pin 26)  */
     GPIO_PinInit(BOARD_INITPINS_LD1XLAT_GPIO, BOARD_INITPINS_LD1XLAT_PORT, BOARD_INITPINS_LD1XLAT_PIN, &LD1XLAT_config);
+
+    gpio_pin_config_t gpio0_pin27_config = {
+        .pinDirection = kGPIO_DigitalInput,
+        .outputLogic = 0U
+    };
+    /* Initialize GPIO functionality on pin PIO0_16 (pin 27)  */
+    GPIO_PinInit(GPIO, 0U, 16U, &gpio0_pin27_config);
 
     gpio_pin_config_t T5_config = {
         .pinDirection = kGPIO_DigitalInput,
@@ -424,6 +432,18 @@ void BOARD_InitPins(void)
                          /* Select Analog/Digital mode.
                           * : Digital mode. */
                          | IOCON_PIO_DIGIMODE(PIO015_DIGIMODE_DIGITAL));
+
+    IOCON->PIO[0][16] = ((IOCON->PIO[0][16] &
+                          /* Mask bits to zero which are setting */
+                          (~(IOCON_PIO_FUNC_MASK | IOCON_PIO_DIGIMODE_MASK)))
+
+                         /* Selects pin function.
+                          * : PORT016 (pin 27) is configured as PIO0_16. */
+                         | IOCON_PIO_FUNC(PIO016_FUNC_ALT0)
+
+                         /* Select Analog/Digital mode.
+                          * : Digital mode. */
+                         | IOCON_PIO_DIGIMODE(PIO016_DIGIMODE_DIGITAL));
 
     IOCON->PIO[0][17] = ((IOCON->PIO[0][17] &
                           /* Mask bits to zero which are setting */

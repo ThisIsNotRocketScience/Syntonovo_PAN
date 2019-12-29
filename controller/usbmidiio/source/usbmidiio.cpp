@@ -924,6 +924,10 @@ void ScanButtonsAndEncoders()
 	cur_encoder_time = timer_value();
 
 	for (int i = 0; i < __encoder_Count; i++) {
+#ifndef OLDSYNTH
+		if (i == 18 || i == 19) continue;
+#endif
+
 		int move = encoder_process(i, sw[encoder_a[i]], sw[encoder_c[i]]);
 
 		if (move < 0) {
@@ -2060,6 +2064,11 @@ extern "C" void DoMidiCommand(midicmd_t cmd)
 
 int main(void) {
   	/* Init board hardware. */
+	//POWER_EnablePD(kPDRUNCFG_PD_VD2_ANA);
+	//POWER_EnablePD(kPDRUNCFG_PD_VD3);
+	//POWER_EnablePD(kPDRUNCFG_PD_VD5);
+	//POWER_EnablePD(kPDRUNCFG_PD_USB1_PHY);
+
 	BOARD_InitBootPins();
     BOARD_InitBootClocks();
     BOARD_InitBootPeripherals();
@@ -2070,15 +2079,16 @@ int main(void) {
     LedsOff();
     printf("Board init done\n");
 
-	CLOCK_EnableClock(kCLOCK_Usbd1);
-	CLOCK_EnableClock(kCLOCK_UsbRam1);
-	POWER_EnablePD(kPDRUNCFG_PD_VD5);
-	POWER_EnablePD(kPDRUNCFG_PD_USB1_PHY);
+	//POWER_DisablePD(kPDRUNCFG_PD_VD5);
+	POWER_DisablePD(kPDRUNCFG_PD_USB1_PHY);
+	//CLOCK_EnableClock(kCLOCK_Usbd1);
+	//CLOCK_EnableClock(kCLOCK_UsbRam1);
 	/* enable usb1 host clock */
 	CLOCK_EnableClock(kCLOCK_Usbh1);
-	/* disable usb1 host clock */
-	//CLOCK_DisableClock(kCLOCK_Usbh1);
-	/* According to reference manual, device mode setting has to be set by access usb host register */
+
+	for (volatile int i = 0; i < 10000; i++) ;
+
+	/* According to reference mannual, device mode setting has to be set by access usb host register */
 	*((uint32_t *)(USBHSH_BASE + 0x50)) |= USBHSH_PORTMODE_DEV_ENABLE_MASK;
 
     printf("USB init done\n");
@@ -2112,7 +2122,7 @@ int main(void) {
     volatile BaseType_t r = 0;
     r = xTaskCreate(KeyboardTask, "keys", 256, NULL, 2, NULL);
     r = xTaskCreate(LedTask, "Leds", 1024, NULL, 3, NULL);
-    r = xTaskCreate(ArpTriggerTask, "Arp", 256, NULL, 1, NULL);
+    r = xTaskCreate(ArpTriggerTask, "Arp", 256, NULL, 2, NULL);
     //xTaskCreate(RpiTask, "rpi", 256, NULL, 4, NULL);
     r = xTaskCreate(USBTask, "usb", 2048, NULL, 3, NULL);
     r = xTaskCreate(IdleTask, "idle", 512, NULL, 3, NULL);

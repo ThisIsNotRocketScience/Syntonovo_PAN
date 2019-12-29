@@ -177,7 +177,7 @@ USB_DMA_NONINIT_DATA_ALIGN(USB_DATA_ALIGN_SIZE) static usb_cdc_acm_info_t s_usbC
 #define DATA_BUFF_SIZE HS_CDC_VCOM_BULK_OUT_PACKET_SIZE
 #endif
 
-#define USB_DEVICE_INTERRUPT_PRIORITY (3U)
+#define USB_DEVICE_INTERRUPT_PRIORITY (1U)
 
 /* Data buffer for receiving and sending */
 USB_DMA_NONINIT_DATA_ALIGN(USB_DATA_ALIGN_SIZE) static uint8_t s_currRecvBuf[DATA_BUFF_SIZE];
@@ -836,6 +836,8 @@ void APPTask(void)
         }
     }
 #endif
+
+    //USB_DeviceTaskFn(s_MidiStreaming.deviceHandle);
 }
 
 #if 0
