@@ -615,9 +615,9 @@ int autotune(int osc)
 		for (int i = 0; i < 8; i++) {
 			// pick best possible value with linear interpolation
 
-			EnableIRQ(USART_DSP_FLEXCOMM_IRQN);
-			autotune_control_out(osc, bin+1);
-			DisableIRQ(USART_DSP_FLEXCOMM_IRQN);
+			//EnableIRQ(USART_DSP_FLEXCOMM_IRQN);
+			//autotune_control_out(osc, bin+1);
+			//DisableIRQ(USART_DSP_FLEXCOMM_IRQN);
 
 			float targetvalue = ((target_freq - low_pitch) / (float)(high_pitch - low_pitch)) * (float)(high - low) + (float)low;
 			uint16_t ivalue = (uint16_t) targetvalue;
