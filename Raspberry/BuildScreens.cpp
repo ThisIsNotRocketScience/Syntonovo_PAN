@@ -30,6 +30,8 @@ void cmd_AddCalibrationByte(unsigned char cmd)
 		{
 			SS->OscillatorReady[Osc] = false;
 			SS->OscillatorOctave[Osc] = -1;
+			SS->OscillatorError[Osc] = false;
+			SS->CalibrationReady = false;
 		}
 	}
 	if (Osc == 0xf)
@@ -110,10 +112,10 @@ void SystemScreen::Render(bool active, float DT)
 
 				}
 			}
-
 		}
 
 		ImGui::SetCursorPos(ImVec2(300, 9 * 30 + 200));
+
 		if (CalibrationReady)
 		{
 			ImGui::Text("Calibration ready!");
