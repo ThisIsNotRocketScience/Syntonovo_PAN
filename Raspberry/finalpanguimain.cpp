@@ -418,6 +418,8 @@ DiffSyncer<PanPreset_t> presetsync(&gCurrentPreset, 0x0);
 #undef SHOWSYNCPRINTF
 #define SHOWSYNCPRINTF
 
+extern void cmd_AddCalibrationByte(unsigned char data);
+
 int sync_oobdata_func(uint8_t cmd, uint32_t data)
 {
 	switch (cmd) {
