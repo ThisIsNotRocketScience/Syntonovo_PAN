@@ -644,6 +644,8 @@ void SendLeds()
 #define OOB_ENCODER_UP		(0x59)
 #define OOB_SWITCH_CHANGE	(0x5F)
 
+#define OOB_AUTOTUNE_STATE	(0x60)
+
 void SW1ClkOn()
 {
 	BOARD_INITPINS_SW1CLK_GPIO->W[BOARD_INITPINS_SW1CLK_PORT][BOARD_INITPINS_SW1CLK_PIN] = 1;
@@ -1466,11 +1468,42 @@ void USBTask(void* pvParameters)
 	}
 }
 
+typedef enum {
+	control_state_idle = 0,
+	control_state_mod_fb = 1,
+	control_state_autotune_status = 2
+} control_cb_state_t;
+
+control_cb_state_t control_cb_state = control_state_idle;
+
+volatile int autotune_status = 0;
+
 void control_cb(uint8_t data)
 {
-	if (mod_fb_count < sizeof(mod_fb)) {
-		mod_fb[mod_fb_count] = data;
-		mod_fb_count++;
+	if (control_cb_state == control_state_idle) {
+		if (data == control_state_mod_fb) {
+			control_cb_state = control_state_mod_fb;
+		}
+		else if (data == control_state_autotune_status) {
+			control_cb_state = control_state_autotune_status;
+		}
+		else {
+		}
+	}
+	else if (control_cb_state == control_state_mod_fb) {
+		if (mod_fb_count < sizeof(mod_fb)) {
+			mod_fb[mod_fb_count] = data;
+			mod_fb_count++;
+		}
+		if (mod_fb_count == sizeof(mod_fb)) {
+			control_cb_state = control_state_idle;
+		}
+	}
+	else if (control_cb_state == control_state_autotune_status) {
+		autotune_status = data;
+        sync_oob_word(&rpi_sync, OOB_AUTOTUNE_STATE, autotune_status, 0);
+        printf("autotune: %02x\n", (int)(uint16_t)autotune_status);
+		control_cb_state = control_state_idle;
 	}
 }
 
@@ -1485,6 +1518,11 @@ void mod_data_loop()
 	if (mod_sync_done) {
 		mod_fb_count = 0;
 		mod_sync_done = 0;
+		__disable_irq();
+		if (control_cb_state == control_state_mod_fb) {
+			control_state_idle;
+		}
+		__enable_irq();
 		REQUEST_MODVALUES();
 		no_mod_reply_count = 0;
 	}
@@ -1502,6 +1540,11 @@ void mod_data_loop()
 				mod_fb_count = sizeof(mod_fb);
 				mod_data_ready = 0;
 				mod_sync_done = 1;
+				__disable_irq();
+				if (control_cb_state == control_state_mod_fb) {
+					control_state_idle;
+				}
+				__enable_irq();
 			}
 		}
 	}

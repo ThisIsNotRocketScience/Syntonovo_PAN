@@ -39,7 +39,7 @@ void pad_zero();
 
 
 volatile int mod_data_done = 0;
-volatile uint8_t mod_data[48] = {0};
+volatile uint8_t mod_data[49] = {0};
 
 const int KEYBOARD_X = 0;
 const int KEYBOARD_Y = 1;
@@ -728,11 +728,13 @@ static void update_note(int zone)
 	}
 }
 
+volatile int do_autotune = 0;
+
 void control_cb(int param, int subparam, uint16_t value)
 {
 	if (param == 0xfe) {
 		if (subparam == 0xfe) {
-			autotune_start();
+			do_autotune = 1;
 			return;
 		}
 
@@ -2074,6 +2076,8 @@ void pad_init()
 
 void synth_init()
 {
+    shiftctrl_clear(SELOUTPUT);
+
 	notestack_init(0, keyboard_mode_last);
 	notestack_init(1, keyboard_mode_last);
 	notestack_init(2, keyboard_mode_last);
@@ -2310,7 +2314,7 @@ void synth_modulation_run()
 		int modid = 0x00 + i;
 		int32_t lfo = (int32_t)lfo_update(i);
 		if (read_mods) {
-			mod_data[modid] = (uint8_t)(lfo >> 8);
+			mod_data[modid+1] = (uint8_t)(lfo >> 8);
 		}
 		add_mod_targets(modid, lfo);
 	}
@@ -2322,7 +2326,7 @@ void synth_modulation_run()
 
 		int32_t adsr = adsr_update(i, una_corda_release);
 		if (read_mods) {
-			mod_data[modid] = (uint8_t)(adsr >> 9);
+			mod_data[modid+1] = (uint8_t)(adsr >> 9);
 		}
 		add_mod_targets(modid, adsr);
 		//uint16_t ad = ad_update(ctrlid, una_corda_release);
@@ -2340,7 +2344,7 @@ void synth_modulation_run()
 			else {
 				ctrlval = value >> 8;
 			}
-			mod_data[modid] = (uint8_t)(ctrlval);
+			mod_data[modid+1] = (uint8_t)(ctrlval);
 		}
 		add_mod_targets(modid, value);
 	}
@@ -2350,6 +2354,7 @@ void synth_modulation_run()
 
 	if (read_mods) {
 		mod_data_done = 0;
+		mod_data[0] = control_state_mod_fb;
 		control_out_queue(mod_data, sizeof(mod_data));
 	}
 }
@@ -2357,8 +2362,17 @@ void synth_modulation_run()
 void synth_run()
 {
 	for (;;) {
+		if (do_autotune) {
+			control_set_receive(0);
+			autotune_start();
+			do_autotune = 0;
+			control_set_receive(1);
+		}
+
 		doing_reset = reset;
 		reset = 0;
+
+	    shiftctrl_set(SELOUTPUT);
 
 		inputcycle_start();
 
