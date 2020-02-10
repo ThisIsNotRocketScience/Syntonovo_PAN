@@ -28,8 +28,10 @@ void cmd_AddCalibrationByte(unsigned char cmd)
 	{
 		for (int i = 0; i < 8; i++)
 		{
-			SS->OscillatorReady[Osc] = false;
-			SS->OscillatorOctave[Osc] = -1;
+			SS->OscillatorReady[i] = false;
+			SS->OscillatorOctave[i] = -1;
+			SS->OscillatorError[i] = false;
+			SS->CalibrationReady = false;
 		}
 	}
 	if (Osc == 0xf)
@@ -110,10 +112,10 @@ void SystemScreen::Render(bool active, float DT)
 
 				}
 			}
-
 		}
 
 		ImGui::SetCursorPos(ImVec2(300, 9 * 30 + 200));
+
 		if (CalibrationReady)
 		{
 			ImGui::Text("Calibration ready!");
