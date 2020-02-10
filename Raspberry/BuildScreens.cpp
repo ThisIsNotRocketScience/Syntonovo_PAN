@@ -24,7 +24,14 @@ void cmd_AddCalibrationByte(unsigned char cmd)
 	SS->calibrationcount++;
 	int Osc = cmd >> 4;
 	int State = cmd & 0xf;
-
+	if (cmd == 0)
+	{
+		for (int i = 0; i < 8; i++)
+		{
+			SS->OscillatorReady[Osc] = false;
+			SS->OscillatorOctave[Osc] = -1;
+		}
+	}
 	if (Osc == 0xf)
 	{
 		SS->CalibrationReady = true;
@@ -65,7 +72,7 @@ SystemScreen::SystemScreen() : _screensetup_t(SCREEN_SYSTEM)
 		OscillatorError[i] = false;
 
 		OscillatorOctave[i] = -1;
-		OscillatorReady[i] = true;
+		OscillatorReady[i] = false;
 		CalibrationReady = true;
 	}
 }
@@ -86,15 +93,34 @@ void SystemScreen::Render(bool active, float DT)
 			{
 				if (OscillatorError[i])
 				{
-					ImGui::Text("oscillator %d: ERROR! (last oct is)",i, OscillatorOctave[i]);
+					ImGui::Text("oscillator %d: ERROR! (last oct is %d)",i, OscillatorOctave[i]);
 				}
 				else
 				{
-					ImGui::Text("oscillator %d: oct %d!",i, OscillatorOctave[i]);
+					if (OscillatorOctave[i] < 0)
+					{
+						ImGui::Text("oscillator %d: waiting..", i);
+
+					}
+					else
+					{
+						ImGui::Text("oscillator %d: oct %d!", i, OscillatorOctave[i]);
+
+					}
 
 				}
 			}
 
+		}
+
+		ImGui::SetCursorPos(ImVec2(300, 9 * 30 + 200));
+		if (CalibrationReady)
+		{
+			ImGui::Text("Calibration ready!");
+		}
+		else
+		{
+			ImGui::Text("Calibration in progress!");
 		}
 	}
 }
