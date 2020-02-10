@@ -16,12 +16,97 @@
 #include "ArpeggiatorScreen.h"
 #include "KeyZoneScreen.h"
 
+
+
+void cmd_AddCalibrationByte(unsigned char cmd)
+{
+	SystemScreen* SS = (SystemScreen * )gGui.Screens[SCREEN_SYSTEM];
+	SS->calibrationcount++;
+	int Osc = cmd >> 4;
+	int State = cmd & 0xf;
+
+	if (Osc == 0xf)
+	{
+		SS->CalibrationReady = true;
+	}
+	else
+	{
+		if (State == 0xe)
+		{
+			SS->OscillatorReady[Osc] = true;
+			SS->OscillatorError[Osc] = false;
+		}
+		else
+		{
+			if (State == 0xf)
+			{
+				SS->OscillatorError[Osc] = true;
+			}
+			else
+			{
+				SS->OscillatorError[Osc] = false;
+				SS->OscillatorOctave[Osc] = State;
+			}
+			SS->OscillatorReady[Osc] = false;
+
+		}
+		SS->CalibrationReady = false;
+	}
+
+}
+
+
+SystemScreen::SystemScreen() : _screensetup_t(SCREEN_SYSTEM)
+{
+	calibrationcount = 0;
+	for (int i = 0; i < 8; i++)
+	{
+
+		OscillatorError[i] = false;
+
+		OscillatorOctave[i] = -1;
+		OscillatorReady[i] = true;
+		CalibrationReady = true;
+	}
+}
+
+void SystemScreen::Render(bool active, float DT)
+{
+	_screensetup_t::Render(active, DT);
+	if (calibrationcount > 0)
+	{
+		for (int i = 0; i < 8; i++)
+		{
+			ImGui::SetCursorPos(ImVec2(300, i * 30+200));
+			if (OscillatorReady[i])
+			{
+				ImGui::Text("oscillator %d: ready",i);
+			}
+			else
+			{
+				if (OscillatorError[i])
+				{
+					ImGui::Text("oscillator %d: ERROR! (last oct is)",i, OscillatorOctave[i]);
+				}
+				else
+				{
+					ImGui::Text("oscillator %d: oct %d!",i, OscillatorOctave[i]);
+
+				}
+			}
+
+		}
+	}
+}
+
+
+
 void Gui::BuildScreens()
 {
 	for (int i = 0; i < __SCREENS_COUNT; i++) Screens[i] = 0;
 
 
-
+	Screens[SCREEN_SYSTEM] = new SystemScreen();
 	Screens[SCREEN_PRESETNAME] = new PresetScreen();
 	auto BL = new BankSelectScreen();
 	BL->Side = Left;

@@ -58,6 +58,7 @@ enum
 
 extern void cmd_pad_zero();
 extern void cmd_calibrate();
+extern void cmd_AddCalibrationByte(unsigned char cmd);
 extern void cmd_preset_load(int presetid);
 extern void cmd_preset_save(int presetid);
 

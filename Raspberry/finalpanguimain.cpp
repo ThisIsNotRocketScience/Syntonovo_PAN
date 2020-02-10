@@ -322,6 +322,9 @@ void sync_data_func(int addr, uint8_t* data)
 #define OOB_ENCODER_UP		(0x59)
 #define OOB_SWITCH_CHANGE	(0x5F)
 
+#define OOB_AUTOTUNE_STATE	(0x60)
+
+
 void cmd_pad_zero()
 {
 	sync_oob_word(&rpi_sync, CMD_PAD_ZERO, 0, 0);
@@ -475,6 +478,10 @@ int sync_oobdata_func(uint8_t cmd, uint32_t data)
 #ifdef SHOWSYNCPRINTF
 		//printf("switch change %d\n", data);
 #endif
+		break;
+
+	case OOB_AUTOTUNE_STATE: 
+		cmd_AddCalibrationByte(data);
 		break;
 	default:
 #ifdef SHOWSYNCPRINTF
