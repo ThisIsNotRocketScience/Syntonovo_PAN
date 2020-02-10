@@ -21,6 +21,7 @@
 #include "synth_internal_ctrlmap.h"
 #include "shiftctrl.h"
 #include "synth_param.h"
+#include "control.h"
 
 #define AVERAGECOUNT 32
 
@@ -535,8 +536,19 @@ uint16_t uint16_sub_clamp(uint16_t value, uint16_t sub)
 
 volatile float startf;
 
+void autotune_control_out(int osc, int state)
+{
+	uint8_t data[2];
+	data[0] = control_state_autotune_status;
+	data[1] = (osc << 4) | state;
+	control_out_queue(data, 2);
+	control_out_queue_wait();
+}
+
 int autotune(int osc)
 {
+	control_out_queue_wait();
+	autotune_control_out(osc, 0);
 	DisableIRQ(USART_DSP_FLEXCOMM_IRQN);
 
 	__disable_irq();
@@ -558,11 +570,12 @@ int autotune(int osc)
 	if (startf >= 15.0) {
 		//printf("low freq out of range: %f >= 15.0\n", startf);
 		EnableIRQ(USART_DSP_FLEXCOMM_IRQN);
-
+		autotune_control_out(osc, 0x0f);
 		return 1;
 	}
 
 	for (int bin = 0; bin < BINCOUNT; bin++) {
+
 		float target_freq = binfreq(bin);
 		//printf("target: %f\n", target_freq);
 		caldata[osc].calpitch[bin] = target_freq;
@@ -601,6 +614,10 @@ int autotune(int osc)
 
 		for (int i = 0; i < 8; i++) {
 			// pick best possible value with linear interpolation
+
+			EnableIRQ(USART_DSP_FLEXCOMM_IRQN);
+			autotune_control_out(osc, bin+1);
+			DisableIRQ(USART_DSP_FLEXCOMM_IRQN);
 
 			float targetvalue = ((target_freq - low_pitch) / (float)(high_pitch - low_pitch)) * (float)(high - low) + (float)low;
 			uint16_t ivalue = (uint16_t) targetvalue;
@@ -678,6 +695,8 @@ int autotune(int osc)
 
 	EnableIRQ(USART_DSP_FLEXCOMM_IRQN);
 
+	autotune_control_out(osc, 0x0e);
+
 	return 0;
 }
 
@@ -696,7 +715,7 @@ void autotune_start()
 	r = autotune(0);
 	if (r) {
 		autotune_phase |= 0x100;
-		return;
+		//return;
 	}
 
 	autotune_phase = 3;
@@ -704,7 +723,7 @@ void autotune_start()
 	r = autotune(1);
 	if (r) {
 		autotune_phase |= 0x100;
-		return;
+		//return;
 	}
 
 	autotune_phase = 4;
@@ -712,7 +731,7 @@ void autotune_start()
 	r = autotune(2);
 	if (r) {
 		autotune_phase |= 0x100;
-		return;
+		//return;
 	}
 
 	autotune_phase = 5;
@@ -720,7 +739,7 @@ void autotune_start()
 	r = autotune(3);
 	if (r) {
 		autotune_phase |= 0x100;
-		return;
+		//return;
 	}
 
 	autotune_phase = 6;
@@ -728,7 +747,7 @@ void autotune_start()
 	r = autotune(4);
 	if (r) {
 		autotune_phase |= 0x100;
-		return;
+		//return;
 	}
 
 	autotune_phase = 7;
@@ -736,7 +755,7 @@ void autotune_start()
 	r = autotune(5);
 	if (r) {
 		autotune_phase |= 0x100;
-		return;
+		//return;
 	}
 
 	autotune_phase = 8;
@@ -744,7 +763,7 @@ void autotune_start()
 	r = autotune(6);
 	if (r) {
 		autotune_phase |= 0x100;
-		return;
+		//return;
 	}
 
 	autotune_phase = 9;
@@ -752,10 +771,11 @@ void autotune_start()
 	r = autotune(7);
 	if (r) {
 		autotune_phase |= 0x100;
-		return;
+		//return;
 	}
 
 	autotune_phase = 10;
+	autotune_control_out(0xf, 0x00);
 
 	//printf("writecal\n");
 
@@ -764,9 +784,11 @@ void autotune_start()
 	//printf("done\n");
 
 	autotune_phase = 11;
+	autotune_control_out(0xf, 0x01);
 
 	//Vout(6, 2*256);
 
 	autotune_phase = 12;
+	autotune_control_out(0xf, 0x02);
 }
 
