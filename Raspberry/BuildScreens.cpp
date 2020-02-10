@@ -72,7 +72,7 @@ SystemScreen::SystemScreen() : _screensetup_t(SCREEN_SYSTEM)
 		OscillatorError[i] = false;
 
 		OscillatorOctave[i] = -1;
-		OscillatorReady[i] = true;
+		OscillatorReady[i] = false;
 		CalibrationReady = true;
 	}
 }
