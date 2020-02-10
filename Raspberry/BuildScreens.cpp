@@ -28,9 +28,9 @@ void cmd_AddCalibrationByte(unsigned char cmd)
 	{
 		for (int i = 0; i < 8; i++)
 		{
-			SS->OscillatorReady[Osc] = false;
-			SS->OscillatorOctave[Osc] = -1;
-			SS->OscillatorError[Osc] = false;
+			SS->OscillatorReady[i] = false;
+			SS->OscillatorOctave[i] = -1;
+			SS->OscillatorError[i] = false;
 			SS->CalibrationReady = false;
 		}
 	}
