@@ -644,6 +644,8 @@ void SendLeds()
 #define OOB_ENCODER_UP		(0x59)
 #define OOB_SWITCH_CHANGE	(0x5F)
 
+#define OOB_AUTOTUNE_STATE	(0x60)
+
 void SW1ClkOn()
 {
 	BOARD_INITPINS_SW1CLK_GPIO->W[BOARD_INITPINS_SW1CLK_PORT][BOARD_INITPINS_SW1CLK_PIN] = 1;
@@ -924,6 +926,10 @@ void ScanButtonsAndEncoders()
 	cur_encoder_time = timer_value();
 
 	for (int i = 0; i < __encoder_Count; i++) {
+#ifndef OLDSYNTH
+		if (i == 18 || i == 19) continue;
+#endif
+
 		int move = encoder_process(i, sw[encoder_a[i]], sw[encoder_c[i]]);
 
 		if (move < 0) {
@@ -1462,11 +1468,42 @@ void USBTask(void* pvParameters)
 	}
 }
 
+typedef enum {
+	control_state_idle = 0,
+	control_state_mod_fb = 1,
+	control_state_autotune_status = 2
+} control_cb_state_t;
+
+control_cb_state_t control_cb_state = control_state_idle;
+
+volatile int autotune_status = 0;
+
 void control_cb(uint8_t data)
 {
-	if (mod_fb_count < sizeof(mod_fb)) {
-		mod_fb[mod_fb_count] = data;
-		mod_fb_count++;
+	if (control_cb_state == control_state_idle) {
+		if (data == control_state_mod_fb) {
+			control_cb_state = control_state_mod_fb;
+		}
+		else if (data == control_state_autotune_status) {
+			control_cb_state = control_state_autotune_status;
+		}
+		else {
+		}
+	}
+	else if (control_cb_state == control_state_mod_fb) {
+		if (mod_fb_count < sizeof(mod_fb)) {
+			mod_fb[mod_fb_count] = data;
+			mod_fb_count++;
+		}
+		if (mod_fb_count == sizeof(mod_fb)) {
+			control_cb_state = control_state_idle;
+		}
+	}
+	else if (control_cb_state == control_state_autotune_status) {
+		autotune_status = data;
+        sync_oob_word(&rpi_sync, OOB_AUTOTUNE_STATE, autotune_status, 0);
+        printf("autotune: %02x\n", (int)(uint16_t)autotune_status);
+		control_cb_state = control_state_idle;
 	}
 }
 
@@ -1481,6 +1518,11 @@ void mod_data_loop()
 	if (mod_sync_done) {
 		mod_fb_count = 0;
 		mod_sync_done = 0;
+		__disable_irq();
+		if (control_cb_state == control_state_mod_fb) {
+			control_state_idle;
+		}
+		__enable_irq();
 		REQUEST_MODVALUES();
 		no_mod_reply_count = 0;
 	}
@@ -1498,6 +1540,11 @@ void mod_data_loop()
 				mod_fb_count = sizeof(mod_fb);
 				mod_data_ready = 0;
 				mod_sync_done = 1;
+				__disable_irq();
+				if (control_cb_state == control_state_mod_fb) {
+					control_state_idle;
+				}
+				__enable_irq();
 			}
 		}
 	}
@@ -2060,6 +2107,11 @@ extern "C" void DoMidiCommand(midicmd_t cmd)
 
 int main(void) {
   	/* Init board hardware. */
+	//POWER_EnablePD(kPDRUNCFG_PD_VD2_ANA);
+	//POWER_EnablePD(kPDRUNCFG_PD_VD3);
+	//POWER_EnablePD(kPDRUNCFG_PD_VD5);
+	//POWER_EnablePD(kPDRUNCFG_PD_USB1_PHY);
+
 	BOARD_InitBootPins();
     BOARD_InitBootClocks();
     BOARD_InitBootPeripherals();
@@ -2070,15 +2122,16 @@ int main(void) {
     LedsOff();
     printf("Board init done\n");
 
-	CLOCK_EnableClock(kCLOCK_Usbd1);
-	CLOCK_EnableClock(kCLOCK_UsbRam1);
-	POWER_EnablePD(kPDRUNCFG_PD_VD5);
-	POWER_EnablePD(kPDRUNCFG_PD_USB1_PHY);
+	//POWER_DisablePD(kPDRUNCFG_PD_VD5);
+	POWER_DisablePD(kPDRUNCFG_PD_USB1_PHY);
+	//CLOCK_EnableClock(kCLOCK_Usbd1);
+	//CLOCK_EnableClock(kCLOCK_UsbRam1);
 	/* enable usb1 host clock */
 	CLOCK_EnableClock(kCLOCK_Usbh1);
-	/* disable usb1 host clock */
-	//CLOCK_DisableClock(kCLOCK_Usbh1);
-	/* According to reference manual, device mode setting has to be set by access usb host register */
+
+	for (volatile int i = 0; i < 10000; i++) ;
+
+	/* According to reference mannual, device mode setting has to be set by access usb host register */
 	*((uint32_t *)(USBHSH_BASE + 0x50)) |= USBHSH_PORTMODE_DEV_ENABLE_MASK;
 
     printf("USB init done\n");
@@ -2112,7 +2165,7 @@ int main(void) {
     volatile BaseType_t r = 0;
     r = xTaskCreate(KeyboardTask, "keys", 256, NULL, 2, NULL);
     r = xTaskCreate(LedTask, "Leds", 1024, NULL, 3, NULL);
-    r = xTaskCreate(ArpTriggerTask, "Arp", 256, NULL, 1, NULL);
+    r = xTaskCreate(ArpTriggerTask, "Arp", 256, NULL, 2, NULL);
     //xTaskCreate(RpiTask, "rpi", 256, NULL, 4, NULL);
     r = xTaskCreate(USBTask, "usb", 2048, NULL, 3, NULL);
     r = xTaskCreate(IdleTask, "idle", 512, NULL, 3, NULL);

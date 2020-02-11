@@ -224,6 +224,7 @@ void ParameterModal::SideButton(FinalLedButtonEnum b)
 		//CurrentMod = targetmod;
 	}
 }
+
 void ParameterModal::SketchLeftDelta(int delta)
 {
 

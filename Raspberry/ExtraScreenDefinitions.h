@@ -33,6 +33,21 @@ public:
 	void AddLetterControl(int x, int y, int id);
 };
 
+class SystemScreen : public _screensetup_t
+{
+public:
+	SystemScreen();
+	int OscillatorOctave[8];
+	bool OscillatorError[8];
+	int calibrationcount;
+
+	bool OscillatorReady[8];
+	bool CalibrationReady;
+
+	virtual void Render(bool active, float DT);
+
+};
+
 class BankSelectScreen : public _screensetup_t
 {
 public:

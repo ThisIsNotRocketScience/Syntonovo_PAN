@@ -25,6 +25,12 @@ void control_out_queue(uint8_t* data, int count)
 	USART_DSP_PERIPHERAL->FIFOINTENSET = USART_FIFOINTENSET_TXLVL_MASK | USART_FIFOINTENSET_TXERR_MASK;
 }
 
+void control_out_queue_wait()
+{
+	while (out_count) {}
+    while (!(USART_DSP_PERIPHERAL->STAT & USART_STAT_TXIDLE_MASK)) {}
+}
+
 #define RING_SIZE	16
 static uint8_t fifo_rx_ring[RING_SIZE];
 static int fifo_rx_write = 0;
@@ -113,7 +119,12 @@ void fifo_rx_process()
 	}
 }
 
-int receiveEnabled = 0;
+volatile int receiveEnabled = 0;
+
+void control_set_receive(int enable)
+{
+	receiveEnabled = enable;
+}
 
 void control_init()
 {

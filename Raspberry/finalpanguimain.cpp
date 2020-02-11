@@ -322,6 +322,9 @@ void sync_data_func(int addr, uint8_t* data)
 #define OOB_ENCODER_UP		(0x59)
 #define OOB_SWITCH_CHANGE	(0x5F)
 
+#define OOB_AUTOTUNE_STATE	(0x60)
+
+
 void cmd_pad_zero()
 {
 	sync_oob_word(&rpi_sync, CMD_PAD_ZERO, 0, 0);
@@ -413,6 +416,9 @@ DiffSyncer<PanLedState_t> ledsync(&gPanState.s, 0x1000000);
 DiffSyncer<PanPreset_t> presetsync(&gCurrentPreset, 0x0);
 
 #undef SHOWSYNCPRINTF
+#define SHOWSYNCPRINTF
+
+extern void cmd_AddCalibrationByte(unsigned char data);
 
 int sync_oobdata_func(uint8_t cmd, uint32_t data)
 {
@@ -475,6 +481,10 @@ int sync_oobdata_func(uint8_t cmd, uint32_t data)
 #ifdef SHOWSYNCPRINTF
 		//printf("switch change %d\n", data);
 #endif
+		break;
+
+	case OOB_AUTOTUNE_STATE: 
+		cmd_AddCalibrationByte(data);
 		break;
 	default:
 #ifdef SHOWSYNCPRINTF

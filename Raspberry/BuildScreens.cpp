@@ -16,12 +16,125 @@
 #include "ArpeggiatorScreen.h"
 #include "KeyZoneScreen.h"
 
+
+
+void cmd_AddCalibrationByte(unsigned char cmd)
+{
+	SystemScreen* SS = (SystemScreen * )gGui.Screens[SCREEN_SYSTEM];
+	SS->calibrationcount++;
+	int Osc = cmd >> 4;
+	int State = cmd & 0xf;
+	if (cmd == 0)
+	{
+		for (int i = 0; i < 8; i++)
+		{
+			SS->OscillatorReady[i] = false;
+			SS->OscillatorOctave[i] = -1;
+			SS->OscillatorError[i] = false;
+			SS->CalibrationReady = false;
+		}
+	}
+	if (Osc == 0xf)
+	{
+		SS->CalibrationReady = true;
+	}
+	else
+	{
+		if (State == 0xe)
+		{
+			SS->OscillatorReady[Osc] = true;
+			SS->OscillatorError[Osc] = false;
+		}
+		else
+		{
+			if (State == 0xf)
+			{
+				SS->OscillatorError[Osc] = true;
+			}
+			else
+			{
+				SS->OscillatorError[Osc] = false;
+				SS->OscillatorOctave[Osc] = State;
+			}
+			SS->OscillatorReady[Osc] = false;
+
+		}
+		SS->CalibrationReady = false;
+	}
+
+}
+
+
+SystemScreen::SystemScreen() : _screensetup_t(SCREEN_SYSTEM)
+{
+	calibrationcount = 0;
+	for (int i = 0; i < 8; i++)
+	{
+
+		OscillatorError[i] = false;
+
+		OscillatorOctave[i] = -1;
+		OscillatorReady[i] = false;
+		CalibrationReady = true;
+	}
+}
+
+void SystemScreen::Render(bool active, float DT)
+{
+	_screensetup_t::Render(active, DT);
+	if (calibrationcount > 0)
+	{
+		for (int i = 0; i < 8; i++)
+		{
+			ImGui::SetCursorPos(ImVec2(300, i * 30+200));
+			if (OscillatorReady[i])
+			{
+				ImGui::Text("oscillator %d: ready",i);
+			}
+			else
+			{
+				if (OscillatorError[i])
+				{
+					ImGui::Text("oscillator %d: ERROR! (last oct is %d)",i, OscillatorOctave[i]);
+				}
+				else
+				{
+					if (OscillatorOctave[i] < 0)
+					{
+						ImGui::Text("oscillator %d: waiting..", i);
+
+					}
+					else
+					{
+						ImGui::Text("oscillator %d: oct %d!", i, OscillatorOctave[i]);
+
+					}
+
+				}
+			}
+		}
+
+		ImGui::SetCursorPos(ImVec2(300, 9 * 30 + 200));
+
+		if (CalibrationReady)
+		{
+			ImGui::Text("Calibration ready!");
+		}
+		else
+		{
+			ImGui::Text("Calibration in progress!");
+		}
+	}
+}
+
+
+
 void Gui::BuildScreens()
 {
 	for (int i = 0; i < __SCREENS_COUNT; i++) Screens[i] = 0;
 
 
-
+	Screens[SCREEN_SYSTEM] = new SystemScreen();
 	Screens[SCREEN_PRESETNAME] = new PresetScreen();
 	auto BL = new BankSelectScreen();
 	BL->Side = Left;
@@ -150,12 +263,14 @@ void Gui::BuildScreens()
 	Screens[SCREEN_SYSTEM]->EnableAvailableButton("Recalibrate Oscillators", MenuEntry_Action, MenuAction_CalibrateOscillators);
 	Screens[SCREEN_SYSTEM]->EnableAvailableButton("Recalibrate Pads", MenuEntry_Action, MenuAction_CalibratePads);
 	Screens[SCREEN_SYSTEM]->EnableButton(7, "Done", MenuEntry_Action, MenuAction_Home);
-	Screens[SCREEN_SYSTEM]->EnableAvailableButton("Polymode bit 0", MenuEntry_Toggle, Switch_POLYMODE1);
-	Screens[SCREEN_SYSTEM]->EnableAvailableButton("Polymode bit 1", MenuEntry_Toggle, Switch_POLYMODE2);
-	Screens[SCREEN_SYSTEM]->EnableAvailableButton("KeyPrio bit 0", MenuEntry_Toggle, Switch_KEYPRIO1);
-	Screens[SCREEN_SYSTEM]->EnableAvailableButton("KeyPrio bit 1", MenuEntry_Toggle, Switch_KEYPRIO2);
 
-	Screens[SCREEN_SYSTEM]->EnableAvailableButton("Headphone enable", MenuEntry_Toggle, Switch_SELVCF1MOST);
+	
+	//	Screens[SCREEN_SYSTEM]->EnableAvailableButton("Polymode bit 0", MenuEntry_Toggle, Switch_POLYMODE1);
+	//Screens[SCREEN_SYSTEM]->EnableAvailableButton("Polymode bit 1", MenuEntry_Toggle, Switch_POLYMODE2);
+//	Screens[SCREEN_SYSTEM]->EnableAvailableButton("KeyPrio bit 0", MenuEntry_Toggle, Switch_KEYPRIO1);
+	//Screens[SCREEN_SYSTEM]->EnableAvailableButton("KeyPrio bit 1", MenuEntry_Toggle, Switch_KEYPRIO2);
+
+	//Screens[SCREEN_SYSTEM]->EnableAvailableButton("Headphone enable", MenuEntry_Toggle, Switch_SELVCF1MOST);
 
 	//Screens[SCREEN_SYSTEM]->EnableButton(7, "Done", Menu);
 

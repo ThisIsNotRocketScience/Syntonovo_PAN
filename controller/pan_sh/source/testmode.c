@@ -18,14 +18,14 @@ void testmode_run()
 	while (1) {
 
 		slow_shift_counter++;
-		if (slow_shift_counter >= 100) {
+		if (slow_shift_counter >= 40) {
 			slow_shift_counter = 0;
 			for (int i = 0; i < 64; i++) {
 				shiftctrl_clear(i);
 			}
 			shiftctrl_set(cur_shift_bit);
 			cur_shift_bit = (cur_shift_bit + 1) & 63;
-			shiftctrl_set(22);
+			//shiftctrl_set(22);
 			shiftctrl_update();
 		}
 

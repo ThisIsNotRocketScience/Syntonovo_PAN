@@ -1180,7 +1180,9 @@ void Gui::ButtonPressed(FinalLedButtonEnum Button)
 	// insert what to do if selecting modulation source/target here? 
 	switch (Button)
 	{
-
+	case ledbutton_L10:
+		GotoPage(SCREEN_HOME);
+		break;
 	case ledbutton_OctDownLeft:
 	case ledbutton_OctDownRight:
 		AddPitch(-1);

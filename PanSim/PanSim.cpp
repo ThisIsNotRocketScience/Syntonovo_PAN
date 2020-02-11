@@ -62,9 +62,26 @@ void cmd_pad_zero()
 	printf("Calibrating Pads!\n");
 };
 
+extern void cmd_AddCalibrationByte(unsigned char cmd);
+
+
 void cmd_calibrate()
 {
 	printf("Calibrating Oscillators!\n");
+
+	for (int i = 0; i < 8; i++)
+	{
+
+		for (int j = 0; j < 11; j++)
+		{
+			cmd_AddCalibrationByte((i<<4) + (j));
+		}
+		cmd_AddCalibrationByte((i << 4) + 0xe);
+	}
+
+	cmd_AddCalibrationByte(0xf0);
+	cmd_AddCalibrationByte(0xf1);
+	cmd_AddCalibrationByte(0xf2);
 
 };
 
