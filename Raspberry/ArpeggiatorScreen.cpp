@@ -71,7 +71,6 @@ void ArpeggiatorScreen::DoToggle(int id)
 	case Arp_KillAll: settings->KillNotesAfterLastNoteOff = ~settings->KillNotesAfterLastNoteOff; break;
 	case Arp_Hold: settings->Hold = ~settings->Hold; break;
 
-
 	case Arp_Up:  settings->Mode = Arp_Up; break;
 	case Arp_Down: settings->Mode = Arp_Down; break;
 	case Arp_UpDown: settings->Mode = Arp_UpDown; break;

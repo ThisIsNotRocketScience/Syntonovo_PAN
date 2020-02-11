@@ -664,8 +664,6 @@ void _screensetup_t::RenderContent(bool active, float DT)
 		{
 			ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(0, 0), ImVec2(1024 , 600 ), gGuiResources.ModalBGColor);
 		}
-		
-		
 	}
 	else
 	{
@@ -680,6 +678,7 @@ void _screensetup_t::RenderContent(bool active, float DT)
 			ImGui::Image(BG?BG:gGuiResources.MainBG, ImVec2(1024, 600));
 		}
 	}
+
 	if (strlen(title) > 0)
 	{
 		ImGui::PushFont(gGuiResources.BigFont);
