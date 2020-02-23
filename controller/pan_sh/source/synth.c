@@ -41,6 +41,9 @@ void pad_zero();
 volatile int mod_data_done = 0;
 volatile uint8_t mod_data[49] = {0};
 
+const int ADC_F1_LEVEL = 5;
+const int ADC_F2_LEVEL = 3;
+
 const int KEYBOARD_X = 0;
 const int KEYBOARD_Y = 1;
 const int KEYBOARD_Z = 2;
@@ -2371,6 +2374,10 @@ void synth_modulation_run()
 			mod_data[modid+1] = (uint8_t)(ctrlval);
 		}
 		add_mod_targets(modid, value);
+	}
+	if (read_mods) {
+		mod_data[0x20+11+1] = pad_adc_value[ADC_F1_LEVEL];
+		mod_data[0x20+11+2] = pad_adc_value[ADC_F2_LEVEL];
 	}
 	//for (int i = 0; i < NUM_OPERATORS; i++) {
 		//int modid = 0x30 + i;
