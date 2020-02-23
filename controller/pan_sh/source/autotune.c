@@ -560,8 +560,8 @@ int autotune(int osc)
 
 	int osc_offset = 0;
 
-	if (osc == 7)
-		osc_offset = 0x6000;
+	//if (osc == 7)
+	//	osc_offset = 0x6000;
 
 	Voutraw(osc, osc_offset);
 	WAIT1_Waitms(1);

@@ -120,14 +120,15 @@ int main(void) {
     BOARD_InitBootClocks();
     BOARD_InitBootPeripherals();
 
-    for (int i = 0; i < 1000000; i++) __NOP();
-
     CLOCK_EnableClock(kCLOCK_Gpio0);
     CLOCK_EnableClock(kCLOCK_Gpio1);
 
+    shiftctrl_init();
+
+    for (int i = 0; i < 1000000; i++) __NOP();
+
     //synth_init();
     codecsetup_init();
-    shiftctrl_init();
     spi_sched_init();
     max11311_init();
     //max11300_init();

@@ -737,9 +737,11 @@ static void update_note(int zone)
 }
 
 volatile int do_autotune = 0;
+volatile int got_input = 0;
 
 void control_cb(int param, int subparam, uint16_t value)
 {
+	got_input = 1;
 	if (param == 0xfe) {
 		if (subparam == 0xfe) {
 			do_autotune = 1;
@@ -2380,7 +2382,9 @@ void synth_run()
 		doing_reset = reset;
 		reset = 0;
 
-	    shiftctrl_set(SELOUTPUT);
+		if (got_input) {
+			shiftctrl_set(SELOUTPUT);
+		}
 
 		inputcycle_start();
 
