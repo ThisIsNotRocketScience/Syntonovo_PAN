@@ -97,26 +97,40 @@ int doing_reset = 0;
 
 struct peak_state_t
 {
-	int32_t values[32];
-	int index;
+	int32_t peak_value;
+	int32_t peak_timer;
+
+	//int32_t values[32];
+	//int index;
 };
 
 __attribute__( ( section(".data") ) )
 int32_t peak_handle(struct peak_state_t* state, int32_t value)
 {
-	state->index++;
+	/*state->index++;
 	state->index &= 31;
 	state->values[state->index] = value;
 
 	int32_t max = -0x80000000;
 	for (int i = 0; i < 32; i++) {
 		if (state->values[i] > max) max = state->values[i];
+	}*/
+
+	if (state->peak_timer < 100) {
+		state->peak_timer++;
+	}
+	else {
+		state->peak_value -= 0x2000 / 200;
+	}
+	if (value >= state->peak_value) {
+		state->peak_value = value;
+		state->peak_timer = 0;
 	}
 
-	return max;
+	return state->peak_value;
 }
 
-struct peak_state_t peak_state_z;
+struct peak_state_t peak_state_z = {0, 0};
 
 struct hp_state_t zprime_lp;
 struct hp_state_t zprime_hp;
@@ -406,7 +420,7 @@ void synth_mapping_defaultpatch()
 		adsr_set_r(i, 0x5000);
     }
 
-	modmatrix[0x10].targets[0].outputid = VCF1_LIN;
+/*	modmatrix[0x10].targets[0].outputid = VCF1_LIN;
 	modmatrix[0x10].targets[0].sourceid = 0;
 	modmatrix[0x10].targets[0].depth = 0x3fff;
 	modmatrix[0x10].targets[1].outputid = VCF1_LIN;
@@ -414,7 +428,7 @@ void synth_mapping_defaultpatch()
 	modmatrix[0x10].targets[1].depth = 0x3fff;
 	modmatrix[0x10].targets[2].outputid = VCF1_LIN;
 	modmatrix[0x10].targets[2].sourceid = 0;
-	modmatrix[0x10].targets[2].depth = 0x3fff;
+	modmatrix[0x10].targets[2].depth = 0x3fff;*/
 
 	for (int i = 0; i < 64; i++) {
 		key_mapping[i].keyindex = 0;
@@ -2147,7 +2161,7 @@ void sctimer_init()
     NVIC_SetPriority(SCTIMER_1_IRQN, 1);
 }
 
-const int negate[12] = { 1, 0, 1,  0, 0, 0,  1, 0, 0,  1, 0, 0 };
+const int negate[12] = { 1, 0, 0,  0, 0, 0,  1, 0, 0,  1, 0, 0 };
 
 //__attribute__( ( section(".data") ) )
 int32_t pad_threshold(int32_t value, int i)
@@ -2389,6 +2403,15 @@ void synth_run()
 		inputcycle_start();
 
 		synth_mapping_reset();
+
+		/*
+	    modmatrix[0x10].targets[0].outputid = 0xffff;
+	    modmatrix[0x22].targets[0].outputid = VCF1_LIN;
+		modmatrix[0x22].targets[0].sourceid = 0;
+		modmatrix[0x22].targets[0].depth = 0x7fff;
+		controller_param[2].deadzone = 0;
+		controller_param[2].scale = 0x200;
+		*/
 
 		synth_modulation_run();
 
