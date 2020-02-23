@@ -267,7 +267,14 @@ void _screensetup_t::Action(int action)
 	case MenuAction_CloseParentModal: if (Parent) ((_screensetup_t*)Parent)->Modal = NULL; break;	
 	case MenuAction_CalibratePads: cmd_pad_zero(); break;
 	case MenuAction_CalibrateOscillators: cmd_calibrate(); break;
-	case MenuAction_CloseModal: Modal = NULL; break;
+	case MenuAction_CloseModal:
+	
+	{
+
+		Modal = NULL;
+		SetupEncoderSet(currentencoderset);
+	}
+	break;
 	case MenuAction_EnableReferenceLines: gGuiResources.referencelines = !gGuiResources.referencelines; break;
 	case MenuAction_EnableTestImage: gGuiResources.testimage = !gGuiResources.testimage; break;
 
