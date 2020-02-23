@@ -672,10 +672,12 @@ void _control_t::RenderBoxHorizontal(int x, int y, int val, int mode, bool activ
 	break;
 	case BOX_MID:
 	{
+		static unsigned short testval = 0;
 		ImVec2 br2 = br;
-		
+		//val = testval++;
+//		testval += 100;
 		float x1 = tl.x + ParamHorizontalBoxWidth / 2;
-		float x2 = tl.x - ((0x8000 - val) * ParamHorizontalBoxWidth) / 0x8000;
+		float x2 = tl.x - ((0xffff - val) * ParamHorizontalBoxWidth) / 0xffff + ParamHorizontalBoxWidth;
 		
 		ImVec2 tl2 = tl;
 		
