@@ -498,11 +498,15 @@ volatile int ports_strobe = -1;
 
 void nops(int count)
 {
+    __DSB();
 	while (count--) __NOP();
+    __DSB();
 }
 
 void ports_write_callback(uint32_t data, void* user)
 {
+	__disable_irq();
+
 	const int A = ((ports_strobe >> 1) & 1) == 0;
 	const int B = ((ports_strobe >> 2) & 1) == 0;
 	const int C = ((ports_strobe >> 3) & 1) == 0;
@@ -517,18 +521,20 @@ void ports_write_callback(uint32_t data, void* user)
 	GPIO->B[BOARD_INITPINS_SELE_PORT][BOARD_INITPINS_SELE_PIN] = E;
 	GPIO->B[BOARD_INITPINS_SELF_PORT][BOARD_INITPINS_SELF_PIN] = F;
 
-	nops(5);
+	nops(30);
 
 	GPIO->B[BOARD_INITPINS_SELINHG_PORT][BOARD_INITPINS_SELINHG_PIN] = 1;
 
 	// wait for charging
-	nops(10);
+	nops(20);
 
 	GPIO->B[BOARD_INITPINS_SELINHG_PORT][BOARD_INITPINS_SELINHG_PIN] = 0;
 
 	ports_strobe = -1;
 
 //	nops(100);
+
+	__enable_irq();
 }
 
 __attribute__( ( section(".data") ) )
@@ -591,6 +597,8 @@ void ports_value(int portid, uint16_t value)
 	//if (portfunc_write_func[portid]) {
 	//	portfunc_write_func[portid] (portfunc_write_ic[portid], portfunc_write_ch[portid], value);
 	//}
+
+	ports_wait_write();
 
 	if ((ports_last_updated & 1) == 0 && portid == (ports_last_updated + 1)) {
 		ports_strobe = portid;
