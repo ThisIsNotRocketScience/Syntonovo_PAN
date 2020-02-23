@@ -672,12 +672,18 @@ void _control_t::RenderBoxHorizontal(int x, int y, int val, int mode, bool activ
 	break;
 	case BOX_MID:
 	{
+		static unsigned short testval = 0;
 		ImVec2 br2 = br;
+		//val = testval++;
+//		testval += 100;
 		float x1 = tl.x + ParamHorizontalBoxWidth / 2;
-		float x2 = tl.x - ((0xffff - val) * ParamHorizontalBoxWidth) / 0xffff;
+		float x2 = tl.x - ((0xffff - val) * ParamHorizontalBoxWidth) / 0xffff + ParamHorizontalBoxWidth;
+		
 		ImVec2 tl2 = tl;
+		
 		tl2.x = __min(x1, x2);
 		br2.x = __max(x1, x2);
+
 		ImGui::GetWindowDrawList()->AddRectFilled(tl, br, CalcFillColor(0, active));
 		ImGui::GetWindowDrawList()->AddRectFilled(tl2, br2, CalcFillColor(1, active));
 		ImGui::GetWindowDrawList()->AddRect(tl2, br2, active ? gGuiResources.Highlight : gGuiResources.Normal, 0, 0, 1);

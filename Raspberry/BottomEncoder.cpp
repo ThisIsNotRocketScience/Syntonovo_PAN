@@ -34,7 +34,7 @@ void bottomencoder_t::Turn(int delta)
 
 int GetEncoderX(int id)
 {
-	return 512 + (id - 5.0)* ((1024) / 12.0f);
+	return 512 + (id - 5.0)* ((1024) / 11.0f);
 	//return ((1024) / 11.0f) * (id + 0.5);
 }
 
