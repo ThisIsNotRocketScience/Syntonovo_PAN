@@ -477,7 +477,7 @@ ENTRY("CLNFD lvl", MenuEntry_RemapValue, Output_CLEANF_LEVEL)
 SKIPENTRY
 ENTRY("FX Return", MenuEntry_Value, Output_FX_RET_LEVEL)
 ENTRY("Out Main", MenuEntry_RemapValue, Output_MASTER_LEVEL)
-ENTRY("Out HP", MenuEntry_RemapValue, Output_MASTER_LEVEL)
+ENTRY("Out HP", MenuEntry_RemapValue, Output_HEADPHONE_LEVEL)
 
 ENDMENU()
 
