@@ -208,10 +208,12 @@ void ModTargetModal::TweakParameterValue(int param, int delta)
 	}
 	if (param == -2)
 	{
-		gCurrentPreset.TweakModMatrix(modType, Instance, OriginalOutputID, delta);
-		return;
-	}
+		gCurrentPreset.TweakModMatrix(modType, Instance, TargetID, delta);
 
+		return;
+
+	}
+	
 }
 
 void ModTargetModal::Activate()
