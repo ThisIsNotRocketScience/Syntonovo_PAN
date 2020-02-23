@@ -99,14 +99,12 @@ void TargetList::SketchRightDelta(int delta)
 	Current = ModulationTargetList[CurrentIDX]->targetid;
 	((ModTargetModal*)Parent)->SetOutput(Current);
 
-
-
-
 	while (CurrentIDX > PageEnd - 1)
 	{
 		PageEnd++;
 		PageStart++;
 	}
+
 	while (CurrentIDX < PageStart)
 	{
 		PageStart--;
@@ -118,7 +116,6 @@ void ModTargetModal::SetOutput(int out)
 {
 	auto row = gCurrentPreset.GetModSourceRow(modType, Instance);
 	row->targets[TargetID].outputid = out;
-
 	encoders[0][TargetID].SetTitle(GetModulationTargetName(out));
 }
 
@@ -202,6 +199,21 @@ uint16_t ModTargetModal::GetParameterValue(int param, int encoderset)
 	return row->targets[param].depth;
 }
 
+void ModTargetModal::TweakParameterValue(int param, int delta)
+{
+	if (param == -1)
+	{
+		TheTargetList.SketchRightDelta(delta>0?1:-1);
+		return;
+	}
+	if (param == -2)
+	{
+		gCurrentPreset.TweakModMatrix(modType, Instance, OriginalOutputID, delta);
+		return;
+	}
+
+}
+
 void ModTargetModal::Activate()
 {
 	auto row = gCurrentPreset.GetModSourceRow(modType, Instance);	
@@ -220,16 +232,24 @@ void ModTargetModal::Activate()
 		encoders[0][i].ledmode = ledmode_solid;
 		encoders[0][i].SetTitle("modulation");
 	}
-	encoders[0][TargetID].enabled = true;
-	encoders[0][TargetID].SetTitle(GetModulationTargetName(OriginalOutputID));
 	
+	encoders[0][0].enabled = true;
+	encoders[0][0].SetTitle("Modulation");
+	encoders[0][0].target = -2;
+	encoders[0][0].style = MenuEntry_ModMatrixValue;
+
+	encoders[0][1].target = -1;
+	encoders[0][1].enabled = true;
+	encoders[0][1].SetTitle("Select Target");
+	encoders[0][1].style = MenuEntry_ArrowUp;
+
 }
 
 ModTargetModal::ModTargetModal() : _screensetup_t(SCREEN_MODTARGETMODAL)
 {
 	EnableButton(11, "OK", MenuEntry_Action, MenuAction_Ok);
 	EnableButton(10, "Cancel", MenuEntry_Action, MenuAction_Cancel);
-	EnableButton(9, "Remove Modulation", MenuEntry_Action, MenuAction_Remove);
+	EnableButton(13, "Remove Modulation", MenuEntry_Action, MenuAction_Remove);
 
 
 	ControlsInOrder.push_back(&TheTargetList);
@@ -283,7 +303,7 @@ void ModTargetModal::Render(bool active, float dt)
 	}
 	ImGui::PushFont(gGuiResources.BigFont);
 	auto R = ImGui::CalcTextSize(txt);
-	ImGui::SetCursorPos(ImVec2(1024 / 2 - R.x / 2, ParamMasterMargin));
+	ImGui::SetCursorPos(ImVec2(1024 / 2 - R.x / 2, R.y * 3));
 	ImGui::Text(txt);
 	ImGui::PopFont();
 
