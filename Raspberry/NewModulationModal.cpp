@@ -17,18 +17,12 @@ NewModulationModal::NewModulationModal(): _screensetup_t(SCREEN_NEWMODULATIONMOD
 
 	EnableButton(LB3, "Mod Left");
 	EnableButton(LB4, "Sustain Left");
-	EnableButton(LB5, "Una corda Left");
-	
+	EnableButton(LB5, "Una corda Left");	
 	EnableButton(LB6, "ZPrime");
 	EnableButton(LB7, "LFO");
 	EnableButton(LB8, "Envelope");
-
 	EnableButton(LB9, "Velocity");
-
-
-
 	EnableButton(RB3, "Mod left");
-
 	EnableButton(RB4, "Mod Right");
 	EnableButton(RB5, "Sustain Right");
 	EnableButton(RB6, "Una corda Left");

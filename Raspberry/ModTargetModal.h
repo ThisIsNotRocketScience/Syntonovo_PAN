@@ -45,6 +45,8 @@ public:
 
 	virtual void SketchRightPress() {}
 
+	virtual void TweakParameterValue(int param, int delta);
+
 
 	virtual void Activate();
 	virtual void SetupLeds();

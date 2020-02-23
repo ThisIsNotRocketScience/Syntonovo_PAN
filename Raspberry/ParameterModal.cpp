@@ -88,7 +88,10 @@ void ParameterModal::Setup(OutputEnum target)
 	{
 	}
 
-
+	for (int i = 0; i < SourcesForCurrentTarget.Sources + 1; i++)
+	{
+		DisableButton(i+1);
+	}
 	SetupTargetButton();
 
 	int i = 0;
@@ -102,7 +105,7 @@ void ParameterModal::Setup(OutputEnum target)
 
 		char txt[400];
 		char ftxt[400];
-		gCurrentPreset.GetModSourceName(SourcesForCurrentTarget.SourceDetails[CurrentMod].sourceid, txt, 400);
+		gCurrentPreset.GetModSourceName(SourcesForCurrentTarget.SourceDetails[i].sourceid, txt, 400);
 		snprintf(ftxt, 400, "Remove %s", txt);
 
 
@@ -115,7 +118,7 @@ void ParameterModal::Setup(OutputEnum target)
 
 		encoders[0][i*2].SetTitle(txt);
 	}
-
+	
 }
 
 
