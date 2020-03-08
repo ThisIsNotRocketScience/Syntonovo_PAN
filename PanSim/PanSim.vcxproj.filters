@@ -113,6 +113,9 @@
     <ClCompile Include="..\Raspberry\KeyZoneScreen.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\Raspberry\SwitchDebug.cpp">
+      <Filter>Source Files\Screens</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Font Include="ProggyTiny.ttf" />
@@ -158,6 +161,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\Raspberry\ArpSettings.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Raspberry\SwitchDebug.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

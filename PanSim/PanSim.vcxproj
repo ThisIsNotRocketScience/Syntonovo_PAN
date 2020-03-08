@@ -193,6 +193,7 @@
     <ClCompile Include="..\Raspberry\NewModulationModal.cpp" />
     <ClCompile Include="..\Raspberry\ScreenSetup.cpp" />
     <ClCompile Include="..\Raspberry\ParameterModal.cpp" />
+    <ClCompile Include="..\Raspberry\SwitchDebug.cpp" />
     <ClCompile Include="..\Raspberry\VCF2StructureScreen.cpp" />
     <ClCompile Include="PanSim.cpp" />
   </ItemGroup>
@@ -216,6 +217,7 @@
     <ClInclude Include="..\Raspberry\PanPreset.h" />
     <ClInclude Include="..\Raspberry\PanUiMap.h" />
     <ClInclude Include="..\Raspberry\ParameterModal.h" />
+    <ClInclude Include="..\Raspberry\SwitchDebug.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\libs\SDL2-2.0.7\lib\x86\SDL2.lib" />

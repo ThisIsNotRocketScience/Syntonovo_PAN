@@ -141,6 +141,13 @@ LEDBUTTON(LSus, 40, 140, 62, "L Sus", 1, 0.9f, 0)
 
 LEDBUTTON(RUna, 520, 140, 63, "R Una", 1, 0.9f, 0)
 LEDBUTTON(RSus, 520, 140, 64, "R Sus", 1, 0.9f, 0)
+
+
+LEDBUTTON(Zone1, 10, 120, 65, "Zone 1", 1, 0.9f, 0) // SW65??
+LEDBUTTON(Zone2, 40, 120, 66, "Zone 2", 1, 0.9f, 0) // 
+LEDBUTTON(Zone3, 70, 120, 67, "Zone 3", 1, 0.9f, 0) // 
+LEDBUTTON(Zone4, 100, 120, 68, "Zone 4", 1, 0.9f, 0) // 
+
 //LEDBUTTON(SeqStop, 220, 0, 51, "SeqStop", 1, 0.9f, 0)
 
 

@@ -286,7 +286,7 @@ void ModSourceScreen::RenderContent(bool active, float DT)
 	case SCREEN_ENVELOPE:
 	{
 		float A = gCurrentPreset.GetModParameterValue(Envelope_Attack, ActiveInstance)/65535.0f;
-		float D = gCurrentPreset.GetModParameterValue(Envelope_Decay, ActiveInstance) / 65535.0f;
+		float D = gCurrentPreset.GetModParameterValue(Envelope_Decay,  ActiveInstance) / 65535.0f;
 		float S = gCurrentPreset.GetModParameterValue(Envelope_Sustain, ActiveInstance) / 65535.0f;
 		float R = gCurrentPreset.GetModParameterValue(Envelope_Release, ActiveInstance) / 65535.0f;
 

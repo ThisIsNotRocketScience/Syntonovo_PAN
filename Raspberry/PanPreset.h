@@ -208,6 +208,11 @@ public:
 		return false;
 
 	}
+
+	int GetOctave()
+	{
+		return ((int)paramvalue[Output_MASTER_PITCH2] - 0x8000) / (0x100 * 12);
+	}
 	void ToggleModulationSwitch(int switchid, int instance)
 	{
 		switch (switchid)

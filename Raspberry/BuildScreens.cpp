@@ -10,6 +10,7 @@
 #include "ExtraScreenDefinitions.h"
 #include "ArpeggiatorScreen.h"
 #include "KeyZoneScreen.h"
+#include "SwitchDebug.h"
 
 void cmd_AddCalibrationByte(unsigned char cmd)
 {
@@ -124,7 +125,7 @@ void Gui::BuildScreens()
 {
 	for (int i = 0; i < __SCREENS_COUNT; i++) Screens[i] = 0;
 
-
+	Screens[SCREEN_SWITCHLIST] = new SwitchScreen();
 	Screens[SCREEN_SYSTEM] = new SystemScreen();
 	Screens[SCREEN_PRESETNAME] = new PresetScreen();
 	auto BL = new BankSelectScreen();
@@ -195,7 +196,7 @@ void Gui::BuildScreens()
 		if (Screens[i] == 0) Screens[i] = new _screensetup_t(i);
 	}
 
-	Screens[SCREEN_HOME]->SetTitle("Home");
+	Screens[SCREEN_HOME]->SetTitle("");
 
 	Screens[SCREEN_HOME]->EncodersThatOpenThisScreen.push_back(encoder_SketchLeft);
 
@@ -206,6 +207,7 @@ void Gui::BuildScreens()
 	Screens[SCREEN_HOME]->EnableButton(LB6, "Cleanfeed Mix", MenuEntry_Page, SCREEN_CLEANMIX);
 	Screens[SCREEN_HOME]->EnableButton(LB7, "Keyzones", MenuEntry_Page, SCREEN_KEYZONES);
 	Screens[SCREEN_HOME]->EnableButton(LB8, "Calibration", MenuEntry_Page, SCREEN_CALIBRATION);
+	Screens[SCREEN_HOME]->EnableButton(LB9, "SwitchDebug", MenuEntry_Page, SCREEN_SWITCHLIST);
 
 
 	Screens[SCREEN_HOME]->EnableButton(RB2, "Save preset", MenuEntry_Page, SCREEN_PRESETSAVE);
