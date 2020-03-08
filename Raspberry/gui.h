@@ -455,7 +455,7 @@ public:
 	Gui();
 	ModSourceScreen *AddModSourceScreen(Screens_t screen, ModSource_t mod, const char *basetitle);
 	uint32_t GetNumberColor(int idx, int total);
-
+	void PrintSwitchName(char *txt, int strlen, SwitchEnum idx);
 	void GotoPageForMod(ModSource_t mod, int instance);
 	void GotoPageForKeyZone(int zone);
 	void GotoPageForArpeggiator(int arp);

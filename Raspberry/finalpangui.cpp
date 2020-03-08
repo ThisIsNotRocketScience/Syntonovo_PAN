@@ -1414,6 +1414,20 @@ void Gui::Render(bool active, float dt)
 	}
 }
 
+
+char SwitchNames[][20] = {
+
+#define SWITCH(name, id, val) #name ,
+#include "../interface/paramdef.h"
+#undef SWITCH
+};
+
+void Gui::PrintSwitchName(char* txt, int strlen, SwitchEnum idx)
+{
+	snprintf(txt, strlen, "%s", SwitchNames[idx]);
+}
+
+
 void Gui::GotoPage(Screens_t s)
 {
 	if (CurrentScreen == s)
