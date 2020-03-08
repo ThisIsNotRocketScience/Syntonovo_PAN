@@ -23,6 +23,25 @@
 
 /* TODO: insert other definitions and declarations here. */
 
+#define CMD_PAD_ZERO		(0x11)
+#define CMD_CALIBRATE		(0x12)
+#define CMD_PRESET_LOAD		(0x21)
+#define CMD_PRESET_STORE	(0x22)
+
+#define OOB_UI_PAUSE		(0x41)
+#define OOB_UI_CONTINUE		(0x42)
+#define OOB_BUTTON_DOWN		(0x50)
+#define OOB_BUTTON_UP		(0x51)
+#define OOB_ENCODER_CCW		(0x56)
+#define OOB_ENCODER_CW		(0x57)
+#define OOB_ENCODER_DOWN	(0x58)
+#define OOB_ENCODER_UP		(0x59)
+#define OOB_SWITCH_CHANGE	(0x5F)
+#define OOB_NOTEON			(0x5C)
+#define OOB_NOTEOFF			(0x5D)
+
+#define OOB_AUTOTUNE_STATE	(0x60)
+
 void arpclock_run();
 void arpclock_reset();
 void arpclock_set_speed(float bpm);
@@ -142,6 +161,13 @@ void key_down(key_source_t source, int channel, int key, int vel)
 		return;
 	}
 
+	uint8_t data[4] = {0};
+	data[0] = source;
+	data[1] = channel;
+	data[2] = key;
+	data[3] = vel;
+	sync_oob_word(&rpi_sync, OOB_NOTEON, *(uint32_t*)data, 0);
+
 	int fieldbase = 0;
 	if (source == key_source_midi) fieldbase = 0;
 	else if (source == key_source_usb) fieldbase = 4;
@@ -176,6 +202,13 @@ void key_down(key_source_t source, int channel, int key, int vel)
 
 void key_up(key_source_t source, int channel, int key)
 {
+	uint8_t data[4] = {0};
+	data[0] = source;
+	data[1] = channel;
+	data[2] = key;
+	data[3] = 0;
+	sync_oob_word(&rpi_sync, OOB_NOTEOFF, *(uint32_t*)data, 0);
+
 	int fieldbase = 0;
 	if (source == key_source_midi) fieldbase = 0;
 	else if (source == key_source_usb) fieldbase = 4;
@@ -628,23 +661,6 @@ void SendLeds()
 	L2LatchOff();
 }
 
-
-#define CMD_PAD_ZERO		(0x11)
-#define CMD_CALIBRATE		(0x12)
-#define CMD_PRESET_LOAD		(0x21)
-#define CMD_PRESET_STORE	(0x22)
-
-#define OOB_UI_PAUSE		(0x41)
-#define OOB_UI_CONTINUE		(0x42)
-#define OOB_BUTTON_DOWN		(0x50)
-#define OOB_BUTTON_UP		(0x51)
-#define OOB_ENCODER_CCW		(0x56)
-#define OOB_ENCODER_CW		(0x57)
-#define OOB_ENCODER_DOWN	(0x58)
-#define OOB_ENCODER_UP		(0x59)
-#define OOB_SWITCH_CHANGE	(0x5F)
-
-#define OOB_AUTOTUNE_STATE	(0x60)
 
 void SW1ClkOn()
 {
