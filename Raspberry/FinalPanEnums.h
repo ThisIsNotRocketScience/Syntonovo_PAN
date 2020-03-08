@@ -461,7 +461,7 @@ enum ModSourceEnum
 
 enum SwitchEnum
 {
-#define SWITCH(name,id,defaultvalue) Switch_##name = id,
+#define SWITCH(name,id,defaultvalue, desc) Switch_##name = id,
 #include "../interface/paramdef.h"
 #undef SWITCH
 	__SWITCH_COUNT
