@@ -1,22 +1,15 @@
 #include <stdio.h>
 #include "FinalPanEnums.h"
 #include "PanPreset.h"
-
 #include "gui.h"
-
 #include "ModSourceScreen.h"
 #include "HomeScreen.h"
 #include "VCF2Structure.h"
 #include "ParameterModal.h"
 #include "NewModulationModal.h"
-
-
 #include "ExtraScreenDefinitions.h"
-
 #include "ArpeggiatorScreen.h"
 #include "KeyZoneScreen.h"
-
-
 
 void cmd_AddCalibrationByte(unsigned char cmd)
 {
@@ -61,9 +54,7 @@ void cmd_AddCalibrationByte(unsigned char cmd)
 		}
 		SS->CalibrationReady = false;
 	}
-
 }
-
 
 SystemScreen::SystemScreen() : _screensetup_t(SCREEN_SYSTEM)
 {

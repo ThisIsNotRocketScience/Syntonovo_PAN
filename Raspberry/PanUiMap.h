@@ -256,6 +256,7 @@ ENTRY("Level", MenuEntry_Value, Output_VCF1_LEVEL)
 ENDMENU()
 
 MENU(PORTAMENTO, ledbutton_PortamentoLeft, "Portamento")
+
 ENTRY("Time", MenuEntry_Value, Output_PORTAMENTO_TIME)
 CUSTOMENTRY("Portamento", MenuEntry_Toggle, Switch_SELPORTAMENTO)
 CUSTOMENTRY("Staccato", MenuEntry_Toggle, Switch_SELSTACCATO)
