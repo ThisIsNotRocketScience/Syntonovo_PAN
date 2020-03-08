@@ -185,7 +185,7 @@ void FinalPan_DefaultPresetNamesInBank()
 void FinalPan_SetupDefaultPreset()
 {
 
-#define SWITCH(name,id,defaultvalue) 	gCurrentPreset.PutSwitch(Switch_##name , defaultvalue>0?true:false);gRevertPreset.PutSwitch(Switch_##name , defaultvalue>0?true:false);   
+#define SWITCH(name,id,defaultvalue, desc) 	gCurrentPreset.PutSwitch(Switch_##name , defaultvalue>0?true:false);gRevertPreset.PutSwitch(Switch_##name , defaultvalue>0?true:false);   
 #define OUTPUT(name,codecport,codecpin, type,id, style,defaultvalue,Label, Category) 	gCurrentPreset.paramvalue[id] = gRevertPreset.paramvalue[id] = defaultvalue;
 #define OUTPUT_VIRT(name,codecport,codecpin, type,id, style,defaultvalue,Label, Category) gCurrentPreset.paramvalue[id] = gRevertPreset.paramvalue[id] = defaultvalue;
 #include "../interface/paramdef.h"
