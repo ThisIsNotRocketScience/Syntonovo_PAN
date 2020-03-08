@@ -55,6 +55,7 @@ public:
 	virtual void RenderContent(bool active, float DT);
 	virtual void RepeatGoto();
 
+
 	virtual void Render(bool active, float DT);
 	virtual void Activate();
 

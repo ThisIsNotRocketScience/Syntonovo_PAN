@@ -103,6 +103,12 @@ void SwitchScreen::Render(bool active, float DT)
 			ImGui::TextColored(ImVec4(0.8, 0.8, 0.8, 1), txt);
 		
 		}
+		if (i == Current)
+		{
+			ImGui::SetCursorPos(ImVec2(10, 20 * (i - Current) + 100));
+			ImGui::TextColored(ImVec4(1, 0, 1, 1), "---> ");
+
+		}
 	}
 
 	char txt2[100];

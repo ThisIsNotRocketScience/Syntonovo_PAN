@@ -482,7 +482,7 @@ void DrawKeyRange(int Lower, int Upper, int Transpose, int col, int y, bool acti
 	ImGui::SetCursorPos(ImVec2(KeyX(0) - 20, y));
 	char txt[15];
 	sprintf(txt, "zone %d", idx);
-	ImGui::Text(txt);
+	//ImGui::Text(txt);
 
 
 	if (active)
@@ -495,6 +495,9 @@ void DrawKeyRange(int Lower, int Upper, int Transpose, int col, int y, bool acti
 		ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(lx, y), ImVec2(ux + KEYWIDTH, y + RANGEHEIGHT - 1), Dimmed(3, col));
 
 	}
+
+	ImGui::SetCursorPos(ImVec2(ux + KEYWIDTH + ParamMasterMargin, y));
+	ImGui::TextColored(ImGui::ColorConvertU32ToFloat4(col),   txt);
 }
 
 void KeyZoneScreen::Render(bool active, float DT)
@@ -530,6 +533,20 @@ void KeyZoneScreen::Render(bool active, float DT)
 		bool active = i == ActiveInstance;
 		DrawKeyRange(Lower, Upper, Transpose, gGui.GetNumberColor(i, 4) , 400 -((RANGEHEIGHT + ParamMasterMargin) * NUM_KEYZONES) - 4 + i * (RANGEHEIGHT+ParamMasterMargin), active, i+1);
 	}
+
+	int oct = gCurrentPreset.GetOctave();
+	oct += 2;
+	int basenote =   oct * 12;
+	int KeyboardL = KeyX(basenote);
+	int KeyboardU = KeyX(basenote+37) + KEYWIDTH;
+
+
+
+	ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(KeyboardL, 450+ ParamMasterMargin), ImVec2(KeyboardU, 450+RANGEHEIGHT + ParamMasterMargin), IM_COL32(200,200,200,255));
+
+	ImGui::SetCursorPos(ImVec2(KeyboardL, 450 + RANGEHEIGHT + ParamMasterMargin * 2));
+	ImGui::Text("Keyboard");
+
 
 	//ImGui::GetWindowDrawList()->AddText()
 

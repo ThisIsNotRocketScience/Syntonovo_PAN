@@ -196,7 +196,7 @@ void Gui::BuildScreens()
 		if (Screens[i] == 0) Screens[i] = new _screensetup_t(i);
 	}
 
-	Screens[SCREEN_HOME]->SetTitle("Home");
+	Screens[SCREEN_HOME]->SetTitle("");
 
 	Screens[SCREEN_HOME]->EncodersThatOpenThisScreen.push_back(encoder_SketchLeft);
 

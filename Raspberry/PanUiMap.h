@@ -33,7 +33,7 @@
 #define ENDMENU()
 #endif
 
-MENU(HOME, ledbutton_L10, "HOME")
+MENU(HOME, ledbutton_L10, "")
 
 ENTRY("VCF1 Level", MenuEntry_Value, Output_VCF1_LEVEL)
 ENTRY("VCF1 -> FX", MenuEntry_Value, Output_VCF1_FX_12)
@@ -65,12 +65,12 @@ ENTRY("Fine", MenuEntry_Pitch, Output_VCO1_PITCH)
 ENTRY("PW", MenuEntry_Percentage, Output_VCO1_PW)
 SKIPENTRY
 SKIPENTRY
-ENTRY("> VCF1", MenuEntry_Value, Output_VCO1_MIX1)
-SKIPENTRY
-ENTRY("> VCF2", MenuEntry_Value, Output_VCO1_MIX2)
-SKIPENTRY
-ENTRY("Sine >\n Cleanfeed ", MenuEntry_Value, Output_VCO1SIN_MIX3)
 
+ENTRY("> VCF1", MenuEntry_Value, Output_VCO1_MIX1)
+ENTRY("Sub123 > VCF1", MenuEntry_Value, Output_VCO1_SUB1)
+ENTRY("> VCF2", MenuEntry_Value, Output_VCO1_MIX2)
+ENTRY("Sub123 > VCF2", MenuEntry_Value, Output_VCO1_SUB2)
+ENTRY("Sine >\n Cleanfeed ", MenuEntry_Value, Output_VCO1SIN_MIX3)
 
 ENDMENU()
 

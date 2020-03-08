@@ -1227,9 +1227,15 @@ void AddPitch(int add)
 void Gui::ButtonPressed(FinalLedButtonEnum Button)
 {
 	if (Waiting) return;
+
+
 	// insert what to do if selecting modulation source/target here? 
 	switch (Button)
 	{
+	case ledbutton_Zone1: GotoPageForKeyZone(0); break;
+	case ledbutton_Zone2: GotoPageForKeyZone(1); break;
+	case ledbutton_Zone3: GotoPageForKeyZone(2); break;
+	case ledbutton_Zone4: GotoPageForKeyZone(3); break;
 	case ledbutton_L10:
 		GotoPage(SCREEN_HOME);
 		break;
@@ -1394,13 +1400,18 @@ void Gui::GotoPageForKeyZone(int zone)
 	((KeyZoneScreen*)Screens[SCREEN_KEYZONES])->SetActiveInstance(zone);	
 }
 
-
+int LogoTime = 0;
 void Gui::Render(bool active, float dt)
 {
 	if (Waiting)
 	{
 		Screens[SCREEN_LOADING]->Render(active, dt);
 		return;
+	}
+	if (CurrentScreen == SCREEN_LOGO)
+	{
+		LogoTime++;
+		if (LogoTime > 200) CurrentScreen = SCREEN_HOME;
 	}
 	Screens[CurrentScreen]->Render(active, dt);
 
