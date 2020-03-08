@@ -23,6 +23,8 @@
 #include "synth_param.h"
 #include "control.h"
 
+#define TOTAL_NUM_CAL_OSCS 13
+
 #define AVERAGECOUNT 32
 
 volatile int32_t doaveragecount = 4;
@@ -155,6 +157,21 @@ void Voutraw(int channel, uint16_t ictrl)
 	case 7:
 		ports_value(synth_param[NOISE_COLOR].port, ictrl);
 		break;
+	case 8:
+		ports_value(synth_param[VCF1_CV].port, 65535-ictrl);
+		break;
+	case 9:
+		ports_value(synth_param[VCF2_A_CV].port, 65535-ictrl);
+		break;
+	case 10:
+		ports_value(synth_param[VCF2_B_CV].port, 65535-ictrl);
+		break;
+	case 11:
+		ports_value(synth_param[VCF2_C_CV].port, 65535-ictrl);
+		break;
+	case 12:
+		ports_value(synth_param[VCF2_D_CV].port, 65535-ictrl);
+		break;
 	}
 	ports_flush();
 }
@@ -177,11 +194,11 @@ struct caldata_t {
 	int minbin, maxbin;
 };
 
-static struct caldata_t caldata[8] = {0};
+static struct caldata_t caldata[TOTAL_NUM_CAL_OSCS] = {0};
 
 struct flashcontent_t
 {
-	struct caldata_t caldata[8];
+	struct caldata_t caldata[TOTAL_NUM_CAL_OSCS];
 	//POPSettings settings;
 };
 
@@ -205,7 +222,6 @@ uint16_t autotune_note_to_dac(int osc, uint16_t note)
 	return (uint16_t)v;
 }
 
-
 void Vout(int channel, uint16_t note)
 {
 	Voutraw(channel, autotune_note_to_dac(channel, note));
@@ -213,7 +229,7 @@ void Vout(int channel, uint16_t note)
 
 void resetcal()
 {
-	for (int c = 0; c < 8; c++) {
+	for (int c = 0; c < TOTAL_NUM_CAL_OSCS; c++) {
 		for (int i = 0; i < BINCOUNT; i++) {
 			//caldata.inv_scale_error[i] = 1.0f;
 			caldata[c].inv_offset_error[i] = 0.0f;
@@ -232,7 +248,7 @@ int loadcal()
 	memcpy(&flashdata, (void*)FSL_FEATURE_EEPROM_BASE_ADDRESS, sizeof(flashdata));
 
 	if (flashdata.caldata[0].magic == 0x55612348) {
-		memcpy(&caldata[0], &flashdata.caldata[0], 8*sizeof(struct caldata_t));
+		memcpy(&caldata[0], &flashdata.caldata[0], TOTAL_NUM_CAL_OSCS*sizeof(struct caldata_t));
 		return 0;
 	}
 	else {
@@ -245,7 +261,7 @@ int loadcal()
 
 void writecal()
 {
-	memcpy(&flashdata.caldata[0], &caldata[0], 8*sizeof(struct caldata_t));
+	memcpy(&flashdata.caldata[0], &caldata[0], TOTAL_NUM_CAL_OSCS*sizeof(struct caldata_t));
 	flashdata.caldata[0].magic = 0x55612348;
 
 	int pagecount = (sizeof(struct flashcontent_t) + (EEPROM_PAGE_SIZE-1)) / EEPROM_PAGE_SIZE;
@@ -310,6 +326,9 @@ void autotune_set_routing(int osc)
     shiftctrl_clear(SELVCF24A);
     shiftctrl_clear(SELVCF24B);
 
+    shiftctrl_set(SELVCF21SER);
+    shiftctrl_set(SELVCF23SER);
+
     shiftctrl_clear(SELVCOSYNC1);
     shiftctrl_clear(SELVCOSYNC2);
     shiftctrl_clear(SELVCOSYNC3);
@@ -333,6 +352,7 @@ void autotune_set_routing(int osc)
 	ports_value(PORT_VCF2_R_LOG, 0xffff);
 	ports_value(PORT_CLEANF_R_LOG, 0xffff);
 
+	ports_value(PORT_VCF1_CV, 0xffff);
 	ports_value(PORT_VCF1_RES, 0xffff);
 	ports_value(PORT_VCF2_A_CV, 0xffff);
 	ports_value(PORT_VCF2_B_CV, 0xffff);
@@ -352,6 +372,11 @@ void autotune_set_routing(int osc)
 	ports_value(PORT_VCO7_PW, 0xA000);
 	ports_value(PORT_VCO123_FM2, 0);
 	ports_value(PORT_VCO123_FM3, 0);
+
+	ports_value(PORT_VCF1_CROSSMOD, 0xffff);
+	ports_value(PORT_VCF2_CROSSMOD, 0xffff);
+	ports_value(PORT_VCF2_P_FB, 0);
+	ports_value(PORT_VCF2_M_FB, 0);
 
 	ports_flush();
 
@@ -380,6 +405,41 @@ void autotune_set_routing(int osc)
 	case 7:
 	    shiftctrl_clear(SELMUTEDNSAW);
 	    break;
+	case 8:
+	    shiftctrl_set(SELTUNEVCF);
+		ports_value(PORT_VCF1_RES, 0xffff);
+	    ports_flush();
+		ports_value(PORT_VCF1_CV, 0);
+	    ports_flush();
+		break;
+	case 9:
+	    shiftctrl_set(SELTUNEVCF);
+		ports_value(PORT_VCF2_A_RES, 0);
+	    ports_flush();
+		ports_value(PORT_VCF2_A_CV, 0);
+	    ports_flush();
+		break;
+	case 10:
+	    shiftctrl_set(SELTUNEVCF);
+		ports_value(PORT_VCF2_B_RES, 0);
+	    ports_flush();
+		ports_value(PORT_VCF2_B_CV, 0);
+	    ports_flush();
+		break;
+	case 11:
+	    shiftctrl_set(SELTUNEVCF);
+		ports_value(PORT_VCF2_C_RES, 0);
+	    ports_flush();
+		ports_value(PORT_VCF2_C_CV, 0);
+	    ports_flush();
+		break;
+	case 12:
+	    shiftctrl_set(SELTUNEVCF);
+		ports_value(PORT_VCF2_D_RES, 0);
+	    ports_flush();
+		ports_value(PORT_VCF2_D_CV, 0);
+	    ports_flush();
+		break;
 	}
     shiftctrl_update();
 }
@@ -405,7 +465,6 @@ void enable_pin_int()
 void disable_pin_int()
 {
 	DisableIRQ(PIN_INT0_IRQn);
-
 }
 
 void resetcmp(int averagecount)
@@ -433,23 +492,28 @@ float readhz(int averagecount)
 	while (avgindex < 2 /*&& (timer_value() - starttime) < 12000000*/) {
 		ports_refresh();
 	}
+
 	__disable_irq();
 	uint32_t avg = elapsedavg[1];
-
 	disable_pin_int();
 	__enable_irq();
 
-	if (avgindex < 2)
-	{
-		return 40000.0f;
-	}
+	//if (avgindex < 2)
+	//{
+	//	return 40000.0f;
+	//}
 
 	return (180000000.0f * 0.125f) / (float)avg;
 }
 
-float binfreq(int bin)
+float binfreq(int osc, int bin)
 {
-	return (float)(1 << bin) * 16.35159798313f;
+	if (osc < 8) {
+		return (float)(1 << bin) * 16.35159798313f;
+	}
+	else {
+		return 16744.0f / (float)(1 << bin);
+	}
 }
 
 uint16_t bindacvalue(int bin)
@@ -457,8 +521,9 @@ uint16_t bindacvalue(int bin)
 	return (uint16_t) ((65535 * bin) / 10);
 }
 
-uint16_t bindacvalue_e(int bin, int32_t error)
+uint16_t bindacvalue_e(int osc, int bin, int32_t error)
 {
+	if (osc >= 8) return 65535;
 	int32_t value = ((65535 * bin) / 10);
 	value += error;
 	if (value < 0) return 0;
@@ -545,6 +610,26 @@ void autotune_control_out(int osc, int state)
 	control_out_queue_wait();
 }
 
+float minfreq(int osc)
+{
+	if (osc < 8) {
+		return 4.f;
+	}
+	else {
+		return 10000.f;
+	}
+}
+
+float maxfreq(int osc)
+{
+	if (osc < 8) {
+		return 15.f;
+	}
+	else {
+		return 100000.f;
+	}
+}
+
 int autotune(int osc)
 {
 	control_out_queue_wait();
@@ -560,14 +645,15 @@ int autotune(int osc)
 
 	int osc_offset = 0;
 
-	//if (osc == 7)
-	//	osc_offset = 0x6000;
+	if (osc >= 8) {
+			osc_offset = 0xffff;
+	}
 
 	Voutraw(osc, osc_offset);
 	WAIT1_Waitms(1);
 	startf = readhz(16);
 
-	if (startf >= 15.0) {
+	if (startf < minfreq(osc) || startf > maxfreq(osc)) {
 		//printf("low freq out of range: %f >= 15.0\n", startf);
 		EnableIRQ(USART_DSP_FLEXCOMM_IRQN);
 		autotune_control_out(osc, 0x0f);
@@ -576,18 +662,18 @@ int autotune(int osc)
 
 	for (int bin = 0; bin < BINCOUNT; bin++) {
 
-		float target_freq = binfreq(bin);
+		float target_freq = binfreq(osc, bin);
 		//printf("target: %f\n", target_freq);
 		caldata[osc].calpitch[bin] = target_freq;
 		if (bin == 0) {
 			caldata[osc].inv_offset_error[bin] = 0.0f;
 			caldata[osc].dacerror[bin] = 0;
-			caldata[osc].dacvalue[bin] = bindacvalue_e(bin, osc_offset);
+			caldata[osc].dacvalue[bin] = bindacvalue_e(osc, bin, osc_offset);
 		}
 		else {
 			caldata[osc].inv_offset_error[bin] = caldata[osc].inv_offset_error[bin - 1];
 			caldata[osc].dacerror[bin] = caldata[osc].dacerror[bin - 1];
-			caldata[osc].dacvalue[bin] = bindacvalue_e(bin, (int32_t)caldata[osc].dacerror[bin] + osc_offset);
+			caldata[osc].dacvalue[bin] = bindacvalue_e(osc, bin, (int32_t)caldata[osc].dacerror[bin] + osc_offset);
 		}
 		//float last_real_scale_error = 10000.0f;
 
@@ -653,6 +739,11 @@ int autotune(int osc)
 
 				high_pitch = pitch;
 				high = ivalue;
+
+				//if (pitch > target_freq * 2) {
+				//	i--;
+				//}
+
 			}
 			else {
 				//if (pitch < low_pitch) {
@@ -663,10 +754,14 @@ int autotune(int osc)
 
 				low_pitch = pitch;
 				low = ivalue;
-			}
+
+				//if (pitch < target_freq / 2) {
+				//	i--;
+				//}
+}
 
 			caldata[osc].dacvalue[bin] = ivalue;
-			caldata[osc].dacerror[bin] = (int32_t)caldata[osc].dacvalue[bin] - (int32_t)bindacvalue_e(bin, osc_offset);
+			caldata[osc].dacerror[bin] = (int32_t)caldata[osc].dacvalue[bin] - (int32_t)bindacvalue_e(osc, bin, osc_offset);
 
 			if (high <= low + 4) {
 				log_meas(osc, bin, i, ivalue, binsamples(bin), target_freq, pitch, caldata[osc].dacerror[bin], low_pitch, low, high_pitch, high, 10);
@@ -708,6 +803,7 @@ void autotune_start()
 
 	autotune_phase = 1;
 
+#if 1
 	resetcal();
 
 	autotune_phase = 2;
@@ -776,7 +872,14 @@ void autotune_start()
 
 	autotune_phase = 10;
 	autotune_control_out(0xf, 0x00);
+#endif
 
+/*	r = autotune(8);
+	r = autotune(9);
+	r = autotune(10);
+	r = autotune(11);
+	r = autotune(12);
+*/
 	//printf("writecal\n");
 
 	writecal();
