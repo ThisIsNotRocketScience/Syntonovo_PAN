@@ -83,17 +83,21 @@ void SwitchScreen::Action(int a)
 	}
 }
 
+
 void SwitchScreen::Render(bool active, float DT)
 {
 	RenderContent(active, DT);
+	char txt[100];
+	char txt3[300];
 
 	for (int i = 0; i < __SWITCH_COUNT; i++)
 	{
-		char txt[100];
 		//snprintf(txt, 100, "%d", i + 1);
 		gGui.PrintSwitchName(txt, 99, (SwitchEnum)i);
+		//snprintf(txt, 100, "%d", i + 1);
+		gGui.PrintSwitchDesc(txt3, 99, (SwitchEnum)i);
 
-		ImGui::SetCursorPos(ImVec2(100, 20 * (i - Current) + 100));
+		ImGui::SetCursorPos(ImVec2(50, 20 * (i - Current) + 100));
 		if (gCurrentPreset.GetSwitch((SwitchEnum)i))
 		{
 			ImGui::TextColored(ImVec4(1, 1, 0, 1),  txt);
@@ -103,6 +107,8 @@ void SwitchScreen::Render(bool active, float DT)
 			ImGui::TextColored(ImVec4(0.8, 0.8, 0.8, 1), txt);
 		
 		}
+		ImGui::SetCursorPos(ImVec2(200, 20 * (i - Current) + 100));
+		ImGui::Text(txt3);
 		if (i == Current)
 		{
 			ImGui::SetCursorPos(ImVec2(10, 20 * (i - Current) + 100));
@@ -114,8 +120,11 @@ void SwitchScreen::Render(bool active, float DT)
 	char txt2[100];
 	//snprintf(txt, 100, "%d", i + 1);
 	gGui.PrintSwitchName(txt2, 99, (SwitchEnum)Current);
+	gGui.PrintSwitchDesc(txt3, 99, (SwitchEnum)Current);
 
-	ImGui::SetCursorPos(ImVec2(300, 300));
+
+
+	ImGui::SetCursorPos(ImVec2(500, 300));
 	if (gCurrentPreset.GetSwitch((SwitchEnum)Current))
 	{
 		ImGui::TextColored(ImVec4(1, 1, 0, 1), txt2);
@@ -125,7 +134,8 @@ void SwitchScreen::Render(bool active, float DT)
 		ImGui::TextColored(ImVec4(0.8, 0.8, 0.8, 1), txt2);
 
 	}
-
+	ImGui::SetCursorPos(ImVec2(500, 330));
+	ImGui::Text(txt3);
 
 	RenderModalBox(active, DT);
 	//auto row = gCurrentPreset.GetModSourceRow(modType, ActiveInstance);

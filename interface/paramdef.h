@@ -13,7 +13,7 @@
 
 #ifndef SWITCH
 #define REDEFINEDSWITCH
-#define SWITCH(name,id,def)
+#define SWITCH(name,id,def, desc)
 #endif
 
 #ifndef MODSOURCE
@@ -242,92 +242,92 @@ OUTPUT(VCF2_R_LIN,		11,	7,	INT,	0x6F,	CUSTOM,	0, "", IGNORE)
 #else
 // not OLDSYNTH
 
-
-SWITCH(SELOUTPUT, 55, 0)
-
-// 0 0 stereo wide
-// 0 1 stereo
-// 1 1 mono
-// NIET 1 0
-SWITCH(SELVCF2MS1, 54, 0)  
-SWITCH(SELVCF2MS2, 53, 0)
+// master mute uit bij startup.
+SWITCH(SELOUTPUT, 55, 0, "master mute")
 
 // 0 0 stereo wide
 // 0 1 stereo
 // 1 1 mono
 // NIET 1 0
-SWITCH(SELCLEANFMS1, 52, 0)
-SWITCH(SELCLEANFMS2, 51, 0)
+SWITCH(SELVCF2MS1, 54, 0, "vcf 2 mono stereo bit 1")
+SWITCH(SELVCF2MS2, 53, 0, "vcf 2 mono stereo bit 2")
+
+// 0 0 stereo wide
+// 0 1 stereo
+// 1 1 mono
+// NIET 1 0
+SWITCH(SELCLEANFMS1, 52, 0, "cleanfeed mono stereo bit 1")
+SWITCH(SELCLEANFMS2, 51, 0, "cleanfeed mono stereo bit 2")
 
 // SWITCH(SELGATETRIG, 50, 0)
 
-SWITCH(SELFMVONS, 47, 0) 
+SWITCH(SELFMVONS, 47, 0, "FM vco or noise")
 
 
-SWITCH(SELEF0, 45, 0)
-SWITCH(SELEF1, 44, 0)
-SWITCH(SELEF2, 43, 0)
-SWITCH(SELEF3, 42,  0)
+SWITCH(SELEF0, 45, 0, "Effect bit 0")
+SWITCH(SELEF1, 44, 0, "Effect bit 1")
+SWITCH(SELEF2, 43, 0, "Effect bit 2")
+SWITCH(SELEF3, 42, 0, "Effect bit 3")
 
-SWITCH(SEQCLICK, 41, 0)
+SWITCH(SEQCLICK, 41, 0, "Sequencer Click")
 
-SWITCH(SELVCF2CDFSM, 39, 0)
-SWITCH(SELVCF2ABFSM, 38, 0)
-SWITCH(SEL1TRI, 37, 0)
-SWITCH(SEL1SAW, 36, 0)
+SWITCH(SELVCF2CDFSM, 39, 0, "vcf 2 CD crossmod")
+SWITCH(SELVCF2ABFSM, 38, 0, "vcf 2 AB crossmod")
+SWITCH(SEL1TRI, 37, 0, "vco 1 triangle")
+SWITCH(SEL1SAW, 36, 0, "vco 1 saw")
 
-SWITCH(SEL1SQR, 34, 0)
-SWITCH(SEL1SUB, 35, 1)
+SWITCH(SEL1SQR, 34, 0, "vco 1 square")
+SWITCH(SEL1SUB, 35, 1, "vco 1 sub")
 
-SWITCH(SELVCOSYNC1, 33, 0)
-SWITCH(SELVCOSYNC2, 32, 0)
-SWITCH(SELVCOSYNC3, 31, 0)
+SWITCH(SELVCOSYNC1, 33, 0, "vco 1 sync")
+SWITCH(SELVCOSYNC2, 32, 0, "vco 2 sync")
+SWITCH(SELVCOSYNC3, 31, 0, "vco 3 sync")
 
 
 // 0 0 = stereo
 // 1 0 = mono 12db
 // 0 1 = mono 24db
 // NIET 1 1: undefined
-SWITCH(SELVCF1AP, 30, 0)  // A0 
-SWITCH(SELVCF1BP, 29, 0)  // B0
+SWITCH(SELVCF1AP, 30, 0, "vcf 1 mono/stereo bit A")  // A0 
+SWITCH(SELVCF1BP, 29, 0, "vcf 1 mono/stereo bit B")  // B0
 
-SWITCH(SEL2TRI, 28, 0)
-SWITCH(SEL2SAW, 27, 0)
-SWITCH(SEL2SQR, 26, 1)
-SWITCH(SEL2SUB, 25, 0)
+SWITCH(SEL2TRI, 28, 0, "vco 2 triangle")
+SWITCH(SEL2SAW, 27, 0, "vco 2 saw")
+SWITCH(SEL2SQR, 26, 1, "vco 2 square")
+SWITCH(SEL2SUB, 25, 0, "vco 2 sub")
 
-SWITCH(SEL3TRI, 24, 0)
-SWITCH(SEL3SAW, 23, 0)
-SWITCH(SELMUTEVCOTUNE, 22, 0)
-SWITCH(SEL3SQR, 21, 1)
-SWITCH(SEL3SUB, 20, 0)
-SWITCH(SELFSM1SRC, 19, 0)
-SWITCH(SELVCF21A, 18, 0)
-SWITCH(SELVCF21B, 17, 0)
-SWITCH(SELVCF22A, 16, 0)
+SWITCH(SEL3TRI, 24, 0, "vco 3 triangle")
+SWITCH(SEL3SAW, 23, 0, "vco 3 saw")
+SWITCH(SELMUTEVCOTUNE, 22, 0, "VCO tune mute")
+SWITCH(SEL3SQR, 21, 1,"vco 3 square")
+SWITCH(SEL3SUB, 20, 0,"vco 3 sub")
+SWITCH(SELFSM1SRC, 19, 0, "vcf 1 crossmod source (sin3/sin4)")
+SWITCH(SELVCF21A, 18, 0, "vcf 2 filter A - bit A")
+SWITCH(SELVCF21B, 17, 0, "vcf 2 filter A - bit B")
+SWITCH(SELVCF22A, 16, 0, "vcf 2 filter B - bit A")
 
-SWITCH(SEL4SQR, 15, 0)
-SWITCH(SEL5SQR, 14, 0)
-SWITCH(SELVCF22B, 13, 0)
-SWITCH(SELVCF23A, 12, 0)
-SWITCH(SELVCF23B, 11, 0)
-SWITCH(SELVCF24A, 10, 0)
-SWITCH(SELVCF24B, 9, 0)
+SWITCH(SEL4SQR, 15, 0,"vco 4 square")
+SWITCH(SEL5SQR, 14, 0,"vco 5 square")
+SWITCH(SELVCF22B, 13, 0,"vcf 2 filter B - bit B")
+SWITCH(SELVCF23A, 12, 0,"vcf 2 filter C - bit A")
+SWITCH(SELVCF23B, 11, 0,"vcf 2 filter C - bit B")
+SWITCH(SELVCF24A, 10, 0,"vcf 2 filter D - bit A")
+SWITCH(SELVCF24B, 9, 0, "vcf 2 filter D - bit B")
 
-SWITCH(SEL6SQR, 8, 0)
+SWITCH(SEL6SQR, 8, 0, "vco 6 square")
 
-SWITCH(SELVCF21SER, 7, 0)//??
+SWITCH(SELVCF21SER, 7, 0,"vcf 2 A/B par/ser")//??
 
-SWITCH(SELMUTEDNSAW, 6, 0)
-SWITCH(SELVCF23SER, 5, 0) //??
-SWITCH(SEL7SQR, 4, 0) 
-SWITCH(SELVCF2AINV, 3, 0) 
-SWITCH(SELFSM2SRC, 1, 0)
-SWITCH(SELTUNEVCF, 0, 0)
+SWITCH(SELMUTEDNSAW, 6, 0, "digital noise saw mute")//??)
+SWITCH(SELVCF23SER, 5, 0,"vcf 2 C/D par/ser")//??
+SWITCH(SEL7SQR, 4, 0, "vco 7 square") 
+SWITCH(SELVCF2AINV, 3, 0,"vcf 2 invert") 
+SWITCH(SELFSM2SRC, 1, 0,"vcf 1 crossmod source (sin3/sin5)")
+SWITCH(SELTUNEVCF, 0, 0,"VCF -> tuner")
 
 
-SWITCH(SELPORTAMENTO, 56, 0)
-SWITCH(SELSTACCATO, 57, 0)
+SWITCH(SELPORTAMENTO, 56, 0,"Portament")
+SWITCH(SELSTACCATO, 57, 0, "Staccato")
 
 //SWITCH(SELSTASHOSC4567, 50, 0)
 //SWITCH(SELSTASHVCF2, 51, 0)
@@ -336,12 +336,12 @@ SWITCH(SELSTACCATO, 57, 0)
 //SWITCH(SELCHASEVCF2, 53, 0)
 
 // global sustain -> keep gate open
-SWITCH(SELSUSTAINL, 58, 0)
-SWITCH(SELSUSTAINR, 59, 0)
+SWITCH(SELSUSTAINL, 58, 0,"Sustain left")
+SWITCH(SELSUSTAINR, 59, 0, "Sustain right")
 
 // global una corda -> shorten adsr release
-SWITCH(SELUNACL, 60, 0)
-SWITCH(SELUNACR, 61, 0)
+SWITCH(SELUNACL, 60, 0, "Una corda left")
+SWITCH(SELUNACR, 61, 0, "Una corda right")
 
 //SWITCH(POLYMODE1, 58, 0)
 //SWITCH(POLYMODE2, 59, 0)

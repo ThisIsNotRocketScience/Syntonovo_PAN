@@ -1428,7 +1428,14 @@ void Gui::Render(bool active, float dt)
 
 char SwitchNames[][20] = {
 
-#define SWITCH(name, id, val) #name ,
+#define SWITCH(name, id, val, desc) #name ,
+#include "../interface/paramdef.h"
+#undef SWITCH
+};
+
+char SwitchDesc[][120] = {
+
+#define SWITCH(name, id, val, desc) desc ,
 #include "../interface/paramdef.h"
 #undef SWITCH
 };
@@ -1436,6 +1443,11 @@ char SwitchNames[][20] = {
 void Gui::PrintSwitchName(char* txt, int strlen, SwitchEnum idx)
 {
 	snprintf(txt, strlen, "%s", SwitchNames[idx]);
+}
+
+void Gui::PrintSwitchDesc(char* txt, int strlen, SwitchEnum idx)
+{
+	snprintf(txt, strlen, "%s", SwitchDesc[idx]);
 }
 
 
