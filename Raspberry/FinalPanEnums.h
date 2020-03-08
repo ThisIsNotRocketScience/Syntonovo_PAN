@@ -245,6 +245,11 @@ enum
 	MenuAction_3,
 	MenuAction_4,
 
+	MenuAction_5,
+	MenuAction_6,
+	MenuAction_7,
+	MenuAction_8,
+
 	MenuAction_KeyZone,
 	__MenuAction_Count
 };

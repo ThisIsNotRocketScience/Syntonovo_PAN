@@ -217,7 +217,7 @@ int32_t div64(int32_t a, int32_t b)
 
 void BuildLFOPts(float x, float y, float W, float H, ImVec2 *Pts, int cnt, int ActiveInstance)
 {
-	uint32_t Speed = gCurrentPreset.GetModParameterValue(LFO_Speed, ActiveInstance)<<11;
+	//uint32_t Speed = gCurrentPreset.GetModParameterValue(LFO_Speed, ActiveInstance)<<11;
 //	float Ps = 6.283f * (gCurrentPreset.GetModParameterValue(LFO_ResetPhase, ActiveInstance) / 65535.0f);
 
 
@@ -234,6 +234,8 @@ void BuildLFOPts(float x, float y, float W, float H, ImVec2 *Pts, int cnt, int A
 	//W = W * 2.0f / (float)cnt;
 	//H *= 1.0f / 32767.0f;
 
+	int Speed = 0xffffffff / cnt;
+	Speed*=3;
 	for (int i = 0; i < cnt; i++)
 	{
 		Pts[i].x = (W * i)/(float)cnt + x;
@@ -424,7 +426,7 @@ void ModSourceScreen::Render(bool active, float DT)
 
 			int value = mod_values[idx];
 			if (unipolarmod) value = ((uint8_t*)mod_values)[idx] / 2;
-			RenderLettersInABox(x,y, i == ActiveInstance, txt, 35, 35, used, value, unipolarmod);
+			RenderLettersInABox(x,y, i == ActiveInstance, txt, 35, 35, used, value, unipolarmod,i,MaxInstances);
 		}
 	}
 

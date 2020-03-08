@@ -33,7 +33,6 @@ bool SortList(ModulationTargetOutputEntries_t *A, ModulationTargetOutputEntries_
 
 bool modulationlistbuilt = false;
 
-
 void BuildModulationTargetList()
 {
 	if (modulationlistbuilt == true) return;
@@ -53,13 +52,11 @@ void BuildModulationTargetList()
 	;
 	
 	std::sort (ModulationTargetList.begin(), ModulationTargetList.end(), [](ModulationTargetOutputEntries_t * a, ModulationTargetOutputEntries_t * b) 
-	
-		{
-			if (a->categoryid == b->categoryid) return strcmp(a->name, b->name) < 0;
-			return a->categoryid < b->categoryid; 
-		});
+	{
+		if (a->categoryid == b->categoryid) return strcmp(a->name, b->name) < 0;
+		return a->categoryid < b->categoryid; 
+	});
 };
-
 
 int FindModulationListIndex(int c)
 {

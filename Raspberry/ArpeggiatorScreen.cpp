@@ -85,13 +85,18 @@ void ArpeggiatorScreen::DoToggle(int id)
 
 void ArpeggiatorScreen::TweakParameterValue(int param, int delta)
 {
+	delta = delta > 0 ? 1 : -1;
 	switch (param)
 	{	
-	case Arp_Octaves:break;
-	case Arp_Transpose:break;
-	case Arp_speedupper:break;
-	case Arp_speedlower :break;
-	
+	case Arp_Octaves: 
+		gCurrentPreset.keyzone[ActiveInstance].arpsettings.Octaves = (ArpeggioOctaves_t	)__min(__ArpeggioOctaves_Count, __max(0, gCurrentPreset.keyzone[ActiveInstance].arpsettings.Octaves + delta)); 		break;
+	case Arp_Transpose:
+		gCurrentPreset.keyzone[ActiveInstance].arpsettings.Transpose = __min(24, __max(-24, gCurrentPreset.keyzone[ActiveInstance].arpsettings.Transpose+ delta)); 		break;
+	case Arp_speedupper: 
+		gCurrentPreset.keyzone[ActiveInstance].arpsettings.Speed.Top = __min(32, __max(1, gCurrentPreset.keyzone[ActiveInstance].arpsettings.Speed.Top + delta)); 		break;
+	case Arp_speedlower :
+		gCurrentPreset.keyzone[ActiveInstance].arpsettings.Speed.Bottom = __min(32, __max(1, gCurrentPreset.keyzone[ActiveInstance].arpsettings.Speed.Bottom + delta)); 		break;
+
 	}
 };
 
@@ -197,7 +202,7 @@ void ArpeggiatorScreen::Render(bool active, float DT)
 		int y = 60;
 
 		int value = 0;
-		RenderLettersInABox(x, y, i == ActiveInstance, txt, 35, 35, used, value, false);
+		RenderLettersInABox(x, y, i == ActiveInstance, txt, 35, 35, used, value, false, i, MaxInstances);
 	}
 
 

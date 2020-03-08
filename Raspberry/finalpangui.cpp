@@ -18,9 +18,12 @@
 #include "ParameterModal.h"
 #include "NewModulationModal.h"
 #include "KeyZoneScreen.h"
+#include "ArpeggiatorScreen.h"
+
 
 PanPreset_t gCurrentPreset;
 PanPreset_t gRevertPreset;
+
 PanState_t gPanState;
 class ParameterModal* theParameterBindingModal;
 Gui gGui;
@@ -28,6 +31,20 @@ Gui gGui;
 extern int8_t mod_values[128];
 
 bool GotoPageOnTurn = true;
+
+
+uint32_t Gui::GetNumberColor(int idx, int total)
+{
+	uint16_t H = (idx * 0xffff) / total;
+	uint16_t S = 0xffff;
+	uint16_t V = 0xffff;
+	uint16_t r, g, b;
+	hsv2rgb(H, S, V, &r, &g, &b);
+	return IM_COL32((r >> 8), (g >> 8), (b >> 8), 255);
+
+
+}
+
 
 bool IsCenterEncoder(FinalEncoderEnum button)
 {
@@ -228,6 +245,22 @@ void FinalPan_SetupDefaultPreset()
 	gCurrentPreset.modmatrix[modsource_X].targets[0].outputid = Output_VCF1_CV;
 
 
+	for (int i = 0; i < NUM_KEYZONES; i++)
+	{
+		gCurrentPreset.key_input[i].rangelo= 0;
+		gCurrentPreset.key_input[i+4].rangelo = 0;
+		gCurrentPreset.key_input[i+8].rangelo = 0;
+
+		gCurrentPreset.key_input[i].rangehi = 127;
+		gCurrentPreset.key_input[i + 4].rangehi = 127;
+		gCurrentPreset.key_input[i + 8].rangehi = 127;
+		gCurrentPreset.key_input[i].transpose= 0;
+		gCurrentPreset.key_input[i + 4].transpose = 0;
+		gCurrentPreset.key_input[i + 8].transpose = 0;
+
+
+		gCurrentPreset.keyzone[i].type = PresetKeyzoneType_Single;
+	}
 
 
 };
@@ -236,7 +269,6 @@ int GetSideButtonID(FinalLedButtonEnum B);
 bool IsSideButton(FinalLedButtonEnum B);
 bool IsPatchButton(FinalLedButtonEnum B);
 
-
 #ifndef __min
 #define __min(a,b) ((a<b)?(a):(b))
 #endif
@@ -244,8 +276,6 @@ bool IsPatchButton(FinalLedButtonEnum B);
 #ifndef __max
 #define __max(a,b) ((a>b)?(a):(b))
 #endif
-
-
 
 FinalPan_GuiResources_t gGuiResources;
 
@@ -731,13 +761,13 @@ void sidebutton_t::SetupPosition(int id)
 {
 	y2 = ButtonHeight(id);
 	y = MButtonHeight(id);
-	x = 60;
+	x = 20;
 	lx2 = 0;
 	Align = align_left;
 	if (id >= RB1)
 	{
 		lx2 = 1024;
-		x = 1024 - 60;
+		x = 1024 - 20;
 		Align = align_right;
 	}
 }
@@ -760,8 +790,8 @@ void sidebutton_t::Render(bool active, float DT)
 			ImVec2 A = ImVec2(x + ParamMasterMargin * 2, y + ImGui::GetTextLineHeight() / 2);
 			ImVec2 B = A;
 			B.x += ParamMasterMargin * 2;
-			ImVec2 C = ImVec2(lx2 - ParamMasterMargin * 1, y2);
-			ImVec2 D = ImVec2(lx2, y2);
+			ImVec2 C = ImVec2(lx2 - ParamMasterMargin * 1, y2 + ImGui::GetTextLineHeight() / 2);
+			ImVec2 D = ImVec2(lx2, y2 + ImGui::GetTextLineHeight() / 2);
 			ImGui::GetWindowDrawList()->AddBezierCurve(A, B, C, D, Dimmed(3, gGuiResources.Normal), 3);
 		}
 		else
@@ -769,8 +799,8 @@ void sidebutton_t::Render(bool active, float DT)
 			ImVec2 A = ImVec2(x - ParamMasterMargin * 2, y + ImGui::GetTextLineHeight() / 2);
 			ImVec2 B = A;
 			B.x -= ParamMasterMargin * 2;
-			ImVec2 C = ImVec2(lx2 + ParamMasterMargin * 1, y2);
-			ImVec2 D = ImVec2(lx2, y2);
+			ImVec2 C = ImVec2(lx2 + ParamMasterMargin * 1, y2 + ImGui::GetTextLineHeight() / 2);
+			ImVec2 D = ImVec2(lx2, y2 + ImGui::GetTextLineHeight() / 2);
 			ImGui::GetWindowDrawList()->AddBezierCurve(A, B, C, D, Dimmed(3, gGuiResources.Normal), 3);
 			//ImGui::GetWindowDrawList()->AddLine(ImVec2(x- +ParamMasterMargin * 2, y + ImGui::GetTextLineHeight() / 2), ImVec2(lx2, y2), gGuiResources.Normal, 3);
 
@@ -841,12 +871,12 @@ void sidebutton_t::Render(bool active, float DT)
 			drawline = false;
 			if (Align == align_right)
 			{
-				ImGui::SetCursorPos(ImVec2(x - 15, y));
+				ImGui::SetCursorPos(ImVec2(x - 15, y-5));
 				xoff = -15 - ParamMasterMargin;
 			}
 			else
 			{
-				ImGui::SetCursorPos(ImVec2(x - 15, y));
+				ImGui::SetCursorPos(ImVec2(x - 15, y-5));
 				xoff = 15 + ParamMasterMargin;
 			}
 			ImTextureID icim;
@@ -995,6 +1025,20 @@ void FinalPan_LoadResources()
 	gGuiResources.GhostBG = IM_COL32(0, 0, 0, 200);
 	//res.BGColor = IM_COL32(0, 0, 0, 255);
 	gGuiResources.FillColor = IM_COL32(0, 137, 127, 255);
+
+
+	gGuiResources.WhiteKey = IM_COL32(200,200,200, 255);
+	gGuiResources.BlackKey = IM_COL32(10,10,10, 255);
+	gGuiResources.WhiteKeyActive = IM_COL32(255, 255, 240, 255);
+	gGuiResources.BlackKeyActive= IM_COL32(30,30,30, 255);
+
+	gGuiResources.KeyRangeColor[0] = IM_COL32(255,255,0,255);
+	gGuiResources.KeyRangeColor[1] = IM_COL32(255, 155, 0, 255);
+	gGuiResources.KeyRangeColor[2] = IM_COL32(255, 0, 0, 255);
+	gGuiResources.KeyRangeColor[3] = IM_COL32(0, 120, 255, 255);
+
+
+
 	gGuiResources.OnOff[0] = Raspberry_LoadTexture("PAN__OFF.png");
 	gGuiResources.OnOff[1] = Raspberry_LoadTexture("PAN__ON.png");
 	gGuiResources.OnOff[2] = Raspberry_LoadTexture("UI_ONOFF_OFF_HI.png");
@@ -1336,6 +1380,12 @@ void Gui::GotoPageForMod(ModSource_t mod, int instance)
 			return;
 		}
 	}
+}
+
+void Gui::GotoPageForArpeggiator(int arp)
+{
+	GotoPage(SCREEN_ARP);
+	((ArpeggiatorScreen*)Screens[SCREEN_ARP])->SetActiveInstance(arp);
 }
 
 void Gui::GotoPageForKeyZone(int zone)

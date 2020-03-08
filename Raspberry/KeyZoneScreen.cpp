@@ -91,7 +91,7 @@ KeyZoneSelectorScreen::KeyZoneSelectorScreen(): _screensetup_t(SCREEN_KEYZONESEL
 
 	int cur = 0;
 
-	EnableButton(RB2, "Close", MenuEntry_Action, MenuAction_CloseParentModal);
+	EnableButton(RB1, "Close", MenuEntry_Action, MenuAction_CloseParentModal);
 	//EnableButton(RB3, "Cancel", MenuEntry_Action, MenuAction_Revert);
 	EnableButton(RB3, "Go to zone settings", MenuEntry_Action, MenuAction_1);
 	EnableButton(LB3, "1", MenuEntry_FeatureToggle, 0);
@@ -99,9 +99,9 @@ KeyZoneSelectorScreen::KeyZoneSelectorScreen(): _screensetup_t(SCREEN_KEYZONESEL
 	EnableButton(LB5, "3", MenuEntry_FeatureToggle, 2);
 	EnableButton(LB6, "4", MenuEntry_FeatureToggle, 3);
 
-	EnableButton(RB5, "Para 1", MenuEntry_FeatureToggle, 4);
-	EnableButton(RB6, "Para 2", MenuEntry_FeatureToggle, 5);
-	EnableButton(RB7, "Para 3", MenuEntry_FeatureToggle, 6);
+	EnableButton(RB5, "Paraphonic index 1", MenuEntry_FeatureToggle, 4);
+	EnableButton(RB6, "Paraphonic index 2", MenuEntry_FeatureToggle, 5);
+	EnableButton(RB7, "Paraphonic index 3", MenuEntry_FeatureToggle, 6);
 
 
 	for (int i = 0; i < 11; i++)
@@ -187,17 +187,13 @@ void KeyZoneSelectorScreen::SetTarget(int screen, int instance)
 KeyZoneSelectorScreen KeyZoneModal;
 
 
-
-uint16_t KeyZoneScreen::GetParameterValue(int param, int encoderset)
+unsigned short ParameterValueRange(int lower, int upper, int value)
 {
-	switch (param)
-	{
 
-	}
-	return 0;
+	int R = (value - lower) * 0xffff;
+	R /= upper;
+	return R;
 };
-
-
 
 enum
 {
@@ -209,6 +205,21 @@ enum
 	Zone_Upper,
 	Zone_Transpose
 };
+
+
+uint16_t KeyZoneScreen::GetParameterValue(int param, int encoderset)
+{
+	switch (param)
+	{
+	case Zone_Lower: return ParameterValueRange(0, 127, gCurrentPreset.key_input[ActiveInstance].rangelo);
+	case Zone_Upper:return ParameterValueRange(0, 127, gCurrentPreset.key_input[ActiveInstance].rangelo);
+	case Zone_Transpose:return ParameterValueRange(-24, 24, gCurrentPreset.key_input[ActiveInstance].rangelo);
+	}
+	return 0;
+};
+
+
+
 
 bool KeyZoneScreen::GetToggle(int id)
 {
@@ -248,6 +259,40 @@ void KeyZoneScreen::DoToggle(int id)
 
 void KeyZoneScreen::TweakParameterValue(int param, int delta)
 {
+	switch (param)
+	{
+	case Zone_Lower: 
+		gCurrentPreset.key_input[ActiveInstance].rangelo= __min(127, __max(0, (gCurrentPreset.key_input[ActiveInstance].rangelo  + (delta > 0 ? 1 : -1))));
+		gCurrentPreset.key_input[ActiveInstance + 4].rangelo = gCurrentPreset.key_input[ActiveInstance].rangelo;
+		gCurrentPreset.key_input[ActiveInstance + 8].rangelo = gCurrentPreset.key_input[ActiveInstance].rangelo;
+
+		if (gCurrentPreset.key_input[ActiveInstance].rangelo > gCurrentPreset.key_input[ActiveInstance].rangehi)
+		{
+			gCurrentPreset.key_input[ActiveInstance].rangehi = gCurrentPreset.key_input[ActiveInstance].rangelo ;
+			gCurrentPreset.key_input[ActiveInstance + 4].rangehi = gCurrentPreset.key_input[ActiveInstance].rangehi;
+			gCurrentPreset.key_input[ActiveInstance + 8].rangehi = gCurrentPreset.key_input[ActiveInstance].rangehi;
+
+		}
+		break;
+	case Zone_Upper:
+		gCurrentPreset.key_input[ActiveInstance].rangehi = __min(127, __max(0, (gCurrentPreset.key_input[ActiveInstance].rangehi + (delta > 0 ? 1 : -1))));
+		gCurrentPreset.key_input[ActiveInstance + 4].rangehi = gCurrentPreset.key_input[ActiveInstance].rangehi;
+		gCurrentPreset.key_input[ActiveInstance + 8].rangehi = gCurrentPreset.key_input[ActiveInstance].rangehi;
+
+		if (gCurrentPreset.key_input[ActiveInstance].rangelo > gCurrentPreset.key_input[ActiveInstance].rangehi)
+		{
+			gCurrentPreset.key_input[ActiveInstance].rangelo = gCurrentPreset.key_input[ActiveInstance].rangehi;
+			gCurrentPreset.key_input[ActiveInstance + 4].rangelo = gCurrentPreset.key_input[ActiveInstance].rangelo;
+			gCurrentPreset.key_input[ActiveInstance + 8].rangelo = gCurrentPreset.key_input[ActiveInstance].rangelo;
+		}
+
+		break;
+	case Zone_Transpose:
+		gCurrentPreset.key_input[ActiveInstance].transpose = __min(127, __max(0, (gCurrentPreset.key_input[ActiveInstance].transpose + (delta > 0 ? 1 : -1))));
+		gCurrentPreset.key_input[ActiveInstance + 4].transpose = gCurrentPreset.key_input[ActiveInstance].transpose;
+		gCurrentPreset.key_input[ActiveInstance + 8].transpose= gCurrentPreset.key_input[ActiveInstance].transpose;
+		break;
+	}
 };
 
 void KeyZoneScreen::SetActiveInstance(int id)
@@ -276,18 +321,34 @@ KeyZoneScreen::KeyZoneScreen() : _screensetup_t(SCREEN_KEYZONES)
 	MaxInstances = __KeyZone_Count;
 
 	int cur = 0;
-	EnableButton(LB1, "Previous", MenuEntry_Action, MenuAction_Prev);
-	EnableButton(RB1, "Next", MenuEntry_Action, MenuAction_Next);
-
-	EnableButton(LB3, "Single Mode", MenuEntry_FeatureToggle, Zone_Single);
-	EnableButton(LB4, "Paraphonic Mode", MenuEntry_FeatureToggle, Zone_Para);
-	EnableButton(LB5, "Arpeggiator Mode", MenuEntry_FeatureToggle, Zone_Arp);
+	//EnableButton(LB1, "Previous", MenuEntry_Action, MenuAction_Prev);
+	//EnableButton(RB1, "Next", MenuEntry_Action, MenuAction_Next);
 
 	
+	EnableButton(LB1, "1", MenuEntry_Action, MenuAction_5);
+	EnableButton(LB3, "2", MenuEntry_Action, MenuAction_6);
+	EnableButton(LB5, "3", MenuEntry_Action, MenuAction_7);
+	EnableButton(LB7, "4", MenuEntry_Action, MenuAction_8);
 
-	EnableAvailableEncoder("Lower", MenuEntry_Value, Zone_Lower, -1);
-	EnableAvailableEncoder("Upper", MenuEntry_Value, Zone_Upper, -1);
-	EnableAvailableEncoder("Transpose", MenuEntry_Value, Zone_Transpose, -1);
+	EnableButton(RB3, "Single Mode", MenuEntry_FeatureToggle, Zone_Single);
+	EnableButton(RB4, "Paraphonic Mode", MenuEntry_FeatureToggle, Zone_Para);
+	EnableButton(RB5, "Arpeggiator Mode", MenuEntry_FeatureToggle, Zone_Arp);
+
+	
+	
+	int idx = EnableAvailableEncoder("Lower", MenuEntry_Value, Zone_Lower, -1);
+	idx = SkipAvailableEncoder(idx);
+	idx = SkipAvailableEncoder(idx);
+	idx = SkipAvailableEncoder(idx);
+	idx = SkipAvailableEncoder(idx);
+	idx = SkipAvailableEncoder(idx);
+	idx = EnableAvailableEncoder("Transpose", MenuEntry_Value, Zone_Transpose, idx);
+	idx = SkipAvailableEncoder(idx);
+	idx = SkipAvailableEncoder(idx);
+	idx = SkipAvailableEncoder(idx);
+	idx = SkipAvailableEncoder(idx);
+	idx = SkipAvailableEncoder(idx);
+	idx = EnableAvailableEncoder("Upper", MenuEntry_Value, Zone_Upper, idx);
 
 
 
@@ -316,8 +377,12 @@ void KeyZoneScreen::Action(int a)
 {
 	switch (a)
 	{
+	case MenuAction_5: SetActiveInstance(0); break;
+	case MenuAction_6: SetActiveInstance(1); break;
+	case MenuAction_7: SetActiveInstance(2); break;
+	case MenuAction_8: SetActiveInstance(3); break;
 	case MenuAction_1:
-		gGui.GotoPageForKeyZone(ActiveInstance);
+		gGui.GotoPageForArpeggiator(ActiveInstance);
 		break;
 	case MenuAction_CloseModal: Modal = NULL; break;
 	case MenuAction_Next:
@@ -328,6 +393,107 @@ void KeyZoneScreen::Action(int a)
 	{
 		SetActiveInstance((ActiveInstance + MaxInstances - 1) % MaxInstances);
 	} break;
+	}
+}
+
+#define KEYWIDTH 10
+#define KEYHEIGHT 50
+#define BLACKKEYHEIGHT 30
+#define RANGEHEIGHT 15
+
+#define OCTAVEWIDTH KEYWIDTH * 7
+/*
+
+| | ||| | |
+| |_|||_| |
+|  |   |  |
+-----------
+
+*/
+void RenderOctave(int x, int y)
+{
+	for (int i = 0; i < 7; i++)
+	{
+		ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(x + i * KEYWIDTH, y), ImVec2(x + i * KEYWIDTH + (KEYWIDTH-1), y + KEYHEIGHT), gGuiResources.WhiteKey);
+	}
+	int black[6] = { 1,1,0,1,1,1 };
+	for (int i = 0; i < 6; i++)
+	{
+		if (black[i])
+		{
+			ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(x + i * KEYWIDTH + KEYWIDTH / 2, y), ImVec2(x + i * KEYWIDTH + (KEYWIDTH - 1) + KEYWIDTH / 2, y + BLACKKEYHEIGHT + 2), gGuiResources.BGColor);
+			ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(x + i * KEYWIDTH + KEYWIDTH / 2 + 1, y), ImVec2(x + i * KEYWIDTH + (KEYWIDTH - 1) + KEYWIDTH / 2 - 1, y + BLACKKEYHEIGHT ), gGuiResources.BlackKey);
+		}
+	}
+}
+
+void RenderLastOctave(int x, int y)
+{
+	for (int i = 0; i < 5; i++)
+	{
+		ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(x + i * KEYWIDTH, y), ImVec2(x + i * KEYWIDTH + (KEYWIDTH - 1), y + KEYHEIGHT), gGuiResources.WhiteKey);
+	}
+	int black[6] = { 1,1,0,1,1,1 };
+	for (int i = 0; i < 4; i++)
+	{
+		if (black[i])
+		{
+			ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(x + i * KEYWIDTH + KEYWIDTH / 2, y), ImVec2(x + i * KEYWIDTH + (KEYWIDTH - 1) + KEYWIDTH / 2, y + BLACKKEYHEIGHT + 2), gGuiResources.BGColor);
+			ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(x + i * KEYWIDTH + KEYWIDTH / 2 + 1, y), ImVec2(x + i * KEYWIDTH + (KEYWIDTH - 1) + KEYWIDTH / 2 - 1, y + BLACKKEYHEIGHT), gGuiResources.BlackKey);
+		}
+	}
+}
+
+int KeyX(int inp)
+{
+	int Res =  512 - OCTAVEWIDTH * 5;
+
+	int offs[12] =
+	{
+		KEYWIDTH * 0,
+		KEYWIDTH * 0 + KEYWIDTH / 2,
+		KEYWIDTH * 1,
+		KEYWIDTH * 1 + KEYWIDTH / 2,
+		KEYWIDTH * 2,
+		KEYWIDTH * 3,
+		KEYWIDTH * 3 + KEYWIDTH / 2,
+		KEYWIDTH * 4,
+		KEYWIDTH * 4 + KEYWIDTH / 2,
+		KEYWIDTH * 5,
+		KEYWIDTH * 5 + KEYWIDTH / 2,
+		KEYWIDTH * 6
+	};
+
+		
+		int oct = inp / 12;
+	Res += OCTAVEWIDTH * oct;
+	Res += offs[inp - oct * 12];
+	return Res;
+}
+
+void DrawKeyRange(int Lower, int Upper, int Transpose, int col, int y, bool active, int idx)
+{
+	int lx = KeyX(Lower);
+	int ux = KeyX(Upper);
+
+	int lxt = KeyX(Lower + Transpose);
+	int uxt = KeyX(Upper + Transpose);
+
+	ImGui::SetCursorPos(ImVec2(KeyX(0) - 20, y));
+	char txt[15];
+	sprintf(txt, "zone %d", idx);
+	ImGui::Text(txt);
+
+
+	if (active)
+	{
+		
+		ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(lx, y), ImVec2(ux + KEYWIDTH, y+ RANGEHEIGHT - 1), col);
+	}
+	else
+	{
+		ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(lx, y), ImVec2(ux + KEYWIDTH, y + RANGEHEIGHT - 1), Dimmed(3, col));
+
 	}
 }
 
@@ -351,8 +517,27 @@ void KeyZoneScreen::Render(bool active, float DT)
 		int y = 60;
 
 		int value = 0;
-		RenderLettersInABox(x, y, i == ActiveInstance, txt, 35, 35, used, value, false);
+		RenderLettersInABox(x, y, i == ActiveInstance, txt, 35, 35, used, value, false,i, MaxInstances);
 	}
+
+
+	for (int i = 0; i < 4; i++)
+	{
+		int Lower = gCurrentPreset.key_input[i].rangelo;
+		int Upper = gCurrentPreset.key_input[i].rangehi;
+		int Transpose = gCurrentPreset.key_input[i].transpose;
+
+		bool active = i == ActiveInstance;
+		DrawKeyRange(Lower, Upper, Transpose, gGui.GetNumberColor(i, 4) , 400 -((RANGEHEIGHT + ParamMasterMargin) * NUM_KEYZONES) - 4 + i * (RANGEHEIGHT+ParamMasterMargin), active, i+1);
+	}
+
+	//ImGui::GetWindowDrawList()->AddText()
+
+	for (int i = 0; i < 10; i++)
+	{
+		RenderOctave(KeyX(i*12), 400);
+	}
+	RenderLastOctave(KeyX(10 * 12), 400);
 
 	RenderModalBox(active, DT);
 	//auto row = gCurrentPreset.GetModSourceRow(modType, ActiveInstance);

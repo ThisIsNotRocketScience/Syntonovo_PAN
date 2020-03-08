@@ -66,7 +66,7 @@ extern void cmd_preset_save(int presetid);
 extern int ButtonHeight(int idx);
 extern int MButtonHeight(int idx);
 extern int GetEncoderX(int id);
-extern void RenderLettersInABox(int x, int y, bool active, const char *text, int w, int h, bool notghosted = true, int value = 0, bool unipolar = false);
+extern void RenderLettersInABox(int x, int y, bool active, const char *text, int w, int h, bool notghosted = true, int value = 0, bool unipolar = false, int idx = 0, int total = 1);
 ImU32 Dimmed(int dim, ImU32 col);
 
 extern uint16_t lerp(uint16_t i, uint16_t f, uint16_t t);
@@ -123,6 +123,15 @@ typedef struct FinalPan_GuiResources_t
 	ImU32 BGColor;
 	ImU32 ModalBGColor;
 	ImU32 FillColor;
+	
+	ImU32 WhiteKey;
+	ImU32 BlackKey;
+	ImU32 WhiteKeyActive;
+	ImU32 BlackKeyActive;
+
+	ImU32 KeyRangeColor[4];
+
+
 	int PageTime;
 	int encoderbarmargin;
 	int encoderheight;
@@ -445,8 +454,11 @@ class Gui
 public:
 	Gui();
 	ModSourceScreen *AddModSourceScreen(Screens_t screen, ModSource_t mod, const char *basetitle);
+	uint32_t GetNumberColor(int idx, int total);
+
 	void GotoPageForMod(ModSource_t mod, int instance);
 	void GotoPageForKeyZone(int zone);
+	void GotoPageForArpeggiator(int arp);
 	void Init();
 	void SketchLeftPress();
 	void SketchRightPress();

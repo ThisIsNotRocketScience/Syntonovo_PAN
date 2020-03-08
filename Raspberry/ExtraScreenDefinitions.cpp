@@ -134,7 +134,7 @@ void RenderModulationAmountH(int x, int y, bool active, int w, int h, int value,
 }
 
 
-void RenderModulationAmountV(int x, int y, bool active, int w, int h, int value, bool unipolardisplay, bool notghosted)
+void RenderModulationAmountV(int x, int y, bool active, int w, int h, int value, bool unipolardisplay, bool notghosted, ImU32 Color)
 {
 	if (unipolardisplay && value < 0) value = 0;
 	float H1, H2;
@@ -157,16 +157,16 @@ void RenderModulationAmountV(int x, int y, bool active, int w, int h, int value,
 	ImVec2 tl(x, y);
 	ImVec2 br(x + w, y + h);
 
-	ImGui::GetWindowDrawList()->AddRectFilled(tlv, brv, active ? gGuiResources.Highlight : Dimmed(notghosted ? 2 : 3, gGuiResources.Normal), 0, 0);
-	ImGui::GetWindowDrawList()->AddRect(tl, br, active ? gGuiResources.Highlight : Dimmed(notghosted ? 1 : 3, gGuiResources.Normal), 0, 0, 2);
+	ImGui::GetWindowDrawList()->AddRectFilled(tlv, brv, active ? Color : Dimmed(notghosted ? 2 : 3, Color), 0, 0);
+	ImGui::GetWindowDrawList()->AddRect(tl, br, active ? Color : Dimmed(notghosted ? 1 : 3, Color), 0, 0, 2);
 }
 
 
 
-void RenderLettersInABox(int x, int y, bool active, const char* text, int w, int h, bool notghosted, int value, bool unipolardisplay)
+void RenderLettersInABox(int x, int y, bool active, const char* text, int w, int h, bool notghosted, int value, bool unipolardisplay, int idx, int total)
 {
 
-	RenderModulationAmountV(x, y, active, w, h, value, unipolardisplay, notghosted);
+	RenderModulationAmountV(x, y, active, w, h, value, unipolardisplay, notghosted, gGui.GetNumberColor(idx, total));
 	auto s = ImGui::CalcTextSize(text);
 
 	ImGui::SetCursorPos(ImVec2(x + LetterBoxW / 2 - s.x / 2, y + LetterBoxH / 2 - s.y / 2));
@@ -461,6 +461,6 @@ void EffectList::Render(bool active, float dt)
 
 		int x = (i - 4) * 40 + 512;
 		int y = MButtonHeight(2);
-		RenderLettersInABox(x, y, i == DecodeCurrentEffect(), txt, 35, 35, true);
+		RenderLettersInABox(x, y, i == DecodeCurrentEffect(), txt, 35, 35, true, i, 8);
 	}
 }
