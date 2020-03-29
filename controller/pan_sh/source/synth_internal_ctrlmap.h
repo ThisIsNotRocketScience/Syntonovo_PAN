@@ -24,7 +24,7 @@
 #define OUTPUT_VIRT(NAME, PGROUP, PID, CTRLTYPE, CTRLID, MODE, INITVALUE, dummy1, dummy2) \
 	MAPPING_##CTRLTYPE(CTRLID, NAME, 0)
 
-#define SWITCH(NAME, ID, DEFAULT) \
+#define SWITCH(NAME, ID, DEFAULT, DESC) \
 	extern const int NAME;
 
 #include "../../interface/paramdef.h"
