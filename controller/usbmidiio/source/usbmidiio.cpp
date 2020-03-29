@@ -795,15 +795,15 @@ uint32_t cur_encoder_time = 0;
 
 int speedup(int encid, int dir)
 {
-	uint32_t diff = (cur_encoder_time - encoder_time[encid]) >> 10;
+	uint32_t diff = (cur_encoder_time - encoder_time[encid]) >> 11;
 
 	encoder_time[encid] = cur_encoder_time;
 
 	if (diff < 1) diff = 1;
-	int mul = (1<<20) / diff;
+	int mul = (1<<19) / diff;
 	if (mul < 150) mul = 1;
 
-	mul = (mul * mul) >> 13;
+	mul = (mul * mul) >> 11;
 	if (mul < 1) mul = 1;
 
 	int value = dir * mul;
