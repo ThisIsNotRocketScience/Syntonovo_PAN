@@ -1244,6 +1244,8 @@ void KeyScan()
 	//portEND_SWITCHING_ISR(higherPriorityTaskWoken);
 }
 
+void midi_process();
+
 void KeyboardTask(void* pvParameters)
 {
 	dsp_reset();
@@ -1268,6 +1270,7 @@ void KeyboardTask(void* pvParameters)
         if (xSemaphoreTake(xKeyTimerSemaphore, (TickType_t)10) == pdTRUE) {
         	KeyScan();
             ScanButtonsAndEncoders();
+            midi_process();
         }
 		//vTaskDelay(1);
 	}

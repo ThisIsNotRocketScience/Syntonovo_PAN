@@ -171,7 +171,11 @@ void FLEXCOMM7_IRQHandler(void)
 
 void control_write(uint8_t* data, int count)
 {
+	uint32_t prim = __get_PRIMASK();
+
+	if (prim) __enable_irq();
 	while (fifo_tx_numbytes() >= RING_SIZE - count) {}
+	if (prim) __disable_irq();
 
 	for (int i = 0; i < count; i++) {
 		fifo_tx_queue(data[i]);
