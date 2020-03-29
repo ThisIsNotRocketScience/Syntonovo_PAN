@@ -141,7 +141,7 @@ void sync_in_read_complete(int status, void* stateptr)
 	}
 
 	if (status != 0) {
-		//printf("invalid receive\n");
+		printf("invalid receive\n");
 		sync_reset(state);
 		state->uart->rx.waitfor(6);
 	    LEAVE_CRITICAL_SECTION();
@@ -249,7 +249,7 @@ void sync_out_write_begin(sync_state_t* state, int cmd, uint8_t* data, int expec
   int size = 6;
   int write_count = state->uart->tx.write(sync_write_buf, size);
   if (write_count < size) {
-    //printf("write failed\n");
+	  printf("write failed\n");
 	  sync_reset(state);
   }
 }
@@ -428,13 +428,13 @@ void sync_out_write_ack(sync_state_t* state, uint8_t checksum)
 void sync_out_ack_received(sync_state_t* state, uint8_t checksum)
 {
 	if (!state->ack_receive_pending) {
-		//printf("got ack, not expected\n");
+		printf("got ack, not expected\n");
 		sync_reset(state);
 		return;
 	}
 
 	if (state->ack_receive_value != checksum) {
-		//printf("got ack, invalid checksum %x expected %x\n", checksum, state->ack_receive_value);
+		printf("got ack, invalid checksum %x expected %x\n", checksum, state->ack_receive_value);
 		sync_reset(state);
 		return;
 	}

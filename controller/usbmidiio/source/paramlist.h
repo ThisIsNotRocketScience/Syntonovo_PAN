@@ -15,7 +15,7 @@ enum output_t {
 
 
 enum switch_t {
-#define SWITCH(name,id,DEFAULT) \
+#define SWITCH(name,id,DEFAULT,desc) \
 	switch_##name = id,
 
 #include "../../../interface/paramdef.h"
