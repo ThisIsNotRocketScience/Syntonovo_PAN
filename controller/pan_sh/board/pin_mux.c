@@ -95,6 +95,8 @@ BOARD_InitPins:
   - {pin_num: '28', peripheral: PINT, signal: 'PINT, 0', pin_signal: PIO0_31/FC0_CTS_SDA_SSEL0/SD_D(2)/CTIMER0_MAT1/SCT0_OUT3/TRACEDATA(0)/ADC0_5, identifier: ''}
   - {pin_num: '81', peripheral: FLEXCOMM7, signal: RXD_SDA_MOSI_DATA, pin_signal: PIO1_29/FC7_RXD_SDA_MOSI_DATA/SD_D(6)/SCT0_GPI6/USB1_PORTPWRN/USB1_FRAME/EMC_D(13)}
   - {pin_num: '86', peripheral: FLEXCOMM7, signal: TXD_SCL_MISO_WS, pin_signal: PIO1_30/FC7_TXD_SCL_MISO_WS/SD_D(7)/SCT0_GPI7/USB1_OVERCURRENTN/USB1_UP_LED/EMC_D(14)}
+  - {pin_num: '26', peripheral: GPIO, signal: 'PIO0, 15', pin_signal: PIO0_15/FC6_CTS_SDA_SSEL0/UTICK_CAP2/CTIMER4_CAP0/SCT0_OUT2/EMC_WEN/ENET_TX_EN/ADC0_3}
+  - {pin_num: '27', peripheral: CTIMER1, signal: 'CAPTURE, 0', pin_signal: PIO0_16/FC4_TXD_SCL_MISO/CLKOUT/CTIMER1_CAP0/EMC_CSN(0)/ENET_TXD0/ADC0_4}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
  */
 /* clang-format on */
@@ -297,6 +299,30 @@ void BOARD_InitPins(void)
                          /* Select Analog/Digital mode.
                           * : Digital mode. */
                          | IOCON_PIO_DIGIMODE(PIO013_DIGIMODE_DIGITAL));
+
+    IOCON->PIO[0][15] = ((IOCON->PIO[0][15] &
+                          /* Mask bits to zero which are setting */
+                          (~(IOCON_PIO_FUNC_MASK | IOCON_PIO_DIGIMODE_MASK)))
+
+                         /* Selects pin function.
+                          * : PORT015 (pin 26) is configured as PIO0_15. */
+                         | IOCON_PIO_FUNC(PIO015_FUNC_ALT0)
+
+                         /* Select Analog/Digital mode.
+                          * : Digital mode. */
+                         | IOCON_PIO_DIGIMODE(PIO015_DIGIMODE_DIGITAL));
+
+    IOCON->PIO[0][16] = ((IOCON->PIO[0][16] &
+                          /* Mask bits to zero which are setting */
+                          (~(IOCON_PIO_FUNC_MASK | IOCON_PIO_DIGIMODE_MASK)))
+
+                         /* Selects pin function.
+                          * : PORT016 (pin 27) is configured as CTIMER1_CAP0. */
+                         | IOCON_PIO_FUNC(PIO016_FUNC_ALT3)
+
+                         /* Select Analog/Digital mode.
+                          * : Digital mode. */
+                         | IOCON_PIO_DIGIMODE(PIO016_DIGIMODE_DIGITAL));
 
     IOCON->PIO[0][18] = ((IOCON->PIO[0][18] &
                           /* Mask bits to zero which are setting */

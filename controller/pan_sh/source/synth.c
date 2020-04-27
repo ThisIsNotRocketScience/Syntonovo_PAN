@@ -27,6 +27,8 @@ void ports_value(int portid, uint16_t value);
 #include "autotune.h"
 #include "notestack.h"
 
+void timer1_init();
+
 __attribute__( ( section(".data") ) )
 void virt_gate(int gate);
 
@@ -455,14 +457,11 @@ volatile int sctimer_counter = 0;
 __attribute__( ( section(".data") ) )
 void SCT0_IRQHandler(void)
 {
-	__disable_irq();
 	sctimer_state = SCT0->STATE;
 	sctimer_counter++;
 
     /* Clear event interrupt flag */
     SCT0->EVFLAG = SCT0->EVFLAG;
-
-	__enable_irq();
 
     /* Add for ARM errata 838869, affects Cortex-M4, Cortex-M4F Store immediate overlapping
       exception return operation might vector to incorrect interrupt */
@@ -767,10 +766,28 @@ void control_cb(int param, int subparam, uint16_t value)
 
 		if (subparam == 0xfd) {
 			if ((value & 0xFF00) == 0x200) {
-				shiftctrl_set(value & 0x7f);
+				if ((value&0x7f) == SELEF1)
+					shiftctrl_clear(SELEF0);
+				else if ((value&0x7f) == SELEF2)
+					shiftctrl_clear(SELEF1);
+				else if ((value&0x7f) == SELEF3)
+					shiftctrl_clear(SELEF2);
+				else if ((value&0x7f) == SELEF0)
+					{}
+				else
+					shiftctrl_set(value & 0x7f);
 			}
 			else if ((value & 0xFF00) == 0x100) {
-				shiftctrl_clear(value & 0x7f);
+				if ((value&0x7f) == SELEF1)
+					shiftctrl_set(SELEF0);
+				else if ((value&0x7f) == SELEF2)
+					shiftctrl_set(SELEF1);
+				else if ((value&0x7f) == SELEF3)
+					shiftctrl_set(SELEF2);
+				else if ((value&0x7f) == SELEF0)
+					{}
+				else
+					shiftctrl_clear(value & 0x7f);
 			}
 
 			/*
@@ -1933,9 +1950,11 @@ void update_gateled()
 {
 	if (synth_param[GATE1].last | synth_param[GATE2].last | synth_param[GATE3].last | synth_param[GATE4].last) {
 		GPIO->B[BOARD_INITPINS_LED_PORT][BOARD_INITPINS_LED_PIN] = 0;
+		GPIO->B[BOARD_INITPINS_GATE_PORT][BOARD_INITPINS_GATE_PIN] = 0;
 	}
 	else {
 		GPIO->B[BOARD_INITPINS_LED_PORT][BOARD_INITPINS_LED_PIN] = 1;
+		GPIO->B[BOARD_INITPINS_GATE_PORT][BOARD_INITPINS_GATE_PIN] = 1;
 	}
 }
 
@@ -2149,6 +2168,7 @@ void synth_init()
 	//lfo_set_speed(VCF2_H_CV, synth_param[VCF2_H_CV].lfo_speed);
 
     sctimer_init();
+    timer1_init();
 
     autotune_init();
     pad_init();
@@ -2162,6 +2182,57 @@ void sctimer_init()
 
     // must be lower than autotune priority or overflow checking will break!
     NVIC_SetPriority(SCTIMER_1_IRQN, 1);
+}
+
+uint32_t timer1_value()
+{
+	return CTIMER1->TC;
+}
+
+void timer1_init()
+{
+    CLOCK_EnableClock(kCLOCK_Ct32b1);
+	RESET_PeripheralReset(kCT32B1_RST_SHIFT_RSTn);
+
+	CTIMER1->TCR = CTIMER_TCR_CRST(1);
+	CTIMER1->MR[0] = 0xFFFFFFFF;
+	CTIMER1->PR = 0;
+	CTIMER1->MCR = 0;
+	CTIMER1->TCR = 0;
+	CTIMER1->CCR = CTIMER_CCR_CAP0FE(1) | CTIMER_CCR_CAP0I(1);
+	CTIMER1->EMR = 0;
+	CTIMER1->CTCR = 0;
+	CTIMER1->PWMC = 0;
+	CTIMER1->TCR = CTIMER_TCR_CEN(1);
+    NVIC_SetPriority(CTIMER1_IRQn, 0);
+}
+
+void timer1_enable_irq()
+{
+	CTIMER1->IR = CTIMER_IR_CR0INT_MASK;
+	NVIC_EnableIRQ(CTIMER1_IRQn);
+}
+
+void timer1_disable_irq()
+{
+	NVIC_DisableIRQ(CTIMER1_IRQn);
+}
+
+void autotune_tick(uint32_t timer_value);
+
+//__attribute__( ( section(".data") ) )
+void CTIMER1_IRQHandler(void)
+{
+	uint32_t tick_count = CTIMER1->CR[0];
+	autotune_tick(tick_count);
+
+	CTIMER1->IR = CTIMER_IR_CR0INT_MASK;
+
+	/* Add for ARM errata 838869, affects Cortex-M4, Cortex-M4F Store immediate overlapping
+      exception return operation might vector to incorrect interrupt */
+#if defined __CORTEX_M && (__CORTEX_M == 4U)
+    __DSB();
+#endif
 }
 
 const int negate[12] = { 1, 0, 0,  0, 0, 0,  1, 0, 0,  1, 0, 0 };
@@ -2430,6 +2501,14 @@ void synth_run()
 	    process_inputs();
 
 		ports_refresh();
+
+		//if (shiftctrl_flag_state(SELEF3)) {
+		//	shiftctrl_clear(SELEF3);
+		//}
+
+		shiftctrl_clear(SELVCF2MS1);
+		shiftctrl_set(SELVCF2MS2);
+
 		shiftctrl_update();
 	}
 }

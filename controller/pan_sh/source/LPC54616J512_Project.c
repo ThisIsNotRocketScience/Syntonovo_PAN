@@ -49,6 +49,7 @@
 #include "shiftctrl.h"
 #include "control.h"
 #include "synth.h"
+#include "fsl_i2c.h"
 /* TODO: insert other definitions and declarations here. */
 
 void codecsetup_init()
@@ -110,6 +111,34 @@ void portssetup_init()
 #endif
 }
 
+extern const uint8_t hex_data[4096];
+
+void i2c_write_fv1_eeprom()
+{
+	printf("Writing to EEPROM...\n");
+	for (int i = 0; i < sizeof(hex_data); i += 16) {
+		i2c_master_transfer_t xfer;
+		xfer.flags = 0;
+		xfer.slaveAddress = 0b1010000;
+		xfer.direction = kI2C_Write;
+		xfer.subaddress = i;
+		xfer.subaddressSize = 2;
+		xfer.data = &hex_data[i];
+		xfer.dataSize = 16;
+
+		volatile status_t r = I2C_MasterTransferBlocking(I2C_1_PERIPHERAL, &xfer);
+		r = r;
+		if (r != kStatus_Success) {
+			printf("fail %d at %x\n", r, i);
+			return;
+		}
+
+		for (int k = 0; k < 5*180000; k++) { __NOP(); }
+	}
+
+	printf("EEPROM programming complete\n");
+}
+
 /*
  * @brief   Application entry point.
  */
@@ -126,6 +155,42 @@ int main(void) {
     shiftctrl_init();
 
     for (int i = 0; i < 1000000; i++) __NOP();
+
+    //i2c_write_fv1_eeprom();
+
+    {
+        gpio_pin_config_t config = {
+            .pinDirection = kGPIO_DigitalInput,
+            .outputLogic = 1U
+        };
+        /* Initialize GPIO functionality on pin PIO1_18 (pin 5)  */
+        GPIO_PinInit(GPIO, 0, 8, &config);
+        GPIO_PinInit(GPIO, 0, 9, &config);
+
+        IOCON->PIO[0][8] = ((IOCON->PIO[0][8] &
+                             /* Mask bits to zero which are setting */
+                             (~(IOCON_PIO_FUNC_MASK | IOCON_PIO_DIGIMODE_MASK)))
+
+                            /* Selects pin function.
+                             * : PORT08 (pin 64) is configured as FC5_RXD_SDA_MOSI. */
+                            | IOCON_PIO_FUNC(0)
+
+                            /* Select Analog/Digital mode.
+                             * : Digital mode. */
+                            | IOCON_PIO_DIGIMODE(PIO08_DIGIMODE_DIGITAL));
+
+        IOCON->PIO[0][9] = ((IOCON->PIO[0][9] &
+                             /* Mask bits to zero which are setting */
+                             (~(IOCON_PIO_FUNC_MASK | IOCON_PIO_DIGIMODE_MASK)))
+
+                            /* Selects pin function.
+                             * : PORT09 (pin 65) is configured as FC5_TXD_SCL_MISO. */
+                            | IOCON_PIO_FUNC(0)
+
+                            /* Select Analog/Digital mode.
+                             * : Digital mode. */
+                            | IOCON_PIO_DIGIMODE(PIO09_DIGIMODE_DIGITAL));
+    }
 
     //synth_init();
     codecsetup_init();

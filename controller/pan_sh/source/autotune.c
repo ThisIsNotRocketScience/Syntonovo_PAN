@@ -23,6 +23,10 @@
 #include "synth_param.h"
 #include "control.h"
 
+void timer1_enable_irq();
+void timer1_disable_irq();
+uint32_t timer1_value();
+
 #define TOTAL_NUM_CAL_OSCS 13
 
 #define AVERAGECOUNT 32
@@ -37,6 +41,8 @@ volatile uint32_t elapsedavg[32];
 volatile int32_t avgindex = 0;
 volatile uint32_t elapsedavgsum = 0;
 
+volatile uint32_t last_edge = 0;
+
 #define WEAK __attribute__ ((weak))
 
 extern volatile int sctimer_state;
@@ -44,12 +50,12 @@ extern volatile int sctimer_counter;
 
 uint32_t timer_value_isr()
 {
-	uint32_t highcount = sctimer_counter << 16;
-	uint32_t timervalue = SCT0->COUNT;
+	volatile uint32_t highcount = sctimer_counter << 16;
+	volatile uint32_t timervalue = SCT0->COUNT;
 
 	// but now the counter may have already overflowed! so highcount may be outdated.
 	// must read COUNT first, because the overflow may happen also between reading COUNT and STATE.
-	int overflow = SCT0->STATE != sctimer_state;
+	volatile int overflow = SCT0->STATE != sctimer_state;
 
 	// if there was an overflow, and the timer was close to beginning of its range,
 	// assume that it did indeed overflow since last interrupt.
@@ -60,13 +66,15 @@ uint32_t timer_value_isr()
 	return highcount + timervalue;
 }
 
-__attribute__( ( section(".data") ) )
-WEAK void PIN_INT0_IRQHandler(void)
+//__attribute__( ( section(".data") ) )
+void autotune_tick(uint32_t timer_value)
 {
-	uint32_t timer = timer_value_isr();
+	last_edge = timer_value;
+
+	if (avgindex >= 2) return;
 
 	int32_t index = compareindex;
-	uint32_t elapsedtime = timer - comparetimes[index];
+	uint32_t elapsedtime = timer_value - comparetimes[index];
 
 	elapsed[index] = elapsedtime;
 
@@ -75,7 +83,7 @@ WEAK void PIN_INT0_IRQHandler(void)
 	}
 
 	index = (index + 1) & (doaveragecount-1);
-	comparetimes[index] = timer;
+	comparetimes[index] = timer_value;
 	compareindex = index;
 
 	if (index == 0) {
@@ -83,13 +91,6 @@ WEAK void PIN_INT0_IRQHandler(void)
 		elapsedavgsum = 0;
 		avgindex = (avgindex + 1) & 31;
 	}
-
-	PINT->IST = PINT_IST_PSTAT_MASK;
-/* Add for ARM errata 838869, affects Cortex-M4, Cortex-M4F Store immediate overlapping
-  exception return operation might vector to incorrect interrupt */
-#if defined __CORTEX_M && (__CORTEX_M == 4U)
-	__DSB();
-#endif
 }
 
 static void WAIT1_Waitus(uint32_t us)
@@ -191,6 +192,7 @@ struct caldata_t {
 
 	float inv_offset_error[BINCOUNT];
 	float calpitch[BINCOUNT];
+	float measpitch[BINCOUNT];
 	int minbin, maxbin;
 };
 
@@ -234,6 +236,7 @@ void resetcal()
 			//caldata.inv_scale_error[i] = 1.0f;
 			caldata[c].inv_offset_error[i] = 0.0f;
 			caldata[c].calpitch[i] = 0.0f;
+			caldata[c].measpitch[i] = 0.0f;
 		}
 		caldata[c].minbin = 0;
 		caldata[c].maxbin = BINCOUNT-1;
@@ -247,7 +250,7 @@ int loadcal()
 	//FLASH1_Read(FLASH1_DeviceData, FLASH1_USER_AREA0_DATA_ADDRESS, &caldata[0], sizeof(caldata));
 	memcpy(&flashdata, (void*)FSL_FEATURE_EEPROM_BASE_ADDRESS, sizeof(flashdata));
 
-	if (flashdata.caldata[0].magic == 0x55612348) {
+	if (flashdata.caldata[0].magic == 0x55612349) {
 		memcpy(&caldata[0], &flashdata.caldata[0], TOTAL_NUM_CAL_OSCS*sizeof(struct caldata_t));
 		return 0;
 	}
@@ -262,7 +265,7 @@ int loadcal()
 void writecal()
 {
 	memcpy(&flashdata.caldata[0], &caldata[0], TOTAL_NUM_CAL_OSCS*sizeof(struct caldata_t));
-	flashdata.caldata[0].magic = 0x55612348;
+	flashdata.caldata[0].magic = 0x55612349;
 
 	int pagecount = (sizeof(struct flashcontent_t) + (EEPROM_PAGE_SIZE-1)) / EEPROM_PAGE_SIZE;
 
@@ -276,6 +279,7 @@ void autotune_init()
 {
 	if (FSL_FEATURE_EEPROM_SIZE < sizeof(struct flashcontent_t)) { for (;;) ; }
 
+#if 0
 	CLOCK_EnableClock(kCLOCK_InputMux);
 	INPUTMUX_AttachSignal(INPUTMUX, 0, kINPUTMUX_GpioPort0Pin31ToPintsel);
 
@@ -285,6 +289,7 @@ void autotune_init()
 	// edge sensitive: ISEL=0
 	// rising edge: SIENR=1
 	PINT->SIENR = 1U << 0;
+#endif
 
 	eeprom_config_t config;
 	EEPROM_GetDefaultConfig(&config);
@@ -326,6 +331,9 @@ void autotune_set_routing(int osc)
     shiftctrl_clear(SELVCF24A);
     shiftctrl_clear(SELVCF24B);
 
+    shiftctrl_clear(SELVCF1AP);
+    shiftctrl_clear(SELVCF1BP);
+
     shiftctrl_set(SELVCF21SER);
     shiftctrl_set(SELVCF23SER);
 
@@ -334,75 +342,160 @@ void autotune_set_routing(int osc)
     shiftctrl_clear(SELVCOSYNC3);
 
     shiftctrl_set(SELMUTEDNSAW);
-    shiftctrl_set(SELMUTEVCOTUNE);
+    shiftctrl_clear(SELMUTEVCOTUNE);
     shiftctrl_clear(SELTUNEVCF);
     shiftctrl_update();
 
+    // disable all mixing
+    ports_value(PORT_VCO3_MIX2, 0xffff);
+	ports_flush();
+    ports_value(PORT_DIGINS_MIX2, 0xffff);
+	ports_flush();
+    ports_value(PORT_VCO1_MIX2, 0xffff);
+	ports_flush();
+	ports_value(PORT_WHITENS_MIX2, 0xffff);
+	ports_flush();
+	ports_value(PORT_VCO1_SUB2, 0xffff);
+	ports_flush();
+	ports_value(PORT_VCO4567_MIX2, 0xffff);
+	ports_flush();
+	ports_value(PORT_VCO2_MIX2, 0xffff);
+	ports_flush();
+	ports_value(PORT_RM1_MIX2, 0xffff);
+	ports_flush();
+	ports_value(PORT_VCO1_SUB1, 0xffff);
+	ports_flush();
+	ports_value(PORT_WHITENS_MIX1, 0xffff);
+	ports_flush();
+	ports_value(PORT_VCO2_MIX1, 0xffff);
+	ports_flush();
+	ports_value(PORT_DIGINS_MIX1, 0xffff);
+	ports_flush();
+	ports_value(PORT_VCO1_MIX1, 0xffff);
+	ports_flush();
+	ports_value(PORT_RM1_MIX1, 0xffff);
+	ports_flush();
+	ports_value(PORT_VCO3_MIX1, 0xffff);
+	ports_flush();
+	ports_value(PORT_VCO4567_MIX1, 0xffff);
+	ports_flush();
+	ports_value(PORT_DNSSAW_MIX2, 0xffff);
+	ports_flush();
+	ports_value(PORT_DNSSAW_MIX1, 0xffff);
+	ports_flush();
+	ports_value(PORT_GATETRIG_MIX2, 0xffff);
+	ports_flush();
+	ports_value(PORT_VCF2_P_FB, 0);
+	ports_flush();
+	ports_value(PORT_VCF2_M_FB, 0);
+	ports_flush();
+
     // disable all outputs
 	ports_value(PORT_VCF1_L_LIN, 0);
+	ports_flush();
 	ports_value(PORT_VCF2_L_LIN, 0);
+	ports_flush();
 	ports_value(PORT_CLEANF_L_LIN, 0);
+	ports_flush();
 	ports_value(PORT_VCF1_L_LOG, 0xffff);
+	ports_flush();
 	ports_value(PORT_VCF2_L_LOG, 0xffff);
+	ports_flush();
 	ports_value(PORT_CLEANF_L_LOG, 0xffff);
+	ports_flush();
 	ports_value(PORT_VCF1_R_LIN, 0);
+	ports_flush();
 	ports_value(PORT_VCF2_R_LIN, 0);
+	ports_flush();
 	ports_value(PORT_CLEANF_R_LIN, 0);
+	ports_flush();
 	ports_value(PORT_VCF1_R_LOG, 0xffff);
+	ports_flush();
 	ports_value(PORT_VCF2_R_LOG, 0xffff);
+	ports_flush();
 	ports_value(PORT_CLEANF_R_LOG, 0xffff);
+	ports_flush();
 
 	ports_value(PORT_VCF1_CV, 0xffff);
-	ports_value(PORT_VCF1_RES, 0xffff);
+	ports_flush();
+	ports_value(PORT_VCF1_RES, 0);
+	ports_flush();
 	ports_value(PORT_VCF2_A_CV, 0xffff);
+	ports_flush();
 	ports_value(PORT_VCF2_B_CV, 0xffff);
+	ports_flush();
 	ports_value(PORT_VCF2_C_CV, 0xffff);
+	ports_flush();
 	ports_value(PORT_VCF2_D_CV, 0xffff);
+	ports_flush();
 	ports_value(PORT_VCF2_A_RES, 0xffff);
+	ports_flush();
 	ports_value(PORT_VCF2_B_RES, 0xffff);
+	ports_flush();
 	ports_value(PORT_VCF2_C_RES, 0xffff);
+	ports_flush();
 	ports_value(PORT_VCF2_D_RES, 0xffff);
+	ports_flush();
 
 	ports_value(PORT_VCO1_PW, 0x8000);
+	ports_flush();
 	ports_value(PORT_VCO2_PW, 0x8000);
+	ports_flush();
 	ports_value(PORT_VCO3_PW, 0x8000);
+	ports_flush();
 	ports_value(PORT_VCO4_PW, 0xA000);
+	ports_flush();
 	ports_value(PORT_VCO5_PW, 0xA000);
+	ports_flush();
 	ports_value(PORT_VCO6_PW, 0xA000);
+	ports_flush();
 	ports_value(PORT_VCO7_PW, 0xA000);
+	ports_flush();
 	ports_value(PORT_VCO123_FM2, 0);
+	ports_flush();
 	ports_value(PORT_VCO123_FM3, 0);
+	ports_flush();
 
 	ports_value(PORT_VCF1_CROSSMOD, 0xffff);
+	ports_flush();
 	ports_value(PORT_VCF2_CROSSMOD, 0xffff);
+	ports_flush();
 	ports_value(PORT_VCF2_P_FB, 0);
+	ports_flush();
 	ports_value(PORT_VCF2_M_FB, 0);
-
 	ports_flush();
 
     switch (osc) {
 	case 0:
+	    shiftctrl_set(SELMUTEVCOTUNE);
 	    shiftctrl_set(SEL1SQR);
 	    break;
 	case 1:
+	    shiftctrl_set(SELMUTEVCOTUNE);
 	    shiftctrl_set(SEL2SQR);
 	    break;
 	case 2:
+	    shiftctrl_set(SELMUTEVCOTUNE);
 	    shiftctrl_set(SEL3SQR);
 	    break;
 	case 3:
+	    shiftctrl_set(SELMUTEVCOTUNE);
 	    shiftctrl_set(SEL4SQR);
 	    break;
 	case 4:
+	    shiftctrl_set(SELMUTEVCOTUNE);
 	    shiftctrl_set(SEL5SQR);
 	    break;
 	case 5:
+	    shiftctrl_set(SELMUTEVCOTUNE);
 	    shiftctrl_set(SEL6SQR);
 	    break;
 	case 6:
+	    shiftctrl_set(SELMUTEVCOTUNE);
 	    shiftctrl_set(SEL7SQR);
 	    break;
 	case 7:
+	    shiftctrl_set(SELMUTEVCOTUNE);
 	    shiftctrl_clear(SELMUTEDNSAW);
 	    break;
 	case 8:
@@ -454,6 +547,7 @@ extern volatile int sctimer_counter;
 //extern volatile int32_t avgindex;
 //extern volatile uint32_t elapsedavgsum;
 
+#if 0
 void enable_pin_int()
 {
 	NVIC_ClearPendingIRQ(PIN_INT0_IRQn);
@@ -466,6 +560,7 @@ void disable_pin_int()
 {
 	DisableIRQ(PIN_INT0_IRQn);
 }
+#endif
 
 void resetcmp(int averagecount)
 {
@@ -478,42 +573,91 @@ void resetcmp(int averagecount)
 	doaveragecount = averagecount;
 	//__enable_irq();
 
-	enable_pin_int();
+	timer1_enable_irq();
 }
 
 uint32_t timer_value() { return 0; }
 
+int readhz_timeout = 0;
+
+int count_minmax()
+{
+	int minval = elapsed[1];
+	int maxval = elapsed[1];
+	for (int i = 2; i < doaveragecount; i++) {
+		if (elapsed[i] < minval) {
+			minval = elapsed[i];
+		}
+		if (elapsed[i] > maxval) {
+			maxval = elapsed[i];
+		}
+	}
+
+	return maxval - minval;
+}
+
+volatile uint32_t g_timer_value = 0;
+volatile uint32_t g_timer_value_diff = 0;
+
 float readhz(int averagecount)
 {
 	//uint32_t starttime = timer_value();
+	uint32_t avg;
+	int retry = 4;
+	do {
+		readhz_timeout = 0;
+		resetcmp(averagecount);
+		last_edge = timer1_value();
 
-	resetcmp(averagecount);
+		while (avgindex < 2 /*&& (timer_value() - starttime) < 12000000*/) {
+			ports_refresh();
 
-	while (avgindex < 2 /*&& (timer_value() - starttime) < 12000000*/) {
-		ports_refresh();
-	}
+			// check for timeout
 
-	__disable_irq();
-	uint32_t avg = elapsedavg[1];
-	disable_pin_int();
-	__enable_irq();
+			volatile uint32_t last = last_edge;
+			g_timer_value = timer1_value();
+			g_timer_value_diff = g_timer_value - last;
+			if (g_timer_value_diff > 180000000) {
+				// timeout!
+				readhz_timeout = 1;
+				return 0.0f;
+			}
+		}
+
+		__disable_irq();
+		avg = elapsedavg[1];
+		//disable_pin_int();
+		timer1_disable_irq();
+		__enable_irq();
+
+		int variance = count_minmax();
+
+		if (variance < avg / 100) {
+			break;
+		}
+		else {
+			volatile int tmp = 1;
+			tmp++;
+		}
+		retry--;
+	} while(retry);
 
 	//if (avgindex < 2)
 	//{
 	//	return 40000.0f;
 	//}
 
-	return (180000000.0f * 0.125f) / (float)avg;
+	return 180000000.0f / (float)avg;
 }
 
 float binfreq(int osc, int bin)
 {
-	if (osc < 8) {
+//	if (osc < 8) {
 		return (float)(1 << bin) * 16.35159798313f;
-	}
-	else {
-		return 16744.0f / (float)(1 << bin);
-	}
+//	}
+//	else {
+//		return 16744.0f / (float)(1 << bin);
+//	}
 }
 
 uint16_t bindacvalue(int bin)
@@ -616,7 +760,7 @@ float minfreq(int osc)
 		return 4.f;
 	}
 	else {
-		return 10000.f;
+		return 17000.f;
 	}
 }
 
@@ -636,24 +780,18 @@ int autotune(int osc)
 	autotune_control_out(osc, 0);
 	DisableIRQ(USART_DSP_FLEXCOMM_IRQN);
 
-	__disable_irq();
-	sctimer_counter = 0;
-	__enable_irq();
+	//__disable_irq();
+	//sctimer_counter = 0;
+	//__enable_irq();
 
 	//while(1)
 		autotune_set_routing(osc);
 
-	int osc_offset = 0;
-
-	if (osc >= 8) {
-			osc_offset = 0xffff;
-	}
-
-	Voutraw(osc, osc_offset);
-	WAIT1_Waitms(1);
+	Voutraw(osc, 0);
+	WAIT1_Waitms(10);
 	startf = readhz(16);
 
-	if (startf < minfreq(osc) || startf > maxfreq(osc)) {
+	if (readhz_timeout || startf < minfreq(osc) || startf > maxfreq(osc)) {
 		//printf("low freq out of range: %f >= 15.0\n", startf);
 		EnableIRQ(USART_DSP_FLEXCOMM_IRQN);
 		autotune_control_out(osc, 0x0f);
@@ -668,32 +806,55 @@ int autotune(int osc)
 		if (bin == 0) {
 			caldata[osc].inv_offset_error[bin] = 0.0f;
 			caldata[osc].dacerror[bin] = 0;
-			caldata[osc].dacvalue[bin] = bindacvalue_e(osc, bin, osc_offset);
+			caldata[osc].dacvalue[bin] = bindacvalue_e(osc, bin, 0);
+			caldata[osc].measpitch[bin] = 0.0f;
 		}
 		else {
 			caldata[osc].inv_offset_error[bin] = caldata[osc].inv_offset_error[bin - 1];
 			caldata[osc].dacerror[bin] = caldata[osc].dacerror[bin - 1];
-			caldata[osc].dacvalue[bin] = bindacvalue_e(osc, bin, (int32_t)caldata[osc].dacerror[bin] + osc_offset);
+			caldata[osc].dacvalue[bin] = bindacvalue_e(osc, bin, (int32_t)caldata[osc].dacerror[bin]);
+			caldata[osc].measpitch[bin] = 0.0f;
 		}
 		//float last_real_scale_error = 10000.0f;
 
 		Voutraw(osc, caldata[osc].dacvalue[bin]);
 		float pitch = readhz(binsamples(bin));
+
+		if (readhz_timeout) {
+		}
+
+		caldata[osc].measpitch[bin] = pitch;
+
 		float high_pitch;
 		uint16_t high;
 		uint16_t low;
 		float low_pitch;
-		if (pitch > target_freq) {
+		if (pitch > target_freq * 1.1f) {
 			high_pitch = pitch;
 			high = caldata[osc].dacvalue[bin];
 			low = uint16_sub_clamp(high, 3000);
 			Voutraw(osc, low);
 			low_pitch = readhz(binsamples(bin));
+
+			if (readhz_timeout) {
+			}
 		}
-		else {
+		else if (pitch < target_freq * 0.9f) {
 			low_pitch = pitch;
 			low = caldata[osc].dacvalue[bin];
 			high = uint16_add_clamp(low, 3000);
+			Voutraw(osc, high);
+			high_pitch = readhz(binsamples(bin));
+
+			if (readhz_timeout) {
+			}
+		}
+		else {
+			low = uint16_sub_clamp(caldata[osc].dacvalue[bin], 3000);
+			Voutraw(osc, low);
+			low_pitch = readhz(binsamples(bin));
+
+			high = uint16_add_clamp(caldata[osc].dacvalue[bin], 3000);
 			Voutraw(osc, high);
 			high_pitch = readhz(binsamples(bin));
 		}
@@ -719,13 +880,7 @@ int autotune(int osc)
 			float pitch = readhz(binsamples(bin));
 			//printf("pitch: %f\n", pitch);
 
-			if (abs((int32_t)ivalue - (int32_t)low) < 4) {
-				log_meas(osc, bin, i, ivalue, binsamples(bin), target_freq, pitch, caldata[osc].dacerror[bin], low_pitch, low, high_pitch, high, 11);
-				break;
-			}
-			if (abs((int32_t)ivalue - (int32_t)high) < 4) {
-				log_meas(osc, bin, i, ivalue, binsamples(bin), target_freq, pitch, caldata[osc].dacerror[bin], low_pitch, low, high_pitch, high, 12);
-				break;
+			if (readhz_timeout) {
 			}
 
 			log_meas(osc, bin, i, ivalue, binsamples(bin), target_freq, pitch, caldata[osc].dacerror[bin], low_pitch, low, high_pitch, high, 0);
@@ -758,14 +913,25 @@ int autotune(int osc)
 				//if (pitch < target_freq / 2) {
 				//	i--;
 				//}
-}
+			}
 
 			caldata[osc].dacvalue[bin] = ivalue;
-			caldata[osc].dacerror[bin] = (int32_t)caldata[osc].dacvalue[bin] - (int32_t)bindacvalue_e(osc, bin, osc_offset);
+			caldata[osc].dacerror[bin] = (int32_t)caldata[osc].dacvalue[bin] - (int32_t)bindacvalue_e(osc, bin, 0);
+			caldata[osc].measpitch[bin] = pitch;
+
+#if 0
+			if (abs((int32_t)ivalue - (int32_t)low) < 2) {
+				log_meas(osc, bin, i, ivalue, binsamples(bin), target_freq, pitch, caldata[osc].dacerror[bin], low_pitch, low, high_pitch, high, 11);
+				break;
+			}
+			if (abs((int32_t)ivalue - (int32_t)high) < 2) {
+				log_meas(osc, bin, i, ivalue, binsamples(bin), target_freq, pitch, caldata[osc].dacerror[bin], low_pitch, low, high_pitch, high, 12);
+				break;
+			}
+#endif
 
 			if (high <= low + 4) {
 				log_meas(osc, bin, i, ivalue, binsamples(bin), target_freq, pitch, caldata[osc].dacerror[bin], low_pitch, low, high_pitch, high, 10);
-
 				break;
 			}
 
@@ -795,6 +961,260 @@ int autotune(int osc)
 	return 0;
 }
 
+void filter_fillcal(int osc, int bin)
+{
+	for (; bin > 0; bin--) {
+		if (bin < BINCOUNT - 2) {
+			int newvalue = 2 * (int32_t)caldata[osc].dacvalue[bin + 1] - (int32_t)caldata[osc].dacvalue[bin + 2];
+			if (newvalue < 0) newvalue = 0;
+			else if (newvalue > 65535) newvalue = 65535;
+			caldata[osc].dacvalue[bin] = newvalue;
+			caldata[osc].measpitch[bin] = 0;
+		}
+		else if (bin == BINCOUNT - 2) {
+			int newvalue = (int32_t)caldata[osc].dacvalue[bin + 1] - 1000;
+			if (newvalue < 0) newvalue = 0;
+			else if (newvalue > 65535) newvalue = 65535;
+			caldata[osc].dacvalue[bin] = newvalue;
+			caldata[osc].measpitch[bin] = 0;
+		}
+		else /*if (bin == BINCOUNT - 1)*/ {
+			caldata[osc].dacvalue[bin] = 0xffff;
+			caldata[osc].measpitch[bin] = 0;
+		}
+	}
+
+	// Make sure at 0 the filter closes completely
+	caldata[osc].dacvalue[0] = 0;
+}
+
+#define WAIT_STABILIFY 5
+
+int autotune_filter(int osc)
+{
+	control_out_queue_wait();
+	autotune_control_out(osc, 0);
+	DisableIRQ(USART_DSP_FLEXCOMM_IRQN);
+
+	autotune_set_routing(osc);
+
+	Voutraw(osc, 0xffff);
+
+	int retries = 100;
+
+	while (retries--) {
+		WAIT1_Waitms(10);
+		startf = readhz(16);
+		if (!readhz_timeout) {
+			break;
+		}
+	}
+
+	if (readhz_timeout || startf < minfreq(osc) || startf > maxfreq(osc)) {
+		//printf("low freq out of range: %f >= 15.0\n", startf);
+		EnableIRQ(USART_DSP_FLEXCOMM_IRQN);
+		autotune_control_out(osc, 0x0f);
+		return 1;
+	}
+
+	for (int bin = BINCOUNT - 1; bin > 0; bin--) {
+
+		float target_freq = binfreq(osc, bin);
+
+		caldata[osc].calpitch[bin] = target_freq;
+		if (bin == BINCOUNT - 1) {
+			caldata[osc].inv_offset_error[bin] = 0.0f;
+			caldata[osc].dacerror[bin] = 0;
+			caldata[osc].dacvalue[bin] = 0xffff;//bindacvalue_e(osc, bin, osc_offset);
+			caldata[osc].measpitch[bin] = 0.0f;
+		}
+		else {
+			caldata[osc].inv_offset_error[bin] = caldata[osc].inv_offset_error[bin + 1];
+			caldata[osc].dacerror[bin] = caldata[osc].dacerror[bin + 1];
+			caldata[osc].dacvalue[bin] = caldata[osc].dacvalue[bin + 1];
+			caldata[osc].measpitch[bin] = 0.0f;
+		}
+		//float last_real_scale_error = 10000.0f;
+
+		Voutraw(osc, caldata[osc].dacvalue[bin]);
+		WAIT1_Waitms(WAIT_STABILIFY);
+		float pitch = readhz(binsamples(bin));
+
+		log_meas(osc, bin, 0, 0, binsamples(bin), target_freq, pitch, caldata[osc].dacerror[bin], 0, 0, 0, 0, 97);
+
+		if (readhz_timeout) {
+			log_meas(osc, bin, 0, 0, binsamples(bin), target_freq, pitch, caldata[osc].dacerror[bin], 0, 0, 0, 0, 100);
+			filter_fillcal(osc, bin);
+			goto done_filter;
+		}
+
+		caldata[osc].measpitch[bin] = pitch;
+
+		float high_pitch;
+		uint16_t high;
+		uint16_t low;
+		float low_pitch;
+		if (pitch < target_freq * 0.9f) {
+			low_pitch = pitch;
+			low = caldata[osc].dacvalue[bin];
+			high = uint16_add_clamp(low, 3000);
+			log_meas(osc, bin, 0, 0, binsamples(bin), target_freq, pitch, caldata[osc].dacerror[bin], low_pitch, low, high_pitch, high, 98);
+			Voutraw(osc, high);
+			WAIT1_Waitms(WAIT_STABILIFY);
+			high_pitch = readhz(binsamples(bin));
+
+			if (readhz_timeout) {
+				log_meas(osc, bin, 0, 0, binsamples(bin), target_freq, pitch, caldata[osc].dacerror[bin], low_pitch, low, high_pitch, high, 101);
+				filter_fillcal(osc, bin);
+				goto done_filter;
+			}
+		}
+		else if (pitch > target_freq * 1.1f) {
+			high_pitch = pitch;
+			high = caldata[osc].dacvalue[bin];
+			low = high;
+			low_pitch = pitch;
+			while (low_pitch > target_freq*0.9f) {
+				low = uint16_sub_clamp(low, 500);
+				log_meas(osc, bin, 0, 0, binsamples(bin), target_freq, pitch, caldata[osc].dacerror[bin], low_pitch, low, high_pitch, high, 99);
+				Voutraw(osc, low);
+				WAIT1_Waitms(WAIT_STABILIFY);
+				low_pitch = readhz(binsamples(bin));
+
+				if (readhz_timeout) {
+					log_meas(osc, bin, 0, 0, binsamples(bin), target_freq, pitch, caldata[osc].dacerror[bin], low_pitch, low, high_pitch, high, 102);
+					filter_fillcal(osc, bin);
+					goto done_filter;
+				}
+			}
+		}
+		else {
+			low = caldata[osc].dacvalue[bin];
+			high = caldata[osc].dacvalue[bin];
+			do {
+				high = uint16_add_clamp(high, 500);
+				log_meas(osc, bin, 0, 0, binsamples(bin), target_freq, pitch, caldata[osc].dacerror[bin], low_pitch, low, high_pitch, high, 110);
+				Voutraw(osc, high);
+				WAIT1_Waitms(WAIT_STABILIFY);
+				high_pitch = readhz(binsamples(bin));
+			} while (high_pitch < target_freq * 1.1f);
+
+			do {
+				low = uint16_sub_clamp(low, 500);
+				log_meas(osc, bin, 0, 0, binsamples(bin), target_freq, pitch, caldata[osc].dacerror[bin], low_pitch, low, high_pitch, high, 111);
+				Voutraw(osc, low);
+				WAIT1_Waitms(WAIT_STABILIFY);
+				low_pitch = readhz(binsamples(bin));
+			} while (low_pitch > target_freq * 0.9f);
+		}
+
+		for (int i = 0; i < 8; i++) {
+			// pick best possible value with linear interpolation
+
+			//EnableIRQ(USART_DSP_FLEXCOMM_IRQN);
+			//autotune_control_out(osc, bin+1);
+			//DisableIRQ(USART_DSP_FLEXCOMM_IRQN);
+
+			float targetvalue = ((target_freq - low_pitch) / (float)(high_pitch - low_pitch)) * (float)(high - low) + (float)low;
+			uint16_t ivalue = (uint16_t) targetvalue;
+			if (targetvalue < 0) ivalue = 0;
+			else if (targetvalue > 65535) ivalue = 65535;
+
+			//if (targetvalue <= 1 || targetvalue >= 65535) {
+			//	log_meas(osc, bin, i, targetvalue, binsamples(bin), target_freq, pitch, caldata[osc].dacerror[bin], low_pitch, low, high_pitch, high, 1);
+			//	break;
+			//}
+
+			Voutraw(osc, ivalue);
+			WAIT1_Waitms(WAIT_STABILIFY);
+			float pitch = readhz(binsamples(bin));
+			//printf("pitch: %f\n", pitch);
+
+			if (readhz_timeout) {
+				log_meas(osc, bin, i, ivalue, binsamples(bin), target_freq, pitch, caldata[osc].dacerror[bin], low_pitch, low, high_pitch, high, 105);
+				filter_fillcal(osc, bin);
+				goto done_filter;
+			}
+
+			log_meas(osc, bin, i, ivalue, binsamples(bin), target_freq, pitch, caldata[osc].dacerror[bin], low_pitch, low, high_pitch, high, 0);
+
+			if (pitch > target_freq) {
+				//if (pitch > high_pitch) {
+				//	// fail
+				//	log_meas(osc, bin, i, ivalue, binsamples(bin), target_freq, pitch, caldata[osc].dacerror[bin], low_pitch, low, high_pitch, high, 2);
+				//	return 1;
+				//}
+
+				high_pitch = pitch;
+				high = ivalue;
+
+				//if (pitch > target_freq * 2) {
+				//	i--;
+				//}
+
+			}
+			else {
+				//if (pitch < low_pitch) {
+				//	// fail
+				//	log_meas(osc, bin, i, ivalue, binsamples(bin), target_freq, pitch, caldata[osc].dacerror[bin], low_pitch, low, high_pitch, high, 3);
+				//	return 1;
+				//}
+
+				low_pitch = pitch;
+				low = ivalue;
+
+				//if (pitch < target_freq / 2) {
+				//	i--;
+				//}
+			}
+
+			caldata[osc].dacvalue[bin] = ivalue;
+			//caldata[osc].dacerror[bin] = (int32_t)caldata[osc].dacvalue[bin] - (int32_t)bindacvalue_e(osc, bin, osc_offset);
+			caldata[osc].measpitch[bin] = pitch;
+
+#if 0
+			if (abs((int32_t)ivalue - (int32_t)low) < 2) {
+				log_meas(osc, bin, i, ivalue, binsamples(bin), target_freq, pitch, caldata[osc].dacerror[bin], low_pitch, low, high_pitch, high, 11);
+				break;
+			}
+			if (abs((int32_t)ivalue - (int32_t)high) < 2) {
+				log_meas(osc, bin, i, ivalue, binsamples(bin), target_freq, pitch, caldata[osc].dacerror[bin], low_pitch, low, high_pitch, high, 12);
+				break;
+			}
+#endif
+
+			if (high <= low + 2) {
+				log_meas(osc, bin, i, ivalue, binsamples(bin), target_freq, pitch, caldata[osc].dacerror[bin], low_pitch, low, high_pitch, high, 10);
+				break;
+			}
+
+/*			float new_offset_error = caldata[osc].inv_offset_error[bin] + -logf(pitch / target_freq) / logf(2.0f);
+			float real_scale_error = pitch / target_freq;
+
+			if (i > 2 && fabs(logf(real_scale_error)) > fabs(logf(last_real_scale_error))) {
+				log_meas(osc, bin, i, binvalue(bin), binsamples(bin), target_freq, pitch, caldata[osc].inv_offset_error[bin], last_real_scale_error, new_offset_error, real_scale_error, 0);
+
+				continue;
+			}
+			else if (i > 2) {
+				i--;
+			}*/
+
+			//log_meas(osc, bin, i, binvalue(bin), binsamples(bin), target_freq, pitch, caldata[osc].inv_offset_error[bin], last_real_scale_error, new_offset_error, real_scale_error, 1);
+
+//			last_real_scale_error = real_scale_error;
+//			caldata[osc].inv_offset_error[bin] = new_offset_error;
+		}
+	}
+done_filter:
+	EnableIRQ(USART_DSP_FLEXCOMM_IRQN);
+
+	autotune_control_out(osc, 0x0e);
+
+	return 0;
+}
+
+
 volatile int autotune_phase = 0;
 
 void autotune_start()
@@ -803,7 +1223,6 @@ void autotune_start()
 
 	autotune_phase = 1;
 
-#if 1
 	resetcal();
 
 	autotune_phase = 2;
@@ -871,15 +1290,15 @@ void autotune_start()
 	}
 
 	autotune_phase = 10;
-	autotune_control_out(0xf, 0x00);
-#endif
 
-/*	r = autotune(8);
-	r = autotune(9);
-	r = autotune(10);
-	r = autotune(11);
-	r = autotune(12);
-*/
+	autotune_control_out(0xf, 0x00);
+
+	r = autotune_filter(8);
+	r = autotune_filter(9);
+	r = autotune_filter(10);
+	r = autotune_filter(11);
+	r = autotune_filter(12);
+
 	//printf("writecal\n");
 
 	writecal();

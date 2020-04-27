@@ -71,13 +71,11 @@ outputs:
 - {id: FXCOM7_clock.outFreq, value: 96 MHz}
 - {id: FXCOM8_clock.outFreq, value: 96 MHz}
 - {id: MAIN_clock.outFreq, value: 180 MHz}
-- {id: SC0_clock.outFreq, value: 180 MHz}
 - {id: SCT_clock.outFreq, value: 180 MHz}
 - {id: SYSPLL_clock.outFreq, value: 180 MHz}
 - {id: SYSTICK_clock.outFreq, value: 11.25/2 MHz}
 - {id: System_clock.outFreq, value: 180 MHz, locked: true, accuracy: '0.001'}
 settings:
-- {id: SC0_OUTPUT_ENDI, value: Enabled}
 - {id: SYSCON.AHBCLKDIV.scale, value: '1', locked: true}
 - {id: SYSCON.AUDPDEC.scale, value: '4', locked: true}
 - {id: SYSCON.AUDPLLCLKSEL.sel, value: SYSCON._clk_in}
@@ -156,8 +154,6 @@ void BOARD_BootClockRUN(void)
     CLOCK_SetClkDiv(kCLOCK_DivAhbClk, 1U, false);                  /*!< Reset divider counter and set divider to value 1 */
     CLOCK_SetClkDiv(kCLOCK_DivSystickClk, 0U, true);                  /*!< Reset SYSTICKCLKDIV divider counter and halt it */
     CLOCK_SetClkDiv(kCLOCK_DivSystickClk, 32U, false);                  /*!< Set SYSTICKCLKDIV divider to value 32 */
-    CLOCK_SetClkDiv(kCLOCK_DivSmartCard0Clk, 0U, true);                  /*!< Reset SC0CLKDIV divider counter and halt it */
-    CLOCK_SetClkDiv(kCLOCK_DivSmartCard0Clk, 1U, false);                  /*!< Set SC0CLKDIV divider to value 1 */
     CLOCK_SetClkDiv(kCLOCK_DivSctClk, 0U, true);                  /*!< Reset SCTCLKDIV divider counter and halt it */
     CLOCK_SetClkDiv(kCLOCK_DivSctClk, 1U, false);                  /*!< Set SCTCLKDIV divider to value 1 */
 

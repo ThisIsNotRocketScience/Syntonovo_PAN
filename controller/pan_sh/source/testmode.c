@@ -1,3 +1,5 @@
+#include "peripherals.h"
+#include "pin_mux.h"
 #include "synth.h"
 #include "lfo.h"
 #include "shiftctrl.h"
@@ -34,5 +36,7 @@ void testmode_run()
 			ports_value(i, lfo + 0x8000);
 		}
 		ports_refresh();
+
+		BOARD_INITPINS_GATE_GPIO->B[BOARD_INITPINS_GATE_PORT][BOARD_INITPINS_GATE_PIN] = slow_shift_counter < 20 ? 0 : 1;
 	}
 }
