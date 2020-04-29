@@ -28,6 +28,9 @@ void ports_value(int portid, uint16_t value);
 #include "notestack.h"
 
 void timer1_init();
+uint32_t timer1_value();
+
+int ports_updates = 0;
 
 __attribute__( ( section(".data") ) )
 void virt_gate(int gate);
@@ -542,13 +545,13 @@ void ports_write_callback(uint32_t data, void* user)
 	GPIO->B[BOARD_INITPINS_SELINHG_PORT][BOARD_INITPINS_SELINHG_PIN] = 1;
 
 	// wait for charging
-	nops(20);
+	nops(50);
 
 	GPIO->B[BOARD_INITPINS_SELINHG_PORT][BOARD_INITPINS_SELINHG_PIN] = 0;
 
 	ports_strobe = -1;
 
-//	nops(100);
+	nops(5);
 
 	__enable_irq();
 }
@@ -565,10 +568,25 @@ int ports_last_updated = -1;
 
 int ports_refresh_id = 0;
 
+int timer(uint32_t* state, uint32_t limit)
+{
+	uint32_t value = timer1_value();
+	if (value - *state > limit) {
+		*state = value;
+		return 1;
+	}
+	return 0;
+}
+
 __attribute__( ( section(".data") ) )
 void ports_refresh(void)
 {
+	static uint32_t refresh_timer = 0;
+
 	// scan through all ports and make sure the s&h are not sagging
+	if (!timer(&refresh_timer, 180000000 / 600)) {
+		return;
+	}
 
 	ports_value(ports_refresh_id, ports_last_value[ports_refresh_id]);
 	ports_value(ports_refresh_id+1, ports_last_value[ports_refresh_id+1]);
@@ -577,7 +595,7 @@ void ports_refresh(void)
 	if (ports_refresh_id >= 0x60) {
 		ports_refresh_id -= 0x60;
 	}
-
+/*
 	ports_value(ports_refresh_id, ports_last_value[ports_refresh_id]);
 	ports_value(ports_refresh_id+1, ports_last_value[ports_refresh_id+1]);
 	ports_refresh_id += 0x20;
@@ -592,7 +610,7 @@ void ports_refresh(void)
 
 	if (ports_refresh_id >= 0x60) {
 		ports_refresh_id -= 0x60;
-	}
+	}*/
 }
 
 void ports_flush()
@@ -614,6 +632,7 @@ void ports_value(int portid, uint16_t value)
 	//	portfunc_write_func[portid] (portfunc_write_ic[portid], portfunc_write_ch[portid], value);
 	//}
 
+	ports_updates++;
 	ports_wait_write();
 
 	if ((ports_last_updated & 1) == 0 && portid == (ports_last_updated + 1)) {
@@ -2461,6 +2480,10 @@ void synth_modulation_run()
 	}
 }
 
+int last_ports_values[1024];
+uint32_t last_ports_times[1024];
+int last_ports_value_write = 0;
+
 void synth_run()
 {
 	for (;;) {
@@ -2473,8 +2496,9 @@ void synth_run()
 
 		doing_reset = reset;
 		reset = 0;
+		ports_updates = 0;
 
-		if (got_input) {
+		if (got_input && !shiftctrl_flag_state(SELOUTPUT)) {
 			shiftctrl_set(SELOUTPUT);
 		}
 
@@ -2506,10 +2530,18 @@ void synth_run()
 		//	shiftctrl_clear(SELEF3);
 		//}
 
-		shiftctrl_clear(SELVCF2MS1);
-		shiftctrl_set(SELVCF2MS2);
+		//shiftctrl_clear(SELVCF2MS1);
+		//shiftctrl_set(SELVCF2MS2);
 
 		shiftctrl_update();
+
+		static uint32_t last_timer_value = 0;
+		uint32_t new_timer_value = timer1_value();
+		last_ports_values[last_ports_value_write] = ports_updates;
+		last_ports_times[last_ports_value_write] = new_timer_value - last_timer_value;
+		last_timer_value = new_timer_value;
+		last_ports_value_write = (last_ports_value_write + 1) & 1023;
+
 	}
 }
 
