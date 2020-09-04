@@ -545,7 +545,7 @@ void ports_write_callback(uint32_t data, void* user)
 	GPIO->B[BOARD_INITPINS_SELINHG_PORT][BOARD_INITPINS_SELINHG_PIN] = 1;
 
 	// wait for charging
-	nops(50);
+	nops(100);
 
 	GPIO->B[BOARD_INITPINS_SELINHG_PORT][BOARD_INITPINS_SELINHG_PIN] = 0;
 
@@ -590,7 +590,7 @@ void ports_refresh(void)
 
 	ports_value(ports_refresh_id, ports_last_value[ports_refresh_id]);
 	ports_value(ports_refresh_id+1, ports_last_value[ports_refresh_id+1]);
-	ports_refresh_id += 0x20;
+	ports_refresh_id += 0x22;
 
 	if (ports_refresh_id >= 0x60) {
 		ports_refresh_id -= 0x60;
@@ -785,28 +785,10 @@ void control_cb(int param, int subparam, uint16_t value)
 
 		if (subparam == 0xfd) {
 			if ((value & 0xFF00) == 0x200) {
-				if ((value&0x7f) == SELEF1)
-					shiftctrl_clear(SELEF0);
-				else if ((value&0x7f) == SELEF2)
-					shiftctrl_clear(SELEF1);
-				else if ((value&0x7f) == SELEF3)
-					shiftctrl_clear(SELEF2);
-				else if ((value&0x7f) == SELEF0)
-					{}
-				else
-					shiftctrl_set(value & 0x7f);
+				shiftctrl_set(value & 0x7f);
 			}
 			else if ((value & 0xFF00) == 0x100) {
-				if ((value&0x7f) == SELEF1)
-					shiftctrl_set(SELEF0);
-				else if ((value&0x7f) == SELEF2)
-					shiftctrl_set(SELEF1);
-				else if ((value&0x7f) == SELEF3)
-					shiftctrl_set(SELEF2);
-				else if ((value&0x7f) == SELEF0)
-					{}
-				else
-					shiftctrl_clear(value & 0x7f);
+				shiftctrl_clear(value & 0x7f);
 			}
 
 			/*
@@ -1638,7 +1620,7 @@ int update_porta(int id)
 	uint32_t timer_delta = timer_count - porta_state[id].porta_timer_count;
 
 	timer_delta >>= porta_state[id].porta_timer_shift;
-	if (timer_delta == 0) return 0;
+	if (timer_delta == 0) return 0xffff;
 	porta_state[id].porta_timer_count = timer_count;
 	if (timer_delta > 100) timer_delta = 100;
 
@@ -2526,8 +2508,8 @@ void synth_run()
 
 		ports_refresh();
 
-		//if (shiftctrl_flag_state(SELEF3)) {
-		//	shiftctrl_clear(SELEF3);
+		//if (!shiftctrl_flag_state(SELEF3)) {
+		//	shiftctrl_set(SELEF3);
 		//}
 
 		//shiftctrl_clear(SELVCF2MS1);
