@@ -24,14 +24,6 @@ extern "C" {
  **********************************************************************************************************************/
 /* Definitions for BOARD_InitPeripherals functional group */
 /* Definition of peripheral ID */
-#define USART_RPI_PERIPHERAL ((USART_Type *)FLEXCOMM2)
-/* Definition of the clock source frequency */
-#define USART_RPI_CLOCK_SOURCE 48000000UL
-/* USART_RPI interrupt vector ID (number). */
-#define USART_RPI_FLEXCOMM_IRQN FLEXCOMM2_IRQn
-/* USART_RPI interrupt handler identifier. */
-#define USART_RPI_FLEXCOMM_IRQHANDLER FLEXCOMM2_IRQHandler
-/* Definition of peripheral ID */
 #define USART_MIDI_PERIPHERAL ((USART_Type *)FLEXCOMM1)
 /* Definition of the clock source frequency */
 #define USART_MIDI_CLOCK_SOURCE 48000000UL
@@ -72,15 +64,41 @@ extern "C" {
 #define SCTIMER_OUTPUT_6_MASK (1U << kSCTIMER_Out_6)
 /* SCTimer output 7 mask */
 #define SCTIMER_OUTPUT_7_MASK (1U << kSCTIMER_Out_7)
+/* Definition of peripheral ID */
+#define USART_RPI_TX_PERIPHERAL ((USART_Type *)FLEXCOMM3)
+/* Definition of the clock source frequency */
+#define USART_RPI_TX_CLOCK_SOURCE 48000000UL
+/* USART_RPI_TX interrupt vector ID (number). */
+#define USART_RPI_TX_FLEXCOMM_IRQN FLEXCOMM3_IRQn
+/* USART_RPI_TX interrupt handler identifier. */
+#define USART_RPI_TX_FLEXCOMM_IRQHANDLER FLEXCOMM3_IRQHandler
+/* Definition of peripheral ID */
+#define USART_RPI_RX_PERIPHERAL ((USART_Type *)FLEXCOMM0)
+/* Definition of the clock source frequency */
+#define USART_RPI_RX_CLOCK_SOURCE 48000000UL
+/* USART_RPI_RX interrupt vector ID (number). */
+#define USART_RPI_RX_FLEXCOMM_IRQN FLEXCOMM0_IRQn
+/* USART_RPI_RX interrupt handler identifier. */
+#define USART_RPI_RX_FLEXCOMM_IRQHANDLER FLEXCOMM0_IRQHandler
+/* Definition of peripheral ID */
+#define USART_RPI_OLD_PERIPHERAL ((USART_Type *)FLEXCOMM2)
+/* Definition of the clock source frequency */
+#define USART_RPI_OLD_CLOCK_SOURCE 48000000UL
+/* USART_RPI_OLD interrupt vector ID (number). */
+#define USART_RPI_OLD_FLEXCOMM_IRQN FLEXCOMM2_IRQn
+/* USART_RPI_OLD interrupt handler identifier. */
+#define USART_RPI_OLD_FLEXCOMM_IRQHANDLER FLEXCOMM2_IRQHandler
 
 /***********************************************************************************************************************
  * Global variables
  **********************************************************************************************************************/
-extern const usart_config_t USART_RPI_config;
 extern const usart_config_t USART_MIDI_config;
 extern const usart_config_t USART_DSP_config;
 extern const sctimer_config_t SCTimer_1_initConfig;
 extern uint32_t SCTimer_1_event[1];
+extern const usart_config_t USART_RPI_TX_config;
+extern const usart_config_t USART_RPI_RX_config;
+extern const usart_config_t USART_RPI_OLD_config;
 
 /***********************************************************************************************************************
  * Initialization functions

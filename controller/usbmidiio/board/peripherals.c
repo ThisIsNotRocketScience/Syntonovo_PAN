@@ -34,61 +34,6 @@ component:
  * BOARD_InitPeripherals functional group
  **********************************************************************************************************************/
 /***********************************************************************************************************************
- * USART_RPI initialization code
- **********************************************************************************************************************/
-/* clang-format off */
-/* TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
-instance:
-- name: 'USART_RPI'
-- type: 'flexcomm_usart'
-- mode: 'interrupts'
-- type_id: 'flexcomm_usart_fcc110cc6b16332e9dfd9e0df675e21f'
-- functional_group: 'BOARD_InitPeripherals'
-- peripheral: 'FLEXCOMM2'
-- config_sets:
-  - interruptsCfg:
-    - interrupts: 'kUSART_RxLevelInterruptEnable'
-    - interrupt_vectors:
-      - enable_rx_tx_irq: 'false'
-      - interrupt_rx_tx:
-        - IRQn: 'FLEXCOMM2_IRQn'
-        - enable_priority: 'false'
-        - enable_custom_name: 'false'
-  - usartConfig_t:
-    - usartConfig:
-      - clockSource: 'FXCOMFunctionClock'
-      - clockSourceFreq: 'BOARD_BootClockRUN'
-      - baudRate_Bps: '500000'
-      - parityMode: 'kUSART_ParityDisabled'
-      - stopBitCount: 'kUSART_OneStopBit'
-      - bitCountPerChar: 'kUSART_8BitsPerChar'
-      - loopback: 'false'
-      - txWatermark: 'kUSART_TxFifo0'
-      - rxWatermark: 'kUSART_RxFifo1'
-      - enableRx: 'true'
-      - enableTx: 'true'
- * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
-/* clang-format on */
-const usart_config_t USART_RPI_config = {
-  .baudRate_Bps = 500000,
-  .parityMode = kUSART_ParityDisabled,
-  .stopBitCount = kUSART_OneStopBit,
-  .bitCountPerChar = kUSART_8BitsPerChar,
-  .loopback = false,
-  .txWatermark = kUSART_TxFifo0,
-  .rxWatermark = kUSART_RxFifo1,
-  .enableRx = true,
-  .enableTx = true
-};
-
-void USART_RPI_init(void) {
-  /* Reset FLEXCOMM device */
-  RESET_PeripheralReset(kFC2_RST_SHIFT_RSTn);
-  USART_Init(USART_RPI_PERIPHERAL, &USART_RPI_config, USART_RPI_CLOCK_SOURCE);
-  USART_EnableInterrupts(USART_RPI_PERIPHERAL, kUSART_RxLevelInterruptEnable);
-}
-
-/***********************************************************************************************************************
  * USART_MIDI initialization code
  **********************************************************************************************************************/
 /* clang-format off */
@@ -279,15 +224,182 @@ void SCTimer_1_init(void) {
 }
 
 /***********************************************************************************************************************
+ * USART_RPI_TX initialization code
+ **********************************************************************************************************************/
+/* clang-format off */
+/* TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
+instance:
+- name: 'USART_RPI_TX'
+- type: 'flexcomm_usart'
+- mode: 'interrupts'
+- type_id: 'flexcomm_usart_fcc110cc6b16332e9dfd9e0df675e21f'
+- functional_group: 'BOARD_InitPeripherals'
+- peripheral: 'FLEXCOMM3'
+- config_sets:
+  - interruptsCfg:
+    - interrupts: 'kUSART_RxLevelInterruptEnable'
+    - interrupt_vectors:
+      - enable_rx_tx_irq: 'false'
+      - interrupt_rx_tx:
+        - IRQn: 'FLEXCOMM3_IRQn'
+        - enable_priority: 'false'
+        - enable_custom_name: 'false'
+  - usartConfig_t:
+    - usartConfig:
+      - clockSource: 'FXCOMFunctionClock'
+      - clockSourceFreq: 'BOARD_BootClockRUN'
+      - baudRate_Bps: '500000'
+      - parityMode: 'kUSART_ParityDisabled'
+      - stopBitCount: 'kUSART_OneStopBit'
+      - bitCountPerChar: 'kUSART_8BitsPerChar'
+      - loopback: 'false'
+      - txWatermark: 'kUSART_TxFifo0'
+      - rxWatermark: 'kUSART_RxFifo1'
+      - enableRx: 'false'
+      - enableTx: 'true'
+ * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
+/* clang-format on */
+const usart_config_t USART_RPI_TX_config = {
+  .baudRate_Bps = 500000,
+  .parityMode = kUSART_ParityDisabled,
+  .stopBitCount = kUSART_OneStopBit,
+  .bitCountPerChar = kUSART_8BitsPerChar,
+  .loopback = false,
+  .txWatermark = kUSART_TxFifo0,
+  .rxWatermark = kUSART_RxFifo1,
+  .enableRx = false,
+  .enableTx = true
+};
+
+void USART_RPI_TX_init(void) {
+  /* Reset FLEXCOMM device */
+  RESET_PeripheralReset(kFC3_RST_SHIFT_RSTn);
+  USART_Init(USART_RPI_TX_PERIPHERAL, &USART_RPI_TX_config, USART_RPI_TX_CLOCK_SOURCE);
+  USART_EnableInterrupts(USART_RPI_TX_PERIPHERAL, kUSART_RxLevelInterruptEnable);
+}
+
+/***********************************************************************************************************************
+ * USART_RPI_RX initialization code
+ **********************************************************************************************************************/
+/* clang-format off */
+/* TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
+instance:
+- name: 'USART_RPI_RX'
+- type: 'flexcomm_usart'
+- mode: 'interrupts'
+- type_id: 'flexcomm_usart_fcc110cc6b16332e9dfd9e0df675e21f'
+- functional_group: 'BOARD_InitPeripherals'
+- peripheral: 'FLEXCOMM0'
+- config_sets:
+  - interruptsCfg:
+    - interrupts: 'kUSART_RxLevelInterruptEnable'
+    - interrupt_vectors:
+      - enable_rx_tx_irq: 'false'
+      - interrupt_rx_tx:
+        - IRQn: 'FLEXCOMM0_IRQn'
+        - enable_priority: 'false'
+        - enable_custom_name: 'false'
+  - usartConfig_t:
+    - usartConfig:
+      - clockSource: 'FXCOMFunctionClock'
+      - clockSourceFreq: 'BOARD_BootClockRUN'
+      - baudRate_Bps: '500000'
+      - parityMode: 'kUSART_ParityDisabled'
+      - stopBitCount: 'kUSART_OneStopBit'
+      - bitCountPerChar: 'kUSART_8BitsPerChar'
+      - loopback: 'false'
+      - txWatermark: 'kUSART_TxFifo0'
+      - rxWatermark: 'kUSART_RxFifo1'
+      - enableRx: 'true'
+      - enableTx: 'false'
+ * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
+/* clang-format on */
+const usart_config_t USART_RPI_RX_config = {
+  .baudRate_Bps = 500000,
+  .parityMode = kUSART_ParityDisabled,
+  .stopBitCount = kUSART_OneStopBit,
+  .bitCountPerChar = kUSART_8BitsPerChar,
+  .loopback = false,
+  .txWatermark = kUSART_TxFifo0,
+  .rxWatermark = kUSART_RxFifo1,
+  .enableRx = true,
+  .enableTx = false
+};
+
+void USART_RPI_RX_init(void) {
+  /* Reset FLEXCOMM device */
+  RESET_PeripheralReset(kFC0_RST_SHIFT_RSTn);
+  USART_Init(USART_RPI_RX_PERIPHERAL, &USART_RPI_RX_config, USART_RPI_RX_CLOCK_SOURCE);
+  USART_EnableInterrupts(USART_RPI_RX_PERIPHERAL, kUSART_RxLevelInterruptEnable);
+}
+
+/***********************************************************************************************************************
+ * USART_RPI_OLD initialization code
+ **********************************************************************************************************************/
+/* clang-format off */
+/* TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
+instance:
+- name: 'USART_RPI_OLD'
+- type: 'flexcomm_usart'
+- mode: 'interrupts'
+- type_id: 'flexcomm_usart_fcc110cc6b16332e9dfd9e0df675e21f'
+- functional_group: 'BOARD_InitPeripherals'
+- peripheral: 'FLEXCOMM2'
+- config_sets:
+  - interruptsCfg:
+    - interrupts: 'kUSART_RxLevelInterruptEnable'
+    - interrupt_vectors:
+      - enable_rx_tx_irq: 'false'
+      - interrupt_rx_tx:
+        - IRQn: 'FLEXCOMM2_IRQn'
+        - enable_priority: 'false'
+        - enable_custom_name: 'false'
+  - usartConfig_t:
+    - usartConfig:
+      - clockSource: 'FXCOMFunctionClock'
+      - clockSourceFreq: 'BOARD_BootClockRUN'
+      - baudRate_Bps: '500000'
+      - parityMode: 'kUSART_ParityDisabled'
+      - stopBitCount: 'kUSART_OneStopBit'
+      - bitCountPerChar: 'kUSART_8BitsPerChar'
+      - loopback: 'false'
+      - txWatermark: 'kUSART_TxFifo0'
+      - rxWatermark: 'kUSART_RxFifo1'
+      - enableRx: 'false'
+      - enableTx: 'false'
+ * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
+/* clang-format on */
+const usart_config_t USART_RPI_OLD_config = {
+  .baudRate_Bps = 500000,
+  .parityMode = kUSART_ParityDisabled,
+  .stopBitCount = kUSART_OneStopBit,
+  .bitCountPerChar = kUSART_8BitsPerChar,
+  .loopback = false,
+  .txWatermark = kUSART_TxFifo0,
+  .rxWatermark = kUSART_RxFifo1,
+  .enableRx = false,
+  .enableTx = false
+};
+
+void USART_RPI_OLD_init(void) {
+  /* Reset FLEXCOMM device */
+  RESET_PeripheralReset(kFC2_RST_SHIFT_RSTn);
+  USART_Init(USART_RPI_OLD_PERIPHERAL, &USART_RPI_OLD_config, USART_RPI_OLD_CLOCK_SOURCE);
+  USART_EnableInterrupts(USART_RPI_OLD_PERIPHERAL, kUSART_RxLevelInterruptEnable);
+}
+
+/***********************************************************************************************************************
  * Initialization functions
  **********************************************************************************************************************/
 void BOARD_InitPeripherals(void)
 {
   /* Initialize components */
-  USART_RPI_init();
   USART_MIDI_init();
   USART_DSP_init();
   SCTimer_1_init();
+  USART_RPI_TX_init();
+  USART_RPI_RX_init();
+  USART_RPI_OLD_init();
 }
 
 /***********************************************************************************************************************

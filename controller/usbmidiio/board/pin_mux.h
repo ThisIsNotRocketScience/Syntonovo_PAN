@@ -25,283 +25,98 @@ extern "C" {
  */
 void BOARD_InitBootPins(void);
 
-/*!
- * @brief Select Analog/Digital mode.: Digital mode. */
-#define PIO013_DIGIMODE_DIGITAL 0x01u
-/*!
- * @brief Selects pin function.: Alternative connection 0. */
-#define PIO013_FUNC_ALT0 0x00u
-/*!
- * @brief Select Analog/Digital mode.: Digital mode. */
-#define PIO014_DIGIMODE_DIGITAL 0x01u
-/*!
- * @brief Selects pin function.: Alternative connection 0. */
-#define PIO014_FUNC_ALT0 0x00u
-/*!
- * @brief Select Analog/Digital mode.: Digital mode. */
-#define PIO015_DIGIMODE_DIGITAL 0x01u
-/*!
- * @brief Selects pin function.: Alternative connection 0. */
-#define PIO015_FUNC_ALT0 0x00u
-/*!
- * @brief Select Analog/Digital mode.: Digital mode. */
-#define PIO016_DIGIMODE_DIGITAL 0x01u
-/*!
- * @brief Selects pin function.: Alternative connection 0. */
-#define PIO016_FUNC_ALT0 0x00u
-/*!
- * @brief Select Analog/Digital mode.: Digital mode. */
-#define PIO017_DIGIMODE_DIGITAL 0x01u
-/*!
- * @brief Selects pin function.: Alternative connection 0. */
-#define PIO017_FUNC_ALT0 0x00u
-/*!
- * @brief Select Analog/Digital mode.: Digital mode. */
-#define PIO018_DIGIMODE_DIGITAL 0x01u
-/*!
- * @brief Selects pin function.: Alternative connection 0. */
-#define PIO018_FUNC_ALT0 0x00u
-/*!
- * @brief Select Analog/Digital mode.: Digital mode. */
-#define PIO019_DIGIMODE_DIGITAL 0x01u
-/*!
- * @brief Selects pin function.: Alternative connection 0. */
-#define PIO019_FUNC_ALT0 0x00u
-/*!
- * @brief Select Analog/Digital mode.: Digital mode. */
-#define PIO01_DIGIMODE_DIGITAL 0x01u
-/*!
- * @brief Selects pin function.: Alternative connection 0. */
-#define PIO01_FUNC_ALT0 0x00u
-/*!
- * @brief Select Analog/Digital mode.: Digital mode. */
-#define PIO020_DIGIMODE_DIGITAL 0x01u
-/*!
- * @brief Selects pin function.: Alternative connection 0. */
-#define PIO020_FUNC_ALT0 0x00u
-/*!
- * @brief Select Analog/Digital mode.: Digital mode. */
-#define PIO021_DIGIMODE_DIGITAL 0x01u
-/*!
- * @brief Selects pin function.: Alternative connection 0. */
-#define PIO021_FUNC_ALT0 0x00u
-/*!
- * @brief Select Analog/Digital mode.: Digital mode. */
-#define PIO022_DIGIMODE_DIGITAL 0x01u
-/*!
- * @brief Selects pin function.: Alternative connection 0. */
-#define PIO022_FUNC_ALT0 0x00u
-/*!
- * @brief Select Analog/Digital mode.: Digital mode. */
-#define PIO023_DIGIMODE_DIGITAL 0x01u
-/*!
- * @brief Selects pin function.: Alternative connection 6. */
-#define PIO023_FUNC_ALT6 0x06u
-/*!
- * @brief Select Analog/Digital mode.: Digital mode. */
-#define PIO024_DIGIMODE_DIGITAL 0x01u
-/*!
- * @brief Selects pin function.: Alternative connection 6. */
-#define PIO024_FUNC_ALT6 0x06u
-/*!
- * @brief Select Analog/Digital mode.: Digital mode. */
-#define PIO025_DIGIMODE_DIGITAL 0x01u
-/*!
- * @brief Selects pin function.: Alternative connection 6. */
-#define PIO025_FUNC_ALT6 0x06u
-/*!
- * @brief Select Analog/Digital mode.: Digital mode. */
-#define PIO026_DIGIMODE_DIGITAL 0x01u
-/*!
- * @brief Selects pin function.: Alternative connection 6. */
-#define PIO026_FUNC_ALT6 0x06u
-/*!
- * @brief Select Analog/Digital mode.: Digital mode. */
-#define PIO027_DIGIMODE_DIGITAL 0x01u
-/*!
- * @brief Selects pin function.: Alternative connection 6. */
-#define PIO027_FUNC_ALT6 0x06u
-/*!
- * @brief Select Analog/Digital mode.: Digital mode. */
-#define PIO028_DIGIMODE_DIGITAL 0x01u
-/*!
- * @brief Selects pin function.: Alternative connection 6. */
-#define PIO028_FUNC_ALT6 0x06u
-/*!
- * @brief Select Analog/Digital mode.: Digital mode. */
-#define PIO03_DIGIMODE_DIGITAL 0x01u
-/*!
- * @brief Selects pin function.: Alternative connection 0. */
-#define PIO03_FUNC_ALT0 0x00u
-/*!
- * @brief Select Analog/Digital mode.: Digital mode. */
-#define PIO05_DIGIMODE_DIGITAL 0x01u
-/*!
- * @brief Selects pin function.: Alternative connection 0. */
-#define PIO05_FUNC_ALT0 0x00u
-/*!
- * @brief Select Analog/Digital mode.: Digital mode. */
-#define PIO06_DIGIMODE_DIGITAL 0x01u
-/*!
- * @brief Selects pin function.: Alternative connection 0. */
-#define PIO06_FUNC_ALT0 0x00u
-/*!
- * @brief Select Analog/Digital mode.: Digital mode. */
-#define PIO07_DIGIMODE_DIGITAL 0x01u
-/*!
- * @brief Selects pin function.: Alternative connection 0. */
-#define PIO07_FUNC_ALT0 0x00u
-/*!
- * @brief Select Analog/Digital mode.: Digital mode. */
-#define PIO08_DIGIMODE_DIGITAL 0x01u
-/*!
- * @brief Selects pin function.: Alternative connection 0. */
-#define PIO08_FUNC_ALT0 0x00u
-/*!
- * @brief Select Analog/Digital mode.: Digital mode. */
-#define PIO09_DIGIMODE_DIGITAL 0x01u
-/*!
- * @brief Selects pin function.: Alternative connection 0. */
-#define PIO09_FUNC_ALT0 0x00u
-/*!
- * @brief Select Analog/Digital mode.: Digital mode. */
-#define PIO110_DIGIMODE_DIGITAL 0x01u
-/*!
- * @brief Selects pin function.: Alternative connection 2. */
-#define PIO110_FUNC_ALT2 0x02u
-/*!
- * @brief Select Analog/Digital mode.: Digital mode. */
-#define PIO111_DIGIMODE_DIGITAL 0x01u
-/*!
- * @brief Selects pin function.: Alternative connection 0. */
-#define PIO111_FUNC_ALT0 0x00u
-/*!
- * @brief Select Analog/Digital mode.: Digital mode. */
-#define PIO112_DIGIMODE_DIGITAL 0x01u
-/*!
- * @brief Selects pin function.: Alternative connection 0. */
-#define PIO112_FUNC_ALT0 0x00u
-/*!
- * @brief Select Analog/Digital mode.: Digital mode. */
-#define PIO113_DIGIMODE_DIGITAL 0x01u
-/*!
- * @brief Selects pin function.: Alternative connection 0. */
-#define PIO113_FUNC_ALT0 0x00u
-/*!
- * @brief Select Analog/Digital mode.: Digital mode. */
-#define PIO114_DIGIMODE_DIGITAL 0x01u
-/*!
- * @brief Selects pin function.: Alternative connection 0. */
-#define PIO114_FUNC_ALT0 0x00u
-/*!
- * @brief Select Analog/Digital mode.: Digital mode. */
-#define PIO117_DIGIMODE_DIGITAL 0x01u
-/*!
- * @brief Selects pin function.: Alternative connection 0. */
-#define PIO117_FUNC_ALT0 0x00u
-/*!
- * @brief Select Analog/Digital mode.: Digital mode. */
-#define PIO119_DIGIMODE_DIGITAL 0x01u
-/*!
- * @brief Selects pin function.: Alternative connection 0. */
-#define PIO119_FUNC_ALT0 0x00u
-/*!
- * @brief Select Analog/Digital mode.: Digital mode. */
-#define PIO120_DIGIMODE_DIGITAL 0x01u
-/*!
- * @brief Selects pin function.: Alternative connection 0. */
-#define PIO120_FUNC_ALT0 0x00u
-/*!
- * @brief Select Analog/Digital mode.: Digital mode. */
-#define PIO121_DIGIMODE_DIGITAL 0x01u
-/*!
- * @brief Selects pin function.: Alternative connection 0. */
-#define PIO121_FUNC_ALT0 0x00u
-/*!
- * @brief Select Analog/Digital mode.: Digital mode. */
-#define PIO122_DIGIMODE_DIGITAL 0x01u
-/*!
- * @brief Selects pin function.: Alternative connection 0. */
-#define PIO122_FUNC_ALT0 0x00u
-/*!
- * @brief Select Analog/Digital mode.: Digital mode. */
-#define PIO123_DIGIMODE_DIGITAL 0x01u
-/*!
- * @brief Selects pin function.: Alternative connection 0. */
-#define PIO123_FUNC_ALT0 0x00u
-/*!
- * @brief Select Analog/Digital mode.: Digital mode. */
-#define PIO124_DIGIMODE_DIGITAL 0x01u
-/*!
- * @brief Selects pin function.: Alternative connection 1. */
-#define PIO124_FUNC_ALT1 0x01u
-/*!
- * @brief Select Analog/Digital mode.: Digital mode. */
-#define PIO125_DIGIMODE_DIGITAL 0x01u
-/*!
- * @brief Selects pin function.: Alternative connection 1. */
-#define PIO125_FUNC_ALT1 0x01u
-/*!
- * @brief Select Analog/Digital mode.: Digital mode. */
-#define PIO126_DIGIMODE_DIGITAL 0x01u
-/*!
- * @brief Selects pin function.: Alternative connection 0. */
-#define PIO126_FUNC_ALT0 0x00u
-/*!
- * @brief Select Analog/Digital mode.: Digital mode. */
-#define PIO127_DIGIMODE_DIGITAL 0x01u
-/*!
- * @brief Selects pin function.: Alternative connection 0. */
-#define PIO127_FUNC_ALT0 0x00u
-/*!
- * @brief Select Analog/Digital mode.: Digital mode. */
-#define PIO128_DIGIMODE_DIGITAL 0x01u
-/*!
- * @brief Selects pin function.: Alternative connection 0. */
-#define PIO128_FUNC_ALT0 0x00u
-/*!
- * @brief Select Analog/Digital mode.: Digital mode. */
-#define PIO129_DIGIMODE_DIGITAL 0x01u
-/*!
- * @brief Selects pin function.: Alternative connection 1. */
-#define PIO129_FUNC_ALT1 0x01u
-/*!
- * @brief Select Analog/Digital mode.: Digital mode. */
-#define PIO130_DIGIMODE_DIGITAL 0x01u
-/*!
- * @brief Selects pin function.: Alternative connection 1. */
-#define PIO130_FUNC_ALT1 0x01u
-/*!
- * @brief Select Analog/Digital mode.: Digital mode. */
-#define PIO131_DIGIMODE_DIGITAL 0x01u
-/*!
- * @brief Selects pin function.: Alternative connection 0. */
-#define PIO131_FUNC_ALT0 0x00u
-/*!
- * @brief Select Analog/Digital mode.: Digital mode. */
-#define PIO13_DIGIMODE_DIGITAL 0x01u
-/*!
- * @brief Selects pin function.: Alternative connection 0. */
-#define PIO13_FUNC_ALT0 0x00u
-/*!
- * @brief
- * Selects function mode (on-chip pull-up/pull-down resistor control).
- * : Pull-down.
- * Pull-down resistor enabled.
- */
-#define PIO13_MODE_PULL_DOWN 0x01u
-/*!
- * @brief Select Analog/Digital mode.: Digital mode. */
-#define PIO18_DIGIMODE_DIGITAL 0x01u
-/*!
- * @brief Selects pin function.: Alternative connection 0. */
-#define PIO18_FUNC_ALT0 0x00u
-/*!
- * @brief Select Analog/Digital mode.: Digital mode. */
-#define PIO19_DIGIMODE_DIGITAL 0x01u
-/*!
- * @brief Selects pin function.: Alternative connection 0. */
-#define PIO19_FUNC_ALT0 0x00u
+#define PIO010_DIGIMODE_DIGITAL 0x01u /*!<@brief Select Analog/Digital mode.: Digital mode. */
+#define PIO010_FUNC_ALT4 0x04u        /*!<@brief Selects pin function.: Alternative connection 4. */
+#define PIO013_DIGIMODE_DIGITAL 0x01u /*!<@brief Select Analog/Digital mode.: Digital mode. */
+#define PIO013_FUNC_ALT0 0x00u        /*!<@brief Selects pin function.: Alternative connection 0. */
+#define PIO014_DIGIMODE_DIGITAL 0x01u /*!<@brief Select Analog/Digital mode.: Digital mode. */
+#define PIO014_FUNC_ALT0 0x00u        /*!<@brief Selects pin function.: Alternative connection 0. */
+#define PIO015_DIGIMODE_DIGITAL 0x01u /*!<@brief Select Analog/Digital mode.: Digital mode. */
+#define PIO015_FUNC_ALT0 0x00u        /*!<@brief Selects pin function.: Alternative connection 0. */
+#define PIO016_DIGIMODE_DIGITAL 0x01u /*!<@brief Select Analog/Digital mode.: Digital mode. */
+#define PIO016_FUNC_ALT0 0x00u        /*!<@brief Selects pin function.: Alternative connection 0. */
+#define PIO017_DIGIMODE_DIGITAL 0x01u /*!<@brief Select Analog/Digital mode.: Digital mode. */
+#define PIO017_FUNC_ALT0 0x00u        /*!<@brief Selects pin function.: Alternative connection 0. */
+#define PIO018_DIGIMODE_DIGITAL 0x01u /*!<@brief Select Analog/Digital mode.: Digital mode. */
+#define PIO018_FUNC_ALT0 0x00u        /*!<@brief Selects pin function.: Alternative connection 0. */
+#define PIO019_DIGIMODE_DIGITAL 0x01u /*!<@brief Select Analog/Digital mode.: Digital mode. */
+#define PIO019_FUNC_ALT0 0x00u        /*!<@brief Selects pin function.: Alternative connection 0. */
+#define PIO01_DIGIMODE_DIGITAL 0x01u  /*!<@brief Select Analog/Digital mode.: Digital mode. */
+#define PIO01_FUNC_ALT0 0x00u         /*!<@brief Selects pin function.: Alternative connection 0. */
+#define PIO020_DIGIMODE_DIGITAL 0x01u /*!<@brief Select Analog/Digital mode.: Digital mode. */
+#define PIO020_FUNC_ALT0 0x00u        /*!<@brief Selects pin function.: Alternative connection 0. */
+#define PIO021_DIGIMODE_DIGITAL 0x01u /*!<@brief Select Analog/Digital mode.: Digital mode. */
+#define PIO021_FUNC_ALT0 0x00u        /*!<@brief Selects pin function.: Alternative connection 0. */
+#define PIO022_DIGIMODE_DIGITAL 0x01u /*!<@brief Select Analog/Digital mode.: Digital mode. */
+#define PIO022_FUNC_ALT0 0x00u        /*!<@brief Selects pin function.: Alternative connection 0. */
+#define PIO023_DIGIMODE_DIGITAL 0x01u /*!<@brief Select Analog/Digital mode.: Digital mode. */
+#define PIO023_FUNC_ALT6 0x06u        /*!<@brief Selects pin function.: Alternative connection 6. */
+#define PIO024_DIGIMODE_DIGITAL 0x01u /*!<@brief Select Analog/Digital mode.: Digital mode. */
+#define PIO024_FUNC_ALT6 0x06u        /*!<@brief Selects pin function.: Alternative connection 6. */
+#define PIO025_DIGIMODE_DIGITAL 0x01u /*!<@brief Select Analog/Digital mode.: Digital mode. */
+#define PIO025_FUNC_ALT6 0x06u        /*!<@brief Selects pin function.: Alternative connection 6. */
+#define PIO026_DIGIMODE_DIGITAL 0x01u /*!<@brief Select Analog/Digital mode.: Digital mode. */
+#define PIO026_FUNC_ALT6 0x06u        /*!<@brief Selects pin function.: Alternative connection 6. */
+#define PIO027_DIGIMODE_DIGITAL 0x01u /*!<@brief Select Analog/Digital mode.: Digital mode. */
+#define PIO027_FUNC_ALT6 0x06u        /*!<@brief Selects pin function.: Alternative connection 6. */
+#define PIO028_DIGIMODE_DIGITAL 0x01u /*!<@brief Select Analog/Digital mode.: Digital mode. */
+#define PIO028_FUNC_ALT6 0x06u        /*!<@brief Selects pin function.: Alternative connection 6. */
+#define PIO029_DIGIMODE_DIGITAL 0x01u /*!<@brief Select Analog/Digital mode.: Digital mode. */
+#define PIO029_FUNC_ALT1 0x01u        /*!<@brief Selects pin function.: Alternative connection 1. */
+#define PIO02_DIGIMODE_DIGITAL 0x01u  /*!<@brief Select Analog/Digital mode.: Digital mode. */
+#define PIO02_FUNC_ALT1 0x01u         /*!<@brief Selects pin function.: Alternative connection 1. */
+#define PIO03_DIGIMODE_DIGITAL 0x01u  /*!<@brief Select Analog/Digital mode.: Digital mode. */
+#define PIO03_FUNC_ALT0 0x00u         /*!<@brief Selects pin function.: Alternative connection 0. */
+#define PIO05_DIGIMODE_DIGITAL 0x01u  /*!<@brief Select Analog/Digital mode.: Digital mode. */
+#define PIO05_FUNC_ALT0 0x00u         /*!<@brief Selects pin function.: Alternative connection 0. */
+#define PIO06_DIGIMODE_DIGITAL 0x01u  /*!<@brief Select Analog/Digital mode.: Digital mode. */
+#define PIO06_FUNC_ALT0 0x00u         /*!<@brief Selects pin function.: Alternative connection 0. */
+#define PIO07_DIGIMODE_DIGITAL 0x01u  /*!<@brief Select Analog/Digital mode.: Digital mode. */
+#define PIO07_FUNC_ALT0 0x00u         /*!<@brief Selects pin function.: Alternative connection 0. */
+#define PIO08_DIGIMODE_DIGITAL 0x01u  /*!<@brief Select Analog/Digital mode.: Digital mode. */
+#define PIO08_FUNC_ALT0 0x00u         /*!<@brief Selects pin function.: Alternative connection 0. */
+#define PIO09_DIGIMODE_DIGITAL 0x01u  /*!<@brief Select Analog/Digital mode.: Digital mode. */
+#define PIO09_FUNC_ALT0 0x00u         /*!<@brief Selects pin function.: Alternative connection 0. */
+#define PIO110_DIGIMODE_DIGITAL 0x01u /*!<@brief Select Analog/Digital mode.: Digital mode. */
+#define PIO110_FUNC_ALT2 0x02u        /*!<@brief Selects pin function.: Alternative connection 2. */
+#define PIO111_DIGIMODE_DIGITAL 0x01u /*!<@brief Select Analog/Digital mode.: Digital mode. */
+#define PIO111_FUNC_ALT0 0x00u        /*!<@brief Selects pin function.: Alternative connection 0. */
+#define PIO112_DIGIMODE_DIGITAL 0x01u /*!<@brief Select Analog/Digital mode.: Digital mode. */
+#define PIO112_FUNC_ALT0 0x00u        /*!<@brief Selects pin function.: Alternative connection 0. */
+#define PIO113_DIGIMODE_DIGITAL 0x01u /*!<@brief Select Analog/Digital mode.: Digital mode. */
+#define PIO113_FUNC_ALT0 0x00u        /*!<@brief Selects pin function.: Alternative connection 0. */
+#define PIO114_DIGIMODE_DIGITAL 0x01u /*!<@brief Select Analog/Digital mode.: Digital mode. */
+#define PIO114_FUNC_ALT0 0x00u        /*!<@brief Selects pin function.: Alternative connection 0. */
+#define PIO117_DIGIMODE_DIGITAL 0x01u /*!<@brief Select Analog/Digital mode.: Digital mode. */
+#define PIO117_FUNC_ALT0 0x00u        /*!<@brief Selects pin function.: Alternative connection 0. */
+#define PIO119_DIGIMODE_DIGITAL 0x01u /*!<@brief Select Analog/Digital mode.: Digital mode. */
+#define PIO119_FUNC_ALT0 0x00u        /*!<@brief Selects pin function.: Alternative connection 0. */
+#define PIO120_DIGIMODE_DIGITAL 0x01u /*!<@brief Select Analog/Digital mode.: Digital mode. */
+#define PIO120_FUNC_ALT0 0x00u        /*!<@brief Selects pin function.: Alternative connection 0. */
+#define PIO121_DIGIMODE_DIGITAL 0x01u /*!<@brief Select Analog/Digital mode.: Digital mode. */
+#define PIO121_FUNC_ALT0 0x00u        /*!<@brief Selects pin function.: Alternative connection 0. */
+#define PIO122_DIGIMODE_DIGITAL 0x01u /*!<@brief Select Analog/Digital mode.: Digital mode. */
+#define PIO122_FUNC_ALT0 0x00u        /*!<@brief Selects pin function.: Alternative connection 0. */
+#define PIO123_DIGIMODE_DIGITAL 0x01u /*!<@brief Select Analog/Digital mode.: Digital mode. */
+#define PIO123_FUNC_ALT0 0x00u        /*!<@brief Selects pin function.: Alternative connection 0. */
+#define PIO126_DIGIMODE_DIGITAL 0x01u /*!<@brief Select Analog/Digital mode.: Digital mode. */
+#define PIO126_FUNC_ALT0 0x00u        /*!<@brief Selects pin function.: Alternative connection 0. */
+#define PIO127_DIGIMODE_DIGITAL 0x01u /*!<@brief Select Analog/Digital mode.: Digital mode. */
+#define PIO127_FUNC_ALT0 0x00u        /*!<@brief Selects pin function.: Alternative connection 0. */
+#define PIO128_DIGIMODE_DIGITAL 0x01u /*!<@brief Select Analog/Digital mode.: Digital mode. */
+#define PIO128_FUNC_ALT0 0x00u        /*!<@brief Selects pin function.: Alternative connection 0. */
+#define PIO129_DIGIMODE_DIGITAL 0x01u /*!<@brief Select Analog/Digital mode.: Digital mode. */
+#define PIO129_FUNC_ALT1 0x01u        /*!<@brief Selects pin function.: Alternative connection 1. */
+#define PIO130_DIGIMODE_DIGITAL 0x01u /*!<@brief Select Analog/Digital mode.: Digital mode. */
+#define PIO130_FUNC_ALT1 0x01u        /*!<@brief Selects pin function.: Alternative connection 1. */
+#define PIO131_DIGIMODE_DIGITAL 0x01u /*!<@brief Select Analog/Digital mode.: Digital mode. */
+#define PIO131_FUNC_ALT0 0x00u        /*!<@brief Selects pin function.: Alternative connection 0. */
+#define PIO14_DIGIMODE_DIGITAL 0x01u  /*!<@brief Select Analog/Digital mode.: Digital mode. */
+#define PIO14_FUNC_ALT0 0x00u         /*!<@brief Selects pin function.: Alternative connection 0. */
+#define PIO18_DIGIMODE_DIGITAL 0x01u  /*!<@brief Select Analog/Digital mode.: Digital mode. */
+#define PIO18_FUNC_ALT0 0x00u         /*!<@brief Selects pin function.: Alternative connection 0. */
+#define PIO19_DIGIMODE_DIGITAL 0x01u  /*!<@brief Select Analog/Digital mode.: Digital mode. */
+#define PIO19_FUNC_ALT0 0x00u         /*!<@brief Selects pin function.: Alternative connection 0. */
 
 /*! @name PIO1_8 (number 36), MK0
   @{ */
@@ -386,13 +201,6 @@ void BOARD_InitBootPins(void);
 #define BOARD_INITPINS_T6_PORT 1U   /*!<@brief PORT device name: 1U */
 #define BOARD_INITPINS_T6_PIN 28U   /*!<@brief 1U pin index: 28 */
                                     /* @} */
-
-/*! @name PIO1_3 (number 60), RASPI_DETECT
-  @{ */
-#define BOARD_INITPINS_RASPI_DETECT_GPIO GPIO /*!<@brief GPIO device name: GPIO */
-#define BOARD_INITPINS_RASPI_DETECT_PORT 1U   /*!<@brief PORT device name: 1U */
-#define BOARD_INITPINS_RASPI_DETECT_PIN 3U    /*!<@brief 1U pin index: 3 */
-                                              /* @} */
 
 /*! @name PIO1_19 (number 16), SW2CLK
   @{ */
@@ -533,6 +341,13 @@ void BOARD_InitBootPins(void);
 #define BOARD_INITPINS_LD1BLANK_PORT 0U   /*!<@brief PORT device name: 0U */
 #define BOARD_INITPINS_LD1BLANK_PIN 1U    /*!<@brief 0U pin index: 1 */
                                           /* @} */
+
+/*! @name PIO1_4 (number 3), LED
+  @{ */
+#define BOARD_INITPINS_LED_GPIO GPIO /*!<@brief GPIO device name: GPIO */
+#define BOARD_INITPINS_LED_PORT 1U   /*!<@brief PORT device name: 1U */
+#define BOARD_INITPINS_LED_PIN 4U    /*!<@brief 1U pin index: 4 */
+                                     /* @} */
 
 /*!
  * @brief Configures pin routing and optionally pin electrical features.

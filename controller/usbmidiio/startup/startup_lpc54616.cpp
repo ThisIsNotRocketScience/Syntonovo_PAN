@@ -70,6 +70,8 @@ extern "C" {
 #include <NXP/crp.h>
 __CRP const unsigned int CRP_WORD = CRP_NO_CRP ;
 
+#define ECRP_NO_ISP_ON_BOOT 0x2943f
+
 //*****************************************************************************
 // Declaration of external SystemInit function
 //*****************************************************************************
@@ -264,7 +266,7 @@ void (* const g_pfnVectors[])(void) = {
     BusFault_Handler,                  // The bus fault handler
     UsageFault_Handler,                // The usage fault handler
     __valid_user_code_checksum,        // LPC MCU checksum
-    0,                                 // ECRP
+	(void(*)())ECRP_NO_ISP_ON_BOOT,                                 // ECRP
     0,                                 // Reserved
     0,                                 // Reserved
     SVC_Handler,                       // SVCall handler

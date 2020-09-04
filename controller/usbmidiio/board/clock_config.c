@@ -62,8 +62,10 @@ outputs:
 - {id: CLKOUT_clock.outFreq, value: 12 MHz}
 - {id: FRO12M_clock.outFreq, value: 12 MHz}
 - {id: FROHF_clock.outFreq, value: 48 MHz}
+- {id: FXCOM0_clock.outFreq, value: 48 MHz}
 - {id: FXCOM1_clock.outFreq, value: 48 MHz}
 - {id: FXCOM2_clock.outFreq, value: 48 MHz}
+- {id: FXCOM3_clock.outFreq, value: 48 MHz}
 - {id: FXCOM7_clock.outFreq, value: 48 MHz}
 - {id: MAIN_clock.outFreq, value: 180 MHz}
 - {id: SCT_clock.outFreq, value: 180 MHz}
@@ -79,8 +81,10 @@ settings:
 - {id: SYSCON.AUD_M_MULT.scale, value: '128', locked: true}
 - {id: SYSCON.AUD_N_DIV.scale, value: '4', locked: true}
 - {id: SYSCON.CLKOUTSELA.sel, value: SYSCON._clk_in}
+- {id: SYSCON.FXCLKSEL0.sel, value: SYSCON.AUDPLL_BYPASS}
 - {id: SYSCON.FXCLKSEL1.sel, value: SYSCON.AUDPLL_BYPASS}
 - {id: SYSCON.FXCLKSEL2.sel, value: SYSCON.AUDPLL_BYPASS}
+- {id: SYSCON.FXCLKSEL3.sel, value: SYSCON.AUDPLL_BYPASS}
 - {id: SYSCON.FXCLKSEL7.sel, value: SYSCON.AUDPLL_BYPASS}
 - {id: SYSCON.MAINCLKSELB.sel, value: SYSCON.PLL_BYPASS}
 - {id: SYSCON.M_MULT.scale, value: '30', locked: true}
@@ -144,7 +148,7 @@ void BOARD_BootClockRUN(void)
     };
     CLOCK_AttachClk(kEXT_CLK_to_AUDIO_PLL);                         /*!< Set audio pll clock source*/
     CLOCK_SetAudioPLLFreq(&audio_pllSetup);                        /*!< Configure PLL to the desired value */
-#if 0
+
     /*!< Set up USB PLL */
     const usb_pll_setup_t usb_pllSetup = {
         .msel = 15U,
@@ -156,22 +160,24 @@ void BOARD_BootClockRUN(void)
         .inputRate = 12000000U,
     };
     CLOCK_SetUsbPLLFreq(&usb_pllSetup);                        /*!< Configure PLL to the desired value */
-#endif
+
 
     /*!< Set up dividers */
     CLOCK_SetClkDiv(kCLOCK_DivAhbClk, 1U, false);                  /*!< Reset divider counter and set divider to value 1 */
     CLOCK_SetClkDiv(kCLOCK_DivClkOut, 0U, true);                  /*!< Reset CLKOUTDIV divider counter and halt it */
     CLOCK_SetClkDiv(kCLOCK_DivClkOut, 1U, false);                  /*!< Set CLKOUTDIV divider to value 1 */
-    //CLOCK_SetClkDiv(kCLOCK_DivUsb1Clk, 0U, true);                  /*!< Reset USB1CLKDIV divider counter and halt it */
-    //CLOCK_SetClkDiv(kCLOCK_DivUsb1Clk, 2U, false);                  /*!< Set USB1CLKDIV divider to value 2 */
+    CLOCK_SetClkDiv(kCLOCK_DivUsb1Clk, 0U, true);                  /*!< Reset USB1CLKDIV divider counter and halt it */
+    CLOCK_SetClkDiv(kCLOCK_DivUsb1Clk, 2U, false);                  /*!< Set USB1CLKDIV divider to value 2 */
     CLOCK_SetClkDiv(kCLOCK_DivSctClk, 0U, true);                  /*!< Reset SCTCLKDIV divider counter and halt it */
     CLOCK_SetClkDiv(kCLOCK_DivSctClk, 1U, false);                  /*!< Set SCTCLKDIV divider to value 1 */
 
     /*!< Set up clock selectors - Attach clocks to the peripheries */
     CLOCK_AttachClk(kSYS_PLL_to_MAIN_CLK);                  /*!< Switch MAIN_CLK to SYS_PLL */
-    //CLOCK_AttachClk(kUSB_PLL_to_USB1_CLK);                  /*!< Switch USB1_CLK to USB_PLL */
+    CLOCK_AttachClk(kUSB_PLL_to_USB1_CLK);                  /*!< Switch USB1_CLK to USB_PLL */
+    CLOCK_AttachClk(kAUDIO_PLL_to_FLEXCOMM0);                  /*!< Switch FLEXCOMM0 to AUDIO_PLL */
     CLOCK_AttachClk(kAUDIO_PLL_to_FLEXCOMM1);                  /*!< Switch FLEXCOMM1 to AUDIO_PLL */
     CLOCK_AttachClk(kAUDIO_PLL_to_FLEXCOMM2);                  /*!< Switch FLEXCOMM2 to AUDIO_PLL */
+    CLOCK_AttachClk(kAUDIO_PLL_to_FLEXCOMM3);                  /*!< Switch FLEXCOMM3 to AUDIO_PLL */
     CLOCK_AttachClk(kAUDIO_PLL_to_FLEXCOMM7);                  /*!< Switch FLEXCOMM7 to AUDIO_PLL */
     CLOCK_AttachClk(kMCLK_to_SCT_CLK);                  /*!< Switch SCT_CLK to MAIN_CLK */
     CLOCK_AttachClk(kSYS_PLL_to_SPIFI_CLK);                  /*!< Switch SPIFI_CLK to SYS_PLL */
