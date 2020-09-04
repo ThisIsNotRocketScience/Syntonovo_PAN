@@ -47,6 +47,7 @@
 #include "usb_device_cdc_acm.h"
 #include "usb_device_ch9.h"
 #include "fsl_debug_console.h"
+#include "fsl_mrt.h"
 
 #include "usb_device_descriptor.h"
 //#include "virtual_com.h"
@@ -267,6 +268,133 @@ void USB_DeviceTaskFn(void *deviceHandle)
 #endif
 }
 #endif
+
+volatile uint32_t hwTick;
+uint32_t timerInterval;
+uint32_t isConnectedToFsHost = 0U;
+uint32_t isConnectedToHsHost = 0U;
+
+void USB_TimerInit(uint8_t instance, uint32_t interval)
+{
+    MRT_Type *instanceList[] = MRT_BASE_PTRS;
+    IRQn_Type instanceIrq[] = MRT_IRQS;
+    /* Structure of initialize MRT */
+    mrt_config_t mrtConfig;
+    /* mrtConfig.enableMultiTask = false; */
+    MRT_GetDefaultConfig(&mrtConfig);
+    /* Init mrt module */
+    MRT_Init(instanceList[instance], &mrtConfig);
+    /* Setup Channel 0 to be repeated */
+    MRT_SetupChannelMode(instanceList[instance], kMRT_Channel_0, kMRT_RepeatMode);
+    /* Enable timer interrupts for channel 0 */
+    MRT_EnableInterrupts(instanceList[instance], kMRT_Channel_0, kMRT_TimerInterruptEnable);
+    timerInterval = interval;
+    /* Enable at the NVIC */
+    EnableIRQ(instanceIrq[instance]);
+}
+void USB_TimerInt(uint8_t instance, uint8_t enable)
+{
+    MRT_Type *instanceList[] = MRT_BASE_PTRS;
+    uint32_t mrt_clock;
+    mrt_clock = CLOCK_GetFreq(kCLOCK_BusClk);
+    if (enable)
+    {
+        /* Start channel 0 */
+        MRT_StartTimer(instanceList[instance], kMRT_Channel_0, USEC_TO_COUNT(timerInterval, mrt_clock));
+    }
+    else
+    {
+        /* Stop channel 0 */
+        MRT_StopTimer(instanceList[instance], kMRT_Channel_0);
+        /* Clear interrupt flag.*/
+        MRT_ClearStatusFlags(instanceList[instance], kMRT_Channel_0, kMRT_TimerInterruptFlag);
+    }
+}
+
+void MRT0_IRQHandler(void)
+{
+    /* Clear interrupt flag.*/
+    MRT_ClearStatusFlags(MRT0, kMRT_Channel_0, kMRT_TimerInterruptFlag);
+    if (hwTick)
+    {
+        hwTick--;
+        if (!hwTick)
+        {
+            USB_TimerInt(0, 0);
+        }
+    }
+    else
+    {
+        USB_TimerInt(0, 0);
+    }
+}
+
+void USB_DeviceDisconnected(void)
+{
+    isConnectedToFsHost = 0U;
+}
+
+/*
+ * This is a work-around to fix the HS device Chirping issue.
+ * The device (IP3511HS controller) will not work sometimes when the cable
+ * is attached at the first time after a Power-on Reset.
+ */
+void USB_DeviceHsPhyChirpIssueWorkaround(void)
+{
+    uint32_t startFrame = USBHSD->INFO & USBHSD_INFO_FRAME_NR_MASK;
+    uint32_t currentFrame;
+    uint32_t isConnectedToFsHostFlag = 0U;
+    if ((!isConnectedToHsHost) && (!isConnectedToFsHost))
+    {
+        if (((USBHSD->DEVCMDSTAT & USBHSD_DEVCMDSTAT_Speed_MASK) >> USBHSD_DEVCMDSTAT_Speed_SHIFT) == 0x01U)
+        {
+            USBHSD->DEVCMDSTAT = (USBHSD->DEVCMDSTAT & (~(0x0F000000U | USBHSD_DEVCMDSTAT_PHY_TEST_MODE_MASK))) |
+                                 USBHSD_DEVCMDSTAT_PHY_TEST_MODE(0x05U);
+            hwTick = 100;
+            USB_TimerInt(0, 1);
+            usb_echo("The USB device PHY chirp work-around is working\r\n");
+            while (hwTick)
+            {
+            }
+            currentFrame = USBHSD->INFO & USBHSD_INFO_FRAME_NR_MASK;
+            if (currentFrame != startFrame)
+            {
+                isConnectedToHsHost = 1U;
+            }
+            else
+            {
+                hwTick = 1;
+                USB_TimerInt(0, 1);
+                while (hwTick)
+                {
+                }
+                currentFrame = USBHSD->INFO & USBHSD_INFO_FRAME_NR_MASK;
+                if (currentFrame != startFrame)
+                {
+                    isConnectedToHsHost = 1U;
+                }
+                else
+                {
+                    isConnectedToFsHostFlag = 1U;
+                }
+            }
+            USBHSD->DEVCMDSTAT = (USBHSD->DEVCMDSTAT & (~(0x0F000000U | USBHSD_DEVCMDSTAT_PHY_TEST_MODE_MASK)));
+            USBHSD->DEVCMDSTAT = (USBHSD->DEVCMDSTAT & (~(0x0F000000U | USBHSD_DEVCMDSTAT_DCON_MASK)));
+            hwTick = 510;
+            USB_TimerInt(0, 1);
+            while (hwTick)
+            {
+            }
+            USBHSD->DEVCMDSTAT = (USBHSD->DEVCMDSTAT & (~(0x0F000000U))) | USB_DEVCMDSTAT_DCON_C_MASK;
+            USBHSD->DEVCMDSTAT =
+                (USBHSD->DEVCMDSTAT & (~(0x0F000000U))) | USBHSD_DEVCMDSTAT_DCON_MASK | USB_DEVCMDSTAT_DRES_C_MASK;
+            if (isConnectedToFsHostFlag)
+            {
+                isConnectedToFsHost = 1U;
+            }
+        }
+    }
+}
 
 usb_status_t USB_DeviceMidiStreamingCallback(class_handle_t handle, uint32_t event, void *param)
 {
@@ -642,6 +770,12 @@ usb_status_t USB_DeviceCallback(usb_device_handle handle, uint32_t event, void *
         {
         	s_MidiStreaming.attach = 0;
         	s_MidiStreaming.startTransactions = 0;
+#if (defined(USB_DEVICE_CONFIG_LPCIP3511HS) && (USB_DEVICE_CONFIG_LPCIP3511HS > 0U))
+            /* The work-around is used to fix the HS device Chirping issue.
+             * Please refer to the implementation for the detail information.
+             */
+//            USB_DeviceHsPhyChirpIssueWorkaround();
+#endif
 #if (defined(USB_DEVICE_CONFIG_EHCI) && (USB_DEVICE_CONFIG_EHCI > 0U)) || \
     (defined(USB_DEVICE_CONFIG_LPCIP3511HS) && (USB_DEVICE_CONFIG_LPCIP3511HS > 0U))
             /* Get USB speed to configure the device, including max packet size and interval of the endpoints. */
@@ -704,6 +838,12 @@ usb_status_t USB_DeviceCallback(usb_device_handle handle, uint32_t event, void *
                 error = USB_DeviceGetStringDescriptor(handle, (usb_device_get_string_descriptor_struct_t *)param);
             }
             break;
+        case kUSB_DeviceEventDetach:
+        {
+#if (defined(USB_DEVICE_CONFIG_LPCIP3511HS) && (USB_DEVICE_CONFIG_LPCIP3511HS > 0U))
+            USB_DeviceDisconnected();
+#endif
+        }
         default:
             break;
     }
@@ -721,6 +861,7 @@ usb_status_t USB_DeviceCallback(usb_device_handle handle, uint32_t event, void *
 void APPInit(void)
 {
     USB_DeviceClockInit();
+    USB_TimerInit(0, 1000U);
 #if (defined(FSL_FEATURE_SOC_SYSMPU_COUNT) && (FSL_FEATURE_SOC_SYSMPU_COUNT > 0U))
     SYSMPU_Enable(SYSMPU, 0);
 #endif /* FSL_FEATURE_SOC_SYSMPU_COUNT */

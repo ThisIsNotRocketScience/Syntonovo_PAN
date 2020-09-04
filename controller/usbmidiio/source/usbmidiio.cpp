@@ -2154,7 +2154,6 @@ int main(void) {
 	*((uint32_t *)(USBHSH_BASE + 0x50)) |= USBHSH_PORTMODE_DEV_ENABLE_MASK;
 
     printf("USB init done\n");
-    //POWER_EnablePD(kPDRUNCFG_PD_VD3);
 
     CLOCK_EnableClock(kCLOCK_Gpio0);
     CLOCK_EnableClock(kCLOCK_Gpio1);
