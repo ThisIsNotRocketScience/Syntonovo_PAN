@@ -175,11 +175,17 @@ void BOARD_InitBootPins(void);
  * @brief Selects pin function.: Alternative connection 3. */
 #define PIO08_FUNC_ALT3 0x03u
 /*!
+ * @brief Controls open-drain mode.: Open-drain. Simulated open-drain output (high drive disabled). */
+#define PIO08_OD_OPEN_DRAIN 0x01u
+/*!
  * @brief Select Analog/Digital mode.: Digital mode. */
 #define PIO09_DIGIMODE_DIGITAL 0x01u
 /*!
  * @brief Selects pin function.: Alternative connection 3. */
 #define PIO09_FUNC_ALT3 0x03u
+/*!
+ * @brief Controls open-drain mode.: Open-drain. Simulated open-drain output (high drive disabled). */
+#define PIO09_OD_OPEN_DRAIN 0x01u
 /*!
  * @brief Select Analog/Digital mode.: Digital mode. */
 #define PIO10_DIGIMODE_DIGITAL 0x01u
@@ -273,6 +279,15 @@ void BOARD_InitBootPins(void);
 /*!
  * @brief Selects pin function.: Alternative connection 0. */
 #define PIO15_FUNC_ALT0 0x00u
+/*!
+ * @brief Select Analog/Digital mode.: Digital mode. */
+#define PIO16_DIGIMODE_DIGITAL 0x01u
+/*!
+ * @brief Selects pin function.: Alternative connection 0. */
+#define PIO16_FUNC_ALT0 0x00u
+/*!
+ * @brief Selects function mode (on-chip pull-up/pull-down resistor control).: Pull-up. Pull-up resistor enabled. */
+#define PIO16_MODE_PULL_UP 0x02u
 /*!
  * @brief Select Analog/Digital mode.: Digital mode. */
 #define PIO18_DIGIMODE_DIGITAL 0x01u
@@ -533,6 +548,21 @@ void BOARD_InitBootPins(void);
 #define BOARD_INITPINS_SELINHG_LABEL "SELINHG"                    /*!<@brief Label */
 #define BOARD_INITPINS_SELINHG_NAME "SELINHG"                     /*!<@brief Identifier name */
 #define BOARD_INITPINS_SELINHG_DIRECTION kPIN_MUX_DirectionOutput /*!<@brief Direction */
+                                                                  /* @} */
+
+/*! @name PIO1_6 (number 15), TESTMODE
+  @{ */
+#define BOARD_INITPINS_TESTMODE_PERIPHERAL GPIO                   /*!<@brief Device name: GPIO */
+#define BOARD_INITPINS_TESTMODE_SIGNAL PIO1                       /*!<@brief GPIO signal: PIO1 */
+#define BOARD_INITPINS_TESTMODE_GPIO GPIO                         /*!<@brief GPIO device name: GPIO */
+#define BOARD_INITPINS_TESTMODE_GPIO_PIN 6U                       /*!<@brief PIO1 pin index: 6 */
+#define BOARD_INITPINS_TESTMODE_PORT 1U                           /*!<@brief PORT device name: 1U */
+#define BOARD_INITPINS_TESTMODE_PIN 6U                            /*!<@brief 1U pin index: 6 */
+#define BOARD_INITPINS_TESTMODE_CHANNEL 6                         /*!<@brief GPIO PIO1 channel: 6 */
+#define BOARD_INITPINS_TESTMODE_PIN_NAME PIO1_6                   /*!<@brief Pin name */
+#define BOARD_INITPINS_TESTMODE_LABEL "TESTMODE"                  /*!<@brief Label */
+#define BOARD_INITPINS_TESTMODE_NAME "TESTMODE"                   /*!<@brief Identifier name */
+#define BOARD_INITPINS_TESTMODE_DIRECTION kPIN_MUX_DirectionInput /*!<@brief Direction */
                                                                   /* @} */
 
 /*!

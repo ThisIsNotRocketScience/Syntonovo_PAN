@@ -36,6 +36,7 @@
                <pin_label pin_num="92" pin_signal="PIO1_31/MCLK/CTIMER0_MAT2/SCT0_OUT6/FC8_CTS_SDA_SSEL0/EMC_D(15)" label="SELD" identifier="SELD"/>
                <pin_label pin_num="94" pin_signal="PIO1_11/ENET_TX_EN/FC1_TXD_SCL_MISO/CTIMER1_CAP1/USB0_VBUS/EMC_CLK(0)" label="SELINHG" identifier="SELINHG"/>
                <pin_label pin_num="43" pin_signal="PIO1_22/FC8_RTS_SCL_SSEL1/SD_CMD/CTIMER2_MAT3/SCT0_GPI5/FC4_SSEL3/EMC_CKE(1)" label="FC2INT" identifier="FC2_INT"/>
+               <pin_label pin_num="15" pin_signal="PIO1_6/FC0_TXD_SCL_MISO/SD_D(3)/CTIMER2_MAT1/SCT0_GPI3/EMC_A(5)" label="TESTMODE" identifier="TESTMODE"/>
             </pin_labels>
          </pins_profile>
          <functions_list>
@@ -118,8 +119,16 @@
                   <pin peripheral="FLEXCOMM2" signal="RXD_SDA_MOSI" pin_num="56" pin_signal="PIO0_26/FC2_RXD_SDA_MOSI/CLKOUT/CTIMER3_CAP2/SCT0_OUT5/PDM0_CLK/SPIFI_CLK/USB0_IDVALUE"/>
                   <pin peripheral="FLEXCOMM2" signal="SCK" pin_num="46" pin_signal="PIO1_23/FC2_SCK/SCT0_OUT0/ENET_MDIO/FC3_SSEL2/EMC_A(11)"/>
                   <pin peripheral="FLEXCOMM2" signal="TXD_SCL_MISO" pin_num="42" pin_signal="PIO0_27/FC2_TXD_SCL_MISO/CTIMER3_MAT2/SCT0_OUT6/PDM0_DATA/SPIFI_IO(3)"/>
-                  <pin peripheral="FLEXCOMM5" signal="RXD_SDA_MOSI" pin_num="64" pin_signal="PIO0_8/FC3_SSEL3/SD_CMD/FC5_RXD_SDA_MOSI/SWO/PDM1_DATA/EMC_D(6)"/>
-                  <pin peripheral="FLEXCOMM5" signal="TXD_SCL_MISO" pin_num="65" pin_signal="PIO0_9/FC3_SSEL2/SD_POW_EN/FC5_TXD_SCL_MISO/SCI1_IO/EMC_D(7)"/>
+                  <pin peripheral="FLEXCOMM5" signal="RXD_SDA_MOSI" pin_num="64" pin_signal="PIO0_8/FC3_SSEL3/SD_CMD/FC5_RXD_SDA_MOSI/SWO/PDM1_DATA/EMC_D(6)">
+                     <pin_features>
+                        <pin_feature name="open_drain" value="enabled"/>
+                     </pin_features>
+                  </pin>
+                  <pin peripheral="FLEXCOMM5" signal="TXD_SCL_MISO" pin_num="65" pin_signal="PIO0_9/FC3_SSEL2/SD_POW_EN/FC5_TXD_SCL_MISO/SCI1_IO/EMC_D(7)">
+                     <pin_features>
+                        <pin_feature name="open_drain" value="enabled"/>
+                     </pin_features>
+                  </pin>
                   <pin peripheral="GPIO" signal="PIO1, 31" pin_num="92" pin_signal="PIO1_31/MCLK/CTIMER0_MAT2/SCT0_OUT6/FC8_CTS_SDA_SSEL0/EMC_D(15)">
                      <pin_features>
                         <pin_feature name="direction" value="OUTPUT"/>
@@ -227,6 +236,12 @@
                   <pin peripheral="FLEXCOMM7" signal="TXD_SCL_MISO_WS" pin_num="86" pin_signal="PIO1_30/FC7_TXD_SCL_MISO_WS/SD_D(7)/SCT0_GPI7/USB1_OVERCURRENTN/USB1_UP_LED/EMC_D(14)"/>
                   <pin peripheral="GPIO" signal="PIO0, 15" pin_num="26" pin_signal="PIO0_15/FC6_CTS_SDA_SSEL0/UTICK_CAP2/CTIMER4_CAP0/SCT0_OUT2/EMC_WEN/ENET_TX_EN/ADC0_3"/>
                   <pin peripheral="CTIMER1" signal="CAPTURE, 0" pin_num="27" pin_signal="PIO0_16/FC4_TXD_SCL_MISO/CLKOUT/CTIMER1_CAP0/EMC_CSN(0)/ENET_TXD0/ADC0_4"/>
+                  <pin peripheral="GPIO" signal="PIO1, 6" pin_num="15" pin_signal="PIO1_6/FC0_TXD_SCL_MISO/SD_D(3)/CTIMER2_MAT1/SCT0_GPI3/EMC_A(5)">
+                     <pin_features>
+                        <pin_feature name="direction" value="INPUT"/>
+                        <pin_feature name="mode" value="pullUp"/>
+                     </pin_features>
+                  </pin>
                </pins>
             </function>
          </functions_list>

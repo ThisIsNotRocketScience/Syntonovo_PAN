@@ -139,6 +139,16 @@ void i2c_write_fv1_eeprom()
 	printf("EEPROM programming complete\n");
 }
 
+int test_mode_in()
+{
+	// jumper is pull-down
+	if (GPIO->B[BOARD_INITPINS_TESTMODE_PORT][BOARD_INITPINS_TESTMODE_PIN] == 0) {
+		return 1;
+	}
+
+	return 0;
+}
+
 /*
  * @brief   Application entry point.
  */
@@ -204,7 +214,7 @@ int main(void) {
 
     ltc2712_init();
 
-    int test_mode = 0;
+    int test_mode = test_mode_in();
     if (test_mode) {
     	testmode_run();
         while(1) {
