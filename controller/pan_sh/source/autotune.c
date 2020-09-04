@@ -298,7 +298,7 @@ void autotune_init()
 	if (loadcal())
 	{
 		GPIO->B[BOARD_INITPINS_LED_PORT][BOARD_INITPINS_LED_PIN] = 0;
-		autotune_start();
+		//autotune_start();
 		GPIO->B[BOARD_INITPINS_LED_PORT][BOARD_INITPINS_LED_PIN] = 1;
 	}
 }
@@ -653,7 +653,7 @@ float readhz(int averagecount)
 float binfreq(int osc, int bin)
 {
 //	if (osc < 8) {
-		return (float)(1 << bin) * 16.35159798313f;
+		return (float)(1 << bin) * 2.f * 16.35159798313f;
 //	}
 //	else {
 //		return 16744.0f / (float)(1 << bin);
@@ -767,7 +767,7 @@ float minfreq(int osc)
 float maxfreq(int osc)
 {
 	if (osc < 8) {
-		return 15.f;
+		return 25.f;
 	}
 	else {
 		return 100000.f;
