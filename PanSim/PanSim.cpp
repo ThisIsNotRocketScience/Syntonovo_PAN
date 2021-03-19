@@ -313,6 +313,8 @@ void DumpKnownScreens(SDL_Window* window)
 		gImguiOffX = 0;
 
 		ImGui::Render();
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		ImGui_ImplSdlGL3_RenderDrawData(ImGui::GetDrawData());
 		std::stringstream filename;
 		filename << "screen_" << i << ".png";
@@ -945,6 +947,7 @@ int main(int argc, char** argv)
 	para.value = 3;
 	set(para);
 	auto t = SDL_GetTicks();
+	bool dodump = false;
 	while (!done)
 	{
 
@@ -1130,18 +1133,19 @@ int main(int argc, char** argv)
 
 
 				ImGui::PopFont();
-
-
+				
+				if (ImGui::Button("dump"))
+				{
+					dodump = true;
+				}
 				ImGui::End();
 				ImGui::PopFont();
 			}
 			ImGui::PopStyleColor();
 		}
 
-		/*if (ImGui::Button("dump"))
-		{
-			DumpKnownScreens(window);
-		}*/
+		
+		
 
 
 		if (finalpan)
@@ -1177,7 +1181,11 @@ int main(int argc, char** argv)
 		ImGui_ImplSdlGL3_RenderDrawData(ImGui::GetDrawData());
 
 
-		
+		if (dodump) {
+			DumpKnownScreens(window);
+			dodump = false;
+		}
+
 
 		//ImGui::PopFont();
 		SDL_GL_SwapWindow(window);

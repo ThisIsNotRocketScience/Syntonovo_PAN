@@ -159,6 +159,7 @@
     <ClCompile Include="finalpanguimain.cpp" />
     <ClCompile Include="HomeScreen.cpp" />
     <ClCompile Include="imgui_es2.cpp" />
+    <ClCompile Include="KeyZoneScreen.cpp" />
     <ClCompile Include="linux_serial.cpp" />
     <ClCompile Include="ModSourceScreen.cpp" />
     <ClCompile Include="ModTargetModal.cpp" />

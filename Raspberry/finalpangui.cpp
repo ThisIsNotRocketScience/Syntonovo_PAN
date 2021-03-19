@@ -1039,31 +1039,32 @@ void FinalPan_LoadResources()
 
 
 
-	gGuiResources.OnOff[0] = Raspberry_LoadTexture("PAN__OFF.png");
-	gGuiResources.OnOff[1] = Raspberry_LoadTexture("PAN__ON.png");
-	gGuiResources.OnOff[2] = Raspberry_LoadTexture("UI_ONOFF_OFF_HI.png");
-	gGuiResources.OnOff[3] = Raspberry_LoadTexture("UI_ONOFF_ON_HI.png");
+	gGuiResources.OnOff[0] = Raspberry_LoadTexture("gfx/OFF.png");
+	gGuiResources.OnOff[1] = Raspberry_LoadTexture("gfx/ON.png");
+	gGuiResources.OnOff[2] = Raspberry_LoadTexture("gfx/ONOFF_OFF_HI.png");
+	gGuiResources.OnOff[3] = Raspberry_LoadTexture("gfx/ONOFF_ON_HI.png");
 
-	gGuiResources.LogoScreen = Raspberry_LoadTexture("PAN__LOGO.png");
-	gGuiResources.RootBG = Raspberry_LoadTexture("PAN__MAIN_BG.png");
-	gGuiResources.MainBG = Raspberry_LoadTexture("PAN__MAIN_BG.png");
-	gGuiResources.TestBG = Raspberry_LoadTexture("PAN_TEST.png");
+	gGuiResources.LogoScreen = Raspberry_LoadTexture("gfx/LOGO.png");
+	gGuiResources.RootBG = Raspberry_LoadTexture("gfx/MAIN_BG.png");
+	gGuiResources.MainBG = Raspberry_LoadTexture("gfx/MAIN_BG.png");
+	gGuiResources.TestBG = Raspberry_LoadTexture("gfx/TEST.png");
 
-	gGuiResources.GotoIconLeft = Raspberry_LoadTexture("PAN__GOTOL.png");
-	gGuiResources.GotoIconRight = Raspberry_LoadTexture("PAN__GOTOR.png");
+	gGuiResources.GotoIconLeft = Raspberry_LoadTexture("gfx/GOTOL.png");
+	gGuiResources.GotoIconRight = Raspberry_LoadTexture("gfx/GOTOR.png");
 
-	gGuiResources.VCF2 = Raspberry_LoadTexture("PAN__FILT_BG.png");
-	gGuiResources.F[Filt_LP] = Raspberry_LoadTexture("PAN__FILT_LP.png");
-	gGuiResources.F[Filt_HP] = Raspberry_LoadTexture("PAN__FILT_HP.png");
-	gGuiResources.F[Filt_BP] = Raspberry_LoadTexture("PAN__FILT_BP.png");
-	gGuiResources.F[Filt_BR] = Raspberry_LoadTexture("PAN__FILT_NOTCH.png");
-	gGuiResources.Fs[Filt_Par] = Raspberry_LoadTexture("PAN__FILT_PAR.png");
-	gGuiResources.Fs[Filt_Ser] = Raspberry_LoadTexture("PAN__FILT_SER.png");
+	gGuiResources.GraphBG = Raspberry_LoadTexture("gfx/GRAPH_BG.png");
+	gGuiResources.VCF2 = Raspberry_LoadTexture("gfx/FILT_BG.png");
+	gGuiResources.F[Filt_LP] = Raspberry_LoadTexture("gfx/FILT_LP.png");
+	gGuiResources.F[Filt_HP] = Raspberry_LoadTexture("gfx/FILT_HP.png");
+	gGuiResources.F[Filt_BP] = Raspberry_LoadTexture("gfx/FILT_BP.png");
+	gGuiResources.F[Filt_BR] = Raspberry_LoadTexture("gfx/FILT_BR.png");
+	gGuiResources.Fs[Filt_Par] = Raspberry_LoadTexture("gfx/FILT_PAR.png");
+	gGuiResources.Fs[Filt_Ser] = Raspberry_LoadTexture("gfx/FILT_SER.png");
 
 
-	gGuiResources.Plugs[Plugs_OnePlug] = Raspberry_LoadTexture("PAN__ONEPLUG.png");
-	gGuiResources.Plugs[Plugs_TwoPlug] = Raspberry_LoadTexture("PAN__TWOPLUG.png");
-	gGuiResources.Plugs[Plugs_ManyPlug] = Raspberry_LoadTexture("PAN__MANYPLUG.png");
+	gGuiResources.Plugs[Plugs_OnePlug] = Raspberry_LoadTexture("gfx/ONEPLUG.png");
+	gGuiResources.Plugs[Plugs_TwoPlug] = Raspberry_LoadTexture("gfx/TWOPLUG.png");
+	gGuiResources.Plugs[Plugs_ManyPlug] = Raspberry_LoadTexture("gfx/MANYPLUG.png");
 
 	gGuiResources.LeftIndicator = Raspberry_LoadTexture("UI_LEFT.png");
 	gGuiResources.RightIndicator = Raspberry_LoadTexture("UI_RIGHT.png");

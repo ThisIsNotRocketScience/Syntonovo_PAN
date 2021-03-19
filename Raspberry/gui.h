@@ -104,6 +104,7 @@ typedef struct FinalPan_GuiResources_t
 
 	ImTextureID TestBG;
 	ImTextureID VCF2;
+	ImTextureID GraphBG;
 	ImTextureID F[__FILT_COUNT];
 	ImTextureID Fs[__FILT_STRUCT_COUNT];
 	ImTextureID Plugs[__PLUGS_COUNT];

@@ -402,6 +402,8 @@ void ModSourceScreen::Action(int a)
 
 void ModSourceScreen::Render(bool active, float DT)
 {
+	BG = gGuiResources.GraphBG;
+
 	RenderContent(active, DT);
 	
 	if (HasActiveInstanceDisplay)
