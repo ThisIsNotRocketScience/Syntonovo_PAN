@@ -1071,6 +1071,12 @@ void FinalPan_LoadResources()
 	gGuiResources.TinyFont = io.Fonts->AddFontFromFileTTF("CORBEL.TTF", 16.0f);
 	gGuiResources.SmallFont = io.Fonts->AddFontFromFileTTF("CORBEL.TTF", 20.0f);
 	gGuiResources.MediumFont = io.Fonts->AddFontFromFileTTF("CORBEL.TTF", 28.0f);
+
+	static ImWchar ranges[] = { 0xf000, 0xf3ff, 0 };
+	ImFontConfig config;
+	config.MergeMode = true;
+	io.Fonts->AddFontFromFileTTF("fa-regular-400.ttf", 16.0f, &config, ranges);
+
 	//gGuiResources.BigFont = io.Fonts->AddFontFromFileTTF("Fontfabric - Panton ExtraBold.otf", 44.0f);
 
 	gGuiResources.referencelines = false;
@@ -1323,6 +1329,7 @@ void EncoderLineDisplay::Render(bool active, float dt)
 
 
 		//ImGui::GetWindowDrawList()->AddLine(ImVec2(x, midy), ImVec2(x, 500), gGuiResources.Normal, 3);
+
 
 	}
 	//ImGui::GetWindowDrawList()->AddLine(ImVec2(minx, midy), ImVec2(maxx, midy), gGuiResources.Normal, 3);
