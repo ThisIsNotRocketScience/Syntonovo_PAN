@@ -356,14 +356,8 @@ public:
 		case KeyboardParam_ScaleRSus: return (uint16_t*)&controller[Controller_SustainR].scale;
 		case KeyboardParam_ScaleLUna: return (uint16_t*)&controller[Controller_UnaCordaL].scale;
 		case KeyboardParam_ScaleRUna: return (uint16_t*)&controller[Controller_UnaCordaR].scale;
-
 		case Envelope_Switches:  return (uint16_t*)&env[instance].flags;
 		case LFO_Switches:  return (uint16_t*)&lfo[instance].flags;
-
-
-
-
-
 		}
 		return 0;
 	}

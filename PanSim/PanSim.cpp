@@ -18,22 +18,23 @@
 #include <stdio.h>
 #include <GL/gl3w.h>    
 #include <SDL.h>
-
+#include "../libs/implot-master/implot.h"
 #include "../libs/lodepng-master/lodepng.h"
 
 //#include  "PanHeader.h"
 #include "../Raspberry/FinalPanHeader.h"
 #include "../Raspberry/PanPreset.h"
+#include "BatonAndStacking.h"
 
-extern void FinalPan_WindowFrame(float DT);
+extern void FinalPan_WindowFrame(float DT, bool aschild);
 extern void FinalPan_RenderSpecificScreen(float DT, int screen);
 extern void FinalPan_LoadResources();
 extern void FinalPan_SetupLeds();
 extern void FinalPan_SetupDefaultPreset();
 extern void FinalPan_DefaultPresetNamesInBank();
-extern float gImguiScale ;
-extern float gImguiOffY ;
-extern float gImguiOffX;
+//extern float gImguiScale ;
+//extern float gImguiOffY ;
+//extern float gImguiOffX;
 
 int8_t mod_values[128] = { 0 };
 
@@ -308,9 +309,9 @@ void DumpKnownScreens(SDL_Window* window)
 		glClearColor(0, 0, 0, 1);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		gImguiScale = 1.0f;
-		gImguiOffY = 0;
-		gImguiOffX = 0;
+//		gImguiScale = 1.0f;
+	//	gImguiOffY = 0;
+		//gImguiOffX = 0;
 
 		ImGui::Render();
 		glEnable(GL_BLEND);
@@ -938,7 +939,8 @@ int main(int argc, char** argv)
 	FinalPan_LoadResources();
 	FinalPan_DefaultPresetNamesInBank();
 	//Raspberry_Reset();
-	
+	ImPlot::CreateContext();
+	ImPlot::GetStyle().AntiAliasedLines = true;
 
 
 	
@@ -1047,8 +1049,53 @@ int main(int argc, char** argv)
 			}
 			ImGui::PopFont();
 		}
+		static float x[1500];
+		static float y[MAXBATONSTAGE][1500];
+		static float sy[MAXBATONSTAGE][1500];
+		static Baton Bat;
+		static Stack Sta;
 		
-		
+
+		for (int i = 0; i < 1500; i++)
+		{
+
+			x[i] = i * (1.0f / 1500.0f);
+			Bat.Set(0, i* (1.0f / 1500.0f));
+			Sta.Set(0, i* (1.0f / 1500.0f));
+
+			for (int j = 0; j < MAXBATONSTAGE; j++)
+			{
+				y[j][i] = Bat.Get(j);
+				sy[j][i] = Sta.Get(j);
+			}
+		}
+
+		bool plotsforstashbaton = true;
+		if (plotsforstashbaton)
+		{
+			if (ImPlot::BeginPlot("Baton", "Input", "Output"))
+			{
+
+				for (int i = 0; i < MAXBATONSTAGE; i++)
+				{
+					char txt[10];
+					sprintf(txt, "%d", i + 1);
+					ImPlot::PlotLine(txt, x, y[i], 1500);
+				}
+				ImPlot::EndPlot();
+			}
+			if (ImPlot::BeginPlot("Stack", "Input", "Output"))
+			{
+
+				for (int i = 0; i < MAXBATONSTAGE; i++)
+				{
+					char txt[10];
+					sprintf(txt, "%d", i + 1);
+					ImPlot::PlotLine(txt, x, sy[i], 1500);
+				}
+				ImPlot::EndPlot();
+			}
+		}
 		
 
 		if (finalparameters)
@@ -1150,8 +1197,11 @@ int main(int argc, char** argv)
 
 		if (finalpan)
 		{
+			//ImGui::SetNextWindowSize(ImVec2(1024, 620));
+			//ImGui::SetNextWindowPos(ImVec2(0, 0));
+			ImGui::Begin("pan!", &finalpan, ImGuiWindowFlags_NoResize);
 			//			ImGui_ImplSdlGL3_NewFrame(window);
-			ImGui::SetNextWindowPos(ImVec2(0, 0));
+			
 			auto nt = SDL_GetTicks();
 
 			for (int i = 0; i < 128; i++)
@@ -1161,11 +1211,12 @@ int main(int argc, char** argv)
 
 			auto diff = nt - t;
 			t = nt;
-			FinalPan_WindowFrame(diff * 0.001);
+			FinalPan_WindowFrame(diff * 0.001, true);
 			FinalPan_SetupLeds();
 			blinktime++;
 			blinkon = ((blinktime % 30) > 15) ? 1 : 0;
 
+			ImGui::End();
 		
 		}
 	
@@ -1173,9 +1224,9 @@ int main(int argc, char** argv)
 		glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		gImguiScale = 1.0f;
-		gImguiOffY = 0;
-		gImguiOffX = 0;
+//		gImguiScale = 1.0f;
+	//	gImguiOffY = 0;
+		//gImguiOffX = 0;
 
 		ImGui::Render();
 		ImGui_ImplSdlGL3_RenderDrawData(ImGui::GetDrawData());

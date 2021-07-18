@@ -6,6 +6,7 @@
 #include "../interface/paramdef.h"
 #include <stdio.h>
 #include "../libs/imgui-master/imgui.h"
+#include "../libs/imgui-master/imgui_internal.h"
 #include <vector>
 #include "FinalPanEnums.h"
 #include "PanPreset.h"
@@ -388,7 +389,7 @@ void VerticalText(char* text, alignment_t align, ImU32 text_color)
 {
 	ImFont* font = ImGui::GetFont();
 	char c;
-	const ImFont::Glyph* glyph;
+	const ImFontGlyph* glyph;
 
 	const ImGuiStyle& style = ImGui::GetStyle();
 	float pad = style.FramePadding.x;
@@ -524,7 +525,9 @@ ImU32 CalcFillColor(uint16_t value, bool active)
 
 void _control_t::RenderBox(int x, int y, int val, int mode, bool active)
 {
-	ImVec2 p = ImVec2(x, y + ImGui::GetTextLineHeight());
+
+	ImVec2 wp = ImGui::GetWindowPos();
+	ImVec2 p = ImVec2(wp.x+x,wp.y+ y + ImGui::GetTextLineHeight());
 	p.x += 10;
 	ImVec2 tl = p;
 	ImVec2 br = tl;
@@ -574,7 +577,8 @@ void _control_t::RenderBox(int x, int y, int val, int mode, bool active)
 
 void _control_t::RenderBoxVertical(int x, int y, int val, int mode, bool active)
 {
-	ImVec2 p = ImVec2(x, y);// +ImGui::GetTextLineHeight());
+	ImVec2 wp = ImGui::GetWindowPos();
+	ImVec2 p = ImVec2(wp.x + x, wp.y+y);// +ImGui::GetTextLineHeight());
 	p.x -= ParamBoxDim / 2;
 	ImVec2 tl = p;
 	ImVec2 br = tl;
@@ -648,7 +652,8 @@ void _control_t::RenderBoxVertical(int x, int y, int val, int mode, bool active)
 
 void _control_t::RenderBoxHorizontal(int x, int y, int val, int mode, bool active)
 {
-	ImVec2 p = ImVec2(x, y);// +ImGui::GetTextLineHeight());
+	ImVec2 wp = ImGui::GetWindowPos();
+	ImVec2 p = ImVec2(x + wp.x, y+ wp.y);// +ImGui::GetTextLineHeight());
 	p.x -= ParamHorizontalBoxWidth / 2;
 	ImVec2 tl = p;
 	ImVec2 br = tl;
@@ -778,6 +783,8 @@ void sidebutton_t::Render(bool active, float DT)
 	{
 		icons icon = myIcon;
 
+		ImVec2 wp = ImGui::GetWindowPos();
+
 
 
 		ImGui::PushFont(gGuiResources.SmallFont);
@@ -787,20 +794,20 @@ void sidebutton_t::Render(bool active, float DT)
 			ImVec2 textsize = ImGui::CalcTextSize(title);
 			x2 -= textsize.x;
 			//			ImGui::GetWindowDrawList()->AddLine(ImVec2(x+ParamMasterMargin*2, y + ImGui::GetTextLineHeight() / 2), ImVec2(lx2, y2), gGuiResources.Normal, 3);
-			ImVec2 A = ImVec2(x + ParamMasterMargin * 2, y + ImGui::GetTextLineHeight() / 2);
+			ImVec2 A = ImVec2(wp.x + x + ParamMasterMargin * 2, wp.y + y + ImGui::GetTextLineHeight() / 2);
 			ImVec2 B = A;
 			B.x += ParamMasterMargin * 2;
-			ImVec2 C = ImVec2(lx2 - ParamMasterMargin * 1, y2 + ImGui::GetTextLineHeight() / 2);
-			ImVec2 D = ImVec2(lx2, y2 + ImGui::GetTextLineHeight() / 2);
+			ImVec2 C = ImVec2(wp.x + lx2 - ParamMasterMargin * 1, wp.y + y2 + ImGui::GetTextLineHeight() / 2);
+			ImVec2 D = ImVec2(wp.x + lx2, wp.y + y2 + ImGui::GetTextLineHeight() / 2);
 			ImGui::GetWindowDrawList()->AddBezierCurve(A, B, C, D, Dimmed(3, gGuiResources.Normal), 3);
 		}
 		else
 		{
-			ImVec2 A = ImVec2(x - ParamMasterMargin * 2, y + ImGui::GetTextLineHeight() / 2);
+			ImVec2 A = ImVec2(wp.x + x - ParamMasterMargin * 2, wp.y+y + ImGui::GetTextLineHeight() / 2);
 			ImVec2 B = A;
 			B.x -= ParamMasterMargin * 2;
-			ImVec2 C = ImVec2(lx2 + ParamMasterMargin * 1, y2 + ImGui::GetTextLineHeight() / 2);
-			ImVec2 D = ImVec2(lx2, y2 + ImGui::GetTextLineHeight() / 2);
+			ImVec2 C = ImVec2(wp.x+lx2 + ParamMasterMargin * 1, wp.y + y2 + ImGui::GetTextLineHeight() / 2);
+			ImVec2 D = ImVec2(wp.x+lx2, wp.y+y2 + ImGui::GetTextLineHeight() / 2);
 			ImGui::GetWindowDrawList()->AddBezierCurve(A, B, C, D, Dimmed(3, gGuiResources.Normal), 3);
 			//ImGui::GetWindowDrawList()->AddLine(ImVec2(x- +ParamMasterMargin * 2, y + ImGui::GetTextLineHeight() / 2), ImVec2(lx2, y2), gGuiResources.Normal, 3);
 
@@ -1019,7 +1026,7 @@ void FinalPan_LoadResources()
 	gGuiResources.encoderheight = 600;
 	gGuiResources.PageTime = 0;
 	gGuiResources.Highlight = IM_COL32(235, 200, 28, 255);
-	gGuiResources.Normal = IM_COL32(200, 200, 200, 255);
+	gGuiResources.Normal = IM_COL32(240, 240, 240, 255);
 	gGuiResources.BGColor = IM_COL32(0, 0, 0, 255);
 	gGuiResources.ModalBGColor = IM_COL32(0, 0, 0, 240);
 	gGuiResources.GhostBG = IM_COL32(0, 0, 0, 200);
@@ -1082,7 +1089,7 @@ void FinalPan_LoadResources()
 	gGuiResources.referencelines = false;
 	gGuiResources.testimage = false;
 	//	gGuiResources.BigFont = io.Fonts->AddFontFromFileTTF("Petronius-Roman.ttf", 38.0f);
-	gGuiResources.BigFont = io.Fonts->AddFontFromFileTTF("CORBEL.TTF", 38.0f);
+	gGuiResources.BigFont = io.Fonts->AddFontFromFileTTF("CORBELB.TTF", 38.0f);
 	init = true;
 
 	CheckFont("BigFont - PetroniusRoman", gGuiResources.BigFont);
@@ -1314,6 +1321,7 @@ void EncoderLineDisplay::Render(bool active, float dt)
 {
 	float midy = (fromY + 500) / 2;
 
+	ImVec2 wp = ImGui::GetWindowPos();
 
 
 	//	ImGui::GetWindowDrawList()->AddLine(ImVec2(fromX, fromY), ImVec2(fromX, midy), gGuiResources.Normal, 3);
@@ -1325,7 +1333,7 @@ void EncoderLineDisplay::Render(bool active, float dt)
 		if (x > maxx) maxx = x;
 		if (x < minx) minx = x;
 		//int tox =
-		ImGui::GetWindowDrawList()->AddBezierCurve(ImVec2(fromX, fromY), ImVec2(fromX, fromY + 70), ImVec2(x, 430), ImVec2(x, 600 - ParamVerticalBoxHeight - ParamMasterMargin * 2), gGuiResources.Normal, 3);
+		ImGui::GetWindowDrawList()->AddBezierCurve(ImVec2(wp.x+fromX, wp.y + fromY), ImVec2(wp.x + fromX, wp.y + fromY + 70), ImVec2(wp.x + x, wp.y + 430), ImVec2(wp.x + x, wp.y + 600 - ParamVerticalBoxHeight - ParamMasterMargin * 2), gGuiResources.Normal, 3);
 
 
 		//ImGui::GetWindowDrawList()->AddLine(ImVec2(x, midy), ImVec2(x, 500), gGuiResources.Normal, 3);
@@ -1425,10 +1433,11 @@ void Gui::Render(bool active, float dt)
 
 	if (gGuiResources.referencelines)
 	{
+		ImVec2 wp = ImGui::GetWindowPos();
 		for (int i = 0; i < 11; i++)
 		{
-			int X = GetEncoderX(i);
-			ImGui::GetWindowDrawList()->AddLine(ImVec2(X, 0), ImVec2(X, 1024), gGuiResources.Normal, 2);
+			int X = GetEncoderX(i) + wp.x;
+			ImGui::GetWindowDrawList()->AddLine(ImVec2(X, wp.y+ 0), ImVec2(X, wp.y+1024), gGuiResources.Normal, 2);
 		}
 	}
 }
@@ -1641,7 +1650,7 @@ void FinalPan_RenderSpecificScreen(float DT, int screen)
 
 }
 
-void FinalPan_WindowFrame(float DT)
+void FinalPan_WindowFrame(float DT, bool aschild)
 {
 	if (!init)
 	{
@@ -1649,25 +1658,39 @@ void FinalPan_WindowFrame(float DT)
 		FinalPan_LoadResources();
 	}
 
-	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
-	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0);
-	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
-	ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 0);
-	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
+	if (aschild == false)
+	{
 
-
-	ImGui::Begin("screen", 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoTitleBar);
-
-	ImGui::SetWindowSize(ImVec2(1024, 600));
-
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0);
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 0);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
+		ImGui::Begin("screen", 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoTitleBar);
+		ImGui::SetWindowSize(ImVec2(1024, 600));
+	}
+	else
+	{
+		ImGui::BeginChild("screen", ImVec2(1024,600), false, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoTitleBar);
+	}
+	
 	FinalPan_RenderMain(DT);
 
-	ImGui::End();
-	ImGui::PopStyleVar();
-	ImGui::PopStyleVar();
-	ImGui::PopStyleVar();
-	ImGui::PopStyleVar();
-	ImGui::PopStyleVar();
+	if (aschild == false)
+	{
+		ImGui::End();
+
+		ImGui::PopStyleVar();
+		ImGui::PopStyleVar();
+		ImGui::PopStyleVar();
+		ImGui::PopStyleVar();
+		ImGui::PopStyleVar();
+	}
+	else
+	{
+		ImGui::EndChild();
+	}
+	
 }
 
 

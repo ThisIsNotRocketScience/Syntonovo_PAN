@@ -1,5 +1,3 @@
-#define WINDOWS_IGNORE_PACKING_MISMATCH
-
 // ImGui SDL2 binding with OpenGL3
 // (SDL is a cross-platform general purpose library for handling windows, inputs, OpenGL/Vulkan graphics context creation, etc.)
 // (GL3W is a helper library to access OpenGL functions since there is no standard header to access modern OpenGL functions easily. Alternatives are GLEW, Glad, etc.)
@@ -49,13 +47,10 @@ static SDL_Cursor*  g_MouseCursors[ImGuiMouseCursor_Count_] = { 0 };
 // OpenGL data
 static GLuint       g_FontTexture = 0;
 static int          g_ShaderHandle = 0, g_VertHandle = 0, g_FragHandle = 0;
-static int          g_AttribLocationTex = 0, g_AttribLocationProjMtx = 0, g_AttribLocationOffset = 0, g_AttribLocationScale= 0;
+static int          g_AttribLocationTex = 0, g_AttribLocationProjMtx = 0;
 static int          g_AttribLocationPosition = 0, g_AttribLocationUV = 0, g_AttribLocationColor = 0;
 static unsigned int g_VboHandle = 0,g_ElementsHandle = 0;
 
-float gImguiScale = 0.5f;
-float gImguiOffY = 0;
-float gImguiOffX = 0;
 // This is the main rendering function that you have to implement and provide to ImGui (via setting up 'RenderDrawListsFn' in the ImGuiIO structure)
 // Note that this implementation is little overcomplicated because we are saving/setting up/restoring every OpenGL state explicitly, in order to be able to run within any OpenGL engine that doesn't do so. 
 // If text or lines are blurry when integrating ImGui in your engine: in your Render function, try translating your projection matrix by (0.5f,0.5f) or (0.375f,0.375f)
@@ -96,7 +91,7 @@ void ImGui_ImplSdlGL3_RenderDrawData(ImDrawData* draw_data)
     glEnable(GL_BLEND);
     glBlendEquation(GL_FUNC_ADD);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glDisable(GL_CULL_FACE);	
+    glDisable(GL_CULL_FACE);
     glDisable(GL_DEPTH_TEST);
     glEnable(GL_SCISSOR_TEST);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -113,10 +108,6 @@ void ImGui_ImplSdlGL3_RenderDrawData(ImDrawData* draw_data)
     glUseProgram(g_ShaderHandle);
     glUniform1i(g_AttribLocationTex, 0);
     glUniformMatrix4fv(g_AttribLocationProjMtx, 1, GL_FALSE, &ortho_projection[0][0]);
-	
-	glUniform1f(g_AttribLocationScale, gImguiScale);
-	glUniform2f(g_AttribLocationOffset, gImguiOffX, gImguiOffX);
-
     glBindSampler(0, 0); // Rely on combined texture/sampler state.
 
     // Recreate the VAO every time 
@@ -272,9 +263,7 @@ bool ImGui_ImplSdlGL3_CreateDeviceObjects()
     const GLchar *vertex_shader =
         "#version 150\n"
         "uniform mat4 ProjMtx;\n"
-		"uniform vec2 Offset;\n"
-		"uniform float Scale;\n"
-		"in vec2 Position;\n"
+        "in vec2 Position;\n"
         "in vec2 UV;\n"
         "in vec4 Color;\n"
         "out vec2 Frag_UV;\n"
@@ -283,7 +272,7 @@ bool ImGui_ImplSdlGL3_CreateDeviceObjects()
         "{\n"
         "	Frag_UV = UV;\n"
         "	Frag_Color = Color;\n"
-        "	gl_Position = ProjMtx * vec4(Position.xy*Scale + Offset.xy,0,1);\n"
+        "	gl_Position = ProjMtx * vec4(Position.xy,0,1);\n"
         "}\n";
 
     const GLchar* fragment_shader =
@@ -310,11 +299,7 @@ bool ImGui_ImplSdlGL3_CreateDeviceObjects()
 
     g_AttribLocationTex = glGetUniformLocation(g_ShaderHandle, "Texture");
     g_AttribLocationProjMtx = glGetUniformLocation(g_ShaderHandle, "ProjMtx");
-	
-	g_AttribLocationOffset = glGetUniformLocation(g_ShaderHandle, "Offset");
-	g_AttribLocationScale = glGetUniformLocation(g_ShaderHandle, "Scale");
-
-	g_AttribLocationPosition = glGetAttribLocation(g_ShaderHandle, "Position");
+    g_AttribLocationPosition = glGetAttribLocation(g_ShaderHandle, "Position");
     g_AttribLocationUV = glGetAttribLocation(g_ShaderHandle, "UV");
     g_AttribLocationColor = glGetAttribLocation(g_ShaderHandle, "Color");
 

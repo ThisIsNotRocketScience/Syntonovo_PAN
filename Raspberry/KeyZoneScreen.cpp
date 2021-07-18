@@ -412,6 +412,9 @@ void KeyZoneScreen::Action(int a)
 */
 void RenderOctave(int x, int y)
 {
+	ImVec2 wp = ImGui::GetWindowPos();
+	x += wp.x;
+	y += wp.y;
 	for (int i = 0; i < 7; i++)
 	{
 		ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(x + i * KEYWIDTH, y), ImVec2(x + i * KEYWIDTH + (KEYWIDTH-1), y + KEYHEIGHT), gGuiResources.WhiteKey);
@@ -429,6 +432,10 @@ void RenderOctave(int x, int y)
 
 void RenderLastOctave(int x, int y)
 {
+	ImVec2 wp = ImGui::GetWindowPos();
+	x += wp.x;
+	y += wp.y;
+
 	for (int i = 0; i < 5; i++)
 	{
 		ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(x + i * KEYWIDTH, y), ImVec2(x + i * KEYWIDTH + (KEYWIDTH - 1), y + KEYHEIGHT), gGuiResources.WhiteKey);
@@ -484,7 +491,13 @@ void DrawKeyRange(int Lower, int Upper, int Transpose, int col, int y, bool acti
 	sprintf(txt, "zone %d", idx);
 	//ImGui::Text(txt);
 
+	ImGui::SetCursorPos(ImVec2(ux + KEYWIDTH + ParamMasterMargin, y));
+	ImGui::TextColored(ImGui::ColorConvertU32ToFloat4(col), txt);
 
+	ImVec2 wp = ImGui::GetWindowPos();
+	lx += wp.x;
+	ux += wp.x;
+	y += wp.y;
 	if (active)
 	{
 		
@@ -496,8 +509,6 @@ void DrawKeyRange(int Lower, int Upper, int Transpose, int col, int y, bool acti
 
 	}
 
-	ImGui::SetCursorPos(ImVec2(ux + KEYWIDTH + ParamMasterMargin, y));
-	ImGui::TextColored(ImGui::ColorConvertU32ToFloat4(col),   txt);
 }
 
 void KeyZoneScreen::Render(bool active, float DT)

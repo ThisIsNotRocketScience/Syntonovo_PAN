@@ -688,6 +688,8 @@ void _screensetup_t::RenderContent(bool active, float DT)
 
 	if (strlen(title) > 0)
 	{
+
+
 		ImGui::PushFont(gGuiResources.BigFont);
 		ImGui::SetCursorPos(ImVec2(300+ParamMasterMargin, ParamMasterMargin));
 
@@ -707,7 +709,7 @@ void _screensetup_t::RenderContent(bool active, float DT)
 			}
 			int idx2 = (idx + 1) % 2;
 			auto R = ImGui::CalcTextSize(titletext[idx2]);
-			ImGui::SetCursorPos(ImVec2(512 - R.x / 2, R.y * 3));
+			ImGui::SetCursorPos(ImVec2(705 - R.x / 2, 65/2 -R.y/2 ));
 			ImGui::Text(titletext[idx2]);
 
 		}
@@ -715,7 +717,7 @@ void _screensetup_t::RenderContent(bool active, float DT)
 		{
 			auto R = ImGui::CalcTextSize(title);
 
-			ImGui::SetCursorPos(ImVec2(512 - R.x / 2, R.y * 3));
+			ImGui::SetCursorPos(ImVec2(705 - R.x / 2, 65 / 2 - R.y / 2));
 			ImGui::Text(title);
 		}
 		
@@ -735,13 +737,16 @@ void _screensetup_t::RenderContent(bool active, float DT)
 void _screensetup_t::RenderPatchBox()
 {
 	char txt[100];
-	snprintf(txt, 100, "current patch : %s", gCurrentPreset.Name);
+	snprintf(txt, 100, "%s", gCurrentPreset.Name);
+	ImGui::PushFont(gGuiResources.BigFont);
 
 	auto R = ImGui::CalcTextSize(txt);
+	
 
-
-	ImGui::SetCursorPos(ImVec2(1024/2 -R.x / 2, ParamMasterMargin));
+	ImGui::SetCursorPos(ImVec2(370 -R.x / 2, 65/2-R.y/2));
 	ImGui::Text(txt);
+	ImGui::PopFont();
+
 	ImVec2 Pts[4];
 	Pts[0] = Pts[1] = ImVec2(512 - ParamMasterMargin - R.x / 2, R.y + ParamMasterMargin * 2);
 	Pts[2] = Pts[3] = ImVec2(512 + ParamMasterMargin + R.x / 2, R.y + ParamMasterMargin * 2);
@@ -751,7 +756,7 @@ void _screensetup_t::RenderPatchBox()
 	Pts[0].x -= ParamMasterMargin * 2;
 	Pts[3].x += ParamMasterMargin * 2;
 
-	ImGui::GetWindowDrawList()->AddPolyline(Pts, 4, IM_COL32(255, 255, 255, 255), false, 1);
+	//ImGui::GetWindowDrawList()->AddPolyline(Pts, 4, IM_COL32(255, 255, 255, 255), false, 1);
 	
 
 	//	Screens[SCREEN_HOME]->AddText(512, 50, "Current preset: ", align_right);

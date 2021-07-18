@@ -176,9 +176,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\libs\gl3w-master\src\gl3w.c" />
-    <ClCompile Include="..\libs\imgui-master\examples\sdl_opengl3_example\imgui_impl_sdl_gl3.cpp" />
     <ClCompile Include="..\libs\imgui-master\imgui.cpp" />
     <ClCompile Include="..\libs\imgui-master\imgui_draw.cpp" />
+    <ClCompile Include="..\libs\imgui-master\imgui_tables.cpp" />
+    <ClCompile Include="..\libs\imgui-master\imgui_widgets.cpp" />
+    <ClCompile Include="..\libs\implot-master\implot.cpp" />
+    <ClCompile Include="..\libs\implot-master\implot_items.cpp" />
     <ClCompile Include="..\libs\lodepng-master\lodepng.cpp" />
     <ClCompile Include="..\Raspberry\ArpeggiatorScreen.cpp" />
     <ClCompile Include="..\Raspberry\BottomEncoder.cpp" />
@@ -195,6 +198,7 @@
     <ClCompile Include="..\Raspberry\ParameterModal.cpp" />
     <ClCompile Include="..\Raspberry\SwitchDebug.cpp" />
     <ClCompile Include="..\Raspberry\VCF2StructureScreen.cpp" />
+    <ClCompile Include="imgui_impl_sdl_gl3.cpp" />
     <ClCompile Include="PanSim.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -218,6 +222,8 @@
     <ClInclude Include="..\Raspberry\PanUiMap.h" />
     <ClInclude Include="..\Raspberry\ParameterModal.h" />
     <ClInclude Include="..\Raspberry\SwitchDebug.h" />
+    <ClInclude Include="BatonAndStacking.h" />
+    <ClInclude Include="imgui_impl_sdl_gl3.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\libs\SDL2-2.0.7\lib\x86\SDL2.lib" />

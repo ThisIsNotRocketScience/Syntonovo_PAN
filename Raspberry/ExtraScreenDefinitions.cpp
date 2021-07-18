@@ -122,6 +122,10 @@ void RenderModulationAmountH(int x, int y, bool active, int w, int h, int value,
 		W2 = (w / 2) + (w / 2) * (value / 128.0f);
 	};
 
+
+	ImVec2 wp = ImGui::GetWindowPos();
+	x += wp.x;
+	y += wp.y;
 	ImVec2 tlv(x+ __min(W1, W2), y);
 
 	ImVec2 brv(x +__max(W1, W2), y + h);

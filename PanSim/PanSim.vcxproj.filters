@@ -68,9 +68,6 @@
     <ClCompile Include="..\libs\imgui-master\imgui_draw.cpp">
       <Filter>Source Files\PlatformRelated</Filter>
     </ClCompile>
-    <ClCompile Include="..\libs\imgui-master\examples\sdl_opengl3_example\imgui_impl_sdl_gl3.cpp">
-      <Filter>Source Files\PlatformRelated</Filter>
-    </ClCompile>
     <ClCompile Include="..\libs\lodepng-master\lodepng.cpp">
       <Filter>Source Files\PlatformRelated</Filter>
     </ClCompile>
@@ -115,6 +112,21 @@
     </ClCompile>
     <ClCompile Include="..\Raspberry\SwitchDebug.cpp">
       <Filter>Source Files\Screens</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libs\implot-master\implot.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libs\implot-master\implot_items.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libs\imgui-master\imgui_tables.cpp">
+      <Filter>Source Files\PlatformRelated</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libs\imgui-master\imgui_widgets.cpp">
+      <Filter>Source Files\PlatformRelated</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_impl_sdl_gl3.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -165,6 +177,12 @@
     </ClInclude>
     <ClInclude Include="..\Raspberry\SwitchDebug.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BatonAndStacking.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_impl_sdl_gl3.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
